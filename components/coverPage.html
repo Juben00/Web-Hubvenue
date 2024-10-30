@@ -1,0 +1,153 @@
+<section class="first-section relative">
+  <div class="ml-20 p-8">
+    <!-- Added ml-20 to account for sidebar width -->
+
+    <!-- search -->
+    <div
+      class="bg-slate-100 border border-gray-300 rounded-full shadow-lg p-2 mb-4 flex items-center max-w-5xl mx-auto"
+    >
+      <div class="flex-1 min-w-0 px-4">
+        <label for="where" class="block text-sm font-medium text-gray-700"
+          >Where</label
+        >
+        <input
+          type="text"
+          id="where"
+          placeholder="Search destinations"
+          class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent"
+        />
+      </div>
+      <div class="w-px h-10 bg-gray-300 mx-2"></div>
+      <div class="flex-1 min-w-0 px-4">
+        <button id="checkInBtn" class="w-full text-left font-normal">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 inline-block mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <span id="checkInText">Check in</span>
+        </button>
+      </div>
+      <div class="w-px h-10 bg-gray-300 mx-2"></div>
+      <div class="flex-1 min-w-0 px-4">
+        <button id="checkOutBtn" class="w-full text-left font-normal">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 inline-block mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
+          </svg>
+          <span id="checkOutText">Check out</span>
+        </button>
+      </div>
+      <div class="w-px h-10 bg-gray-300 mx-2"></div>
+      <div class="flex-1 min-w-0 px-4">
+        <label for="guests" class="block text-sm font-medium text-gray-700"
+          >Who</label
+        >
+        <input
+          type="text"
+          id="guests"
+          placeholder="Add guests"
+          class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent"
+        />
+      </div>
+      <button
+        class="rounded-full bg-red-500 hover:bg-red-600 text-white p-2 mx-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Updated sign-in section -->
+    <div class="text-white rounded-3xl p-8 mb-8 max-w-6xl mx-auto relative">
+      <div class="flex items-center justify-around w-full relative z-10">
+        <div class="w-2/3">
+          <h2 class="text-5xl font-bold mb-2">Welcome to HubVenue, Guest!</h2>
+          <p class="text-xl mb-4">
+            Discover A Venue: A Perfect Setting for Every Occasion
+          </p>
+          <p>
+            Discover the perfect setting for your most memorable events. At
+            HubVenue, we believe every occasion deserves a beautiful backdrop,
+            whether it's a wedding, corporate gathering, or an intimate
+            celebration. HubVenue is more than just a place—it's where your
+            dreams come to life. Come explore our versatile venue and let us be
+            the host to your next cherished moment.
+          </p>
+          <button
+            class="bg-white mt-4 hover:font-semibold text-blue-500 font-semibold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300 text-lg"
+          >
+            Check venues
+          </button>
+        </div>
+        <div class="hidden lg:block">
+          <img
+            src="./images/R.png"
+            alt="VenueSpot Mascot"
+            class="w-48 h-48 object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cloud-bottom absolute left-0 w-full overflow-hidden">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1440 320"
+      preserveAspectRatio="none"
+      class="w-full h-32"
+    >
+      <path
+        fill="#F1F5F9"
+        fill-opacity="0.2"
+        d="M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,165.3C672,149,768,139,864,149.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
+      <path
+        fill="#F1F5F9"
+        fill-opacity="0.4"
+        d="M0,192L48,181.3C96,171,192,149,288,149.3C384,149,480,171,576,181.3C672,192,768,192,864,181.3C960,171,1056,149,1152,144C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
+      <path
+        fill="#F1F5F9"
+        fill-opacity="0.6"
+        d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,213.3C960,203,1056,181,1152,170.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
+      <path
+        fill="#F1F5F9"
+        fill-opacity="1"
+        d="M0,256L48,245.3C96,235,192,213,288,213.3C384,213,480,235,576,245.3C672,256,768,256,864,245.3C960,235,1056,213,1152,202.7C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
+    </svg>
+  </div>
+</section>

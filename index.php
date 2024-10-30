@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HubVenue</title>
+    <link rel="icon" href="./images/black_ico.png">
+    <link rel="stylesheet" href="./output.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <style>
@@ -55,156 +58,213 @@
     <!-- Header -->
     <?php include './components/navbar.html'; ?>
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 ">
         <!-- Sidebar -->
-        <aside id="sidebar"
-            class="sidebar fixed left-0 top-1/2 transform -translate-y-1/2 w-20 flex flex-col items-center py-8 space-y-8 z-20">
-            <button class=" flex flex-col items-center focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                <span class="text-xs mt-1">Home</span>
-            </button>
-            <button class="flex flex-col items-center text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-                <span class="text-xs mt-1">Weddings</span>
-            </button>
-            <button class="flex flex-col items-center text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
-                </svg>
-                <span class="text-xs mt-1">Parties</span>
-            </button>
-            <button class="flex flex-col items-center text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-                </svg>
-                <span class="text-xs mt-1">Outdoor</span>
-            </button>
-            <button class="flex flex-col items-center text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-                <span class="text-xs mt-1">Outings</span>
-            </button>
-            <button class="flex flex-col items-center text-gray-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                </svg>
-                <span class="text-xs mt-1">Unique</span>
-            </button>
-        </aside>
+        <?php include_once './components/sidebar.html' ?>
 
         <!-- Main content -->
-        <main class="flex-1">
+        <main class="flex-1 mt-28">
             <!-- First section -->
-            <section class="first-section relative">
-                <div class="ml-20 p-8"> <!-- Added ml-20 to account for sidebar width -->
-                    <div
-                        class="bg-white border border-gray-300 rounded-full shadow-lg p-2 mb-8 flex items-center max-w-5xl mx-auto">
-                        <div class="flex-1 min-w-0 px-4">
-                            <label for="where" class="block text-sm font-medium text-gray-700">Where</label>
-                            <input type="text" id="where" placeholder="Search destinations"
-                                class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
-                        </div>
-                        <div class="w-px h-10 bg-gray-300 mx-2"></div>
-                        <div class="flex-1 min-w-0 px-4">
-                            <button id="checkInBtn" class="w-full text-left font-normal">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span id="checkInText">Check in</span>
-                            </button>
-                        </div>
-                        <div class="w-px h-10 bg-gray-300 mx-2"></div>
-                        <div class="flex-1 min-w-0 px-4">
-                            <button id="checkOutBtn" class="w-full text-left font-normal">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <span id="checkOutText">Check out</span>
-                            </button>
-                        </div>
-                        <div class="w-px h-10 bg-gray-300 mx-2"></div>
-                        <div class="flex-1 min-w-0 px-4">
-                            <label for="guests" class="block text-sm font-medium text-gray-700">Who</label>
-                            <input type="text" id="guests" placeholder="Add guests"
-                                class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
-                        </div>
-                        <button class="rounded-full bg-red-500 hover:bg-red-600 text-white p-2 mx-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Updated sign-in section -->
-                    <div class="text-white rounded-3xl p-8 mb-8 max-w-5xl mx-auto relative">
-                        <div class="flex items-center justify-between relative z-10">
-                            <div>
-                                <h2 class="text-5xl font-bold mb-2">Sign in, save money</h2>
-                                <p class="text-xl mb-4">Save 10% on select properties with VenueSpot Rewards</p>
-                                <button
-                                    class="bg-white text-blue-500 font-semibold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300 text-lg">
-                                    Sign in or register
-                                </button>
-                            </div>
-                            <div class="hidden lg:block">
-                                <!-- Replace this with your actual mascot image -->
-                                <img src="https://placekitten.com/200/200" alt="VenueSpot Mascot"
-                                    class="w-48 h-48 object-cover">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="cloud-bottom absolute left-0 w-full overflow-hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none"
-                        class="w-full h-32">
-                        <path fill="#ffffff" fill-opacity="0.2"
-                            d="M0,128L48,144C96,160,192,192,288,197.3C384,203,480,181,576,165.3C672,149,768,139,864,149.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                        </path>
-                        <path fill="#ffffff" fill-opacity="0.4"
-                            d="M0,192L48,181.3C96,171,192,149,288,149.3C384,149,480,171,576,181.3C672,192,768,192,864,181.3C960,171,1056,149,1152,144C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                        </path>
-                        <path fill="#ffffff" fill-opacity="0.6"
-                            d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,213.3C672,224,768,224,864,213.3C960,203,1056,181,1152,170.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                        </path>
-                        <path fill="#ffffff" fill-opacity="1"
-                            d="M0,256L48,245.3C96,235,192,213,288,213.3C384,213,480,235,576,245.3C672,256,768,256,864,245.3C960,235,1056,213,1152,202.7C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                        </path>
-                    </svg>
-                </div>
-            </section>
+            <?php require_once './components/coverPage.html' ?>
 
             <!-- Second section with venue cards -->
-            <section class="bg-white py-16 relative z-10">
-                <div class="ml-20 max-w-7xl mx-auto px-4">
-                    <h2 class="text-3xl font-bold mb-8">Featured Venues</h2>
+            <div class="bg-slate-100 pt-10 relative z-10 ">
+                <section class="ml-20 max-w-7xl mx-auto px-4  mb-8">
+                    <div class="flex flex-col ">
+                        <h2 class="text-3xl font-bold mb-4">Our Services</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+                            <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
+                                <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
+                                    class="w-full h-56">
+                                <h3 class="text-xl font-semibold mt-2">Space Rentals</h3>
+                                <p class="">Discover unique spaces for any event, from intimate
+                                    gatherings to
+                                    large-scale
+                                    functions.</p>
+                            </div>
+                            <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
+                                <img src="./images/serviceimages/pexels-rdne-7414284.jpg" alt="Post Listings"
+                                    class="w-full h-56">
+                                <h3 class="text-xl font-semibold mt-2">Post Your Space</h3>
+                                <p class="">Earn money by listing your home or commercial space for event
+                                    rentals.
+                                </p>
+                            </div>
+                            <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
+                                <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
+                                    alt="Book Event" class="w-full h-56">
+                                <h3 class="text-xl font-semibold mt-2">Book an Event Space</h3>
+                                <p class="">Easily browse and book spaces for weddings, meetings,
+                                    parties,
+                                    and
+                                    more.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="ml-20 max-w-7xl mx-auto px-4 mb-8">
+                    <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
                         <!-- Venue cards will be dynamically inserted here -->
                     </div>
-                </div>
-            </section>
+                </section>
+
+                <section class="ml-20 max-w-7xl mx-auto px-4 mb-8">
+                    <div class="container mx-auto flex flex-col ">
+                        <h2 class="text-3xl font-bold mb-4">About Us</h2>
+
+                        <div class="flex flex-col gap-4">
+
+                            <div
+                                class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                <h3 class="text-xl font-semibold  text-red-500 italic">Our Story</h3>
+                                <p>
+                                    Hubvenue was born out of the need to streamline the often complex and time-consuming
+                                    process of
+                                    event
+                                    planning. The journey began when our founders, faced with the daunting task of
+                                    organizing
+                                    multiple
+                                    events, realized how fragmented the venue and catering service industry was. From
+                                    endless phone
+                                    calls to
+                                    lengthy negotiations, the process was anything but easy. Inspired by the vision of a
+                                    one-stop
+                                    platform,
+                                    Hubvenue was developed to centralize and simplify these interactions, allowing users
+                                    to focus on
+                                    creating memorable experiences instead of logistics.
+                                </p>
+                                <p>Throughout our journey, we faced challenges, such as integrating diverse services and
+                                    building
+                                    trust
+                                    within the community. However, these obstacles only strengthened our commitment to
+                                    innovation.
+                                    Hubvenue
+                                    continues to grow, expanding our network of partners and refining our platform based
+                                    on user
+                                    feedback,
+                                    making it the ultimate event planning tool for everyone.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- mission -->
+                                <div
+                                    class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                    <h3 class="text-xl font-semibold  text-red-500 italic">Our Mission</h3>
+                                    <p class="text-center">
+                                        To simplify finding and booking available venues, offering users an easy and
+                                        efficient platform
+                                        that connects them with ideal spaces for their events, ensuring seamless
+                                        experience from
+                                        discovery ro registration.
+                                    </p>
+                                </div>
+                                <!-- vission -->
+                                <div
+                                    class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                    <h3 class="text-xl font-semibold  text-red-500 italic">Our Vision</h3>
+                                    <p class="text-center">
+                                        To be the go to platform for venue reservations, helping people connect with the
+                                        perfect spaces
+                                        for any event.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- FAQ -->
+                            <div
+                                class="flex flex-col bg-slate-50 border text-neutral-700 p-4 lg:p-4 lg:py-8 rounded-lg shadow-md">
+                                <h3 class="text-xl font-semibold text-red-500 italic text-center">FAQs</h3>
+                                <div class="w-full ">
+                                    <div class="faq-item mb-4">
+                                        <button class="faq-header w-full text-left">
+                                            1. How do I book a space?
+                                        </button>
+                                        <div class="faq-content hidden">
+                                            <p class="text-xs">To book a space, simply look for your desired
+                                                location
+                                                and
+                                                date on our platform. Browse
+                                                through the available options, select the space that suits your needs,
+                                                and follow
+                                                the
+                                                booking process to confirm your reservation.</p>
+                                        </div>
+                                    </div>
+                                    <div class="faq-item mb-4">
+                                        <button class="faq-header  w-full text-left">
+                                            2. Can I list my own space on HubVenue?
+                                        </button>
+                                        <div class="faq-content hidden">
+                                            <p class="text-sm ">Yes, you can list your space on HubVenue. Create an
+                                                account,
+                                                provide details about your
+                                                space, upload photos, and set your availability and pricing. Once your
+                                                listing is
+                                                approved, it will be visible to potential renters.</p>
+                                        </div>
+                                    </div>
+                                    <div class="faq-item mb-4">
+                                        <button class="faq-header  w-full text-left">
+                                            3. What types of spaces can I list?
+                                        </button>
+                                        <div class="faq-content hidden">
+                                            <p class="text-sm ">You can list a variety of spaces including
+                                                residential
+                                                homes,
+                                                commercial venues, event
+                                                halls, and more. The platform is designed to accommodate all types of
+                                                spaces that
+                                                can be
+                                                used for events and gatherings.</p>
+                                        </div>
+                                    </div>
+                                    <div class="faq-item mb-4">
+                                        <button class="faq-header  w-full text-left">
+                                            4. Are there any fees associated with booking or listing a space?
+                                        </button>
+                                        <div class="faq-content hidden">
+                                            <p class="text-sm ">Yes, there may be fees associated with both booking
+                                                and
+                                                listing
+                                                spaces. Booking fees are
+                                                typically a percentage of the total rental cost, while listing fees may
+                                                vary based
+                                                on
+                                                the type of space and duration of the listing. Detailed information
+                                                about fees will
+                                                be
+                                                provided during the booking or listing process.</p>
+                                        </div>
+                                    </div>
+                                    <div class="faq-item mb-4">
+                                        <button class="faq-header  w-full text-left">
+                                            5. How can I contact customer support?
+                                        </button>
+                                        <div class="faq-content hidden">
+                                            <p class="text-sm ">If you need assistance, you can contact our customer
+                                                support
+                                                team via the contact form on
+                                                our website, or by email at info@hubvenue.com. Our team is available to
+                                                help you
+                                                with
+                                                any questions or issues you may have.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                <?php require_once './components/footer.html' ?>
+
+            </div>
         </main>
     </div>
 
@@ -284,6 +344,24 @@
         window.addEventListener('scroll', updateSidebarColor);
         // Initial call to set correct color on page load
         updateSidebarColor();
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const faqHeaders = document.querySelectorAll(".faq-header");
+
+            faqHeaders.forEach((header) => {
+                header.addEventListener("click", function () {
+                    const faqContent = this.nextElementSibling;
+
+                    if (faqContent.classList.contains("hidden")) {
+                        faqContent.classList.remove("hidden");
+                    } else {
+                        faqContent.classList.add("hidden");
+                    }
+                });
+            });
+        });
     </script>
 </body>
 
