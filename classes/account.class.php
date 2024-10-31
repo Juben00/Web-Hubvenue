@@ -52,6 +52,10 @@ class Account
             $stmt->bindParam(':birthdate', $this->birthdate);
             $stmt->bindParam(':contact_number', $this->contact_number);
             $stmt->bindParam(':email', $this->email);
+
+            // Hash the password before saving to the database
+            $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+
             $stmt->bindParam(':password', $this->password);
 
             if ($stmt->execute()) {

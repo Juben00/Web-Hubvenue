@@ -14,17 +14,18 @@ try {
 }
 
 // Function to handle login
-function handleLogin($email, $password) {
+function handleLogin($email, $password)
+{
     global $pdo;
-    
+
     // Prepare the SQL query
     $query = "SELECT id, email, password_hash FROM users WHERE email = :email";
-    
+
     try {
         $stmt = $pdo->prepare($query);
         $stmt->execute(['email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         if ($user && password_verify($password, $user['password_hash'])) {
             return ['success' => true, 'message' => 'Login successful', 'user_id' => $user['id']];
         } else {
@@ -39,9 +40,9 @@ function handleLogin($email, $password) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
-    
+
     $result = handleLogin($email, $password);
-    
+
     // Send JSON response
     header('Content-Type: application/json');
     echo json_encode($result);

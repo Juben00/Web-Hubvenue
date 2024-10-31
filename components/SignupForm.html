@@ -2,7 +2,9 @@
   id="authModal"
   class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50"
 >
-  <div class="bg-white rounded-lg p-8 max-w-lg w-full mx-4 relative shadow-2xl">
+  <div
+    class="bg-slate-50 rounded-lg p-8 max-w-lg w-full mx-4 relative shadow-2xl"
+  >
     <!-- Decreased max-width -->
     <!-- Close button -->
     <button
@@ -131,8 +133,8 @@
             >
             <input
               type="text"
-              id="mi"
-              name="mi"
+              id="middlename"
+              name="middlename"
               class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
               placeholder="M.I."
             />
@@ -156,14 +158,14 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label
-              for="birthday"
+              for="birthdate"
               class="block text-sm font-medium text-gray-700"
               >Birthday</label
             >
             <input
               type="date"
-              id="birthday"
-              name="birthday"
+              id="birthdate"
+              name="birthdate"
               class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
             />
           </div>
@@ -209,9 +211,9 @@
             type="checkbox"
             id="agreeTerms"
             name="agreeTerms"
-            class="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+            class="h-4 w-4 rounded accent-blue-500 border-gray-300"
           />
-          <label for="agreeTerms" class="ml-2 block text-sm text-gray-700">
+          <label for="agreeTerms" class="ml-2 block text-xs text-gray-700">
             I agree with all the
             <a href="#" class="text-blue-500">terms and conditions</a> and
             <a href="#" class="text-blue-500">privacy policies</a> of HubVenue
@@ -219,7 +221,9 @@
         </div>
         <button
           type="submit"
-          class="w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          id="signupSubmit"
+          disabled
+          class="disabled:bg-gray-300 disabled:text-neutral-400 w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-sm font-medium text-white enabled:bg-gradient-to-r from-blue-500 to-purple-600 enabled:hover:from-blue-600 enabled:hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Sign Up
         </button>
@@ -233,7 +237,7 @@
           <div class="w-full border-t border-gray-300"></div>
         </div>
         <div class="relative flex justify-center text-sm">
-          <span class="px-2 bg-white text-gray-500">Or login using</span>
+          <span class="px-2 bg-slate-50 text-gray-500">Or login using</span>
         </div>
       </div>
 
@@ -241,7 +245,7 @@
         <div>
           <a
             href="#"
-            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
             <span class="sr-only">Sign in with Facebook</span>
             <svg
@@ -262,7 +266,7 @@
         <div>
           <a
             href="#"
-            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
             <span class="sr-only">Sign in with Twitter</span>
             <svg
@@ -281,7 +285,7 @@
         <div>
           <a
             href="#"
-            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
             <span class="sr-only">Sign in with Google</span>
             <svg
@@ -302,3 +306,51 @@
     </div>
   </div>
 </div>
+
+<script>
+  const signupAgreeTerms = document.getElementById("agreeTerms");
+  if (signupAgreeTerms) {
+    signupAgreeTerms.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        document.getElementById("signupSubmit").disabled = false;
+      } else {
+        document.getElementById("signupSubmit").disabled = true;
+      }
+    });
+  }
+
+  const signupFormSubmit = document.getElementById("signupForm");
+
+  signupFormSubmit.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch("./api/Signup.api.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      let feedbackMessage = "";
+
+      if (data.status === "success") {
+        // feedbackMessage = data.message;
+        console.log("success ", data);
+      } else {
+        // feedbackMessage = data.message;
+        console.log("else ", data);
+      }
+
+      // document.getElementById("feedbackMessage").innerHTML = feedbackMessage;
+      // document.getElementById("modal").style.display = "flex";
+    } catch (error) {
+      console.error("Error:", error);
+      // document.getElementById("feedbackMessage").innerHTML =
+      //   "An error occurred while processing your request.";
+      // document.getElementById("modal").style.display = "flex";
+    }
+    signupFormSubmit.reset();
+  });
+</script>
