@@ -85,7 +85,7 @@
                                 <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
                                     class="w-full h-56">
                                 <h3 class="text-xl font-semibold mt-2">Space Rentals</h3>
-                                <p class="">Discover unique spaces for any event, from intimate
+                                <p class="text-gray-500">Discover unique spaces for any event, from intimate
                                     gatherings to
                                     large-scale
                                     functions.</p>
@@ -94,7 +94,7 @@
                                 <img src="./images/serviceimages/pexels-rdne-7414284.jpg" alt="Post Listings"
                                     class="w-full h-56">
                                 <h3 class="text-xl font-semibold mt-2">Post Your Space</h3>
-                                <p class="">Earn money by listing your home or commercial space for event
+                                <p class="text-gray-500">Earn money by listing your home or commercial space for event
                                     rentals.
                                 </p>
                             </div>
@@ -102,7 +102,7 @@
                                 <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
                                     alt="Book Event" class="w-full h-56">
                                 <h3 class="text-xl font-semibold mt-2">Book an Event Space</h3>
-                                <p class="">Easily browse and book spaces for weddings, meetings,
+                                <p class="text-gray-500">Easily browse and book spaces for weddings, meetings,
                                     parties,
                                     and
                                     more.
