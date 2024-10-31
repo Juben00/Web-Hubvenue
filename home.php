@@ -59,7 +59,7 @@
             <section class="first-section relative">
                 <div class="ml-20 p-8">
                     <div
-                        class="bg-white border mt-16 border-gray-300 rounded-full shadow-lg p-2 mb-8 flex items-center max-w-5xl mx-auto">
+                        class="bg-slate-50 border mt-16 border-gray-300 rounded-full shadow-lg p-2 mb-8 flex items-center max-w-5xl mx-auto">
                         <div class="flex-1 min-w-0 px-4">
                             <label for="where" class="block text-sm font-medium text-gray-700">Where</label>
                             <input type="text" id="where" placeholder="Search destinations"
@@ -108,7 +108,7 @@
                                 <h2 class="text-5xl font-bold mb-2">Welcome to HubVenue</h2>
                                 <p class="text-xl mb-4">Plan your next event, party, or outing with us</p>
                                 <button
-                                    class="bg-white text-blue-500 font-semibold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300 text-lg"
+                                    class="bg-slate-50 text-blue-500 font-semibold py-3 px-8 rounded-full hover:bg-blue-100 transition duration-300 text-lg"
                                     onclick="openModal()">
                                     Sign in or register
                                 </button>
@@ -142,7 +142,7 @@
             </section>
 
             <!-- Second section with venue cards -->
-            <section class="bg-white py-16 relative z-10">
+            <section class="bg-slate-50 py-16 relative z-10">
                 <div class="ml-20 max-w-8xl mx-auto px-4">
                     <h2 class="text-3xl font-bold mb-8">Featured Venues</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 w-full h-full"
@@ -239,7 +239,7 @@
         const venueList = document.getElementById('venueList');
         venues.forEach(venue => {
             const card = document.createElement('div');
-            card.className = 'bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer';
+            card.className = 'bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer';
             card.onclick = () => window.location.href = `venues.php?id=${venue.id}`;
             card.innerHTML = `
                 <div class="relative">
@@ -249,7 +249,7 @@
                             <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    ${venue.tag ? `<span class="absolute top-3 left-3 bg-white text-black text-xs font-semibold px-2 py-1 rounded-full">${venue.tag}</span>` : ''}
+                    ${venue.tag ? `<span class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full">${venue.tag}</span>` : ''}
                 </div>
                 <div class="p-4">
                     <div class="flex justify-between items-center mb-1">
@@ -276,7 +276,7 @@
 
     <!-- Add this right before the closing </body> tag -->
     <div id="authModal" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 relative shadow-2xl"> <!-- Decreased max-width -->
+        <div class="bg-slate-50 rounded-lg p-8 max-w-2xl w-full mx-4 relative shadow-2xl"> <!-- Decreased max-width -->
             <!-- Close button -->
             <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -417,14 +417,14 @@
                         <div class="w-full border-t border-gray-300"></div>
                     </div>
                     <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">Or login using</span>
+                        <span class="px-2 bg-slate-50 text-gray-500">Or login using</span>
                     </div>
                 </div>
 
                 <div class="mt-6 grid grid-cols-3 gap-3">
                     <div>
                         <a href="#"
-                            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="sr-only">Sign in with Facebook</span>
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                 <path fill-rule="evenodd"
@@ -436,7 +436,7 @@
 
                     <div>
                         <a href="#"
-                            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="sr-only">Sign in with Twitter</span>
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                 <path
@@ -447,7 +447,7 @@
 
                     <div>
                         <a href="#"
-                            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50">
                             <span class="sr-only">Sign in with Google</span>
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                 <path fill-rule="evenodd"

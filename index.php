@@ -361,7 +361,7 @@
         const venueList = document.getElementById('venueList');
         venues.forEach(venue => {
             const card = document.createElement('div');
-            card.className = 'bg-white rounded-2xl overflow-hidden shadow-md cursor-pointer';
+            card.className = 'bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer';
             card.onclick = () => window.location.href = `venues.php?id=${venue.id}`;
             card.innerHTML = `
                 <div class="relative">
@@ -371,7 +371,7 @@
                             <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    ${venue.tag ? `<span class="absolute top-3 left-3 bg-white text-black text-xs font-semibold px-2 py-1 rounded-full">${venue.tag}</span>` : ''}
+                    ${venue.tag ? `<span class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full">${venue.tag}</span>` : ''}
                 </div>
                 <div class="p-4">
                     <div class="flex justify-between items-center mb-1">

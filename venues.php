@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
 </head>
-<body class="bg-white">
-   <!-- Header -->
-   <?php include 'pages/navbar.html'; ?>
+
+<body class="bg-slate-50">
+    <!-- Header -->
+    <?php include 'pages/navbar.html'; ?>
 
     <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div id="venueDetails">
@@ -44,7 +46,7 @@
                 "Great location"
             ],
             features: [
-                "Canal view", "Garden view", "Lake access", "Kitchen", "Wifi", 
+                "Canal view", "Garden view", "Lake access", "Kitchen", "Wifi",
                 "Free parking on premises", "Private outdoor pool - available all year, open specific hours, pool cover",
                 "Private hot tub - open 24 hours", "Private sauna"
             ],
@@ -200,4 +202,5 @@
         });
     </script>
 </body>
+
 </html>
