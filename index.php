@@ -479,19 +479,6 @@
             }, 300);
         }
 
-        // Form submission handling
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Add your login logic here
-            console.log('Login submitted');
-        });
-
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Add your signup logic here
-            console.log('Signup submitted');
-        });
-
         // Ensure the DOM is fully loaded before attaching event listeners
         document.addEventListener('DOMContentLoaded', (event) => {
             // Reattach event listeners to make sure they work
