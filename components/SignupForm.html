@@ -340,7 +340,6 @@
       });
 
       const data = await response.json();
-      let feedbackMessage = "";
 
       if (data.status === "success") {
         console.log("success ", data);
@@ -355,6 +354,35 @@
       console.error("Error:", error);
       showModal(error);
     }
-    // signupFormSubmit.reset();
+  });
+
+  const loginFormSubmit = document.getElementById("loginForm");
+
+  loginFormSubmit.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    try {
+      const response = await fetch("./api/Login.api.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        console.log("success ", data);
+        showModal(data.message);
+        loginFormSubmit.reset();
+        document.getElementById("authModal").style.display = "none";
+      } else {
+        console.log("else ", data);
+        showModal(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showModal(error);
+    }
   });
 </script>

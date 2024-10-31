@@ -447,13 +447,6 @@
         // Close modal when clicking close button
         closeModal.addEventListener('click', closeModalFunc);
 
-        // Close modal when clicking outside
-        // authModal.addEventListener('click', (e) => {
-        //     if (e.target === authModal) {
-        //         closeModalFunc();
-        //     }
-        // });
-
         // Tab switching functionality
         loginTab.addEventListener('click', () => {
             switchTab(loginTab, signupTab, loginForm, signupForm);
