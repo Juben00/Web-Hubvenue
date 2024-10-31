@@ -1,0 +1,45 @@
+<div
+  class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center z-50"
+  id="feedbackModal"
+>
+  <!-- Modal Container -->
+  <div class="bg-slate-50 rounded-lg shadow-lg p-8 w-96">
+    <!-- Logo -->
+    <div class="flex justify-center">
+      <img
+        alt="Company logo"
+        class="w-auto h-32"
+        height="100"
+        src="./images/black_ico.png"
+        width="100"
+      />
+    </div>
+    <!-- Message -->
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold mb-2">Feedback</h2>
+      <p class="text-gray-600" id="feedbackModalMessage">
+        Thank you for your feedback! We appreciate your input and will use it to
+        improve our services.
+      </p>
+    </div>
+    <!-- Okay Button -->
+    <div class="flex justify-center">
+      <button
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        id="feedbackModalButton"
+      >
+        Okay
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById("feedbackModal");
+
+  const btn = document.getElementById("feedbackModalButton");
+
+  btn.onclick = function () {
+    modal.classList.toggle("hidden");
+  };
+</script>
