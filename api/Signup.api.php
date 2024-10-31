@@ -82,8 +82,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
-        echo json_encode(['status' => 'error', 'message' => 'Invalid input', 'errors' => ['firstname' => $firstnameErr, 'lastname' => $lastnameErr, 'middlename' => $middlenameErr, 'gender' => $genderErr, 'birthdate' => $birthdateErr, 'contact_number' => $contact_numberErr, 'email' => $emailErr, 'password' => $passwordErr]]);
+        echo json_encode([
+            'status' => 'error',
+            'message' => implode(', ', array_filter([
+                $firstnameErr,
+                $lastnameErr,
+                $middlenameErr,
+                $genderErr,
+                $birthdateErr,
+                $contact_numberErr,
+                $emailErr,
+                $passwordErr
+            ]))
+        ]);
         exit();
-
     }
 }

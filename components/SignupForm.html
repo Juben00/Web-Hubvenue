@@ -309,12 +309,19 @@
 
 <script>
   const signupAgreeTerms = document.getElementById("agreeTerms");
+  const signupButton = document.getElementById("signupSubmit");
   if (signupAgreeTerms) {
-    signupAgreeTerms.addEventListener("change", (e) => {
+    if (signupAgreeTerms.checked) {
+      signupButton.disabled = false;
+    } else {
+      signupButton.disabled = true;
+    }
+
+    signupAgreeTerms.addEventListener("click", (e) => {
       if (e.target.checked) {
-        document.getElementById("signupSubmit").disabled = false;
+        signupButton.disabled = false;
       } else {
-        document.getElementById("signupSubmit").disabled = true;
+        signupButton.disabled = true;
       }
     });
   }
@@ -336,21 +343,18 @@
       let feedbackMessage = "";
 
       if (data.status === "success") {
-        // feedbackMessage = data.message;
         console.log("success ", data);
+        showModal(data.message);
+        signupFormSubmit.reset();
+        signupButton.disabled = true;
       } else {
-        // feedbackMessage = data.message;
         console.log("else ", data);
+        showModal(data.message);
       }
-
-      // document.getElementById("feedbackMessage").innerHTML = feedbackMessage;
-      // document.getElementById("modal").style.display = "flex";
     } catch (error) {
       console.error("Error:", error);
-      // document.getElementById("feedbackMessage").innerHTML =
-      //   "An error occurred while processing your request.";
-      // document.getElementById("modal").style.display = "flex";
+      showModal(error);
     }
-    signupFormSubmit.reset();
+    // signupFormSubmit.reset();
   });
 </script>
