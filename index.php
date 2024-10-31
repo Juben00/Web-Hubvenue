@@ -52,6 +52,18 @@
             /* 3/4 of the viewport height */
         }
     </style>
+    <style>
+        /* ... (rest of the styles remain unchanged) */
+
+        #authModal {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #loginForm,
+        #signupForm {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen text-gray-900 flex flex-col">
@@ -63,6 +75,7 @@
 
     include_once './components/navbar.html';
     include_once './components/SignupForm.html';
+    include_once './components/feedback.modal.html';
 
     ?>
 
@@ -487,19 +500,6 @@
             signupTab.addEventListener('click', () => switchTab(signupTab, loginTab, signupForm, loginForm));
         });
     </script>
-
-    <style>
-        /* ... (rest of the styles remain unchanged) */
-
-        #authModal {
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        #loginForm,
-        #signupForm {
-            transition: opacity 0.3s ease-in-out;
-        }
-    </style>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
