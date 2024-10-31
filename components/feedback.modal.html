@@ -18,8 +18,7 @@
     <div class="text-center mb-6">
       <h2 class="text-2xl font-bold mb-2">Feedback</h2>
       <p class="text-gray-600" id="feedbackModalMessage">
-        Thank you for your feedback! We appreciate your input and will use it to
-        improve our services.
+        <!-- Message goes here -->
       </p>
     </div>
     <!-- Okay Button -->
@@ -36,10 +35,18 @@
 
 <script>
   const modal = document.getElementById("feedbackModal");
-
+  const modalMessage = document.getElementById("feedbackModalMessage");
   const btn = document.getElementById("feedbackModalButton");
 
+  // Function to show the modal with a custom message
+  function showModal(message) {
+    modalMessage.innerHTML = message; // Set the custom message
+    modal.classList.remove("hidden"); // Show the modal
+    modal.classList.add("flex"); // Show the modal
+  }
+
+  // Close modal on "Okay" button click
   btn.onclick = function () {
-    modal.classList.toggle("hidden");
+    modal.classList.add("hidden");
   };
 </script>
