@@ -1,12 +1,15 @@
-<nav class="bg-blue-500/10 backdrop-blur-xl z-50 fixed w-full px-8">
+<nav
+  class="bg-blue-500/10 backdrop-blur-xl z-40 fixed w-full px-8"
+  id="main-nav"
+>
   <div class="mx-auto px-4 py-2 flex items-center justify-between">
-    <img src="./images/white_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
+    <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
     <span class="hidden md:flex space-x-4 items-center ml-20">
-      <button class="text-white hover:text-gray-200 duration-150">
+      <button class="text-white nav-buttons hover:text-gray-200 duration-150">
         Sign Up
       </button>
       <button
-        class="text-white border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-600 ml-20 duration-150"
+        class="text-white nav-buttons border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-600 ml-20 duration-150"
         onclick="openModal()"
       >
         Log In
@@ -30,3 +33,31 @@
     </button>
   </div>
 </nav>
+
+<script>
+  // Function to update sidebar color based on scroll position
+  function updateSidebarColor() {
+    const sidebar = document.getElementById("main-nav");
+    const firstSection = document.querySelector(".first-section");
+    const sidebarButtons = sidebar.querySelectorAll(".nav-buttons");
+
+    const firstSectionBottom =
+      firstSection.offsetTop + firstSection.offsetHeight;
+    const scrollPosition = window.scrollY;
+
+    if (scrollPosition >= firstSectionBottom - sidebar.offsetHeight / 2) {
+      sidebarButtons.forEach((button) => {
+        button.style.color = "#4A5568"; // Change to a dark color that matches your design
+      });
+    } else {
+      sidebarButtons.forEach((button) => {
+        button.style.color = "white";
+      });
+    }
+  }
+
+  // Add scroll event listener
+  window.addEventListener("scroll", updateSidebarColor);
+  // Initial call to set correct color on page load
+  updateSidebarColor();
+</script>
