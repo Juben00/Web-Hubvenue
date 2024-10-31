@@ -66,4 +66,28 @@ class Account
         }
     }
 
+    public function login()
+    {
+        $sql = 'SELECT * FROM users WHERE email = :email';
+        $stmt = $this->db->connect()->prepare($sql);
+        $stmt->bindParam(':email', $this->email);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (password_verify($this->password, $user['password'])) {
+
+                session_start();
+                session_regenerate_id(delete_old_session: true);
+                $_SESSION['user'] = $user;
+
+                return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
+            } else {
+                return ['status' => 'error', 'message' => 'Invalid email or password'];
+            }
+        } else {
+            return ['status' => 'error', 'message' => 'Invalid email or password'];
+        }
+    }
+
 }
