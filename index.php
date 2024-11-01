@@ -34,7 +34,7 @@
         }
 
         .cloud-bottom .shape-fill {
-            fill: #FFFFFF;
+            fill: #3490dc;
         }
 
         .sidebar {
@@ -94,13 +94,30 @@
 
         <!-- Main content -->
         <main class="flex-1 mt-28">
-            <!-- First section -->
-            <?php require_once './components/coverPage.html' ?>
+            <!-- First section with blue background -->
+            <div class="bg-blue-500/20">
+                <?php require_once './components/coverPage.html' ?>
+            </div>
 
-            <!-- Second section with venue cards -->
-            <div class="bg-slate-100 pt-10 relative z-10 container mx-auto">
-                <section class="ml-20 xl:ml-0 max-w-7xl mx-auto px-4  mb-8">
-                    <div class="flex flex-col ">
+            <!-- New second section -->
+<section class="bg-white py-16">
+  <div class="container mx-auto px-4 md:px-8">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
+        Find Your Perfect Venue
+      </h2>
+      <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+        From intimate gatherings to grand celebrations, discover spaces that match your vision. 
+        Browse through our carefully curated selection of venues to find the one that speaks to you.
+      </p>
+      <!-- Add more content here as needed -->
+    </div>
+  </div>
+
+            <!-- Second section with white background -->
+            <div class="bg-white p-50 pt-10 relative z-10 container mx-auto">
+                <section class="ml-32 max-w-7xl mx-auto px-4 mb-8">
+                    <div class="flex flex-col">
                         <h2 class="text-3xl font-bold mb-4">Our Services</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                             <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
@@ -134,16 +151,16 @@
                     </div>
                 </section>
 
-                <section class="ml-20 xl:ml-0 max-w-7xl mx-auto px-4 mb-8">
+                <section class="ml-32 max-w-7xl mx-auto px-4 mb-8">
                     <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
                         <!-- Venue cards will be dynamically inserted here -->
                     </div>
                 </section>
 
-                <section class="ml-20 xl:ml-0 max-w-7xl mx-auto px-4 mb-8">
+                <section class="ml-32 mt-40 max-w-7xl mx-auto px-4 mb-8">
                     <div class="container mx-auto flex flex-col ">
-                        <h2 class="text-3xl font-bold mb-4">About Us</h2>
+                        <h2 class="text-3xl font-bold mb-4 text-center">About Us</h2>
 
                         <div class="flex flex-col gap-4">
 
@@ -290,6 +307,7 @@
                         </div>
 
                     </div>
+                    </section>
                 </section>
 
 
