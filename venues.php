@@ -11,9 +11,9 @@
 
 <body class="bg-slate-50">
     <!-- Header -->
-    <?php include 'pages/navbar.html'; ?>
+    <?php include 'components/navbar.html'; ?>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+    <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div id="venueDetails">
             <!-- Venue details will be dynamically inserted here -->
         </div>
