@@ -73,11 +73,20 @@
     <!-- Header -->
     <?php
 
-    include_once './components/navbar.html';
+    session_start();
+
+    // Check if the 'user' key exists in the session
+    if (isset($_SESSION['user'])) {
+        include_once './components/navbar.logged.in.html';
+    } else {
+        include_once './components/navbar.html';
+    }
+
     include_once './components/SignupForm.html';
     include_once './components/feedback.modal.html';
 
     ?>
+
 
     <div class="flex flex-1 ">
         <!-- Sidebar -->
