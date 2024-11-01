@@ -100,220 +100,237 @@
             </div>
 
             <!-- New second section -->
-<section class="bg-white py-16">
-  <div class="container mx-auto px-4 md:px-8">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
-        Find Your Perfect Venue
-      </h2>
-      <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-        From intimate gatherings to grand celebrations, discover spaces that match your vision. 
-        Browse through our carefully curated selection of venues to find the one that speaks to you.
-      </p>
-      <!-- Add more content here as needed -->
-    </div>
-  </div>
-
-            <!-- Second section with white background -->
-            <div class="bg-white p-50 pt-10 relative z-10 container mx-auto">
-                <section class="ml-32 max-w-7xl mx-auto px-4 mb-8">
-                    <div class="flex flex-col">
-                        <h2 class="text-3xl font-bold mb-4">Our Services</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-                            <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
-                                <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
-                                    class="w-full h-56">
-                                <h3 class="text-xl font-semibold mt-2">Space Rentals</h3>
-                                <p class="text-gray-500">Discover unique spaces for any event, from intimate
-                                    gatherings to
-                                    large-scale
-                                    functions.</p>
-                            </div>
-                            <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
-                                <img src="./images/serviceimages/pexels-rdne-7414284.jpg" alt="Post Listings"
-                                    class="w-full h-56">
-                                <h3 class="text-xl font-semibold mt-2">Post Your Space</h3>
-                                <p class="text-gray-500">Earn money by listing your home or commercial space for event
-                                    rentals.
-                                </p>
-                            </div>
-                            <div class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
-                                <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
-                                    alt="Book Event" class="w-full h-56">
-                                <h3 class="text-xl font-semibold mt-2">Book an Event Space</h3>
-                                <p class="text-gray-500">Easily browse and book spaces for weddings, meetings,
-                                    parties,
-                                    and
-                                    more.
-                                </p>
-                            </div>
-                        </div>
+            <section class="bg-white py-16">
+                <div class=" container mx-auto px-4 md:px-8">
+                    <div class="ml-16 max-w-6xl mx-auto">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
+                            Find Your Perfect Venue
+                        </h2>
+                        <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+                            From intimate gatherings to grand celebrations, discover spaces that match your vision.
+                            Browse through our carefully curated selection of venues to find the one that speaks to you.
+                        </p>
+                        <!-- Add more content here as needed -->
                     </div>
-                </section>
+                </div>
 
-                <section class="ml-32 max-w-7xl mx-auto px-4 mb-8">
-                    <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
-                        <!-- Venue cards will be dynamically inserted here -->
-                    </div>
-                </section>
-
-                <section class="ml-32 mt-40 max-w-7xl mx-auto px-4 mb-8">
-                    <div class="container mx-auto flex flex-col ">
-                        <h2 class="text-3xl font-bold mb-4 text-center">About Us</h2>
-
-                        <div class="flex flex-col gap-4">
-
-                            <div
-                                class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
-                                <h3 class="text-xl font-semibold  text-red-500 italic">Our Story</h3>
-                                <p>
-                                    Hubvenue was born out of the need to streamline the often complex and time-consuming
-                                    process of
-                                    event
-                                    planning. The journey began when our founders, faced with the daunting task of
-                                    organizing
-                                    multiple
-                                    events, realized how fragmented the venue and catering service industry was. From
-                                    endless phone
-                                    calls to
-                                    lengthy negotiations, the process was anything but easy. Inspired by the vision of a
-                                    one-stop
-                                    platform,
-                                    Hubvenue was developed to centralize and simplify these interactions, allowing users
-                                    to focus on
-                                    creating memorable experiences instead of logistics.
-                                </p>
-                                <p>Throughout our journey, we faced challenges, such as integrating diverse services and
-                                    building
-                                    trust
-                                    within the community. However, these obstacles only strengthened our commitment to
-                                    innovation.
-                                    Hubvenue
-                                    continues to grow, expanding our network of partners and refining our platform based
-                                    on user
-                                    feedback,
-                                    making it the ultimate event planning tool for everyone.</p>
-                            </div>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- mission -->
+                <!-- Second section with white background -->
+                <div class="bg-white p-50 pt-10 relative z-10 container mx-auto">
+                    <section class="ml-16 max-w-7xl mx-auto px-4 mb-8">
+                        <div class="flex flex-col">
+                            <h2 class="text-3xl font-bold mb-4">Our Services</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                                 <div
-                                    class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
-                                    <h3 class="text-xl font-semibold  text-red-500 italic">Our Mission</h3>
-                                    <p class="text-center">
-                                        To simplify finding and booking available venues, offering users an easy and
-                                        efficient platform
-                                        that connects them with ideal spaces for their events, ensuring seamless
-                                        experience from
-                                        discovery ro registration.
+                                    class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
+                                    <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
+                                        class="w-full h-56">
+                                    <h3 class="text-xl font-semibold mt-2">Space Rentals</h3>
+                                    <p class="text-gray-500">Discover unique spaces for any event, from intimate
+                                        gatherings to
+                                        large-scale
+                                        functions.</p>
+                                </div>
+                                <div
+                                    class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
+                                    <img src="./images/serviceimages/pexels-rdne-7414284.jpg" alt="Post Listings"
+                                        class="w-full h-56">
+                                    <h3 class="text-xl font-semibold mt-2">Post Your Space</h3>
+                                    <p class="text-gray-500">Earn money by listing your home or commercial space for
+                                        event
+                                        rentals.
                                     </p>
                                 </div>
-                                <!-- vission -->
                                 <div
-                                    class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
-                                    <h3 class="text-xl font-semibold  text-red-500 italic">Our Vision</h3>
-                                    <p class="text-center">
-                                        To be the go to platform for venue reservations, helping people connect with the
-                                        perfect spaces
-                                        for any event.
+                                    class="flex flex-col gap-3 items-start bg-slate-50 p-4 border rounded-lg shadow-md ">
+                                    <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
+                                        alt="Book Event" class="w-full h-56">
+                                    <h3 class="text-xl font-semibold mt-2">Book an Event Space</h3>
+                                    <p class="text-gray-500">Easily browse and book spaces for weddings, meetings,
+                                        parties,
+                                        and
+                                        more.
                                     </p>
                                 </div>
                             </div>
-
-                            <!-- FAQ -->
-                            <div
-                                class="flex flex-col bg-slate-50 border text-neutral-700 p-4 lg:p-4 lg:py-8 rounded-lg shadow-md">
-                                <h3 class="text-xl font-semibold text-red-500 italic text-center">FAQs</h3>
-                                <div class="w-full ">
-                                    <div class="faq-item mb-4">
-                                        <button class="faq-header w-full text-left">
-                                            1. How do I book a space?
-                                        </button>
-                                        <div class="faq-content hidden">
-                                            <p class="text-xs">To book a space, simply look for your desired
-                                                location
-                                                and
-                                                date on our platform. Browse
-                                                through the available options, select the space that suits your needs,
-                                                and follow
-                                                the
-                                                booking process to confirm your reservation.</p>
-                                        </div>
-                                    </div>
-                                    <div class="faq-item mb-4">
-                                        <button class="faq-header  w-full text-left">
-                                            2. Can I list my own space on HubVenue?
-                                        </button>
-                                        <div class="faq-content hidden">
-                                            <p class="text-sm ">Yes, you can list your space on HubVenue. Create an
-                                                account,
-                                                provide details about your
-                                                space, upload photos, and set your availability and pricing. Once your
-                                                listing is
-                                                approved, it will be visible to potential renters.</p>
-                                        </div>
-                                    </div>
-                                    <div class="faq-item mb-4">
-                                        <button class="faq-header  w-full text-left">
-                                            3. What types of spaces can I list?
-                                        </button>
-                                        <div class="faq-content hidden">
-                                            <p class="text-sm ">You can list a variety of spaces including
-                                                residential
-                                                homes,
-                                                commercial venues, event
-                                                halls, and more. The platform is designed to accommodate all types of
-                                                spaces that
-                                                can be
-                                                used for events and gatherings.</p>
-                                        </div>
-                                    </div>
-                                    <div class="faq-item mb-4">
-                                        <button class="faq-header  w-full text-left">
-                                            4. Are there any fees associated with booking or listing a space?
-                                        </button>
-                                        <div class="faq-content hidden">
-                                            <p class="text-sm ">Yes, there may be fees associated with both booking
-                                                and
-                                                listing
-                                                spaces. Booking fees are
-                                                typically a percentage of the total rental cost, while listing fees may
-                                                vary based
-                                                on
-                                                the type of space and duration of the listing. Detailed information
-                                                about fees will
-                                                be
-                                                provided during the booking or listing process.</p>
-                                        </div>
-                                    </div>
-                                    <div class="faq-item mb-4">
-                                        <button class="faq-header  w-full text-left">
-                                            5. How can I contact customer support?
-                                        </button>
-                                        <div class="faq-content hidden">
-                                            <p class="text-sm ">If you need assistance, you can contact our customer
-                                                support
-                                                team via the contact form on
-                                                our website, or by email at info@hubvenue.com. Our team is available to
-                                                help you
-                                                with
-                                                any questions or issues you may have.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
-
-                    </div>
                     </section>
-                </section>
+
+                    <section class="ml-16 max-w-7xl mx-auto px-4 mb-8">
+                        <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
+                            <!-- Venue cards will be dynamically inserted here -->
+                        </div>
+                    </section>
+
+                    <section class="ml-16 mt-40 max-w-7xl mx-auto px-4 mb-8">
+                        <div class="container mx-auto flex flex-col ">
+                            <h2 class="text-3xl font-bold mb-4 text-center">About Us</h2>
+
+                            <div class="flex flex-col gap-4">
+
+                                <div
+                                    class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                    <h3 class="text-xl font-semibold  text-red-500 italic">Our Story</h3>
+                                    <p>
+                                        Hubvenue was born out of the need to streamline the often complex and
+                                        time-consuming
+                                        process of
+                                        event
+                                        planning. The journey began when our founders, faced with the daunting task of
+                                        organizing
+                                        multiple
+                                        events, realized how fragmented the venue and catering service industry was.
+                                        From
+                                        endless phone
+                                        calls to
+                                        lengthy negotiations, the process was anything but easy. Inspired by the vision
+                                        of a
+                                        one-stop
+                                        platform,
+                                        Hubvenue was developed to centralize and simplify these interactions, allowing
+                                        users
+                                        to focus on
+                                        creating memorable experiences instead of logistics.
+                                    </p>
+                                    <p>Throughout our journey, we faced challenges, such as integrating diverse services
+                                        and
+                                        building
+                                        trust
+                                        within the community. However, these obstacles only strengthened our commitment
+                                        to
+                                        innovation.
+                                        Hubvenue
+                                        continues to grow, expanding our network of partners and refining our platform
+                                        based
+                                        on user
+                                        feedback,
+                                        making it the ultimate event planning tool for everyone.</p>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <!-- mission -->
+                                    <div
+                                        class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                        <h3 class="text-xl font-semibold  text-red-500 italic">Our Mission</h3>
+                                        <p class="text-center">
+                                            To simplify finding and booking available venues, offering users an easy and
+                                            efficient platform
+                                            that connects them with ideal spaces for their events, ensuring seamless
+                                            experience from
+                                            discovery ro registration.
+                                        </p>
+                                    </div>
+                                    <!-- vission -->
+                                    <div
+                                        class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                        <h3 class="text-xl font-semibold  text-red-500 italic">Our Vision</h3>
+                                        <p class="text-center">
+                                            To be the go to platform for venue reservations, helping people connect with
+                                            the
+                                            perfect spaces
+                                            for any event.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- FAQ -->
+                                <div
+                                    class="flex flex-col bg-slate-50 border text-neutral-700 p-4 lg:p-4 lg:py-8 rounded-lg shadow-md">
+                                    <h3 class="text-xl font-semibold text-red-500 italic text-center">FAQs</h3>
+                                    <div class="w-full ">
+                                        <div class="faq-item mb-4">
+                                            <button class="faq-header w-full text-left">
+                                                1. How do I book a space?
+                                            </button>
+                                            <div class="faq-content hidden">
+                                                <p class="text-xs">To book a space, simply look for your desired
+                                                    location
+                                                    and
+                                                    date on our platform. Browse
+                                                    through the available options, select the space that suits your
+                                                    needs,
+                                                    and follow
+                                                    the
+                                                    booking process to confirm your reservation.</p>
+                                            </div>
+                                        </div>
+                                        <div class="faq-item mb-4">
+                                            <button class="faq-header  w-full text-left">
+                                                2. Can I list my own space on HubVenue?
+                                            </button>
+                                            <div class="faq-content hidden">
+                                                <p class="text-sm ">Yes, you can list your space on HubVenue. Create an
+                                                    account,
+                                                    provide details about your
+                                                    space, upload photos, and set your availability and pricing. Once
+                                                    your
+                                                    listing is
+                                                    approved, it will be visible to potential renters.</p>
+                                            </div>
+                                        </div>
+                                        <div class="faq-item mb-4">
+                                            <button class="faq-header  w-full text-left">
+                                                3. What types of spaces can I list?
+                                            </button>
+                                            <div class="faq-content hidden">
+                                                <p class="text-sm ">You can list a variety of spaces including
+                                                    residential
+                                                    homes,
+                                                    commercial venues, event
+                                                    halls, and more. The platform is designed to accommodate all types
+                                                    of
+                                                    spaces that
+                                                    can be
+                                                    used for events and gatherings.</p>
+                                            </div>
+                                        </div>
+                                        <div class="faq-item mb-4">
+                                            <button class="faq-header  w-full text-left">
+                                                4. Are there any fees associated with booking or listing a space?
+                                            </button>
+                                            <div class="faq-content hidden">
+                                                <p class="text-sm ">Yes, there may be fees associated with both booking
+                                                    and
+                                                    listing
+                                                    spaces. Booking fees are
+                                                    typically a percentage of the total rental cost, while listing fees
+                                                    may
+                                                    vary based
+                                                    on
+                                                    the type of space and duration of the listing. Detailed information
+                                                    about fees will
+                                                    be
+                                                    provided during the booking or listing process.</p>
+                                            </div>
+                                        </div>
+                                        <div class="faq-item mb-4">
+                                            <button class="faq-header  w-full text-left">
+                                                5. How can I contact customer support?
+                                            </button>
+                                            <div class="faq-content hidden">
+                                                <p class="text-sm ">If you need assistance, you can contact our customer
+                                                    support
+                                                    team via the contact form on
+                                                    our website, or by email at info@hubvenue.com. Our team is available
+                                                    to
+                                                    help you
+                                                    with
+                                                    any questions or issues you may have.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </section>
+            </section>
 
 
-            </div>
-            <?php require_once './components/footer.html' ?>
-        </main>
+    </div>
+    <?php require_once './components/footer.html' ?>
+    </main>
     </div>
 
     <script>
