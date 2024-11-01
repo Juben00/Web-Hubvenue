@@ -1,6 +1,6 @@
 <nav
-  class="bg-blue-500/10 backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8"
   id="main-nav"
+  class="bg-blue-500/20 backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8"
 >
   <!-- logged in -->
   <div class="flex items-center justify-between md:p-4">
@@ -10,8 +10,8 @@
     </div>
     <!-- Center Section -->
     <div
+      id="bottom-search"
       class="bg-slate-100 text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto"
-      id="buttomsearch"
     >
       <div class="md:flex-1 min-w-0 lg:px-4 px-2">
         <label for="where" class="block text-sm font-medium text-gray-700"
@@ -104,36 +104,35 @@
 
 <script>
   // Function to update navigation color based on scroll position
-  function updatemnColor() {
-    const mn = document.getElementById("main-nav");
+  function updateNavColor() {
+    const mainNav = document.getElementById("main-nav");
     const firstSection = document.querySelector(".first-section");
-    const mnButtons = mn.querySelectorAll(".nav-buttons");
-    const bs = document.getElementById("buttomsearch"); // Corrected line
+    const bottomSearch = document.getElementById("bottom-search");
+    const navButtons = mainNav.querySelectorAll(".nav-buttons");
 
-    // Check if firstSection exists
     if (firstSection) {
       const firstSectionBottom =
         firstSection.offsetTop + firstSection.offsetHeight;
       const scrollPosition = window.scrollY;
 
-      // Update button colors based on scroll position
-      if (scrollPosition >= firstSectionBottom - mn.offsetHeight / 2) {
-        mnButtons.forEach((button) => {
-          button.style.color = "#4A5568"; // Change to a dark color that matches your design
+      // Update nav buttons' color based on scroll position
+      if (scrollPosition >= firstSectionBottom - mainNav.offsetHeight / 2) {
+        navButtons.forEach((button) => {
+          button.style.color = "#4A5568"; // Dark color
         });
       } else {
-        mnButtons.forEach((button) => {
+        navButtons.forEach((button) => {
           button.style.color = "white";
         });
       }
 
-      // Show/hide the bottom search element based on scroll position
-      if (scrollPosition >= firstSectionBottom - mn.offsetHeight / 2) {
-        bs.classList.add("flex");
-        bs.classList.remove("hidden");
+      // Show/hide the search bar based on scroll position
+      if (scrollPosition >= firstSectionBottom - mainNav.offsetHeight / 2) {
+        bottomSearch.classList.add("flex");
+        bottomSearch.classList.remove("hidden");
       } else {
-        bs.classList.add("hidden");
-        bs.classList.remove("flex");
+        bottomSearch.classList.add("hidden");
+        bottomSearch.classList.remove("flex");
       }
     } else {
       console.warn("No element with class 'first-section' found.");
@@ -141,7 +140,7 @@
   }
 
   // Add scroll event listener
-  window.addEventListener("scroll", updatemnColor);
+  window.addEventListener("scroll", updateNavColor);
   // Initial call to set correct color on page load
-  updatemnColor();
+  updateNavColor();
 </script>
