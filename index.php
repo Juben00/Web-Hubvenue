@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <style>
         body {
-            background: linear-gradient(to bottom, #3490dc, #2779bd);
+            background: #3490dc;
         }
 
         .cloud-bottom {
@@ -98,8 +98,8 @@
             <?php require_once './components/coverPage.html' ?>
 
             <!-- Second section with venue cards -->
-            <div class="bg-slate-100 pt-10 relative z-10 ">
-                <section class="ml-20 max-w-7xl mx-auto px-4  mb-8">
+            <div class="bg-slate-100 pt-10 relative z-10 container mx-auto">
+                <section class="ml-20 xl:ml-0 max-w-7xl mx-auto px-4  mb-8">
                     <div class="flex flex-col ">
                         <h2 class="text-3xl font-bold mb-4">Our Services</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
@@ -134,14 +134,14 @@
                     </div>
                 </section>
 
-                <section class="ml-20 max-w-7xl mx-auto px-4 mb-8">
+                <section class="ml-20 xl:ml-0 max-w-7xl mx-auto px-4 mb-8">
                     <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
+                    <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
                         <!-- Venue cards will be dynamically inserted here -->
                     </div>
                 </section>
 
-                <section class="ml-20 max-w-7xl mx-auto px-4 mb-8">
+                <section class="ml-20 xl:ml-0 max-w-7xl mx-auto px-4 mb-8">
                     <div class="container mx-auto flex flex-col ">
                         <h2 class="text-3xl font-bold mb-4">About Us</h2>
 
@@ -292,9 +292,9 @@
                     </div>
                 </section>
 
-                <?php require_once './components/footer.html' ?>
 
             </div>
+            <?php require_once './components/footer.html' ?>
         </main>
     </div>
 
