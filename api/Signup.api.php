@@ -81,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
 
     } else {
-
         echo json_encode([
             'status' => 'error',
             'message' => implode(', ', array_filter([

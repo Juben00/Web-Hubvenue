@@ -84,6 +84,8 @@
 
     include_once './components/SignupForm.html';
     include_once './components/feedback.modal.html';
+    include_once './components/confirm.feedback.modal.html';
+    include_once './components/Menu.html';
 
     ?>
 
@@ -554,6 +556,25 @@
                 });
             });
         });
+
+        // Add scroll event listener
+        window.addEventListener("scroll", updateNavColor);
+        // Initial call to set correct color on page load
+        updateNavColor();
+
+        const menutrig = document.getElementById("menutabtrigger");
+        const menu = document.getElementById("menutab");
+
+        menutrig.addEventListener("click", function () {
+            menu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("dblclick", function (event) {
+            if (menu.contains(event.target)) {
+                menu.classList.add("hidden");
+            }
+        });
+
     </script>
 
 </body>

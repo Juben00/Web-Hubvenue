@@ -1,0 +1,73 @@
+<div
+  class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center z-50"
+  id="confirmfeedbackModal"
+>
+  <!-- Modal Container -->
+  <div class="bg-slate-50 rounded-lg shadow-lg p-8 w-96">
+    <!-- Logo -->
+    <div class="flex justify-center">
+      <img
+        alt="Company logo"
+        class="w-auto h-32"
+        height="100"
+        src="./images/black_ico.png"
+        width="100"
+      />
+    </div>
+    <!-- Message -->
+    <div class="text-center mb-6">
+      <h2 class="text-2xl font-bold mb-2">Confirmation</h2>
+      <p class="text-gray-600" id="confirmfeedbackModalMessage">
+        <!-- Message goes here -->
+      </p>
+    </div>
+    <!-- Action Buttons -->
+    <div class="flex justify-center space-x-4">
+      <button
+        class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+        id="confirmcancelButton"
+      >
+        Cancel
+      </button>
+      <button
+        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        id="confirmButton"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const confirmmodal = document.getElementById("confirmfeedbackModal");
+  const confirmmodalMessage = document.getElementById(
+    "confirmfeedbackModalMessage"
+  );
+  const confirmcancelButton = document.getElementById("confirmcancelButton");
+  const confirmButton = document.getElementById("confirmButton");
+
+  // Function to show the modal with a custom message and confirm action
+  function confirmshowModal(message, confirmCallback) {
+    confirmmodalMessage.innerHTML = message; // Set the custom message
+    confirmmodal.classList.remove("hidden"); // Show the modal
+    confirmmodal.classList.add("flex"); // Add display flex
+
+    // Reset the confirm button's onclick to avoid multiple bindings
+    confirmButton.onclick = function () {
+      confirmmodal.classList.add("hidden"); // Hide the modal
+      if (confirmCallback) confirmCallback(); // Execute the action if provided
+    };
+
+    // Cancel button hides the modal without action
+    confirmcancelButton.onclick = function () {
+      confirmmodal.classList.add("hidden"); // Hide the modal
+    };
+  }
+
+  // Example usage
+  // showModal("Are you sure you want to delete this item?", function() {
+  //   // Perform delete action here
+  //   console.log("Item deleted.");
+  // });
+</script>
