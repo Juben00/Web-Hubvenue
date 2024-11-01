@@ -1,19 +1,19 @@
 <nav
-  class="bg-blue-500/10 backdrop-blur-xl z-40 fixed w-full px-8"
+  class="bg-blue-500/10 backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8"
   id="main-nav"
 >
   <!-- logged in -->
-  <div class="flex items-center justify-between p-4">
+  <div class="flex items-center justify-between md:p-4">
     <!-- Left Section -->
     <div class="flex items-center space-x-2">
       <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
     </div>
     <!-- Center Section -->
     <div
-      class="bg-slate-100 hidden border border-gray-300 rounded-full shadow-lg p-2 items-center max-w-5xl mx-auto"
+      class="bg-slate-100 text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto"
       id="buttomsearch"
     >
-      <div class="flex-1 min-w-0 px-4">
+      <div class="md:flex-1 min-w-0 lg:px-4 px-2">
         <label for="where" class="block text-sm font-medium text-gray-700"
           >Location</label
         >
@@ -25,11 +25,11 @@
         />
       </div>
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
-      <div class="flex-1 min-w-0 px-4">
-        <button id="checkInBtn" class="w-full text-left font-normal">
+      <div class="md:flex-1 md:min-w-0 md:px-4">
+        <button id="checkInBtn" class="md:w-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 inline-block mr-2"
+            class="h-5 w-5 inline-block md:mr-2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -41,15 +41,15 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <span id="checkInText">Check in</span>
+          <span id="checkInText" class="hidden md:block">Check in</span>
         </button>
       </div>
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
-      <div class="flex-1 min-w-0 px-4">
-        <button id="checkOutBtn" class="w-full text-left font-normal">
+      <div class="md:flex-1 md:min-w-0 md:px-4">
+        <button id="checkOutBtn" class="md:w-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 inline-block mr-2"
+            class="h-5 w-5 inline-block md:mr-2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -61,7 +61,7 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
             />
           </svg>
-          <span id="checkOutText">Check out</span>
+          <span id="checkOutText" class="hidden md:block">Check out</span>
         </button>
       </div>
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
