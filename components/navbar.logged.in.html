@@ -85,7 +85,7 @@
       </button>
     </div>
     <!-- Right Section -->
-    <div class="flex items-center space-x-4">
+    <button class="flex items-center space-x-4" id="menutabtrigger">
       <div
         class="relative flex items-center space-x-2 bg-slate-50 shadow-md rounded-full px-2 py-1"
       >
@@ -98,7 +98,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </button>
   </div>
 </nav>
 
@@ -138,9 +138,4 @@
       console.warn("No element with class 'first-section' found.");
     }
   }
-
-  // Add scroll event listener
-  window.addEventListener("scroll", updateNavColor);
-  // Initial call to set correct color on page load
-  updateNavColor();
 </script>
