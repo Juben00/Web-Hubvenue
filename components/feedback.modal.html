@@ -47,6 +47,10 @@
 
   // Close modal on "Okay" button click
   btn.onclick = function () {
+    if (modalMessage.innerHTML === "Login successful") {
+      window.location.reload();
+    }
+
     modal.classList.add("hidden");
   };
 </script>

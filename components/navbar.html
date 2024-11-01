@@ -1,15 +1,12 @@
-<nav
-  class="bg-blue-500/10 backdrop-blur-xl z-40 fixed w-full px-8"
-  id="main-nav"
->
+<nav class="bg-blue-500/10 backdrop-blur-xl z-40 fixed w-full px-8">
   <div class="mx-auto px-4 py-2 flex items-center justify-between">
     <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
     <span class="hidden md:flex space-x-4 items-center ml-20">
-      <button class="text-white nav-buttons hover:text-gray-200 duration-150">
+      <button class="text-white hover:text-gray-200 duration-150">
         Sign Up
       </button>
       <button
-        class="text-white nav-buttons border border-white px-4 py-2 rounded hover:bg-slate-50 hover:text-blue-600 ml-20 duration-150"
+        class="text-white border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-600 ml-20 duration-150"
         onclick="openModal()"
       >
         Log In
@@ -33,36 +30,3 @@
     </button>
   </div>
 </nav>
-
-<script>
-  // Function to update mn color based on scroll position
-  function updatemnColor() {
-    const mn = document.getElementById("main-nav");
-    const firstSection = document.querySelector(".first-section");
-    const mnButtons = mn.querySelectorAll(".nav-buttons");
-
-    // Check if firstSection exists
-    if (firstSection) {
-      const firstSectionBottom =
-        firstSection.offsetTop + firstSection.offsetHeight;
-      const scrollPosition = window.scrollY;
-
-      if (scrollPosition >= firstSectionBottom - mn.offsetHeight / 2) {
-        mnButtons.forEach((button) => {
-          button.style.color = "#4A5568"; // Change to a dark color that matches your design
-        });
-      } else {
-        mnButtons.forEach((button) => {
-          button.style.color = "white";
-        });
-      }
-    } else {
-      console.warn("No element with class 'first-section' found.");
-    }
-  }
-
-  // Add scroll event listener
-  window.addEventListener("scroll", updatemnColor);
-  // Initial call to set correct color on page load
-  updatemnColor();
-</script>
