@@ -1,4 +1,4 @@
-<div id="sidebar" class="w-64 bg-white transition-all duration-300 flex flex-col h-screen">
+<div id="sidebar" class="w-64 bg-white transition-all duration-300 flex flex-col h-screen text-sm">
     <div class="p-4 w-full flex justify-center">
         <img src="logo only.png" alt="Archon Logo" class="w-16 h-16 mb-20 transition-all duration-300">
     </div>
@@ -27,7 +27,7 @@
         </button>
     </div>
     <nav class="flex-grow w-full overflow-y-auto">
-        <a href="dashboard.php"
+        <a href="dashboard.php" id="dashboard-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -36,7 +36,7 @@
             <span class="sidebar-full">Dashboard</span>
         </a>
 
-        <a href="venue.php"
+        <a href="venue.php" id="venue-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
@@ -46,7 +46,7 @@
             <span class="sidebar-full">Venue Management</span>
         </a>
 
-        <a href="reservation.php"
+        <a href="reservation.php" id="reservation-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -270,3 +270,72 @@
         color: #FFFFFF;
     }
 </style>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const logo = document.querySelector('#sidebar img');
+        const sidebarFullElements = document.querySelectorAll('.sidebar-full');
+        const icons = document.querySelectorAll('#sidebar nav a svg, #sidebar nav button svg, #sidebar > div:last-child button svg');
+        const navItems = document.querySelectorAll('#sidebar nav a, #sidebar nav button, #sidebar > div:last-child button');
+        const searchInput = document.querySelector('.search-input');
+        const searchButton = document.querySelector('.search-button');
+        const collapsedSearch = document.querySelector('.sidebar-collapsed-search');
+        const logoutButton = document.querySelector('#sidebar > div:last-child button');
+        const logoutIcon = logoutButton.querySelector('svg');
+        const logoutText = logoutButton.querySelector('span');
+
+        sidebar.classList.toggle('w-64');
+        sidebar.classList.toggle('w-16');
+
+        // Toggle logo size
+        logo.classList.toggle('w-12');
+        logo.classList.toggle('h-12');
+        logo.classList.toggle('w-8');
+        logo.classList.toggle('h-8');
+
+        sidebarFullElements.forEach(element => {
+            element.classList.toggle('hidden');
+        });
+
+        navItems.forEach(item => {
+            item.classList.toggle('justify-center');
+            item.classList.toggle('px-4');
+            item.classList.toggle('px-2');
+        });
+
+        icons.forEach(icon => {
+            icon.classList.toggle('mr-3');
+            icon.classList.toggle('mr-0');
+        });
+
+        sidebar.classList.toggle('border-r-0');
+
+        // Toggle search input and button
+        searchInput.parentElement.classList.toggle('hidden');
+        collapsedSearch.classList.toggle('hidden');
+
+        // Align collapsed search with other icons
+        collapsedSearch.querySelector('button').classList.toggle('justify-center');
+        collapsedSearch.querySelector('button').classList.toggle('px-4');
+        collapsedSearch.querySelector('button').classList.toggle('px-2');
+
+        // Adjust logout button
+        logoutButton.classList.toggle('justify-center');
+        logoutButton.classList.toggle('px-4');
+        logoutButton.classList.toggle('px-2');
+        logoutIcon.classList.toggle('mr-3');
+        logoutIcon.classList.toggle('mr-0');
+
+        // Toggle visibility of logout text and adjust icon
+        if (sidebar.classList.contains('w-16')) {
+            logoutText.classList.add('hidden');
+            logoutIcon.classList.remove('mr-3');
+            logoutIcon.classList.add('mx-auto');
+        } else {
+            logoutText.classList.remove('hidden');
+            logoutIcon.classList.add('mr-3');
+            logoutIcon.classList.remove('mx-auto');
+        }
+    }
+</script>

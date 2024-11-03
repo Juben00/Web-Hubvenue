@@ -20,284 +20,6 @@
             }
         };
     </script>
-    <style>
-        body {
-            background-image: url('bg.jpg');
-            /* Uncomment this line */
-            background-size: cover;
-            /* Add this line to ensure the image covers the entire body */
-            background-attachment: fixed;
-            /* Add this to keep the background fixed while scrolling */
-        }
-
-        .topbar,
-        .sidebar {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            backdrop-filter: blur(10px);
-        }
-
-        .sidebar-brand,
-        .sidebar-heading,
-        .nav-item {
-            background-color: transparent;
-        }
-
-        .gradient-background {
-            background: radial-gradient(circle at left, #F3F4F6 0%, #E5E7EB 50%, #D1D5DB 100%);
-        }
-
-        #sidebar nav a:hover,
-        #sidebar nav button:hover {
-            background-color: #f41c1c;
-            color: white;
-            border-radius: 0.5rem;
-        }
-
-        #sidebar nav a,
-        #sidebar nav button {
-            color: #1F2937;
-        }
-
-        #sidebar.w-16 nav a,
-        #sidebar.w-16 nav button {
-            justify-content: center;
-        }
-
-        #sidebar.w-16 nav a svg,
-        #sidebar.w-16 nav button svg {
-            margin-left: 0;
-            margin-right: 0;
-        }
-
-        #sidebar nav a,
-        #sidebar nav button {
-            margin: 0.25rem 0.5rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem 0 0 0.5rem;
-            justify-content: flex-start;
-            width: calc(100% - 1rem);
-            overflow: hidden;
-        }
-
-        #sidebar nav a svg,
-        #sidebar nav button svg {
-            min-width: 1.25rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            margin-right: 0.75rem;
-        }
-
-        #sidebar nav a span,
-        #sidebar nav button span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        #sidebar nav a:hover,
-        #sidebar nav button:hover {
-            background-color: #e60e0e;
-            color: white;
-            border-radius: 0.5rem 0 0 0.5rem;
-            margin-right: 0;
-            width: calc(100% - 0.5rem);
-        }
-
-        #sidebar.w-16 nav a,
-        #sidebar.w-16 nav button {
-            justify-content: center;
-            padding: 0.5rem;
-            margin: 0.25rem;
-            width: calc(100% - 0.5rem);
-            border-radius: 0.5rem;
-        }
-
-        #sidebar.w-16 nav a:hover,
-        #sidebar.w-16 nav button:hover {
-            border-radius: 0.5rem;
-            width: calc(100% - 0.5rem);
-        }
-
-        #sidebar {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #sidebar nav {
-            width: 100%;
-        }
-
-        #sidebar nav a,
-        #sidebar nav button {
-            margin: 0.50rem 0.5rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem 0 0 0.5rem;
-        }
-
-        #sidebar.w-16 {
-            border-right: none;
-        }
-
-        #darkModeToggle:checked+label div {
-            transform: translateX(100%);
-            background-color: #1F2937;
-        }
-
-        #darkModeToggle:checked+label .sun {
-            display: none;
-        }
-
-        #darkModeToggle:checked+label .moon {
-            display: block;
-        }
-
-        .semi-transparent {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
-
-        .rounded-card {
-            border-radius: 1rem;
-        }
-
-        .dark-mode {
-            background: radial-gradient(circle at left, #121212 0%, #3D0000 50%, #000000 100%);
-        }
-
-        .dark-mode .bg-white {
-            background-color: transparent;
-        }
-
-        .dark-mode .text-gray-600,
-        .dark-mode .text-gray-700,
-        .dark-mode .text-gray-800 {
-            color: #D1D5DB;
-        }
-
-
-        .dark-mode table thead th,
-        .dark-mode table tbody td {
-            color: #FFFFFF;
-            /* Set text color to white in dark mode */
-        }
-
-
-        .dark-mode .border-gray-800 {
-            border-color: #4B5563;
-        }
-
-        .dark-mode .hover\:text-gray-800:hover {
-            color: #F3F4F6;
-        }
-
-        .dark-mode .bg-gray-100 {
-            background-color: transparent;
-        }
-
-
-        * New dark mode styles for sidebar and card components */ .dark-mode #sidebar {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .dark-mode #sidebar nav a,
-        .dark-mode #sidebar nav button,
-        .dark-mode #sidebar .sidebar-full {
-            color: #FFFFFF;
-        }
-
-        .dark-mode #sidebar nav a:hover,
-        .dark-mode #sidebar nav button:hover {
-            background-color: #f41c1c;
-            color: #FFFFFF;
-        }
-
-        .dark-mode .semi-transparent {
-            background-color: rgba(31, 41, 55, 0.8);
-            color: #FFFFFF;
-        }
-
-        .dark-mode .bg-light-gray {
-            background-color: rgba(55, 65, 81, 0.8);
-            color: #FFFFFF;
-        }
-
-        .dark-mode .text-gray-800 .h1 {
-            color: #FFFFFF;
-        }
-
-        .dark-mode .border-gray-300 {
-            border-color: #4B5563;
-        }
-
-        /* Dark mode styles */
-
-        .dark-mode .hover:text-gray-800:hover {
-            color: #F3F4F6;
-        }
-
-        .dark-mode .bg-gray-100 {
-            background-color: transparent;
-        }
-
-        /* New dark mode styles for sidebar and card components */
-        .dark-mode #sidebar {
-            background-color: transparent;
-        }
-
-        .dark-mode #sidebar nav a,
-        .dark-mode #sidebar nav button,
-        .dark-mode #sidebar .sidebar-full {
-            color: #FFFFFF;
-        }
-
-        .dark-mode #sidebar nav a:hover,
-        .dark-mode #sidebar nav button:hover {
-            background-color: #f41c1c;
-            color: #FFFFFF;
-        }
-
-        .dark-mode .semi-transparent {
-            background-color: rgba(31, 41, 55, 0.8);
-            color: #FFFFFF;
-        }
-
-        .dark-mode .bg-light-gray {
-            background-color: rgba(55, 65, 81, 0.8);
-            color: #FFFFFF;
-        }
-
-        .h3 {
-            color: #c10000;
-        }
-
-        .dark-mode #h1 {
-            color: white;
-        }
-
-        /* Ensure text is gray in light mode */
-        #totalEarnings,
-        #monthlyEarnings,
-        #venueOccupancy,
-        #newBookings {
-            color: #4B5563;
-            /* Set to a gray color */
-        }
-
-        /* Ensure text is white in dark mode */
-        .dark-mode #totalEarnings,
-        .dark-mode #monthlyEarnings,
-        .dark-mode #venueOccupancy,
-        .dark-mode #newBookings {
-            color: #FFFFFF;
-            /* Set to white */
-        }
-    </style>
 </head>
 
 <body class="text-gray-800 gradient-background">
@@ -316,6 +38,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
 
         // Ensure the dark mode toggle is working
@@ -474,10 +197,6 @@
             event.stopPropagation();
         });
 
-
-
-
-
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const logo = document.querySelector('#sidebar img');
@@ -564,6 +283,9 @@
             console.log("jQuery is working!");
         });
     </script>
+
+
+
 </body>
 
 </html>
