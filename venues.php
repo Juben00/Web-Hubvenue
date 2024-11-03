@@ -76,19 +76,16 @@
                             <span class="mx-2">·</span>
                             <span class="text-sm font-semibold">${venue.location}</span>
                         </div>
-                        <div>
-                            <button class="text-sm font-semibold text-gray-600 hover:underline">Share</button>
-                            <button class="ml-4 text-sm font-semibold text-gray-600 hover:underline">Save</button>
-                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-4 gap-2 mb-8">
+                <div class="grid grid-cols-3 gap-2 mb-8 relative">
                     <img src="${venue.image}" alt="${venue.name}" class="col-span-2 row-span-2 w-full h-full object-cover rounded-l-lg">
                     <img src="${venue.image}" alt="" class="w-full h-full object-cover">
                     <img src="${venue.image}" alt="" class="w-full h-full object-cover rounded-tr-lg">
-                    <img src="${venue.image}" alt="" class="w-full h-full object-cover">
-                    <img src="${venue.image}" alt="" class="w-full h-full object-cover rounded-br-lg">
+                    <button class="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
+                        Show all photos
+                    </button>
                 </div>
 
                 <div class="flex gap-12">
@@ -143,8 +140,57 @@
                         </div>
                         <button class="border border-gray-900 rounded-lg px-6 py-3 font-semibold">Show all 57 amenities</button>
                     </div>
+                         
 
+
+            
                     <div class="w-1/3">
+                        <div class="border rounded-xl p-6 shadow-lg mb-6">
+                            <h3 class="text-xl font-semibold mb-4">Location</h3>
+                            <div class="bg-gray-100 rounded-lg h-48 mb-4">
+                                <div class="w-full h-full flex items-center justify-center text-gray-500">
+                                    Map placeholder
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-start">
+                                    <div class="text-lg">7.7 Very good</div>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.05 3.691c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.372 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.539 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118L3.98 9.483c-.784-.57-.381-1.81.587-1.81H8.03a1 1 0 00.95-.69L9.05 3.691z" />
+                                    </svg>
+                                    <span>Very good location - 2.21 kilometers from city center</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    <span>Exceptional for walking</span>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h4 class="font-semibold mb-2">Walkable places</h4>
+                                    <div class="space-y-2 text-sm text-gray-600">
+                                        <div class="flex justify-between">
+                                            <span>West-Park Presbyterian Church</span>
+                                            <span>70 m</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Upper West Side</span>
+                                            <span>140 m</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Time for Children</span>
+                                            <span>200 m</span>
+                                        </div>
+                                    </div>
+                                    <button class="text-blue-600 hover:underline text-sm mt-3">SEE NEARBY PLACES</button>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="border rounded-xl p-6 shadow-lg sticky top-6">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
