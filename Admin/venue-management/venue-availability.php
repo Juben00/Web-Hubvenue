@@ -1,4 +1,4 @@
-<div id="availability" class="tab-content rounded-lg border bg-white shadow-sm hidden">
+<div id="availability" class="tab-content rounded-lg border bg-white shadow-sm">
     <div class="flex flex-col space-y-1.5 p-6">
         <h3 class="text-2xl font-semibold leading-none tracking-tight">Venue Availability</h3>
     </div>

@@ -28,7 +28,7 @@ $(document).ready(function () {
 
   $("#reservation-management-link").on("click", function (e) {
     e.preventDefault();
-    viewVenueManagement();
+    viewReservationManagement();
   });
 
   function viewDashboard(){
@@ -64,21 +64,26 @@ $(document).ready(function () {
             e.preventDefault();
             viewVmPricing();
             });
+
+          $("#availability-vm").on("click", function (e) {
+            e.preventDefault();
+            viewVmAvailability();
+            });
           
         },
     })
   }
 
-  // function viewReservationManagement(){
-  //   $.ajax({
-  //       type: "GET",
-  //       url: "./reservation-management/reservation-management.php",
-  //       dataType: "html",
-  //       success: function (response) {
-  //         $("#adminView").html(response);
-  //       },
-  //   })
-  // }
+  function viewReservationManagement(){
+    $.ajax({
+        type: "GET",
+        url: "./reservation-management/reservation-management.php",
+        dataType: "html",
+        success: function (response) {
+          $("#adminView").html(response);
+        },
+    })
+  }
 
   function viewVmAddVenue(){
     $.ajax({
@@ -106,6 +111,17 @@ $(document).ready(function () {
     $.ajax({
         type: "GET",
         url: "./venue-management/venue-rates.php",
+        dataType: "html",
+        success: function (response) {
+          $("#venue-management-view").html(response);
+        },
+    })
+  }
+
+  function viewVmAvailability(){
+    $.ajax({
+        type: "GET",
+        url: "./venue-management/venue-availability.php",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);

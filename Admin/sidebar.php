@@ -36,7 +36,7 @@
             <span class="sidebar-full">Dashboard</span>
         </a>
 
-        <a href="venue.php" id="venue-management-link"
+        <a href="venue-management.php" id="venue-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
@@ -46,7 +46,7 @@
             <span class="sidebar-full">Venue Management</span>
         </a>
 
-        <a href="reservation.php" id="reservation-management-link"
+        <a href="reservation-management.php" id="reservation-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
