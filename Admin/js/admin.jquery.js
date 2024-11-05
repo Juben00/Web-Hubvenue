@@ -300,5 +300,4 @@ $(document).ready(function () {
     })
   }
 
-  viewDashboard();
 });

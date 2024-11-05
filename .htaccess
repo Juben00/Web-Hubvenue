@@ -12,4 +12,5 @@
 
 RewriteEngine On
 RewriteRule ^admin/dashboard$ admin/index.php
-RewriteRule ^admin/venue-management$ admin/index.php
+RewriteRule ^admin/products$ admin/index.php
+RewriteRule ^admin/accounts$ admin/index.php
