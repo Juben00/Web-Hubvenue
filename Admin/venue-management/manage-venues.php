@@ -29,7 +29,7 @@
     </div>
 </div>
 
-<!-- <script>
+<script>
     // Sample JSON data
     let venuesData = [
         { id: 1, name: "Grand Hall", location: "New York", capacity: 500 },
@@ -96,4 +96,4 @@
             alert('Availability saved successfully!');
         });
     });
-</script> -->
+</script>

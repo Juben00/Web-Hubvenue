@@ -15,7 +15,6 @@ $(document).ready(function () {
     window.history.pushState({ path: url }, "", url);
   });
 
-
   $("#dashboard-link").on("click", function (e) {
     e.preventDefault();
     viewDashboard();
@@ -31,6 +30,73 @@ $(document).ready(function () {
     viewReservationManagement();
   });
 
+  $("#financial-management-link").on("click", function (e) {
+  e.preventDefault();
+  viewFinancialManagement();
+  });
+
+  $("#reports-analytics-link").on("click", function (e) {
+  e.preventDefault();
+  viewReportsAnalytics();
+  });
+
+  $("#notifications-alerts-link").on("click", function (e) {
+  e.preventDefault();
+  viewNotificationAlerts();
+  });
+
+  $("#content-management-link").on("click", function (e) {
+      e.preventDefault();
+      viewContentManagement();
+  });
+
+  $("#promotions-marketing-link").on("click", function (e) {
+  e.preventDefault();
+  viewPromotionsMarketing();
+  });
+
+  $("#support-helpdesk-link").on("click", function (e) {
+  e.preventDefault();
+  viewSupportHelpdesk();
+  });
+
+  $("#settings-link").on("click", function (e) {
+  e.preventDefault();
+  viewSettings();
+  });
+
+  $("#audit-logs-link").on("click", function (e) {
+  e.preventDefault();
+  viewAuditLogs();
+  });
+
+  $("#user-management-link").on("click", function (e) {
+  e.preventDefault();
+  viewUserManagement();
+  });
+
+
+
+
+
+
+  
+
+  //link listeners
+  let url = window.location.href;
+
+  if (url.endsWith("dashboard")) {
+    $("#dashboard-link").trigger("click");
+  } else if (url.endsWith("venue-management")) {
+    $("#venue-management-link").trigger("click");
+  } else if (url.endsWith("accounts")) {
+    $("#accounts-link").trigger("click");
+  } else {
+    $("#dashboard-link").trigger("click");
+  }
+
+
+  //main views
   function viewDashboard(){
     $.ajax({
         type: "GET",
@@ -50,11 +116,13 @@ $(document).ready(function () {
         success: function (response) {
           $("#adminView").html(response);
 
+          //add event listeners
+          
           $("#add-venue-vm").on("click", function (e) {
-          e.preventDefault();
-          viewVmAddVenue();
+            e.preventDefault();
+            viewVmAddVenue();
           });
-
+          
           $("#manage-venues-vm").on("click", function (e) {
           e.preventDefault();
           viewVmManageVenue();
@@ -68,8 +136,9 @@ $(document).ready(function () {
           $("#availability-vm").on("click", function (e) {
             e.preventDefault();
             viewVmAvailability();
-            });
+          });
           
+          viewVmAddVenue();
         },
     })
   }
@@ -85,6 +154,108 @@ $(document).ready(function () {
     })
   }
 
+  function viewFinancialManagement(){
+    $.ajax({
+        type: "GET",
+        url: "./financial-management/financial-management.php",
+        dataType: "html",
+        success: function (response) {
+          $("#adminView").html(response);
+        },
+    })
+  }
+
+  function viewReportsAnalytics(){
+    $.ajax({
+        type: "GET",
+        url: "./reports-and-analytics/reports-and-analytics.php",
+        dataType: "html",
+        success: function (response) {
+          $("#adminView").html(response);
+        },
+    })
+  }
+
+  function viewNotificationAlerts(){
+    $.ajax({
+      type: "GET",
+      url: "./notifications-alerts/notifications-alerts.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+      },
+      })
+  }
+
+  function viewContentManagement(){
+    $.ajax({
+      type: "GET",
+      url: "./content-management/content-management.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+      }, 
+      })
+  }
+
+  function viewPromotionsMarketing(){
+    $.ajax({
+      type: "GET",
+      url: "./promotion-marketing/promotion-marketing.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+      },
+      })
+  }
+
+  function viewSupportHelpdesk(){
+    $.ajax({
+      type: "GET",
+      url: "./support-helpdesk/support-helpdesk.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);  
+  },
+  })
+  }
+
+  function viewSettings(){
+    $.ajax({
+      type: "GET",
+      url: "./settings/settings.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+        },
+      })
+  }
+
+  function viewAuditLogs(){
+    $.ajax({
+      type: "GET",
+      url: "./audit-logs/audit-logs.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+        },
+      })
+  }
+
+  function viewUserManagement(){
+    $.ajax({
+      type: "GET",
+      url: "./user-management/user-management.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+        },
+      })
+  }
+  
+  
+  
+    //sub views
   function viewVmAddVenue(){
     $.ajax({
         type: "GET",
@@ -129,5 +300,5 @@ $(document).ready(function () {
     })
   }
 
-
+  viewDashboard();
 });

@@ -27,7 +27,7 @@
         </button>
     </div>
     <nav class="flex-grow w-full overflow-y-auto">
-        <a href="dashboard.php" id="dashboard-link"
+        <a href="dashboard" id="dashboard-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -36,7 +36,7 @@
             <span class="sidebar-full">Dashboard</span>
         </a>
 
-        <a href="venue-management.php" id="venue-management-link"
+        <a href="venue-management" id="venue-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
@@ -46,7 +46,7 @@
             <span class="sidebar-full">Venue Management</span>
         </a>
 
-        <a href="reservation-management.php" id="reservation-management-link"
+        <a href="reservation-management" id="reservation-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -55,7 +55,7 @@
             <span class="sidebar-full">Reservation Management</span>
         </a>
 
-        <a href="financials.php"
+        <a href="financial-management" id="financial-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -64,7 +64,7 @@
             <span class="sidebar-full">Financial Management</span>
         </a>
 
-        <a href="reports-analytics.php"
+        <a href="reports-analytics" id="reports-analytics-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
@@ -75,7 +75,7 @@
             <span class="sidebar-full">Reports and Analytics</span>
         </a>
 
-        <a href="notifications.php"
+        <a href="notifications-alerts" id="notifications-alerts-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM5 8h10v2H5V8zm0 4h10v2H5v-2z" />
@@ -83,7 +83,7 @@
             <span class="sidebar-full">Notifications and Alerts</span>
         </a>
 
-        <a href="content-management.php"
+        <a href="content-management" id="content-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 min-w-[1.25rem] mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -93,7 +93,7 @@
             <span class="sidebar-full">Content Management</span>
         </a>
 
-        <a href="promotions.php"
+        <a href="promotions-marketing" id="promotions-marketing-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -103,7 +103,7 @@
             <span class="sidebar-full">Promotions and Marketing</span>
         </a>
 
-        <a href="support.php"
+        <a href="support-helpdesk" id="support-helpdesk-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -112,7 +112,7 @@
             <span class="sidebar-full">Support and Helpdesk</span>
         </a>
 
-        <a href="settings.php"
+        <a href="settings" id="settings-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -122,7 +122,7 @@
             <span class="sidebar-full">Settings</span>
         </a>
 
-        <a href="audit.php"
+        <a href="audit-logs" id="audit-logs-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd"
@@ -132,7 +132,7 @@
             <span class="sidebar-full">Audit Logs</span>
         </a>
 
-        <a href="accounts-management.php"
+        <a href="user-management" id="user-management-link"
             class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
                 <path

@@ -39,7 +39,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
+    <!-- <script>
 
         // Ensure the dark mode toggle is working
         const darkModeToggle = document.getElementById('darkModeToggle');
@@ -274,7 +274,7 @@
             }
         }
 
-    </script>
+    </script> -->
 
     <script src="../vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/admin.jquery.js"></script>
