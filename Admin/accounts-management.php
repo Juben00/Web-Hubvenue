@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,16 +29,17 @@
             background-size: cover;
             background-attachment: fixed;
         }
-        
-        .topbar, .sidebar {
+
+        .topbar,
+        .sidebar {
             background-color: rgba(255, 255, 255, 0.1) !important;
             backdrop-filter: blur(10px);
         }
-        
+
         .dark-mode {
             background: radial-gradient(circle at left, #121212 0%, #3D0000 50%, #000000 100%);
         }
-        
+
         .dark-mode .bg-white {
             background-color: transparent;
         }
@@ -49,6 +51,7 @@
         }
     </style>
 </head>
+
 <body class="text-gray-800 gradient-background">
     <div class="flex h-screen">
         <?php include 'sidebar.php'; ?>
@@ -57,18 +60,21 @@
             <div class="flex-1 overflow-y-auto">
                 <div class="pl-32 pr-32 pt-10 pb-10 bg-gray-100 min-h-full">
                     <h1 class="text-3xl font-bold mb-6">User Management</h1>
-                    
+
                     <div class="mb-6">
                         <div class="flex space-x-2">
-                            <button id="usersTab" class="px-4 py-2 bg-red-500 text-white rounded-t-lg">All Users</button>
-                            <button id="pendingTab" class="px-4 py-2 bg-gray-200 rounded-t-lg">Pending Venue Owners</button>
+                            <button id="usersTab" class="px-4 py-2 bg-red-500 text-white rounded-t-lg">All
+                                Users</button>
+                            <button id="pendingTab" class="px-4 py-2 bg-gray-200 rounded-t-lg">Pending Venue
+                                Owners</button>
                         </div>
                     </div>
-                    
+
                     <div id="usersContent">
                         <div class="flex flex-col space-y-4 mb-4">
                             <div class="flex justify-between">
-                                <input id="searchInput" type="text" placeholder="Search users..." class="px-4 py-2 border rounded-lg">
+                                <input id="searchInput" type="text" placeholder="Search users..."
+                                    class="px-4 py-2 border rounded-lg">
                                 <select id="roleFilter" class="px-4 py-2 border rounded-lg">
                                     <option value="all">All Roles</option>
                                     <option value="User">User</option>
@@ -87,26 +93,32 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <table class="min-w-full bg-white">
                             <thead>
                                 <tr>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Name
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Email
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Registration Date
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Role
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -119,26 +131,32 @@
                         <div class="flex justify-between items-center mt-4">
                             <div id="userCount"></div>
                             <div class="flex space-x-2">
-                                <button id="prevButton" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Previous</button>
-                                <button id="nextButton" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Next</button>
+                                <button id="prevButton"
+                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg">Previous</button>
+                                <button id="nextButton"
+                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg">Next</button>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div id="pendingContent" class="hidden">
                         <table class="min-w-full bg-white">
                             <thead>
                                 <tr>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Name
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Email
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Registration Date
                                     </th>
-                                    <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th
+                                        class="px-6 py-3 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -160,11 +178,13 @@
             <form id="editForm">
                 <div class="mb-4">
                     <label for="editName" class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" id="editName" name="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    <input type="text" id="editName" name="name"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                 </div>
                 <div class="mb-4">
                     <label for="editEmail" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" id="editEmail" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    <input type="email" id="editEmail" name="email"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                 </div>
                 <div class="mb-4">
                     <label for="editRole" class="block text-sm font-medium text-gray-700">Role</label>
@@ -175,13 +195,15 @@
                 </div>
                 <div class="mb-4">
                     <label for="editStatus" class="block text-sm font-medium text-gray-700">Status</label>
-                    <select id="editStatus" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                    <select id="editStatus" name="status"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                         <option value="Active">Active</option>
                         <option value="Pending">Pending</option>
                     </select>
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" id="cancelEdit" class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg">Cancel</button>
+                    <button type="button" id="cancelEdit"
+                        class="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Save changes</button>
                 </div>
             </form>
@@ -204,7 +226,8 @@
             </div>
             <div id="utilityContent" class="hidden">
                 <h4 class="text-md font-semibold mb-2">Utility Bill or Property Document</h4>
-                <img id="utilityImage" src="" alt="Utility Bill or Property Document" class="max-w-full h-auto rounded-md">
+                <img id="utilityImage" src="" alt="Utility Bill or Property Document"
+                    class="max-w-full h-auto rounded-md">
             </div>
             <div id="photosContent" class="hidden">
                 <h4 class="text-md font-semibold mb-2">Venue Photographs</h4>
@@ -223,7 +246,7 @@
             </div>
         </div>
     </div>
-           
+
     <script>
         // Mock data for users
         const users = Array.from({ length: 100 }, (_, i) => ({
@@ -309,7 +332,7 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
 
-            filteredUsers = users.filter(user => 
+            filteredUsers = users.filter(user =>
                 (user.name.toLowerCase().includes(searchTerm) || user.email.toLowerCase().includes(searchTerm)) &&
                 (roleFilter === 'all' || user.role === roleFilter) &&
                 (statusFilter === 'all' || user.status === statusFilter) &&
@@ -537,6 +560,5 @@
         renderUsers();
     </script>
 </body>
+
 </html>
-
-

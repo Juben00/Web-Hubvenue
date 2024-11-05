@@ -75,32 +75,52 @@ $(document).ready(function () {
   viewUserManagement();
   });
 
+// Link listeners
+let url = window.location.href;
 
+// Define a mapping between URL endings and link IDs
+const linkMappings = {
+    "dashboard": "#dashboard-link",
+    "venue-management": "#venue-management-link",
+    "reservation-management": "#reservation-management-link",
+    "financial-management": "#financial-management-link",
+    "reports-analytics": "#reports-analytics-link",
+    "notifications-alerts": "#notifications-alerts-link",
+    "content-management": "#content-management-link",
+    "promotions-marketing": "#promotions-marketing-link",
+    "support-helpdesk": "#support-helpdesk-link",
+    "settings": "#settings-link",
+    "audit-logs": "#audit-logs-link",
+    "user-management": "#user-management-link",
+    // Venue management subviews
+    "venue-management/add": "#add-venue-link",
+    "venue-management/manage": "#manage-venues-link",
+    "venue-management/pricing": "#venue-rates-link",
+    "venue-management/availability": "#venue-availability-link"
+};
 
+// Loop through each mapping to find a matching URL ending
+let linkFound = false;
+for (const [key, linkId] of Object.entries(linkMappings)) {
+    if (url.endsWith(key)) {
+        $(linkId).trigger("click");
+        linkFound = true;
+        break;
+    }
+}
 
-
-
-  
-
-  //link listeners
-  let url = window.location.href;
-
-  if (url.endsWith("dashboard")) {
+// Default to the dashboard link if no match was found
+if (!linkFound) {
     $("#dashboard-link").trigger("click");
-  } else if (url.endsWith("venue-management")) {
-    $("#venue-management-link").trigger("click");
-  } else if (url.endsWith("accounts")) {
-    $("#accounts-link").trigger("click");
-  } else {
-    $("#dashboard-link").trigger("click");
-  }
+}
+
 
 
   //main views
   function viewDashboard(){
     $.ajax({
         type: "GET",
-        url: "./dashboard/dashboard.php",
+        url: "../dashboard/dashboard.php",
         dataType: "html",
         success: function (response) {
           $("#adminView").html(response);
@@ -111,7 +131,7 @@ $(document).ready(function () {
   function viewVenueManagement(){
     $.ajax({
         type: "GET",
-        url: "./venue-management/venue-management.php",
+        url: "../venue-management/venue-management.php",
         dataType: "html",
         success: function (response) {
           $("#adminView").html(response);
@@ -146,7 +166,7 @@ $(document).ready(function () {
   function viewReservationManagement(){
     $.ajax({
         type: "GET",
-        url: "./reservation-management/reservation-management.php",
+        url: "../reservation-management/reservation-management.php",
         dataType: "html",
         success: function (response) {
           $("#adminView").html(response);
@@ -157,7 +177,7 @@ $(document).ready(function () {
   function viewFinancialManagement(){
     $.ajax({
         type: "GET",
-        url: "./financial-management/financial-management.php",
+        url: "../financial-management/financial-management.php",
         dataType: "html",
         success: function (response) {
           $("#adminView").html(response);
@@ -168,7 +188,7 @@ $(document).ready(function () {
   function viewReportsAnalytics(){
     $.ajax({
         type: "GET",
-        url: "./reports-and-analytics/reports-and-analytics.php",
+        url: "../reports-and-analytics/reports-and-analytics.php",
         dataType: "html",
         success: function (response) {
           $("#adminView").html(response);
@@ -179,7 +199,7 @@ $(document).ready(function () {
   function viewNotificationAlerts(){
     $.ajax({
       type: "GET",
-      url: "./notifications-alerts/notifications-alerts.php",
+      url: "../notifications-alerts/notifications-alerts.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
@@ -190,7 +210,7 @@ $(document).ready(function () {
   function viewContentManagement(){
     $.ajax({
       type: "GET",
-      url: "./content-management/content-management.php",
+      url: "../content-management/content-management.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
@@ -201,7 +221,7 @@ $(document).ready(function () {
   function viewPromotionsMarketing(){
     $.ajax({
       type: "GET",
-      url: "./promotion-marketing/promotion-marketing.php",
+      url: "../promotion-marketing/promotion-marketing.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
@@ -212,7 +232,7 @@ $(document).ready(function () {
   function viewSupportHelpdesk(){
     $.ajax({
       type: "GET",
-      url: "./support-helpdesk/support-helpdesk.php",
+      url: "../support-helpdesk/support-helpdesk.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);  
@@ -223,7 +243,7 @@ $(document).ready(function () {
   function viewSettings(){
     $.ajax({
       type: "GET",
-      url: "./settings/settings.php",
+      url: "../settings/settings.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
@@ -234,7 +254,7 @@ $(document).ready(function () {
   function viewAuditLogs(){
     $.ajax({
       type: "GET",
-      url: "./audit-logs/audit-logs.php",
+      url: "../audit-logs/audit-logs.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
@@ -245,7 +265,7 @@ $(document).ready(function () {
   function viewUserManagement(){
     $.ajax({
       type: "GET",
-      url: "./user-management/user-management.php",
+      url: "../user-management/user-management.php",
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
@@ -259,7 +279,7 @@ $(document).ready(function () {
   function viewVmAddVenue(){
     $.ajax({
         type: "GET",
-        url: "./venue-management/add-venue.html",
+        url: "../venue-management/add-venue.html",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
@@ -270,7 +290,7 @@ $(document).ready(function () {
   function viewVmManageVenue(){
     $.ajax({
         type: "GET",
-        url: "./venue-management/manage-venues.php",
+        url: "../venue-management/manage-venues.php",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
@@ -281,7 +301,7 @@ $(document).ready(function () {
   function viewVmPricing(){
     $.ajax({
         type: "GET",
-        url: "./venue-management/venue-rates.php",
+        url: "../venue-management/venue-rates.php",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
@@ -292,7 +312,7 @@ $(document).ready(function () {
   function viewVmAvailability(){
     $.ajax({
         type: "GET",
-        url: "./venue-management/venue-availability.php",
+        url: "../venue-management/venue-availability.php",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
@@ -300,5 +320,4 @@ $(document).ready(function () {
     })
   }
 
-  viewDashboard();
 });

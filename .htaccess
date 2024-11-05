@@ -1,0 +1,44 @@
+#RewriteEngine On
+#RewriteCond %{HTTP_HOST} ^([^\.]*)\.([^\.]*)$
+#RewriteRule (.*) http://www.%1.%2/$1 [L,R=301]
+
+#RewriteCond %{HTTP_HOST} ^www\.([^.]+)\.([^.]+)\.([^\.]*)$ [NC]
+#RewriteRule ^(.*)$ http://%1.%2.%3/$1 [L,R=301]
+
+#RewriteCond %{REQUEST_URI} !^projects/
+#RewriteCond %{REQUEST_URI} !^/projects/
+#RewriteCond %{HTTP_HOST} ^(www\.)?(.*)\.([^\.]*)\.([^\.]*)$
+#RewriteRule (.*) %3/$1 [DPI] 
+
+# RewriteEngine On
+# RewriteRule ^admin/dashboard$ admin/index.php
+# RewriteRule ^admin/venue-management$ admin/index.php
+# RewriteRule ^admin/accounts$ admin/index.php
+
+# Enable the Rewrite Engine
+RewriteEngine On
+
+# Redirects www to non-www (if desired)
+# Uncomment these lines if you want to enforce non-www URLs
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ http://%1/$1 [L,R=301]
+
+# Rewrite rules for admin routes
+RewriteRule ^admin/dashboard$ admin/index.php 
+RewriteRule ^admin/venue-management$ admin/index.php 
+RewriteRule ^admin/reservation-management$ admin/index.php 
+RewriteRule ^admin/financial-management$ admin/index.php 
+RewriteRule ^admin/reports-analytics$ admin/index.php 
+RewriteRule ^admin/notifications-alerts$ admin/index.php 
+RewriteRule ^admin/content-management$ admin/index.php 
+RewriteRule ^admin/promotions-marketing$ admin/index.php 
+RewriteRule ^admin/support-helpdesk$ admin/index.php 
+RewriteRule ^admin/settings$ admin/index.php 
+RewriteRule ^admin/audit-logs$ admin/index.php 
+RewriteRule ^admin/user-management$ admin/index.php 
+
+# Rewrite rule for specific subviews in venue management
+RewriteRule ^admin/venue-management/add$ admin/venue-management/add-venue.html 
+RewriteRule ^admin/venue-management/manage$ admin/venue-management/manage-venues.php 
+RewriteRule ^admin/venue-management/pricing$ admin/venue-management/venue-rates.php 
+RewriteRule ^admin/venue-management/availability$ admin/venue-management/venue-availability.php 

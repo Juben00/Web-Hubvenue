@@ -25,9 +25,9 @@
 <body class="text-gray-800 gradient-background">
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <?php include_once './sidebar.php'; ?>
+        <?php include_once './admin-components/sidebar.php'; ?>
         <div class="flex-1 flex flex-col overflow-hidden">
-            <?php include_once './topbar.php'; ?>
+            <?php include_once './admin-components/topbar.php'; ?>
 
             <!-- Dashboard Content -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100" id="adminView">
