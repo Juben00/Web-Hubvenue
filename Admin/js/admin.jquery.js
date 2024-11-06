@@ -128,40 +128,56 @@ if (!linkFound) {
     })
   }
 
-  function viewVenueManagement(){
-    $.ajax({
-        type: "GET",
-        url: "../venue-management/venue-management.php",
-        dataType: "html",
-        success: function (response) {
-          $("#adminView").html(response);
+  function viewVenueManagement() {
+      $.ajax({
+          type: "GET",
+          url: "../venue-management/venue-management.php",
+          dataType: "html",
+          success: function (response) {
+              $("#adminView").html(response);
 
-          //add event listeners
-          
-          $("#add-venue-vm").on("click", function (e) {
-            e.preventDefault();
-            viewVmAddVenue();
-          });
-          
-          $("#manage-venues-vm").on("click", function (e) {
-          e.preventDefault();
-          viewVmManageVenue();
-          });
+              // Set initial view to Add Venue
+              viewVmAddVenue();
 
-          $("#pricing-vm").on("click", function (e) {
-            e.preventDefault();
-            viewVmPricing();
-            });
+              // Event listeners for tabs within the loaded content
+              $("#add-venue-vm").on("click", function (e) {
+                  e.preventDefault();
+                  viewVmAddVenue();
+                  activateTab($(this));
+              });
 
-          $("#availability-vm").on("click", function (e) {
-            e.preventDefault();
-            viewVmAvailability();
-          });
-          
-          viewVmAddVenue();
-        },
-    })
+              $("#manage-venues-vm").on("click", function (e) {
+                  e.preventDefault();
+                  viewVmManageVenue();
+                  activateTab($(this));
+              });
+
+              $("#pricing-vm").on("click", function (e) {
+                  e.preventDefault();
+                  viewVmPricing();
+                  activateTab($(this));
+              });
+
+              $("#availability-vm").on("click", function (e) {
+                  e.preventDefault();
+                  viewVmAvailability();
+                  activateTab($(this));
+              });
+          },
+      });
   }
+
+// Function to activate the clicked tab
+  function activateTab(selectedTab) {
+      $(".tab-button")
+          .removeClass("bg-red-600 text-white")  // Remove active styles from all tabs
+          .addClass("text-gray-800");            // Set default text color for all tabs
+
+      selectedTab
+          .addClass("bg-red-600 text-white")     // Add active styles to selected tab
+          .removeClass("text-gray-800");         // Remove default text color for active tab
+  }
+
 
   function viewReservationManagement(){
     $.ajax({
