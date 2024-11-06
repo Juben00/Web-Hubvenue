@@ -1,4 +1,6 @@
 $(document).ready(function () {
+  
+
   $(".nav-link").on("click", function (e) {
     e.preventDefault();
 
@@ -163,6 +165,8 @@ if (!linkFound) {
                   viewVmAvailability();
                   activateTab($(this));
               });
+
+              
           },
       });
   }
@@ -288,20 +292,28 @@ if (!linkFound) {
         },
       })
   }
-  
-  
-  
     //sub views
-  function viewVmAddVenue(){
+  function viewVmAddVenue() {
     $.ajax({
         type: "GET",
         url: "../venue-management/add-venue.html",
         dataType: "html",
         success: function (response) {
-          $("#venue-management-view").html(response);
+            
+
+            $("#venue-management-view").html(response);
+
+            $("#maps-button").on("click", function (e) {
+                e.preventDefault();
+                viewOpenStreetMap();  // Open the map for user interaction
+            });
+
+            
         },
-    })
-  }
+    });
+}
+
+
 
   function viewVmManageVenue(){
     $.ajax({
@@ -332,6 +344,32 @@ if (!linkFound) {
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
+        },
+    })
+  }
+
+  function viewOpenStreetMap(){
+    $.ajax({
+        type: "GET",
+        url: "../venue-management/openStreetMap.html",
+        dataType: "html",
+        success: function (response) {
+          $("#openstreetmapplaceholder").html(response);
+
+          $('#openStreetMapSubmit').on("click", function (e) {
+            
+                e.preventDefault();
+                console.log("hgloasd");
+                
+                // // Capture the value of #OpenStreetaddress
+                // let openStreetAddress = $('#OpenStreetaddress').val();
+                // // Set this value to #venue-location if it exists
+                // $('#venue-location').val(openStreetAddress);
+                $('#openStreetMapDiv').addClass("hidden"); // Hide the map modal
+
+                
+            });
+
         },
     })
   }
