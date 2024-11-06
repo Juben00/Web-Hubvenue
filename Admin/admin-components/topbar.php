@@ -1,5 +1,5 @@
 <!-- Top Navigation -->
-<header class="bg-slate-50 flex justify-between items-center p-4">
+<header class="bg-gray-50 flex justify-between items-center p-4">
     <div class="flex items-center">
         <!-- Sidebar Toggle Button -->
         <button onclick="toggleSidebar()" class="text-gray-500 hover:text-gray-700" title="Toggle Sidebar">
@@ -14,9 +14,9 @@
     <div class="flex items-center">
         <input type="checkbox" id="darkModeToggle" class="hidden">
         <label for="darkModeToggle"
-            class="w-12 h-6 rounded-full bg-slate-50-300 flex items-center cursor-pointer relative mx-2">
+            class="w-12 h-6 rounded-full bg-gray-50-300 flex items-center cursor-pointer relative mx-2">
             <div
-                class="w-5 h-5 rounded-full bg-slate-50 absolute left-0.5 transition-transform duration-300 ease-in-out flex items-center justify-center">
+                class="w-5 h-5 rounded-full bg-gray-50 absolute left-0.5 transition-transform duration-300 ease-in-out flex items-center justify-center">
                 <svg class="w-4 h-4 text-yellow-500 sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                     fill="currentColor">
                     <path

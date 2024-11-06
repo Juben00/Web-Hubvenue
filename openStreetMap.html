@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pin Location and Get Address with Leaflet and Nominatim</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 500px;
+      width: 500px;
+    }
+    #address {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body class="">
+
+  <h3>Click on the map to pin a location</h3>
+  <div id="map"></div>
+
+  <input type="text" id="address" placeholder="Selected Address" readonly />
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Set the map's initial view to Zamboanga City, Philippines
+    const map = L.map('map').setView([6.9214, 122.0790], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    let marker;
+
+    map.on('click', function (e) {
+      if (marker) {
+        map.removeLayer(marker);
+      }
+
+      marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+
+      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+
+          const address = data.display_name || "No address found";
+          document.getElementById('address').value = address;
+        })
+        .catch(err => {
+          console.error('Error:', err);
+          document.getElementById('address').value = "Error retrieving address";
+        });
+    });
+  </script>
+
+</body>
+</html>
