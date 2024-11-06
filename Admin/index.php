@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HubVenue Dashboard</title>
     <link rel="icon" href="../images/black_ico.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -280,6 +282,8 @@
     <script src="../vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/admin.jquery.js"></script>
     <script>
+        let map;
+        let marker;
         $(document).ready(function () {
             console.log("jQuery is working!");
         });
