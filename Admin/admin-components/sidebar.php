@@ -1,4 +1,4 @@
-<div id="sidebar" class="w-64 bg-white transition-all duration-300 flex flex-col h-screen text-sm">
+<div id="sidebar" class="w-64 bg-slate-50 transition-all duration-300 flex flex-col h-screen text-sm">
     <div class="p-4 w-full flex justify-center">
         <img src="logo only.png" alt="Archon Logo" class="w-16 h-16 mb-20 transition-all duration-300">
     </div>
