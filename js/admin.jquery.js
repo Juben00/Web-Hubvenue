@@ -159,15 +159,15 @@ if (!linkFound) {
                   activateTab($(this));
               });
 
-              $("#pricing-vm").on("click", function (e) {
+              $("#approved-vm").on("click", function (e) {
                   e.preventDefault();
-                  viewVmPricing();
+                   viewVmApproved();
                   activateTab($(this));
               });
 
-              $("#availability-vm").on("click", function (e) {
+              $("#rejected-vm").on("click", function (e) {
                   e.preventDefault();
-                  viewVmAvailability();
+                 viewVmRejected();
                   activateTab($(this));
               });
 
@@ -332,6 +332,8 @@ if (!linkFound) {
                 addVenue();
             });
 
+           
+
             
         },
     });
@@ -344,14 +346,19 @@ if (!linkFound) {
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
+
+           $('.approveVenueButton').on("submit", function (e) {
+                e.preventDefault();
+                approveVenue($(this)); // Pass the form element to approveVenue
+            });
         },
     })
   }
 
-  function viewVmPricing(){
+  function viewVmRejected(){
     $.ajax({
         type: "GET",
-        url: "../venue-management/venue-rates.php",
+        url: "../venue-management/rejected-venues.php",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
@@ -359,10 +366,10 @@ if (!linkFound) {
     })
   }
 
-  function viewVmAvailability(){
+  function viewVmApproved(){
     $.ajax({
         type: "GET",
-        url: "../venue-management/venue-availability.php",
+        url: "../venue-management/approved-venues.php",
         dataType: "html",
         success: function (response) {
           $("#venue-management-view").html(response);
@@ -417,5 +424,25 @@ if (!linkFound) {
         },
     });
   }
+
+  function approveVenue(formElement) {
+    let form = new FormData(formElement[0]);
+    $.ajax({
+        type: "POST",
+        url: "../api/ApproveVenue.api.php",
+        data: form,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response.status === "success") {
+                console.log("Venue approved successfully");
+                formElement[0].reset();
+            } else {
+                console.log("Venue not approved");
+            }
+        },
+    });
+}
 
 });

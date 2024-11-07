@@ -12,8 +12,6 @@ if (isset($_SESSION['user'])) {
 }
 
 
-include_once '../components/feedback.modal.html';
-include_once '../components/confirm.feedback.modal.html';
 
 include_once '../classes/venue.class.php';
 
@@ -62,6 +60,10 @@ $venueObj = new Venue();
             </main>
 
         </div>
+        <?php
+        include_once '../components/feedback.modal.html';
+        include_once '../components/confirm.feedback.modal.html';
+        ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

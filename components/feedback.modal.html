@@ -10,7 +10,7 @@
         alt="Company logo"
         class="w-auto h-32"
         height="100"
-        src="./images/black_ico.png"
+        id="feedbackModalLogo"
         width="100"
       />
     </div>
@@ -37,12 +37,13 @@
   const modal = document.getElementById("feedbackModal");
   const modalMessage = document.getElementById("feedbackModalMessage");
   const btn = document.getElementById("feedbackModalButton");
-
+  const modalLogo = document.getElementById("feedbackModalLogo");
   // Function to show the modal with a custom message
-  function showModal(message) {
+  function showModal(message, logo) {
     modalMessage.innerHTML = message; // Set the custom message
     modal.classList.remove("hidden"); // Show the modal
     modal.classList.add("flex"); // Show the modal
+    modalLogo.src = logo; // Set the logo
   }
 
   // Close modal on "Okay" button click

@@ -343,16 +343,16 @@
 
       if (data.status === "success") {
         console.log("success ", data);
-        showModal(data.message);
+        showModal(data.message, "./images/black_ico.png");
         signupFormSubmit.reset();
         signupButton.disabled = true;
       } else {
         console.log("else ", data);
-        showModal(data.message);
+        showModal(data.message, "./images/black_ico.png");
       }
     } catch (error) {
       console.error("Error:", error);
-      showModal(error);
+      showModal(error, "./images/black_ico.png");
     }
   });
 
@@ -373,16 +373,16 @@
 
       if (data.status === "success") {
         console.log("success ", data);
-        showModal(data.message);
+        showModal(data.message, "./images/black_ico.png");
         loginFormSubmit.reset();
         document.getElementById("authModal").style.display = "none";
       } else {
         console.log("else ", data);
-        showModal(data.message);
+        showModal(data.message, "./images/black_ico.png");
       }
     } catch (error) {
       console.error("Error:", error);
-      showModal(error);
+      showModal(error, "./images/black_ico.png");
     }
   });
 </script>
