@@ -4,14 +4,14 @@ require_once '../sanitize.php';
 
 $accountObj = new Account();
 
-$firstname = $lastname = $middlename = $gender = $birthdate = $contact_number = $email = $password = '';
-$firstnameErr = $lastnameErr = $middlenameErr = $genderErr = $birthdateErr = $contact_numberErr = $emailErr = $passwordErr = '';
+$firstname = $lastname = $middlename = $sex = $birthdate = $contact_number = $email = $password = '';
+$firstnameErr = $lastnameErr = $middlenameErr = $sexErr = $birthdateErr = $contact_numberErr = $emailErr = $passwordErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $firstname = clean_input($_POST['firstname']);
     $lastname = clean_input($_POST['lastname']);
     $middlename = clean_input($_POST['middlename']);
-    $gender = clean_input($_POST['gender']);
+    $sex = clean_input($_POST['sex']);
     $birthdate = clean_input($_POST['birthdate']);
     $contact_number = clean_input($_POST['contact']);
     $email = clean_input($_POST['email']);
@@ -33,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $middlenameErr = 'Middle name is required';
     }
 
-    if (empty($gender)) {
-        $genderErr = "Gender is required";
+    if (empty($sex)) {
+        $sexErr = "sex is required";
     }
 
     if (empty($birthdate)) {
@@ -65,11 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $passwordErr = 'Password must contain at least one number';
     }
 
-    if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($genderErr) && empty($birthdateErr) && empty($contact_numberErr) && empty($emailErr) && empty($passwordErr)) {
+    if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($sexErr) && empty($birthdateErr) && empty($contact_numberErr) && empty($emailErr) && empty($passwordErr)) {
         $accountObj->firstname = $firstname;
         $accountObj->lastname = $lastname;
         $accountObj->middlename = $middlename;
-        $accountObj->gender = $gender;
+        $accountObj->sex = $sex;
         $accountObj->birthdate = $birthdate;
         $accountObj->contact_number = $contact_number;
         $accountObj->email = $email;
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $firstnameErr,
                 $lastnameErr,
                 $middlenameErr,
-                $genderErr,
+                $sexErr,
                 $birthdateErr,
                 $contact_numberErr,
                 $emailErr,

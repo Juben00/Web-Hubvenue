@@ -157,8 +157,7 @@
 </div>
 
 <script src="../vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
-<script src="./js/admin.jquery.js"></script>
-
+<script src="../js/admin.jquery.js"></script>
 <style>
     #sidebar nav a:hover,
     #sidebar nav button:hover {
