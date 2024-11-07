@@ -75,4 +75,127 @@ class Venue
             return ['status' => 'error', 'message' => 'An error occurred while adding the venue'];
         }
     }
+
+    function getAllVenues($status = '')
+    {
+        try {
+            // Establish database connection
+            $conn = $this->db->connect();
+
+            // Start building the SQL query
+            $sql = "SELECT 
+            v.id AS venue_id,
+            v.*, 
+            u.*, 
+            vss.name AS status, 
+            vas.name AS availability, 
+            GROUP_CONCAT(vi.image_url) AS image_urls
+            FROM venues v 
+            JOIN users u ON v.host_id = u.id 
+            JOIN venue_status_sub vss ON v.status_id = vss.id 
+            JOIN venue_availability_sub vas ON v.availability_id = vas.id 
+            JOIN venue_images vi ON v.id = vi.venue_id";
+
+            // Initialize an array for conditions and parameters
+            $conditions = [];
+            $params = [];
+
+            // Add conditions if parameters are provided
+            if ($status) {
+                $conditions[] = "v.status_id LIKE :status";
+                $params[':status'] = "%$status%";
+            }
+
+            // Add WHERE clause if conditions are present
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(' AND ', $conditions);
+            }
+
+            // Add GROUP BY clause
+            $sql .= " GROUP BY v.id, vss.name, vas.name";
+
+            // Prepare and execute the statement with parameters
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $venues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Process the images (split the comma-separated string into an array)
+            foreach ($venues as &$venue) {
+                if (!empty($venue['image_urls'])) {
+                    $venue['image_urls'] = explode(',', $venue['image_urls']); // Convert image URLs to an array
+                }
+            }
+
+            return $venues;
+
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
+        }
+    }
+
+    function approveVenue($venue_id)
+    {
+        try {
+            // Establish database connection
+            $conn = $this->db->connect();
+
+            // Update the venue status to approved
+            $sql = "UPDATE venues SET status_id = 2 WHERE id = :venue_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+
+            // Execute the update and check if any rows were affected
+            if ($stmt->execute()) {
+                if ($stmt->rowCount() > 0) {
+                    return ['status' => 'success', 'message' => 'Venue approved successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Venue ID not found or status already set to approved'];
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to approve venue'];
+            }
+
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while approving the venue'];
+        }
+    }
+
+    function declineVenue($venue_id)
+    {
+        try {
+            // Establish database connection
+            $conn = $this->db->connect();
+
+            // Update the venue status to declined
+            $sql = "UPDATE venues SET status_id = 3 WHERE id = :venue_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+
+            // Execute the update and check if any rows were affected
+            if ($stmt->execute()) {
+                if ($stmt->rowCount() > 0) {
+                    return ['status' => 'success', 'message' => 'Venue declined successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Venue ID not found or status already set to declined'];
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to decline venue'];
+            }
+
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while declining the venue'];
+        }
+    }
+
 }
+
+
+$venueObj = new Venue();
+
+$venueObj->getAllVenues();

@@ -1,3 +1,13 @@
+<?php
+session_start();
+
+if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['user_type_id'] == 3) {
+        header('Location: admin/dashboard');
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -73,7 +83,7 @@
     <!-- Header -->
     <?php
 
-    session_start();
+
 
     // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {

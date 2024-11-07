@@ -1,3 +1,24 @@
+<?php
+session_start();
+
+if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['user_type_id'] == 3) {
+        $user = $_SESSION['user'];
+    } else {
+        header('Location: ../index.php');
+    }
+} else {
+    header('Location: ../index.php');
+}
+
+
+
+include_once '../classes/venue.class.php';
+
+$venueObj = new Venue();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,6 +60,10 @@
             </main>
 
         </div>
+        <?php
+        include_once '../components/feedback.modal.html';
+        include_once '../components/confirm.feedback.modal.html';
+        ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
