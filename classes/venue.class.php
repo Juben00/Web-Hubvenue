@@ -86,12 +86,10 @@ class Venue
             $sql = "SELECT 
             v.id AS venue_id,
             v.*, 
-            u.*, 
             vss.name AS status, 
             vas.name AS availability, 
             GROUP_CONCAT(vi.image_url) AS image_urls
             FROM venues v 
-            JOIN users u ON v.host_id = u.id 
             JOIN venue_status_sub vss ON v.status_id = vss.id 
             JOIN venue_availability_sub vas ON v.availability_id = vas.id 
             JOIN venue_images vi ON v.id = vi.venue_id";
@@ -134,7 +132,44 @@ class Venue
             return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
         }
     }
+    function getSingleVenue($venue_id = '')
+    {
+        try {
+            // Establish database connection
+            $conn = $this->db->connect();
 
+            // Start building the SQL query
+            $sql = "SELECT 
+            v.id AS venue_id,
+            v.*, 
+            vt.tag_name AS tag,
+            vss.name AS status, 
+            vas.name AS availability, 
+            GROUP_CONCAT(vi.image_url) AS image_urls
+            FROM venues v 
+            JOIN venue_tag_sub vt ON v.venue_tag = vt.id
+            JOIN venue_status_sub vss ON v.status_id = vss.id 
+            JOIN venue_availability_sub vas ON v.availability_id = vas.id 
+            JOIN venue_images vi ON v.id = vi.venue_id 
+            WHERE v.id = :venue_id;";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+            $stmt->execute();
+            $venues = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Process the images (split the comma-separated string into an array)
+            if (!empty($venues['image_urls'])) {
+                $venues['image_urls'] = explode(',', $venues['image_urls']); // Convert image URLs to an array
+            }
+
+            return $venues;
+
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
+        }
+    }
     function approveVenue($venue_id)
     {
         try {
@@ -198,4 +233,4 @@ class Venue
 
 $venueObj = new Venue();
 
-$venueObj->getAllVenues();
+$venueObj->getSingleVenue();

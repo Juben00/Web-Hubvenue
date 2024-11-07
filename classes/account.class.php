@@ -1,5 +1,5 @@
 <?php
-require_once '../dbconnection.php';
+require_once(__DIR__ . '/../dbconnection.php');
 
 class Account
 {
@@ -65,7 +65,6 @@ class Account
             }
         }
     }
-
     public function login()
     {
         $sql = 'SELECT * FROM users WHERE email = :email';
@@ -88,6 +87,27 @@ class Account
         } else {
             return ['status' => 'error', 'message' => 'Invalid email or password'];
         }
+    }
+
+    public function getUser($user_id)
+    {
+        // SQL query to fetch user data along with their sex and user type
+        $sql = 'SELECT u.*, ss.name AS sex, ust.name AS user_type 
+            FROM users u 
+            JOIN sex_sub ss ON u.sex_id = ss.id 
+            JOIN user_types_sub ust ON ust.id = u.user_type_id 
+            WHERE u.id = :user_id';
+
+        // Prepare and execute the SQL statement
+        $stmt = $this->db->connect()->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id); // Bind the user_id parameter
+        $stmt->execute();
+
+        // Fetch the user data as an associative array
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Return the user data
+        return $user;
     }
 
 }
