@@ -79,7 +79,7 @@ class Account
 
                 session_start();
                 session_regenerate_id(delete_old_session: true);
-                $_SESSION['user'] = $user;
+                $_SESSION['user'] = $user['id'];
 
                 return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
             } else {

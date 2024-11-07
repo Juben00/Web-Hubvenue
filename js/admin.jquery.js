@@ -392,8 +392,9 @@ if (!linkFound) {
         contentType: false,
         processData: false,
         success: function (response) {
-            if (response === "success") {
+            if (response.status == "success") {
                 console.log("Venue added successfully");
+                $("#add-venue-form")[0].reset();
             } else {
                 console.log("Venue not added");
             }

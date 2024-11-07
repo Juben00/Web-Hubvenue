@@ -28,9 +28,9 @@ class Venue
             // Establish database connection
             $conn = $this->db->connect();
 
-            // Insert venue information
+            // Insert venue information (without images)
             $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, host_id, status_id, availability_id) 
-                    VALUES (:name, :description, :location, :price, :capacity, :amenities, :host_id, :status_id, :availability_id)';
+                VALUES (:name, :description, :location, :price, :capacity, :amenities, :host_id, :status_id, :availability_id)';
             $stmt = $conn->prepare($sql);
 
             // Bind parameters
@@ -49,18 +49,23 @@ class Venue
                 // Get the last inserted ID for the venue
                 $last_inserted_venue = $conn->lastInsertId();
 
-                // Insert image URL associated with the venue
-                $imageSql = "INSERT INTO venue_images (venue_id, image_url) VALUES (:venue_id, :image_url)";
-                $imageStmt = $conn->prepare($imageSql);
-                $imageStmt->bindParam(':venue_id', $last_inserted_venue);
-                $imageStmt->bindParam(':image_url', $this->image_url);
+                // Loop through each image and insert them
+                $images = json_decode($this->image_url); // Decode the JSON into an array of image URLs
+                foreach ($images as $image_url) {
+                    // Insert image URL into the venue_images table
+                    $imageSql = "INSERT INTO venue_images (venue_id, image_url) VALUES (:venue_id, :image_url)";
+                    $imageStmt = $conn->prepare($imageSql);
+                    $imageStmt->bindParam(':venue_id', $last_inserted_venue);
+                    $imageStmt->bindParam(':image_url', $image_url);
 
-                // Execute image insertion
-                if ($imageStmt->execute()) {
-                    return ['status' => 'success', 'message' => 'Venue and image added successfully'];
-                } else {
-                    return ['status' => 'error', 'message' => 'Failed to add image for the venue'];
+                    // Execute image insertion
+                    if (!$imageStmt->execute()) {
+                        // If any image fails to insert, return error
+                        return ['status' => 'error', 'message' => 'Failed to add images for the venue'];
+                    }
                 }
+
+                return ['status' => 'success', 'message' => 'Venue and images added successfully'];
             } else {
                 return ['status' => 'error', 'message' => 'Failed to add venue'];
             }

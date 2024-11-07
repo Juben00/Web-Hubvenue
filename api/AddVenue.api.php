@@ -1,11 +1,11 @@
 <?php
 
-require_once '../classes/venue-image.class.php';
+require_once '../classes/venue.class.php';
 require_once '../sanitize.php';
 
 $venueObj = new Venue();
 
-$name = $description = $location = $price = $capacity = $amenities = $image = $imageTemp = "";
+$name = $description = $location = $price = $capacity = $amenities = "";
 $nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $imageErr = "";
 
 $uploadDir = '../venue_image_uploads/';
@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = clean_input($_POST['price']);
     $capacity = clean_input($_POST['capacity']);
     $amenities = clean_input($_POST['amenities']);
-    $image = $_FILES['venue_images']['name'];
-    $imageTemp = $_FILES['venue_images']['tmp_name'];
 
     // Validation for required fields
     if (empty($name))
@@ -36,12 +34,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($amenities))
         $amenitiesErr = "Amenities are required";
 
-    // Image validation
-    $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
-    if (empty($image)) {
-        $imageErr = 'Product image is required.';
-    } else if (!in_array($imageFileType, $allowedType)) {
-        $imageErr = 'Accepted files are jpg, jpeg, and png only.';
+    // Handle multiple image uploads
+    $imageErr = [];
+    $uploadedImages = [];
+
+    if (empty($_FILES['venue_images']['name'][0])) {
+        $imageErr[] = 'At least one image is required.';
+    } else {
+        foreach ($_FILES['venue_images']['name'] as $key => $image) {
+            $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+
+            // Validate each image
+            if (!in_array($imageFileType, $allowedType)) {
+                $imageErr[] = "File " . $_FILES['venue_images']['name'][$key] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
+            } else {
+                // Generate a unique target path for each image
+                $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
+
+                // Move the uploaded file to the target directory
+                if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], $targetImage)) {
+                    $uploadedImages[] = $targetImage;
+                } else {
+                    $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
+                }
+            }
+        }
     }
 
     // Prepare amenities JSON
@@ -60,24 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->price = $price;
         $venueObj->capacity = $capacity;
         $venueObj->amenities = $amenitiesJson;
+        $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
 
-        // Generate a unique target path for the image
-        $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
+        // Add venue with image URLs to the database
+        $result = $venueObj->addVenue();
 
-        // Move the uploaded file to the target directory
-        if (move_uploaded_file($imageTemp, $targetImage)) {
-            $venueObj->image_url = $targetImage;
-
-            // Add venue with image URL to database
-            $result = $venueObj->addVenue();
-
-            if ($result['status'] === 'success') {
-                echo json_encode(['status' => 'success', 'message' => 'Venue added successfully.']);
-            } else {
-                echo json_encode(['status' => 'error', 'message' => $result['message']]);
-            }
+        if ($result['status'] === 'success') {
+            echo json_encode(['status' => 'success', 'message' => 'Venue added successfully.']);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to upload image.']);
+            echo json_encode(['status' => 'error', 'message' => $result['message']]);
         }
     } else {
         // Return validation errors as JSON
