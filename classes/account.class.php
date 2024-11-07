@@ -7,8 +7,8 @@ class Account
     public $firstname;
     public $lastname;
     public $middlename;
-    public $gender;
-    public $usertype = 1;
+    public $sex;
+    public $usertype = 2;
     public $birthdate;
     public $contact_number;
     public $email;
@@ -33,21 +33,21 @@ class Account
             return ['status' => 'error', 'message' => 'Account already exists'];
         } else {
             // Insert new account if email does not exist
-            $sql = 'INSERT INTO users (firstname, lastname, middlename, gender_id, user_type_id, birthdate, contact_number, email, password) VALUES (:firstname, :lastname, :middlename, :gender_id, :user_type_id, :birthdate, :contact_number, :email, :password)';
+            $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, email, password) VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number, :email, :password)';
             $stmt = $this->db->connect()->prepare($sql);
 
             $stmt->bindParam(':firstname', $this->firstname);
             $stmt->bindParam(':lastname', $this->lastname);
             $stmt->bindParam(':middlename', $this->middlename);
 
-            // Determine gender_id based on gender value
-            $gender_id = 3; // Default value for unspecified gender
-            if ($this->gender == "Male") {
-                $gender_id = 1;
-            } else if ($this->gender == "Female") {
-                $gender_id = 2;
+            // Determine sex_id based on sex value
+            $sex_id = 3; // Default value for unspecified sex
+            if ($this->sex == "Male") {
+                $sex_id = 1;
+            } else if ($this->sex == "Female") {
+                $sex_id = 2;
             }
-            $stmt->bindParam(':gender_id', $gender_id);
+            $stmt->bindParam(':sex_id', $sex_id);
             $stmt->bindParam(':user_type_id', $this->usertype);
             $stmt->bindParam(':birthdate', $this->birthdate);
             $stmt->bindParam(':contact_number', $this->contact_number);

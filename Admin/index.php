@@ -280,7 +280,7 @@
     </script> -->
 
     <script src="../vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
-    <script src="./js/admin.jquery.js"></script>
+    <script src="../js/admin.jquery.js"></script>
     <script>
         let map;
         let marker;

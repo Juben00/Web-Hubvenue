@@ -281,6 +281,7 @@ if (!linkFound) {
         },
       })
   }
+  
 
   function viewUserManagement(){
     $.ajax({
@@ -292,6 +293,8 @@ if (!linkFound) {
         },
       })
   }
+
+
     //sub views
   function viewVmAddVenue() {
     $.ajax({
@@ -308,12 +311,15 @@ if (!linkFound) {
                 viewOpenStreetMap();  // Open the map for user interaction
             });
 
+            $('#add-venue-form').on("submit", function (e) {
+                e.preventDefault();
+                addVenue();
+            });
+
             
         },
     });
 }
-
-
 
   function viewVmManageVenue(){
     $.ajax({
@@ -372,6 +378,27 @@ if (!linkFound) {
 
         },
     })
+  }
+
+
+  //api calls
+  function addVenue(){
+    let form = new FormData($("#add-venue-form")[0]);
+    $.ajax({
+        type: "POST",
+        url: "../api/AddVenue.api.php",
+        data: form,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response === "success") {
+                console.log("Venue added successfully");
+            } else {
+                console.log("Venue not added");
+            }
+        },
+    });
   }
 
 });
