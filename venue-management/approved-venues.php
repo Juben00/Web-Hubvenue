@@ -28,7 +28,11 @@ $venues = $venueObj->getAllVenues($status = '2');
                     </tr>
                 </thead>
                 <tbody id="venues-table-body" class="[&_tr:last-child]:border-0">
-                    <?php foreach ($venues as $venue): ?>
+                    <?php
+                    if (empty($venues)) {
+                        echo '<tr><td colspan="12" class="p-4 align-middle text-center">No venues found</td></tr>';
+                    }
+                    foreach ($venues as $venue): ?>
                         <tr class="border-b transition-colors hover:bg-muted/50">
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['venue_id']) ?></td>
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['name']) ?></td>

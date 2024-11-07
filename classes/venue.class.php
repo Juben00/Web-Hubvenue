@@ -164,7 +164,34 @@ class Venue
         }
     }
 
+    function declineVenue($venue_id)
+    {
+        try {
+            // Establish database connection
+            $conn = $this->db->connect();
 
+            // Update the venue status to declined
+            $sql = "UPDATE venues SET status_id = 3 WHERE id = :venue_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+
+            // Execute the update and check if any rows were affected
+            if ($stmt->execute()) {
+                if ($stmt->rowCount() > 0) {
+                    return ['status' => 'success', 'message' => 'Venue declined successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Venue ID not found or status already set to declined'];
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to decline venue'];
+            }
+
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while declining the venue'];
+        }
+    }
 
 }
 

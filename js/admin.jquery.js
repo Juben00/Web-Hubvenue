@@ -339,21 +339,46 @@ if (!linkFound) {
     });
 }
 
-  function viewVmManageVenue(){
+  function viewVmManageVenue() {
     $.ajax({
         type: "GET",
         url: "../venue-management/manage-venues.php",
         dataType: "html",
         success: function (response) {
-          $("#venue-management-view").html(response);
+            $("#venue-management-view").html(response);
 
-           $('.approveVenueButton').on("submit", function (e) {
+            // Event listener for form submission
+            $('.approveVenueButton').on("submit", function (e) {
                 e.preventDefault();
-                approveVenue($(this)); // Pass the form element to approveVenue
+                const formElement = $(this); // Capture the form element for use in confirm function
+
+                // Show confirmation modal and only proceed if confirmed
+                confirmshowModal(
+                    "Are you sure you want to approve this post?",
+                    function() {
+                        approveVenue(formElement); // Call approveVenue only after confirmation
+                    },
+                    "../images/black_ico.png"
+                );
+            });
+
+            // Event listener for form submission
+            $('.declineVenueButton').on("submit", function (e) {
+                e.preventDefault();
+                const formElement = $(this); // Capture the form element for use in confirm function
+
+                // Show confirmation modal and only proceed if confirmed
+                confirmshowModal(
+                    "Are you sure you want to reject this post?",
+                    function() {
+                        rejectVenue(formElement); // Call rejectVenue only after confirmation
+                    },
+                    "../images/black_ico.png"
+                );
             });
         },
-    })
-  }
+    });
+}
 
   function viewVmRejected(){
     $.ajax({
@@ -438,11 +463,35 @@ if (!linkFound) {
             if (response.status === "success") {
                 console.log("Venue approved successfully");
                 formElement[0].reset();
+                //refresh the page
+                viewVmManageVenue();
             } else {
                 console.log("Venue not approved");
             }
         },
     });
-}
+  }
+
+  function rejectVenue(formElement) {
+    let form = new FormData(formElement[0]);
+    $.ajax({
+        type: "POST",
+        url: "../api/RejectVenue.api.php",
+        data: form,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response.status === "success") {
+                console.log("Venue rejected successfully");
+                formElement[0].reset();
+                //refresh the page
+                viewVmManageVenue();
+            } else {
+                console.log("Venue not rejected");
+            }
+        },
+    });
+  }
 
 });

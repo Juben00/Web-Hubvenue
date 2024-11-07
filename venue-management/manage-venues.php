@@ -28,7 +28,11 @@ $venues = $venueObj->getAllVenues($status = '1');
                     </tr>
                 </thead>
                 <tbody id="venues-table-body" class="[&_tr:last-child]:border-0">
-                    <?php foreach ($venues as $venue): ?>
+                    <?php
+                    if (empty($venues)) {
+                        echo '<tr><td colspan="12" class="p-4 align-middle text-center">No Pending Request Found!</td></tr>';
+                    }
+                    foreach ($venues as $venue): ?>
                         <tr class="border-b transition-colors hover:bg-muted/50 ">
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['venue_id']) ?></td>
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['name']) ?></td>
@@ -82,9 +86,12 @@ $venues = $venueObj->getAllVenues($status = '1');
                                 <!-- <button
                                     class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-green-500 text-white hover:bg-green-600 h-9 px-3 mr-2"
                                     onclick="editVenue(<?= $venue['id'] ?>)">Edit</button> -->
-                                <button
-                                    class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600 h-9 px-3"
-                                    onclick="deleteVenue(<?= $venue['id'] ?>)">Decline</button>
+                                <form class="declineVenueButton" method="POST">
+                                    <input type="hidden" name="venue_id"
+                                        value="<?php echo htmlspecialchars($venue['venue_id']) ?>">
+                                    <button type="submit"
+                                        class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600 h-9 px-3">Decline</button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>
