@@ -1,6 +1,6 @@
 <div id="sidebar" class="w-64 bg-gray-50 transition-all duration-300 flex flex-col h-screen text-sm">
     <div class="p-4 w-full flex justify-center">
-        <img src="logo only.png" alt="Archon Logo" class="w-16 h-16 mb-20 transition-all duration-300">
+        <img src="logo only.png" alt="Archon Logo" class="transition-all duration-300">
     </div>
     <div class="px-4 w-full mb-4 sidebar-full">
         <div class="flex">
@@ -290,9 +290,6 @@
 
         // Toggle logo size
         logo.classList.toggle('w-12');
-        logo.classList.toggle('h-12');
-        logo.classList.toggle('w-8');
-        logo.classList.toggle('h-8');
 
         sidebarFullElements.forEach(element => {
             element.classList.toggle('hidden');

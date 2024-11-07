@@ -108,7 +108,7 @@ $venues = $venueObj->getAllVenues('2');
 
     // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
-        include_once './components/navbar.logged.in.html';
+        include_once './components/navbar.logged.in.php';
     } else {
         include_once './components/navbar.html';
     }
