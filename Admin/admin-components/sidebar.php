@@ -144,7 +144,8 @@
 
     <!-- Logout button -->
     <div class="w-full mt-auto mb-4">
-        <button class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
+        <button id="admin-logout"
+            class="nav-link flex items-center text-gray-800 hover:bg-red-900 hover:text-white w-full px-4 py-2">
             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

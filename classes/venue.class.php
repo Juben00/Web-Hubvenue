@@ -75,4 +75,50 @@ class Venue
             return ['status' => 'error', 'message' => 'An error occurred while adding the venue'];
         }
     }
+
+    function getAllVenues()
+    {
+        try {
+            // Establish database connection
+            $conn = $this->db->connect();
+
+            // Fetch all venues
+            $sql = "SELECT 
+            v.*, 
+            u.*, 
+            vss.name AS status, 
+            vas.name AS availability, 
+            GROUP_CONCAT(vi.image_url) AS image_urls
+            FROM venues v 
+            JOIN users u ON v.host_id = u.id 
+            JOIN venue_status_sub vss ON v.status_id = vss.id 
+            JOIN venue_availability_sub vas ON v.availability_id = vas.id 
+            JOIN venue_images vi ON v.id = vi.venue_id
+            GROUP BY v.id, vss.name, vas.name;";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $venues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Process the images (split the comma-separated string into an array)
+            foreach ($venues as &$venue) {
+                if (!empty($venue['image_urls'])) {
+                    $venue['image_urls'] = explode(',', $venue['image_urls']); // Convert image URLs to an array
+                }
+            }
+
+            return $venues;
+
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
+        }
+    }
+
 }
+
+
+$venueObj = new Venue();
+
+$venueObj->getAllVenues();

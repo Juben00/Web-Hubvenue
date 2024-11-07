@@ -77,6 +77,11 @@ $(document).ready(function () {
   viewUserManagement();
   });
 
+  $("#admin-logout").on("click", function (e) {
+  e.preventDefault();
+  confirmshowModal("Are you sure you want to logout?", adminLogout, "../images/black_ico.png");
+  });
+
 // Link listeners
 let url = window.location.href;
 
@@ -278,6 +283,17 @@ if (!linkFound) {
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
+        },
+      })
+  }
+
+  function adminLogout(){
+    $.ajax({
+      type: "GET",
+      url: "../logout.php",
+      dataType: "html",
+      success: function (response) {
+        window.location.href = "../index.php";
         },
       })
   }

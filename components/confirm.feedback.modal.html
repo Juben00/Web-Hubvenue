@@ -10,7 +10,7 @@
         alt="Company logo"
         class="w-auto h-32"
         height="100"
-        src="./images/black_ico.png"
+        id="confirmfeedbackModalLogo"
         width="100"
       />
     </div>
@@ -48,10 +48,11 @@
   const confirmButton = document.getElementById("confirmButton");
 
   // Function to show the modal with a custom message and confirm action
-  function confirmshowModal(message, confirmCallback) {
+  function confirmshowModal(message, confirmCallback, logo) {
     confirmmodalMessage.innerHTML = message; // Set the custom message
     confirmmodal.classList.remove("hidden"); // Show the modal
     confirmmodal.classList.add("flex"); // Add display flex
+    confirmfeedbackModalLogo.src = logo; // Set the logo
 
     // Reset the confirm button's onclick to avoid multiple bindings
     confirmButton.onclick = function () {
