@@ -68,7 +68,7 @@ $venues = $venueObj->getAllVenues($status = '3');
                             <td class="p-4 align-middle">
                                 <?php if (!empty($venue['image_urls'])): ?>
                                     <?php foreach ($venue['image_urls'] as $image_url): ?>
-                                        <img src="<?= htmlspecialchars($image_url) ?>" alt="Venue Image"
+                                        <img src="../<?= htmlspecialchars($image_url) ?>" alt="Venue Image"
                                             class="w-16 h-16 object-cover mr-2 mb-2">
                                     <?php endforeach; ?>
                                 <?php endif; ?>

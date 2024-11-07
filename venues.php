@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,11 +10,21 @@
     <title>Venue Details - HubVenue</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
 </head>
 
 <body class="bg-slate-50">
     <!-- Header -->
-    <?php include 'components/navbar.html'; ?>
+    <?php
+    if (isset($_SESSION['user'])) {
+        include_once './components/navbar.logged.in.html';
+    } else {
+        include_once './components/navbar.html';
+    }
+    ?>
 
     <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8">
         <div id="venueDetails">

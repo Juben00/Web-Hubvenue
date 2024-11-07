@@ -6,6 +6,15 @@ if (isset($_SESSION['user'])) {
         header('Location: admin/dashboard');
     }
 }
+
+require_once './sanitize.php';
+require_once './classes/venue.class.php';
+
+$venueObj = new Venue();
+
+// Get all venues
+$venues = $venueObj->getAllVenues('2');
+
 ?>
 
 <!DOCTYPE html>
@@ -21,6 +30,18 @@ if (isset($_SESSION['user'])) {
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <style>
+        .slideshow-container .slide {
+            display: none;
+            opacity: 0;
+        }
+
+        .slideshow-container .slide.active {
+            display: block;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+
         body {
             background: #3490dc;
         }
@@ -171,6 +192,99 @@ if (isset($_SESSION['user'])) {
                         <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
                             <!-- Venue cards will be dynamically inserted here -->
+                            <?php
+                            foreach ($venues as $venue) {
+                                ?>
+                                <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer"
+                                    onclick="window.location.href = 'venues.php?id=<?php echo $venue['venue_id']; ?>'">
+                                    <div class="relative">
+                                        <!-- Slideshow Container for each venue -->
+                                        <div class="relative w-full h-96 overflow-hidden">
+                                            <!-- Image Slideshow for each venue -->
+                                            <div class="slideshow-container">
+                                                <?php if (!empty($venue['image_urls'])): ?>
+                                                    <?php foreach ($venue['image_urls'] as $index => $imageUrl): ?>
+                                                        <div class="slide <?= $index === 0 ? 'active' : '' ?>">
+                                                            <img src="./<?= htmlspecialchars($imageUrl) ?>"
+                                                                alt="<?= htmlspecialchars($venue['name']) ?>"
+                                                                class="w-full h-full object-cover rounded-t-2xl transition-opacity duration-1000">
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <!-- Button (can be used for manual control) -->
+                                            <button class="absolute top-3 right-3 text-white">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path fill-rule="evenodd"
+                                                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+
+                                            <?php if (!empty($venue['tag'])): ?>
+                                                <span
+                                                    class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full">
+                                                    <?= htmlspecialchars($venue['tag']) ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <!-- Venue details below the slideshow -->
+                                        <div class="p-4">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <h3 class="text-base font-semibold text-gray-900">
+                                                    <?= htmlspecialchars($venue['name']) ?>
+                                                </h3>
+                                                <div class="flex items-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4 w-4 text-yellow-500 mr-1" viewBox="0 0 20 20"
+                                                        fill="currentColor">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+
+                                            <p class="text-sm text-gray-500 leading-tight">
+                                                <?= htmlspecialchars($venue['description']) ?>
+                                            </p>
+
+                                            <div class="my-2">
+                                                <!-- Amenities Section -->
+                                                <?php if (!empty($venue['amenities'])): ?>
+                                                    <?php
+                                                    $amenities = json_decode($venue['amenities'], true);
+                                                    if ($amenities):
+                                                        ?>
+                                                        <ul class="list-disc pl-5 space-y-1">
+                                                            <?php foreach ($amenities as $amenity): ?>
+                                                                <li class="text-sm text-gray-500 leading-tight">
+                                                                    <?= htmlspecialchars($amenity) ?>
+                                                                </li>
+                                                            <?php endforeach; ?>
+                                                        </ul>
+                                                    <?php else: ?>
+                                                        <p class="text-sm text-gray-500">No amenities available</p>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <p class="text-sm text-gray-500">No amenities available</p>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <p class="mt-2">
+                                                <span
+                                                    class="font-semibold text-gray-900 text-base">₱<?= number_format($venue['price'], 2) ?></span>
+                                                <span class="text-gray-900 text-sm"> per night</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
+
                         </div>
                     </section>
 
@@ -346,6 +460,41 @@ if (isset($_SESSION['user'])) {
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const venueSlideshows = document.querySelectorAll('.slideshow-container');
+
+            venueSlideshows.forEach((slideshow, index) => {
+                let currentSlide = 0;
+                const slides = slideshow.querySelectorAll('.slide');
+
+                function showSlide(index) {
+                    // Hide all slides
+                    slides.forEach((slide, i) => {
+                        slide.classList.remove('active');
+                        slide.style.opacity = 0;
+                        slide.style.transition = 'opacity 1s ease-out'; // Ensuring smooth transition
+                    });
+
+                    // Show the current slide
+                    slides[index].classList.add('active');
+                    slides[index].style.opacity = 1;
+                }
+
+                // Show next slide every 4 seconds
+                setInterval(() => {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    showSlide(currentSlide);
+                }, 4000); // Change interval to 4000 ms (4 seconds)
+
+                // Initialize the first slide
+                showSlide(currentSlide);
+            });
+        });
+
+    </script>
+
+
+    <script>
         // Date picker functionality
         const checkInBtn = document.getElementById('checkInBtn');
         const checkOutBtn = document.getElementById('checkOutBtn');
@@ -360,108 +509,6 @@ if (isset($_SESSION['user'])) {
         checkOutBtn.addEventListener('click', () => {
             const date = luxon.DateTime.local().plus({ days: 6 }).toFormat('LLL dd, yyyy');
             checkOutText.textContent = date;
-        });
-
-        // Venue data
-        const venues = [
-            {
-                id: 1,
-                name: "Home in Davao City",
-                description: "Spacious 2br budget friendly house",
-                dates: "Nov 1 - 6",
-                price: 1998,
-                image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
-                rating: 4.91,
-                reviews: 65,
-                beds: "4 beds",
-                tag: "Guest favorite"
-            },
-            {
-                id: 2,
-                name: "Apartment in Toril",
-                description: "An affordable bachelor pad within toril...",
-                dates: "Nov 1 - 6",
-                price: 913,
-                image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-                rating: 4.82,
-                reviews: 11,
-                beds: "Free cancellation",
-                tag: "Superhost"
-            },
-            {
-                id: 3,
-                name: "Place to stay in Mintal",
-                description: "Casa Marias R (600Mbps Wifi, 2mins fro...",
-                dates: "Nov 1 - 6",
-                price: 912,
-                image: "https://images.unsplash.com/photo-1505693314120-0d443867891c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80",
-                rating: 4.35,
-                reviews: 20,
-                beds: "2 double beds",
-                tag: ""
-            },
-            {
-                id: 4,
-                name: "Cozy Loft in Buhangin",
-                description: "Modern loft with stunning city views",
-                dates: "Nov 1 - 6",
-                price: 1500,
-                image: "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-                rating: 4.88,
-                reviews: 42,
-                beds: "1 queen bed",
-                tag: "New listing"
-            },
-            {
-                id: 5,
-                name: "Seaside Villa in Samal",
-                description: "Luxurious beachfront property with private pool",
-                dates: "Nov 1 - 6",
-                price: 3500,
-                image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-                rating: 4.95,
-                reviews: 78,
-                beds: "3 bedrooms",
-                tag: "Luxury"
-            }
-        ];
-
-        // Generate venue cards
-        const venueList = document.getElementById('venueList');
-        venues.forEach(venue => {
-            const card = document.createElement('div');
-            card.className = 'bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer';
-            card.onclick = () => window.location.href = `venues.php?id=${venue.id}`;
-            card.innerHTML = `
-                <div class="relative">
-                    <img src="${venue.image}" alt="${venue.name}" class="w-full h-96 object-cover rounded-t-2xl">
-                    <button class="absolute top-3 right-3 text-white">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    ${venue.tag ? `<span class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full">${venue.tag}</span>` : ''}
-                </div>
-                <div class="p-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <h3 class="text-base font-semibold text-gray-900">${venue.name}</h3>
-                        <div class="flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                            <span class="text-sm font-semibold">${venue.rating}</span>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-500 leading-tight">${venue.description}</p>
-                    <p class="text-sm text-gray-500 leading-tight">${venue.beds}</p>
-                    <p class="text-sm text-gray-500 leading-tight">${venue.dates}</p>
-                    <p class="mt-2">
-                        <span class="font-semibold text-gray-900 text-base">₱${venue.price.toLocaleString()}</span>
-                        <span class="text-gray-900 text-sm"> night</span>
-                    </p>
-                </div>
-            `;
-            venueList.appendChild(card);
         });
     </script>
 
