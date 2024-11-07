@@ -8,7 +8,7 @@ $venueObj = new Venue();
 $name = $description = $location = $price = $capacity = $amenities = "";
 $nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $imageErr = "";
 
-$uploadDir = '../venue_image_uploads/';
+$uploadDir = '/venue_image_uploads/';
 $allowedType = ['jpg', 'jpeg', 'png'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
