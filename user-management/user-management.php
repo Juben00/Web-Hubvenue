@@ -1,3 +1,8 @@
+<?php
+require_once(__DIR__ . '/../classes/account.class.php');
+$account = new Account();
+$users = $account->getUser("", "");
+?>
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 hidden md:block">User
         Management</h1>
@@ -51,14 +56,36 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="py-2 px-4 text-left">User ID</th>
-                            <th class="py-2 px-4 text-left">Name</th>
-                            <th class="py-2 px-4 text-left">Email</th>
+                            <th class="py-2 px-4 text-left">First Name</th>
+                            <th class="py-2 px-4 text-left">M.I</th>
+                            <th class="py-2 px-4 text-left">Last Name</th>
+                            <th class="py-2 px-4 text-left">Sex</th>
                             <th class="py-2 px-4 text-left">Role</th>
+                            <th class="py-2 px-4 text-left">Birthdate</th>
+                            <th class="py-2 px-4 text-left">Contact Number</th>
+                            <th class="py-2 px-4 text-left">Email</th>
                             <th class="py-2 px-4 text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="userTable">
-                        <!-- Table rows will be populated by JavaScript -->
+                        <?php foreach ($users as $user): ?>
+                            <tr>
+                                <td class="py-2 px-4 border-b"><?= $user['id'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['firstname'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['middlename'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['lastname'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['sex'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['user_type'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['birthdate'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['contact_number'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['email'] ?></td>
+                                <td class="py-2 px-4 border-b">
+                                    <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                                        Restrict
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

@@ -246,8 +246,3 @@ class Venue
     }
 
 }
-
-
-$venueObj = new Venue();
-
-$venueObj->getSingleVenue();
