@@ -72,7 +72,7 @@ $venues = $venueObj->getAllVenues($status = '2');
                             ?>
 
                             <td class="p-4 align-middle">
-                                <?= htmlspecialchars($venueOwner['firstname']) . ' ' . htmlspecialchars($venueOwner['lastname']) ?>
+                                <?= htmlspecialchars($venueOwner[0]['firstname']) . ' ' . htmlspecialchars($venueOwner[0]['lastname']) ?>
                             </td>
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['status']) ?></td>
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['availability']) ?></td>

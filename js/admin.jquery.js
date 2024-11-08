@@ -447,7 +447,10 @@ if (!linkFound) {
                 );
                 $("#add-venue-form")[0].reset();
             } else {
-                console.log("Venue not added");
+                showModal(
+                    "Venue not added",
+                    "../images/black_ico.png"
+                );
             }
         },
     });

@@ -89,25 +89,35 @@ class Account
         }
     }
 
-    public function getUser($user_id)
+    public function getUser($user_id = '', $user_type = '')
     {
+        // Add wildcards to user_id and user_type for LIKE search
+        $user_id = "%" . $user_id . "%";
+        $user_type = "%" . $user_type . "%";
+
         // SQL query to fetch user data along with their sex and user type
         $sql = 'SELECT u.*, ss.name AS sex, ust.name AS user_type 
             FROM users u 
             JOIN sex_sub ss ON u.sex_id = ss.id 
             JOIN user_types_sub ust ON ust.id = u.user_type_id 
-            WHERE u.id = :user_id';
+            WHERE u.id LIKE :user_id AND u.user_type_id LIKE :user_type';
 
-        // Prepare and execute the SQL statement
+        // Prepare the SQL statement
         $stmt = $this->db->connect()->prepare($sql);
-        $stmt->bindParam(':user_id', $user_id); // Bind the user_id parameter
+
+        // Bind the parameters with wildcards for LIKE clause
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':user_type', $user_type);
+
+        // Execute the SQL query
         $stmt->execute();
 
         // Fetch the user data as an associative array
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Return the user data
         return $user;
     }
+
 
 }

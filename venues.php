@@ -167,7 +167,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                                     class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
                                     <?php
                                     if (isset($owner)) {
-                                        echo $owner['firstname'][0];
+                                        echo $owner[0]['firstname'][0];
                                     } else {
                                         echo "U";
                                     }
@@ -183,50 +183,49 @@ $owner = $accountObj->getUser($venue['host_id']);
                                 <!-- First Name -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">First Name:</span>
-                                    <span><?php echo htmlspecialchars($owner['firstname']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['firstname']) ?></span>
                                 </div>
                                 <!-- Last Name -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">Last Name:</span>
-                                    <span><?php echo htmlspecialchars($owner['lastname']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['lastname']) ?></span>
                                 </div>
                                 <!-- Middle Name -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">Middle Initial:</span>
-                                    <span><?php echo htmlspecialchars($owner['middlename']) ?>.</span>
+                                    <span><?= htmlspecialchars($owner[0]['middlename']) ?>.</span>
                                 </div>
                                 <!-- Sex -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">Sex:</span>
-                                    <span><?php echo htmlspecialchars($owner['sex']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['sex']) ?></span>
                                 </div>
                                 <!-- User Type -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">User Type:</span>
-                                    <span><?php echo htmlspecialchars($owner['user_type']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['user_type']) ?></span>
                                 </div>
                                 <!-- Birthdate -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">Birthdate:</span>
-                                    <span><?php echo htmlspecialchars($owner['birthdate']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['birthdate']) ?></span>
                                 </div>
                                 <!-- Contact Number -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">Contact Number:</span>
-                                    <span><?php echo htmlspecialchars($owner['contact_number']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['contact_number']) ?></span>
                                 </div>
                                 <!-- Email -->
                                 <div class="flex justify-between text-gray-700">
                                     <span class="font-semibold">Email:</span>
-                                    <span><?php echo htmlspecialchars($owner['email']) ?></span>
+                                    <span><?= htmlspecialchars($owner[0]['email']) ?></span>
                                 </div>
                             </div>
 
                             <!-- Footer -->
                             <div class="mt-6 text-center text-gray-500 text-xs">
-                                <p>For inquiries, contact <a
-                                        href="mailto:<?php echo htmlspecialchars($owner['email']) ?>"
-                                        class="text-blue-500 hover:underline"><?php echo htmlspecialchars($owner['email']) ?></a>
+                                <p>For inquiries, contact <a href="mailto:<?= htmlspecialchars($owner[0]['email']) ?>"
+                                        class="text-blue-500 hover:underline"><?= htmlspecialchars($owner[0]['email']) ?></a>
                                 </p>
                             </div>
                         </div>
