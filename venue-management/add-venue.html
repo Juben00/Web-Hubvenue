@@ -46,8 +46,35 @@
                     <input id="venue-price" name="price" type="number" placeholder="Enter venue price" required
                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
                 </div>
-            </div>
+                <div class="space-y-2">
+                    <label for="venue-tag"
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Venue Tag</label>
+                    <select id="venue-tag" name="tag" required 
+                        class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-2 ring-blue-500 
+                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50">
+                        <!-- Unselectable placeholder option -->
+                        <option value="" disabled selected class="text-gray-400"></option>
+                        <option value="Corporate Events">Corporate Events</option>
+                        <option value="Reception Hall">Reception Hall</option>
+                        <option value="Intimate Gatherings">Intimate Gatherings</option>
+                        <option value="Outdoor">Outdoor</option>
+                    </select>
+                </div>
 
+                <div class="space-y-2">
+                    <label for="entrance_fee"
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Entrance Fee</label>
+                    <input id="entrance_fee" name="entrance" type="number" placeholder="Enter venue price" required
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                </div>
+                <div class="space-y-2">
+                    <label for="cleaning_fee"
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Cleaning Fee</label>
+                    <input type="number" id="cleaning_fee" name="cleaning" placeholder="Enter cleaning fee" required class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                </div>
+            
+            </div>
+            
             <div class="space-y-2">
                 <label for="venue-description"
                     class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Description</label>
@@ -57,22 +84,24 @@
             </div>
 
             <div class="space-y-2">
-            <label
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Upload
-                Images</label>
-            <input 
-                type="file" 
-                name="venue_images[]" 
-                multiple 
-                accept="image/*" 
-                required
-                class="bg-white flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-            />
-        </div>
-
-            <button type="submit"
-                class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-500 text-white hover:bg-red-900 h-10 px-4 py-2">Add
-                Venue</button>
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Upload
+                    Images</label>
+                <input 
+                    type="file" 
+                    name="venue_images[]" 
+                    multiple 
+                    accept="image/*" 
+                    required
+                    class="bg-white flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
+                />
+            </div>  
+            
+                
+                <button type="submit"
+                    class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-500 text-white hover:bg-red-900 h-10 px-4 py-2">Add
+                    Venue</button>
+                
         </form>
     </div>
 </div>

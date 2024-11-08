@@ -1,12 +1,26 @@
-<?php require_once __DIR__ . '/classes/venue.class.php';
+<?php
+require_once __DIR__ . '/classes/venue.class.php';
 require_once __DIR__ . '/classes/account.class.php';
+
 $venueObj = new Venue();
 $accountObj = new Account();
-if (isset($_GET['id'])) {
-    $venue = $venueObj->
-        getSingleVenue($_GET['id']);
+
+// Check if 'id' parameter is present and valid
+if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
+    header("Location: index.php");
+    exit();
 }
 
+// Retrieve venue information based on 'id' parameter
+$venue = $venueObj->getSingleVenue($_GET['id']);
+
+// If no venue is found, redirect to index.php
+if (empty($venue['name'])) {
+    header("Location: index.php");
+    exit();
+}
+
+// Retrieve the owner's information
 $owner = $accountObj->getUser($venue['host_id']);
 ?>
 
@@ -19,7 +33,7 @@ $owner = $accountObj->getUser($venue['host_id']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Venue Details - HubVenue</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
 </head>
@@ -98,8 +112,8 @@ $owner = $accountObj->getUser($venue['host_id']);
                 </button>
             </div>
 
-            <div class="flex gap-12">
-                <div class="w-2/3">
+            <div class="flex gap-12 flex-col md:flex-row">
+                <div class="md:w-2/3">
                     <div class="flex justify-between items-center mb-6 gap-4">
                         <div>
                             <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($venue['tag']) ?> at
@@ -219,20 +233,19 @@ $owner = $accountObj->getUser($venue['host_id']);
                     </div>
                 </div>
 
-                <div class="w-1/3">
+                <div class="md:w-1/3">
                     <div class="border rounded-xl p-6 shadow-lg mb-6">
                         <h3 class="text-xl font-semibold mb-4">Location</h3>
-                        <div class="bg-gray-100 rounded-lg h-48 mb-4">
-                            <div class="w-full h-full flex items-center justify-center text-gray-500">
-                                Map placeholder
-                            </div>
+                        <div class="bg-gray-100 rounded-lg h-48 w-full mb-4">
+                            <?php include_once './openStreetMap/autoMapping.osm.php' ?>
                         </div>
                     </div>
 
                     <div class="border rounded-xl p-6 shadow-lg sticky top-6">
                         <div class="flex justify-between items-center mb-4">
                             <div>
-                                <span class="text-2xl font-semibold">₱{{Price}}</span>
+                                <span class="text-2xl font-semibold">₱
+                                    <?php echo htmlspecialchars($venue['price']) ?></span>
                                 <span class="text-lg">night</span>
                             </div>
                             <div class="text-sm">
@@ -262,21 +275,26 @@ $owner = $accountObj->getUser($venue['host_id']);
                         <p class="text-center text-gray-600 mb-4">You won't be charged yet</p>
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span class="underline">₱{{Price}} x {{Nights}} nights</span>
+                                <span class="underline">₱ <?php echo htmlspecialchars($venue['price']) ?> x {{Nights}}
+                                    nights</span>
                                 <span>₱{{Total Price for Nights}}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="underline">Cleaning fee</span>
-                                <span>₱{{Cleaning Fee}}</span>
+                                <span class="underline">Entrance fee</span>
+                                <span>₱ <?php echo htmlspecialchars($venue['entrance']) ?></span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="underline">Airbnb service fee</span>
+                                <span class="underline">Cleaning fee</span>
+                                <span>₱ <?php echo htmlspecialchars($venue['cleaning']) ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="underline">HubVenue service fee</span>
                                 <span>₱{{Service Fee}}</span>
                             </div>
                         </div>
                         <hr class="my-4">
                         <div class="flex justify-between font-semibold">
-                            <span>Total before taxes</span>
+                            <span>Total </span>
                             <span>₱{{Total Price}}</span>
                         </div>
                     </div>

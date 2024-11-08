@@ -10,6 +10,9 @@ class Venue
     public $price;
     public $capacity;
     public $amenities;
+    public $tag;
+    public $entrance;
+    public $cleaning;
     public $host_id = 1;
     public $status = 1;
     public $availability = 1;
@@ -28,9 +31,12 @@ class Venue
             // Establish database connection
             $conn = $this->db->connect();
 
-            // Insert venue information (without images)
-            $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, host_id, status_id, availability_id) 
-                VALUES (:name, :description, :location, :price, :capacity, :amenities, :host_id, :status_id, :availability_id)';
+            // Begin transaction
+            $conn->beginTransaction();
+
+            // Insert venue information
+            $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, entrance, cleaning, venue_tag, host_id, status_id, availability_id) 
+                VALUES (:name, :description, :location, :price, :capacity, :amenities, :entrance, :cleaning, :venue_tag, :host_id, :status_id, :availability_id)';
             $stmt = $conn->prepare($sql);
 
             // Bind parameters
@@ -40,6 +46,9 @@ class Venue
             $stmt->bindParam(':price', $this->price);
             $stmt->bindParam(':capacity', $this->capacity);
             $stmt->bindParam(':amenities', $this->amenities);
+            $stmt->bindParam(':entrance', $this->entrance);
+            $stmt->bindParam(':cleaning', $this->cleaning);
+            $stmt->bindParam(':venue_tag', $this->tag);
             $stmt->bindParam(':host_id', $this->host_id);
             $stmt->bindParam(':status_id', $this->status);
             $stmt->bindParam(':availability_id', $this->availability);
@@ -47,34 +56,42 @@ class Venue
             // Execute venue insertion
             if ($stmt->execute()) {
                 // Get the last inserted ID for the venue
-                $last_inserted_venue = $conn->lastInsertId();
+                $lastInsertedVenue = $conn->lastInsertId();
 
-                // Loop through each image and insert them
-                $images = json_decode($this->image_url); // Decode the JSON into an array of image URLs
-                foreach ($images as $image_url) {
-                    // Insert image URL into the venue_images table
+                // Insert images if available
+                $images = json_decode($this->image_url);
+                if ($images) {
                     $imageSql = "INSERT INTO venue_images (venue_id, image_url) VALUES (:venue_id, :image_url)";
                     $imageStmt = $conn->prepare($imageSql);
-                    $imageStmt->bindParam(':venue_id', $last_inserted_venue);
-                    $imageStmt->bindParam(':image_url', $image_url);
 
-                    // Execute image insertion
-                    if (!$imageStmt->execute()) {
-                        // If any image fails to insert, return error
-                        return ['status' => 'error', 'message' => 'Failed to add images for the venue'];
+                    foreach ($images as $image_url) {
+                        $imageStmt->bindParam(':venue_id', $lastInsertedVenue);
+                        $imageStmt->bindParam(':image_url', $image_url);
+
+                        // Execute image insertion
+                        if (!$imageStmt->execute()) {
+                            // If any image fails to insert, return error
+                            return ['status' => 'error', 'message' => 'Failed to add images for the venue'];
+                        }
                     }
                 }
-
+                $conn->commit();
                 return ['status' => 'success', 'message' => 'Venue and images added successfully'];
             } else {
+                $conn->rollBack();
                 return ['status' => 'error', 'message' => 'Failed to add venue'];
             }
+
         } catch (PDOException $e) {
             // Log error and return failure message
-            error_log("Database error: " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'An error occurred while adding the venue'];
+            $conn->rollBack();
+            $errmess = "Database error: " . $e->getMessage();
+            error_log($errmess);  // Log the error message
+            return ['status' => 'error', 'message' => $errmess];  // Return the error message
         }
+
     }
+
 
     function getAllVenues($status = '')
     {

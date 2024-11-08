@@ -19,6 +19,8 @@ $venues = $venueObj->getAllVenues($status = '3');
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Location</th>
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Price</th>
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Amenities</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Entrance Fee</th>
+                        <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Cleaning Fee</th>
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Venue Owner</th>
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Availability</th>
@@ -59,10 +61,22 @@ $venues = $venueObj->getAllVenues($status = '3');
                                 }
                                 ?>
                             </td>
+                            <td class="p-4 align-middle"><?= htmlspecialchars($venue['entrance']) ?></td>
+                            <td class="p-4 align-middle"><?= htmlspecialchars($venue['cleaning']) ?></td>
+
+
+                            <?php
+                            // Fetch the venue owner details
+                            require_once '../classes/account.class.php';
+                            $accountObj = new Account();
+                            $venueOwner = $accountObj->getUser($venue['host_id']);
+                            ?>
 
                             <td class="p-4 align-middle">
-                                <?= htmlspecialchars($venue['firstname']) . ' ' . htmlspecialchars($venue['lastname']) ?>
+                                <?= htmlspecialchars($venueOwner['firstname']) . ' ' . htmlspecialchars($venueOwner['lastname']) ?>
                             </td>
+
+
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['status']) ?></td>
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['availability']) ?></td>
                             <td class="p-4 align-middle">
