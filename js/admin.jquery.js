@@ -405,7 +405,7 @@ if (!linkFound) {
   function viewOpenStreetMap(){
     $.ajax({
         type: "GET",
-        url: "../venue-management/openStreetMap.html",
+        url: "../openStreetMap/openStreetMap.html",
         dataType: "html",
         success: function (response) {
           $("#openstreetmapplaceholder").html(response);
@@ -441,7 +441,10 @@ if (!linkFound) {
         processData: false,
         success: function (response) {
             if (response.status == "success") {
-                console.log("Venue added successfully");
+                showModal(
+                    "Venue added successfully",
+                    "../images/black_ico.png"
+                );
                 $("#add-venue-form")[0].reset();
             } else {
                 console.log("Venue not added");

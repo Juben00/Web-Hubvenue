@@ -5,8 +5,8 @@ require_once '../sanitize.php';
 
 $venueObj = new Venue();
 
-$name = $description = $location = $price = $capacity = $amenities = "";
-$nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $imageErr = "";
+$name = $description = $location = $price = $capacity = $amenities = $tag = $entrance = $cleaning = "";
+$nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $tagErr = $entranceErr = $cleaningErr = $imageErr = "";
 
 $uploadDir = '/venue_image_uploads/';
 $allowedType = ['jpg', 'jpeg', 'png'];
@@ -19,6 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = clean_input($_POST['price']);
     $capacity = clean_input($_POST['capacity']);
     $amenities = clean_input($_POST['amenities']);
+    $tag = clean_input($_POST['tag']);
+    $entrance = clean_input($_POST['entrance']);
+    $cleaning = clean_input($_POST['cleaning']);
 
     // Validation for required fields
     if (empty($name))
@@ -33,6 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $capacityErr = "Capacity is required";
     if (empty($amenities))
         $amenitiesErr = "Amenities are required";
+    if (empty($tag))
+        $tagErr = "Tag is required";
+    if (empty($entrance))
+        $entranceErr = "Entrance field is required";
+    if (empty($cleaning))
+        $cleaningErr = "Cleaning field is required";
 
     // Handle multiple image uploads
     $imageErr = [];
@@ -52,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
 
                 // Move the uploaded file to the target directory
-                if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], $targetImage)) {
+                if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], '..' . $targetImage)) {
                     $uploadedImages[] = $targetImage;
                 } else {
                     $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
@@ -64,6 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Prepare amenities JSON
     $amenitiesArray = explode(',', $amenities);
     $amenitiesJson = json_encode(array_map('trim', $amenitiesArray));
+
+    if ($tag == 'Corporate Events') {
+        $tag = 1;
+    } else if ($tag == 'Reception Hall') {
+        $tag = 2;
+    } else if ($tag == 'Intimate Gatherings') {
+        $tag = 3;
+    } else if ($tag == 'Outdoor') {
+        $tag = 4;
+    }
 
     // Proceed if no errors
     if (
@@ -77,13 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->price = $price;
         $venueObj->capacity = $capacity;
         $venueObj->amenities = $amenitiesJson;
+        $venueObj->tag = $tag;
+        $venueObj->entrance = $entrance;
+        $venueObj->cleaning = $cleaning;
         $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
 
         // Add venue with image URLs to the database
         $result = $venueObj->addVenue();
 
         if ($result['status'] === 'success') {
-            echo json_encode(['status' => 'success', 'message' => 'Venue added successfully.']);
+            echo json_encode(['status' => 'success', 'message' => $result['message']]);
         } else {
             echo json_encode(['status' => 'error', 'message' => $result['message']]);
         }
@@ -98,6 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'priceErr' => $priceErr,
                 'capacityErr' => $capacityErr,
                 'amenitiesErr' => $amenitiesErr,
+                'entranceErr' => $entranceErr,
+                'cleaningErr' => $cleaningErr,
                 'imageErr' => $imageErr,
             ]
         ]);
