@@ -347,7 +347,6 @@ session_start();
 
     <script>
         let map;
-        let marker;
 
         const mapButton = document.getElementById('maps-button');
 
@@ -356,11 +355,34 @@ session_start();
             const url = `./openStreetMap/openStreetMap.html`;
 
             fetch(url)
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
                 .then(data => {
                     document.getElementById('openstreetmapplaceholder').innerHTML = data;
+                    initializeMap(); // Initialize the map after loading the HTML
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
                 });
         });
+
+        function initializeMap() {
+            const mapElement = document.getElementById('map'); // Ensure this ID matches the one in your HTML
+            if (mapElement) {
+                map = L.map(mapElement).setView([6.9315, 122.0424], 13); // Set initial view
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(map);
+            } else {
+                console.error('Map element not found');
+            }
+        }
     </script>
 
 </body>
