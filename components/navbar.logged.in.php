@@ -66,6 +66,13 @@
 <script>
   // Function to update navigation color based on scroll position
 
+  // Add scroll event listener
+  window.addEventListener("scroll", updateNavColor());
+  // Initial call to set correct color on page load
+  updateNavColor();
+
+
+
   function updateNavColor() {
     const mainNav = document.getElementById("main-nav");
     const firstSection = document.querySelector(".first-section");
