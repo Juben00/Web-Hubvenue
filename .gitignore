@@ -1,2 +1,3 @@
 /node_modules
-/venue_image_uploads
+/venue_image_uploads/*
+!/venue_image_uploads/.gitignore
