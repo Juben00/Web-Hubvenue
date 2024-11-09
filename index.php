@@ -103,9 +103,6 @@ $venues = $venueObj->getAllVenues('2');
 
     <!-- Header -->
     <?php
-
-
-
     // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
         include_once './components/navbar.logged.in.php';
@@ -195,8 +192,9 @@ $venues = $venueObj->getAllVenues('2');
                             <?php
                             foreach ($venues as $venue) {
                                 ?>
-                                <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer"
-                                    onclick="window.location.href = 'venues.php?id=<?php echo $venue['venue_id']; ?>'">
+                                <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer venueCard"
+                                    data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
+                                    data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
                                     <div class="relative">
                                         <!-- Slideshow Container for each venue -->
                                         <div class="relative w-full h-96 overflow-hidden">
@@ -463,6 +461,7 @@ $venues = $venueObj->getAllVenues('2');
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
 
+    <!-- venue slideshow -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const venueSlideshows = document.querySelectorAll('.slideshow-container');
@@ -515,6 +514,7 @@ $venues = $venueObj->getAllVenues('2');
         });
     </script>
 
+    <!-- login and signup form functionality || styling css  -->
     <script>
         // Get modal elements
         const authModal = document.getElementById('authModal');
@@ -616,24 +616,6 @@ $venues = $venueObj->getAllVenues('2');
                 });
             });
         });
-
-        const menutrig = document.getElementById("menutabtrigger");
-        const menu = document.getElementById("menutab");
-
-        if (menutrig) {
-            menutrig.addEventListener("click", function () {
-                menu.classList.toggle("hidden");
-            });
-        }
-
-        document.addEventListener("dblclick", function (event) {
-            if (menu.contains(event.target)) {
-                menu.classList.add("hidden");
-            }
-        });
-
-
-
     </script>
 
 </body>

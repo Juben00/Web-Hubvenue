@@ -303,20 +303,8 @@ $owner = $accountObj->getUser($venue['host_id']);
 
     </main>
 
-    <script>
-        const menutrig = document.getElementById("menutabtrigger");
-        const menu = document.getElementById("menutab");
-
-        menutrig.addEventListener("click", function () {
-            menu.classList.toggle("hidden");
-        });
-
-        document.addEventListener("dblclick", function (event) {
-            if (menu.contains(event.target)) {
-                menu.classList.add("hidden");
-            }
-        });
-    </script>
+    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
 
 </body>
 

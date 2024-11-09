@@ -1,16 +1,16 @@
 $(document).ready(function () {
 
     // signup terms and conditions checker
-    const $signupAgreeTerms = $("#agreeTerms");
-    const $signupButton = $("#signupSubmit");
+    const signupAgreeTerms = $("#agreeTerms");
+    const signupButton = $("#signupSubmit");
 
-    if ($signupAgreeTerms.length) {
+    if (signupAgreeTerms.length) {
         // Initial check on page load
-        $signupButton.prop("disabled", !$signupAgreeTerms.is(":checked"));
+        signupButton.prop("disabled", !signupAgreeTerms.is(":checked"));
 
         // Add a click event listener
-        $signupAgreeTerms.on("click", function () {
-            $signupButton.prop("disabled", !$(this).is(":checked"));
+        signupAgreeTerms.on("click", function () {
+            signupButton.prop("disabled", !$(this).is(":checked"));
         });
     }
 
@@ -33,6 +33,31 @@ $(document).ready(function () {
         e.preventDefault();
         viewOpenStreetMap(); 
     });
+
+    //menu trigger buttons open
+    $("#menutabtrigger").on("click", function (e) {
+        e.preventDefault();
+        $("#menutab").toggleClass("hidden");
+    });
+
+    //menu trigger buttons close
+    $('#menutab').on("dblclick", function (e) {
+        e.preventDefault();
+        $("#menutab").toggleClass("hidden");
+    });
+
+    $(".venueCard").on("click", function () {
+        let isLogged = $(this).data("isloggedin"); 
+        let venueUrl = $(this).data("id");
+
+        if (isLogged === true) {  
+            viewVenue(venueUrl);
+        } else {
+            showModal("Please login to view the venue", "./images/black_ico.png");
+        }
+    });
+
+
 
     function viewOpenStreetMap(){
     $.ajax({
@@ -94,6 +119,10 @@ $(document).ready(function () {
                 }
             },
             });
+    }
+
+    function viewVenue(url) {
+        window.location.href = url;
     }
 
 
