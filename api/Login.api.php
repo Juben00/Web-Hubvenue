@@ -28,13 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $accountObj->password = $password;
 
         $result = $accountObj->login();
-
-
-
         echo json_encode($result);
-
-
+        exit();
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Invalid email or password']);
+        echo json_encode([
+            'status' => 'error',
+            'message' => implode(', ', array_filter([
+                $emailErr,
+                $passwordErr
+            ]))
+        ]);
     }
 }

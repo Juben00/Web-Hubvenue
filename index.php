@@ -459,6 +459,10 @@ $venues = $venueObj->getAllVenues('2');
     </main>
     </div>
 
+    <!-- jQuery -->
+    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const venueSlideshows = document.querySelectorAll('.slideshow-container');
@@ -492,7 +496,6 @@ $venues = $venueObj->getAllVenues('2');
         });
 
     </script>
-
 
     <script>
         // Date picker functionality
