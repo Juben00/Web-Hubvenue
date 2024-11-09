@@ -614,23 +614,22 @@ $venues = $venueObj->getAllVenues('2');
             });
         });
 
-        // Add scroll event listener
-        window.addEventListener("scroll", updateNavColor);
-        // Initial call to set correct color on page load
-        updateNavColor();
-
         const menutrig = document.getElementById("menutabtrigger");
         const menu = document.getElementById("menutab");
 
-        menutrig.addEventListener("click", function () {
-            menu.classList.toggle("hidden");
-        });
+        if (menutrig) {
+            menutrig.addEventListener("click", function () {
+                menu.classList.toggle("hidden");
+            });
+        }
 
         document.addEventListener("dblclick", function (event) {
             if (menu.contains(event.target)) {
                 menu.classList.add("hidden");
             }
         });
+
+
 
     </script>
 
