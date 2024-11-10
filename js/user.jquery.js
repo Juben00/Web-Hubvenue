@@ -29,7 +29,7 @@ $(document).ready(function () {
     });
 
     // maps
-    $("#maps-button").on("click", function (e) {
+    $(".maps-button").on("click", function (e) {
         e.preventDefault();
         viewOpenStreetMap(); 
     });

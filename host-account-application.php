@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['user'])) {
+    header("Location: index.php");
+    exit();
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -11,8 +17,8 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Host Account Application</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Add custom styles -->
@@ -161,7 +167,7 @@ session_start();
                         <span class="flex items-center space-x-2">
                             <input type="text" id="address" name="address" placeholder="Where do you live?" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                            <button id="maps-button"
+                            <button class="maps-button"
                                 class="border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
                                 <svg height="24px" width="24px" version="1.1" id="Layer_1"
                                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -336,6 +342,7 @@ session_start();
                 return isValid;
             }
 
+
             // Handle the Next button click
             nextBtn.addEventListener('click', function () {
                 if (validateStep()) {
@@ -349,7 +356,7 @@ session_start();
                         form.submit();
                     }
                 } else {
-                    alert('Please fill in all required fields before proceeding.');
+                    showModal('Please fill in all required fields before proceeding.', "./images/black_ico.png");
                 }
             });
 
