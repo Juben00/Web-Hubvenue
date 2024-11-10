@@ -1,35 +1,18 @@
 <nav id="main-nav" class="backdrop-blur-xl z-40 fixed w-full px-8">
   <div class="mx-auto flex items-center justify-between">
     <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
-    <span class="hidden md:flex space-x-4 items-center ml-20">
-      <button
-        class="text-gray-500 nav-buttons hover:text-gray-200 duration-150"
-      >
-        Sign Up
+      <button onclick="openModal()" class="flex gap-2 items-center">
+        <span
+          class="text-gray-500 nav-buttons hover:text-gray-200 duration-150"
+        >
+          Sign Up
+        </span>
+        <span
+          class="text-gray-500 border nav-buttons border-white px-4 py-2 rounded hover:bg-slate-200 hover:text-blue-600 duration-150"
+        >
+          Log In
+        </span>
       </button>
-      <button
-        class="text-gray-500 border nav-buttons border-white px-4 py-2 rounded hover:bg-slate-200 hover:text-blue-600 ml-20 duration-150"
-        onclick="openModal()"
-      >
-        Log In
-      </button>
-    </span>
-    <button class="md:hidden text-white hover:text-gray-200">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16"
-        />
-      </svg>
-    </button>
   </div>
 </nav>
 
@@ -66,3 +49,5 @@
   // Initial call to set correct color on page load
   updatemnColor();
 </script>
+
+
