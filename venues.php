@@ -119,9 +119,6 @@ $owner = $accountObj->getUser($venue['host_id']);
                             <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($venue['tag']) ?> at
                                 <?php echo htmlspecialchars($venue['location']) ?>
                             </h2>
-                            <p class="">Venue Capacity : <span
-                                    class="text-gray-600"><?php echo htmlspecialchars($venue['capacity']) ?>
-                                    guests</span>
                         </div>
                     </div>
 
@@ -130,6 +127,14 @@ $owner = $accountObj->getUser($venue['host_id']);
 
                     <h3 class="text-xl font-semibold mb-4">Place Description</h3>
                     <p class="mb-4"><?php echo htmlspecialchars($venue['description']) ?></p>
+
+                    <hr class="my-6">
+
+                    <h3 class="text-xl font-semibold mb-4">Venue Capacity</h3>
+                    <p class="">
+                        <?php echo htmlspecialchars($venue['capacity']) ?>
+                        guests
+                    </p>
 
                     <hr class="my-6">
 

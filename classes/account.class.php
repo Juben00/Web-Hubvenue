@@ -10,9 +10,14 @@ class Account
     public $sex;
     public $usertype = 2;
     public $birthdate;
+    public $address;
     public $contact_number;
     public $email;
     public $password;
+
+    //host account table variables
+
+
 
     protected $db;
 
@@ -33,7 +38,7 @@ class Account
             return ['status' => 'error', 'message' => 'Account already exists'];
         } else {
             // Insert new account if email does not exist
-            $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, email, password) VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number, :email, :password)';
+            $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, address ,email, password) VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number,:address, :email, :password)';
             $stmt = $this->db->connect()->prepare($sql);
 
             $stmt->bindParam(':firstname', $this->firstname);
@@ -51,6 +56,7 @@ class Account
             $stmt->bindParam(':user_type_id', $this->usertype);
             $stmt->bindParam(':birthdate', $this->birthdate);
             $stmt->bindParam(':contact_number', $this->contact_number);
+            $stmt->bindParam(':address', $this->address);
             $stmt->bindParam(':email', $this->email);
 
             // Hash the password before saving to the database
@@ -88,7 +94,6 @@ class Account
             return ['status' => 'error', 'message' => 'Invalid email or password'];
         }
     }
-
     public function getUser($user_id = '', $user_type = '')
     {
         // Add wildcards to user_id and user_type for LIKE search
@@ -117,6 +122,27 @@ class Account
 
         // Return the user data
         return $user;
+    }
+
+    public function upgradeUser()
+    {
+        // SQL query to update the user type to admin
+        try {
+
+            $conn = $this->db->connect();
+
+            // Begin transaction
+            $conn->beginTransaction();
+
+            $sql = "INSERT INTO host_account (userId, Fullname, Address, Birthdate, status_id) VALUES (:userId, :Fullname, :Address, :Birthdate, :status_id)";
+
+        } catch (PDOException $e) {
+            $conn->rollBack();
+            $errmess = "Database error: " . $e->getMessage();
+            error_log($errmess);  // Log the error message
+            return ['status' => 'error', 'message' => $errmess];  // Return the error message
+        }
+
     }
 
 

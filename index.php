@@ -29,6 +29,8 @@ $venues = $venueObj->getAllVenues('2');
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         .slideshow-container .slide {
             display: none;
@@ -449,18 +451,22 @@ $venues = $venueObj->getAllVenues('2');
 
                         </div>
                     </section>
+                </div>
             </section>
+            <div id="openstreetmapplaceholder"></div>
+            <?php require_once './components/footer.html' ?>
+        </main>
+    </div>
 
 
-    </div>
-    <?php require_once './components/footer.html' ?>
-    </main>
-    </div>
 
     <!-- jQuery -->
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
-
+    <script>
+        let map;
+        let marker;
+    </script>
     <!-- venue slideshow -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
