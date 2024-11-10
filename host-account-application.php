@@ -187,7 +187,7 @@ session_start();
                     </div>
                     <div>
                         <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
-                        <input type="date" id="birthdate" name="birthdate" required
+                        <input type="date" id="hostBd" name="birthdate" required
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                     </div>
                 </div>
@@ -203,18 +203,19 @@ session_start();
                         <select name="idType" id="idType"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
                             <option value="" disabled selected>Please choose Identification Card Type</option>
-                            <option value="national-id">National ID</option>
-                            <option value="drivers-license">Driver's License</option>
+                            <option value="Philippine Passport">Philippine Passport</option>
+                            <option value="UMID Card">UMID Card</option>
+                            <option value="National ID">National ID</option>
+                            <option value="Driver's License">Driver's License</option>
                         </select>
                     </div>
-
                     <div>
                         <label for="idImage">Take a picture of your ID card <span
                                 class="text-xs font-thin text-gray-500">*Upload only
                                 1 image of
                                 your ID
                                 (front)</span></label>
-                        <input type="file" name="idImage" id=""
+                        <input type="file" name="idImage" id="idImage"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
                     </div>
                 </div>
@@ -227,11 +228,13 @@ session_start();
                 <div class="space-y-4">
                     <div>
                         <label for="idType" class="block text-sm font-medium text-gray-700">Identification Card</label>
-                        <select name="idType" id="idType"
+                        <select name="idType2" id="idType2"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
                             <option value="" disabled selected>Please choose Identification Card Type</option>
-                            <option value="national-id">National ID</option>
-                            <option value="drivers-license">Driver's License</option>
+                            <option value="Philippine Passport">Philippine Passport</option>
+                            <option value="UMID Card">UMID Card</option>
+                            <option value="National ID">National ID</option>
+                            <option value="Driver's License">Driver's License</option>
                         </select>
                     </div>
 
@@ -241,7 +244,7 @@ session_start();
                                 1 image of
                                 your ID
                                 (front)</span></label>
-                        <input type="file" name="idImage" id=""
+                        <input type="file" name="idImage2" id="idImage2"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
                     </div>
                 </div>
@@ -284,10 +287,10 @@ session_start();
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const progressBarFill = document.getElementById('progressBarFill');
-            const successMessage = document.getElementById('successMessage');
-            const closeSuccessMessage = document.getElementById('closeSuccessMessage');
+            const reviewContent = document.getElementById('reviewContent');
             let currentStep = 0;
 
+            // Show specific step based on current index
             function showStep(stepIndex) {
                 steps.forEach((step, index) => {
                     step.classList.toggle('hidden', index !== stepIndex);
@@ -297,42 +300,60 @@ session_start();
                 progressBarFill.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
             }
 
-            function updateReviewStep() {
-                const reviewContent = document.getElementById('reviewContent');
-                reviewContent.innerHTML = '';
-                const formData = new FormData(form);
-                for (let [key, value] of formData.entries()) {
-                    if (key !== 'governmentId' && key !== 'utilityBill' && key !== 'venuePhotos') {
-                        const p = document.createElement('p');
-                        p.innerHTML = `<strong>${key}:</strong> ${value || 'Not provided'}`;
-                        reviewContent.appendChild(p);
-                    }
-                }
-                // Add file information
-                ['governmentId', 'utilityBill'].forEach(fileId => {
-                    const file = document.getElementById(fileId).files[0];
-                    const p = document.createElement('p');
-                    p.innerHTML = `<strong>${fileId}:</strong> ${file ? file.name : 'Not uploaded'}`;
-                    reviewContent.appendChild(p);
-                });
-                const venuePhotos = document.getElementById('venuePhotos').files;
-                const p = document.createElement('p');
-                p.innerHTML = `<strong>Venue Photos:</strong> ${venuePhotos.length} photo(s) uploaded`;
-                reviewContent.appendChild(p);
+            // Update review content with user inputs
+            function updateReviewContent() {
+                const fullName = document.getElementById('fullName').value;
+                const address = document.getElementById('address').value;
+                const bd = document.getElementById('hostBd').value;
+                const idType1 = document.getElementById('idType').value;
+                const idType2 = document.getElementById('idType2').value;
+                const idImage = document.getElementById('idImage').value;
+                const idImage2 = document.getElementById('idImage2').value;
+
+                reviewContent.innerHTML = `
+                <p><strong>Full Name:</strong> ${fullName}</p>
+                <p><strong>Address:</strong> ${address}</p>
+                <p><strong>Birthdate:</strong> ${bd}</p>
+                <p><strong>Identification Card 1 Type:</strong> ${idType1}</p>
+                <img src="${idImage}">
+                <p><strong>Identification Card 2 Type:</strong> ${idType2}</p>
+                <img src="${idImage2}">
+            `;
             }
 
+            // Validate required fields in the current step
+            function validateStep() {
+                const currentFields = steps[currentStep].querySelectorAll('input, select');
+                let isValid = true;
+                currentFields.forEach(field => {
+                    if (field.hasAttribute('required') && !field.value) {
+                        isValid = false;
+                        field.classList.add('border-red-500');
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+                return isValid;
+            }
+
+            // Handle the Next button click
             nextBtn.addEventListener('click', function () {
-                if (currentStep < steps.length - 1) {
-                    currentStep++;
-                    showStep(currentStep);
-                    if (currentStep === steps.length - 1) {
-                        updateReviewStep();
+                if (validateStep()) {
+                    if (currentStep < steps.length - 1) {
+                        if (currentStep === steps.length - 2) {
+                            updateReviewContent();
+                        }
+                        currentStep++;
+                        showStep(currentStep);
+                    } else {
+                        form.submit();
                     }
                 } else {
-                    successMessage.classList.remove('hidden');
+                    alert('Please fill in all required fields before proceeding.');
                 }
             });
 
+            // Handle the Previous button click
             prevBtn.addEventListener('click', function () {
                 if (currentStep > 0) {
                     currentStep--;
@@ -340,10 +361,12 @@ session_start();
                 }
             });
 
+            // Initialize the first step
             showStep(currentStep);
-
         });
     </script>
+
+
 
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>

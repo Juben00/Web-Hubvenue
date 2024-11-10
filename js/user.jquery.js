@@ -57,6 +57,12 @@ $(document).ready(function () {
         }
     });
 
+    //host account button
+    $("#hostAccountBtn").on("click", function () {
+        const url = $(this).data("url");
+        menuRedirection(url);
+    })
+
 
 
     function viewOpenStreetMap(){
@@ -123,6 +129,10 @@ $(document).ready(function () {
 
     function viewVenue(url) {
         window.location.href = url;
+    }
+
+    function menuRedirection(url){
+        window.location.href = "./" + url;
     }
 
 
