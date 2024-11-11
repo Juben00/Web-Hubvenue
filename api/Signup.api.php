@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo json_encode([
             'status' => 'error',
-            'message' => implode(', ', array_filter([
+            'message' => implode('<br>', array_filter([
                 $firstnameErr,
                 $lastnameErr,
                 $middlenameErr,
