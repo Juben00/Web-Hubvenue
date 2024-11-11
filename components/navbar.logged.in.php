@@ -2,9 +2,9 @@
   <!-- logged in -->
   <div class="flex items-center justify-between md:px-4">
     <!-- Left Section -->
-    <div class="flex items-center space-x-2">
+    <a class="flex items-center space-x-2 hover:cursor-pointer" id="HubvenueLogo">
       <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
-    </div>
+    </a>
     <!-- Center Section -->
     <div id="bottom-search"
       class="bg-slate-100 text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
