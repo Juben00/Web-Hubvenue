@@ -132,58 +132,93 @@ class Account
 
     public function upgradeUser()
     {
-        // SQL query to update the user type to admin
         try {
-
             $conn = $this->db->connect();
 
             // Begin transaction
             $conn->beginTransaction();
 
+            // Check if the user has already applied
+            $checkSql = "SELECT userId FROM host_application WHERE userId = :userId;";
+            $checkStmt = $conn->prepare($checkSql);
+            $checkStmt->bindParam(':userId', $this->userId);
+            $checkStmt->execute();
+
+            if ($checkStmt->rowCount() > 0) {
+                return ['status' => 'error', 'message' => 'You already applied for a Host Account, or your request is pending approval.'];
+            }
+
+            // Insert new host application
             $sql = "INSERT INTO host_application (userId, fullname, address, birthdate, status_id) VALUES (:userId, :fullname, :address, :birthdate, :status_id)";
             $stmt = $conn->prepare($sql);
 
             $stmt->bindParam(':userId', $this->userId);
-            $stmt->bindParam('fullname', $this->fullname);
+            $stmt->bindParam(':fullname', $this->fullname);
             $stmt->bindParam(':address', $this->address);
             $stmt->bindParam(':birthdate', $this->birthdate);
-            $stmt->bindParam('status_id', $this->status_id);
+            $stmt->bindParam(':status_id', $this->status_id);
 
             if ($stmt->execute()) {
-                // Get the last inserted ID for the venue
-                $lastInsertedhostId = $conn->lastInsertId();
-
+                $lastInsertedHostId = $conn->lastInsertId();
                 $imgOne = $this->idOne_url;
                 $imgTwo = $this->idTwo_url;
 
                 if ($imgOne && $imgTwo) {
                     $imageSql = "INSERT INTO host_id_images (id, idOne_type, idOne_image_url, idTwo_type, idTwo_image_url) VALUES (:id, :idOne_type, :idOne_image_url, :idTwo_type, :idTwo_image_url)";
                     $imageStmt = $conn->prepare($imageSql);
-                    $imageStmt->bindParam(':id', $lastInsertedhostId);
+
+                    $imageStmt->bindParam(':id', $lastInsertedHostId);
                     $imageStmt->bindParam(':idOne_type', $this->idOne_type);
                     $imageStmt->bindParam(':idOne_image_url', $imgOne);
                     $imageStmt->bindParam(':idTwo_type', $this->idTwo_type);
                     $imageStmt->bindParam(':idTwo_image_url', $imgTwo);
 
                     if (!$imageStmt->execute()) {
-                        // If any image fails to insert, return error
-                        return ['status' => 'error', 'message' => 'Failed to add images for the venue'];
+                        $conn->rollBack();
+                        return ['status' => 'error', 'message' => 'Failed to add images for the host application'];
                     }
                 }
+
+                // Commit transaction
                 $conn->commit();
-                return ['status' => 'success', 'message' => 'Host Application sent succesfully'];
+                return ['status' => 'success', 'message' => 'Host application sent successfully'];
             } else {
                 $conn->rollBack();
-                return ['status' => 'error', 'message' => 'Failed to send Host Application'];
+                return ['status' => 'error', 'message' => 'Failed to send host application'];
             }
 
         } catch (PDOException $e) {
             $conn->rollBack();
-            $errmess = "Database error: " . $e->getMessage();
-            error_log($errmess);  // Log the error message
-            return ['status' => 'error', 'message' => $errmess];  // Return the error message
+            // $errMessage = "Database error: " . $e->getMessage();
+            // error_log($errMessage); // Log the error message
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
+    }
 
+
+    public function HostApplicationStats($userId, $status)
+    {
+        // Establish database connection
+        $conn = $this->db->connect();
+
+        // Prepare the status filter for LIKE query
+        $statusLike = "%" . $status . "%";
+
+        // SQL query to fetch data
+        $sql = "SELECT * FROM host_application WHERE userId = :userId AND status_id LIKE :status;";
+
+        // Prepare statement
+        $stmt = $conn->prepare($sql);
+
+        // Bind parameters
+        $stmt->bindParam(':userId', $userId);
+        $stmt->bindParam(':status', $statusLike);
+
+        // Execute the query
+        if ($stmt->execute()) {
+            return $stmt->rowCount() > 0; // Return true if records found, false if not
+        }
+        return false;
     }
 
 

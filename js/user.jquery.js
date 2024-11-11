@@ -156,6 +156,7 @@ $(document).ready(function () {
         response = JSON.parse(response);
         if (response.status === "success") {
             formElement[0].reset();
+            $("#hostAccountBtn").click();
         } else {
             showModal(response.message, "./images/black_ico.png");
         }

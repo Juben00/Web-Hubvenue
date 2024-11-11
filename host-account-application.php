@@ -12,6 +12,9 @@ $accountObj = new Account();
 
 $user = $accountObj->getUser($_SESSION['user']['id']);
 
+$appliedHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 1);
+$isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
+
 ?>
 
 <!DOCTYPE html>
@@ -152,11 +155,10 @@ $user = $accountObj->getUser($_SESSION['user']['id']);
 
     ?>
 
-
     <!-- Main Content -->
-    <main class="flex-1 mt-20 container mx-auto px-4 py-8">
+    <main class="flex-1 mt-20 container mx-auto px-4 py-8 relative ">
 
-        <h1 class="text-4xl font-bold mb-4 text-center">Host Account Application</h1>
+        <h1 class="text-2xl md:text-4xl font-bold mb-4 text-center">Host Account Application</h1>
         <form id="hostApplicationForm" method="POST" class="max-w-2xl mx-auto">
             <!-- Step 1: Personal Information -->
             <div id="step1" class="step">
@@ -281,11 +283,20 @@ $user = $accountObj->getUser($_SESSION['user']['id']);
             </div>
 
         </form>
-
-
         <div id="openstreetmapplaceholder"></div>
-    </main>
+        <?php
+        if ($appliedHost) {
+            echo '<div class="bg-yellow-400 mt-4 text-center inline-block absolute -translate-x-1/2 left-1/2 p-3 rounded-lg text-xl font-semibold">
+            Your host application is currently under review. Please allow some time for the admin to process your request.
+          </div>';
+        } else if ($isHost) {
+            echo '<div class="bg-green-400 mt-4 text-center inline-block absolute -translate-x-1/2 left-1/2 p-3 rounded-lg text-xl font-semibold">
+            Congratulations! Your host account is now active. You may start posting and managing your listings.
+          </div>';
+        }
+        ?>
 
+    </main>
     <!-- Bottom Navigation -->
     <footer class="bg-white border-t">
         <div class="container mx-auto px-4 h-20 flex items-center justify-between">
