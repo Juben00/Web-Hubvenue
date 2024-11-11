@@ -17,7 +17,13 @@ class Account
 
     //host account table variables
 
-
+    public $userId;
+    public $fullname;
+    public $status_id = 1;
+    public $idOne_type;
+    public $idOne_url;
+    public $idTwo_type;
+    public $idTwo_url;
 
     protected $db;
 
@@ -134,7 +140,42 @@ class Account
             // Begin transaction
             $conn->beginTransaction();
 
-            $sql = "INSERT INTO host_account (userId, Fullname, Address, Birthdate, status_id) VALUES (:userId, :Fullname, :Address, :Birthdate, :status_id)";
+            $sql = "INSERT INTO host_application (userId, fullname, address, birthdate, status_id) VALUES (:userId, :fullname, :address, :birthdate, :status_id)";
+            $stmt = $conn->prepare($sql);
+
+            $stmt->bindParam(':userId', $this->userId);
+            $stmt->bindParam('fullname', $this->fullname);
+            $stmt->bindParam(':address', $this->address);
+            $stmt->bindParam(':birthdate', $this->birthdate);
+            $stmt->bindParam('status_id', $this->status_id);
+
+            if ($stmt->execute()) {
+                // Get the last inserted ID for the venue
+                $lastInsertedhostId = $conn->lastInsertId();
+
+                $imgOne = $this->idOne_url;
+                $imgTwo = $this->idTwo_url;
+
+                if ($imgOne && $imgTwo) {
+                    $imageSql = "INSERT INTO host_id_images (id, idOne_type, idOne_image_url, idTwo_type, idTwo_image_url) VALUES (:id, :idOne_type, :idOne_image_url, :idTwo_type, :idTwo_image_url)";
+                    $imageStmt = $conn->prepare($imageSql);
+                    $imageStmt->bindParam(':id', $lastInsertedhostId);
+                    $imageStmt->bindParam(':idOne_type', $this->idOne_type);
+                    $imageStmt->bindParam(':idOne_image_url', $imgOne);
+                    $imageStmt->bindParam(':idTwo_type', $this->idTwo_type);
+                    $imageStmt->bindParam(':idTwo_image_url', $imgTwo);
+
+                    if (!$imageStmt->execute()) {
+                        // If any image fails to insert, return error
+                        return ['status' => 'error', 'message' => 'Failed to add images for the venue'];
+                    }
+                }
+                $conn->commit();
+                return ['status' => 'success', 'message' => 'Host Application sent succesfully'];
+            } else {
+                $conn->rollBack();
+                return ['status' => 'error', 'message' => 'Failed to send Host Application'];
+            }
 
         } catch (PDOException $e) {
             $conn->rollBack();
@@ -147,3 +188,11 @@ class Account
 
 
 }
+
+// session_start();
+
+
+$accountObj = new Account();
+
+
+// var_dump($accountObj->getUser($_SESSION['user']['id']));

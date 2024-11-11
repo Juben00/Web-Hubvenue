@@ -6,6 +6,11 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
+require_once './classes/account.class.php';
+
+$accountObj = new Account();
+
+$user = $accountObj->getUser($_SESSION['user']['id']);
 
 ?>
 
@@ -16,6 +21,7 @@ if (!isset($_SESSION['user'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Host Account Application</title>
+    <link rel="icon" href="./images/black_ico.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
@@ -151,51 +157,60 @@ if (!isset($_SESSION['user'])) {
     <main class="flex-1 mt-20 container mx-auto px-4 py-8">
 
         <h1 class="text-4xl font-bold mb-4 text-center">Host Account Application</h1>
-        <form id="venueOwnerForm" class="max-w-2xl mx-auto">
+        <form id="hostApplicationForm" method="POST" class="max-w-2xl mx-auto">
             <!-- Step 1: Personal Information -->
             <div id="step1" class="step">
                 <h1 class="text-2xl font-bold mb-2">Personal Details</h1>
                 <p class="text-gray-600 mb-6">Let's start with your personal information.</p>
                 <div class="flex flex-col gap-4">
-                    <div>
-                        <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                        <input type="text" id="fullName" name="fullName" placeholder="Lastname, Firstname M.I" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                    </div>
-                    <div>
-                        <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                        <span class="flex items-center space-x-2">
-                            <input type="text" id="address" name="address" placeholder="Where do you live?" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                            <button class="maps-button"
-                                class="border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
-                                <svg height="24px" width="24px" version="1.1" id="Layer_1"
-                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
-                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                    <g id="SVGRepo_iconCarrier">
-                                        <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon>
-                                        <polygon style="fill:#d3d5de;"
-                                            points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
-                                        </polygon>
-                                        <polygon
-                                            points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
-                                        </polygon>
-                                        <path style="fill:#e73023;"
-                                            d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
-                                        </path>
-                                        <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
-                                    </g>
-                                </svg>
-                            </button>
-                        </span>
-                    </div>
-                    <div>
-                        <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
-                        <input type="date" id="hostBd" name="birthdate" required
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                    </div>
+
+                    <?php
+                    foreach ($user as $index): ?>
+                        <div>
+                            <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" placeholder="Last Name, First Name M.I."
+                                required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                value="<?php echo htmlspecialchars($index['lastname'] . ', ' . $index['firstname'] . ' ' . $index['middlename']) . '.'; ?>"
+                                readonly>
+                        </div>
+                        <div>
+                            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                            <span class="flex items-center space-x-2">
+                                <input type="text" id="address" name="address" placeholder="Where do you live?" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    value="<?php echo htmlspecialchars($index['address']); ?>" readonly>
+                                <button class="maps-button border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
+                                    <svg height="24px" width="24px" version="1.1" id="Layer_1"
+                                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
+                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                        <g id="SVGRepo_iconCarrier">
+                                            <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon>
+                                            <polygon style="fill:#d3d5de;"
+                                                points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
+                                            </polygon>
+                                            <polygon
+                                                points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
+                                            </polygon>
+                                            <path style="fill:#e73023;"
+                                                d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
+                                            </path>
+                                            <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
+                                        </g>
+                                    </svg>
+                                </button>
+                            </span>
+                        </div>
+                        <div>
+                            <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
+                            <input type="date" id="hostBd" name="birthdate" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                value="<?php echo htmlspecialchars($index['birthdate']); ?>" readonly>
+                        </div>
+                    <?php endforeach; ?>
+
                 </div>
             </div>
 
@@ -262,7 +277,9 @@ if (!isset($_SESSION['user'])) {
                 <h1 class="text-2xl font-bold mb-2">Review and Submit</h1>
                 <p class="text-gray-600 mb-6">Please review your information before submitting.</p>
                 <div id="reviewContent" class="space-y-2"></div>
+                <button type="submit" id="sform" class="hidden">Submit Form</button>
             </div>
+
         </form>
 
 
@@ -288,7 +305,6 @@ if (!isset($_SESSION['user'])) {
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('venueOwnerForm');
             const steps = document.querySelectorAll('.step');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
@@ -313,17 +329,13 @@ if (!isset($_SESSION['user'])) {
                 const bd = document.getElementById('hostBd').value;
                 const idType1 = document.getElementById('idType').value;
                 const idType2 = document.getElementById('idType2').value;
-                const idImage = document.getElementById('idImage').value;
-                const idImage2 = document.getElementById('idImage2').value;
 
                 reviewContent.innerHTML = `
-                <p><strong>Full Name:</strong> ${fullName}</p>
-                <p><strong>Address:</strong> ${address}</p>
-                <p><strong>Birthdate:</strong> ${bd}</p>
-                <p><strong>Identification Card 1 Type:</strong> ${idType1}</p>
-                <img src="${idImage}">
-                <p><strong>Identification Card 2 Type:</strong> ${idType2}</p>
-                <img src="${idImage2}">
+                <p><strong>Full Name:</strong> ${fullName || 'Empty'}</p>
+                <p><strong>Address:</strong> ${address || 'Empty'}</p>
+                <p><strong>Birthdate:</strong> ${bd || 'Empty'}</p>
+                <p><strong>Identification Card 1 Type:</strong> ${idType1 || 'Empty'}</p>
+                <p><strong>Identification Card 2 Type:</strong> ${idType2 || 'Empty'} </p>
             `;
             }
 
@@ -353,7 +365,7 @@ if (!isset($_SESSION['user'])) {
                         currentStep++;
                         showStep(currentStep);
                     } else {
-                        form.submit();
+                        document.getElementById('sform').click();
                     }
                 } else {
                     showModal('Please fill in all required fields before proceeding.', "./images/black_ico.png");

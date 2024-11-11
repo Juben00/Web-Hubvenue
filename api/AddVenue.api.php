@@ -113,17 +113,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Return validation errors as JSON
         echo json_encode([
             'status' => 'error',
-            'errors' => [
-                'nameErr' => $nameErr,
-                'descriptionErr' => $descriptionErr,
-                'locationErr' => $locationErr,
-                'priceErr' => $priceErr,
-                'capacityErr' => $capacityErr,
-                'amenitiesErr' => $amenitiesErr,
-                'entranceErr' => $entranceErr,
-                'cleaningErr' => $cleaningErr,
-                'imageErr' => $imageErr,
-            ]
+            'errors' => implode('<br>', array_filter([
+                $nameErr,
+                $descriptionErr,
+                $locationErr,
+                $priceErr,
+                $capacityErr,
+                $amenitiesErr,
+                $entranceErr,
+                $cleaningErr,
+                $imageErr,
+            ]))
         ]);
     }
     exit;

@@ -62,6 +62,7 @@ $users = $account->getUser("", "");
                             <th class="py-2 px-4 text-left">Sex</th>
                             <th class="py-2 px-4 text-left">Role</th>
                             <th class="py-2 px-4 text-left">Birthdate</th>
+                            <th class="py-2 px-4 text-left">Address</th>
                             <th class="py-2 px-4 text-left">Contact Number</th>
                             <th class="py-2 px-4 text-left">Email</th>
                             <th class="py-2 px-4 text-left">Actions</th>
@@ -77,6 +78,7 @@ $users = $account->getUser("", "");
                                 <td class="py-2 px-4 border-b"><?= $user['sex'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $user['user_type'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $user['birthdate'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['address'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $user['contact_number'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $user['email'] ?></td>
                                 <td class="py-2 px-4 border-b">

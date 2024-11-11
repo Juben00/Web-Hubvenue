@@ -63,6 +63,15 @@ $(document).ready(function () {
         menuRedirection(url);
     })
 
+    //host application button
+    $('#hostApplicationForm').on("submit", function (e) {
+        e.preventDefault();
+        console.log("host application form submitted");
+        
+        const formElement = $(this);
+        hostApplication(formElement);
+    });
+
 
 
     function viewOpenStreetMap(){
@@ -134,6 +143,27 @@ $(document).ready(function () {
     function menuRedirection(url){
         window.location.href = "./" + url;
     }
+
+    function hostApplication(formElement) {
+        let form = new FormData(formElement[0]);
+        $.ajax({
+    type: "POST",
+    url: "./api/HostApplication.api.php",
+    data: form,
+    processData: false,
+    contentType: false,
+    success: function (response) {
+        response = JSON.parse(response);
+        if (response.status === "success") {
+            formElement[0].reset();
+        } else {
+            showModal(response.message, "./images/black_ico.png");
+        }
+    }
+    });
+    }
+
+
 
 
 });
