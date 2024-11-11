@@ -14,6 +14,11 @@ $(document).ready(function () {
         });
     }
 
+    $('#HubvenueLogo').on('click', function (e) {
+        e.preventDefault();
+        window.location.href = "index.php";
+    })
+
     // login form
     $('#loginForm').on("submit", function (e) {
         e.preventDefault();
