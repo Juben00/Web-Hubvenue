@@ -16,6 +16,12 @@ function isActive($page_name) {
         
         <!-- Navigation Links -->
         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+
+        <a href="/web-hubvenue/rent-history.php" 
+                class="<?php echo isActive('rent-history.php'); ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                Rent History
+            </a>
+
             <a href="/web-hubvenue/venue-owner.php" 
                 class="<?php echo isActive('venue-owner.php'); ?> inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                 Today
@@ -43,7 +49,7 @@ function isActive($page_name) {
                 </svg>
             </button>
             <button class="ml-3 p-2 rounded-full bg-gray-900 text-white">
-                R
+                user icon
             </button>
         </div>
     </div>
