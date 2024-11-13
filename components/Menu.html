@@ -5,6 +5,8 @@
     <ul class="divide-y divide-gray-200 hover:cursor-pointer">
       <li
         class="px-4 py-3 flex justify-between items-center hover:bg-slate-100 hover:font-semibold duration-150"
+        data-url="venue-owner.php"
+        id="profileBtn"
       >
         <span>Profile</span>
       </li>
@@ -42,6 +44,7 @@
 
 <script>
   const logoutBtn = document.getElementById("logoutBtn");
+  const profileBtn = document.getElementById("profileBtn");
 
   function logout() {
     window.location.href = "logout.php";
@@ -49,5 +52,9 @@
 
   logoutBtn.addEventListener("click", () => {
     confirmshowModal("Are you sure you want to log out?", logout, "./images/black_ico.png");
+  });
+
+  profileBtn.addEventListener("click", () => {
+    window.location.href = profileBtn.getAttribute("data-url");
   });
 </script>
