@@ -1,5 +1,7 @@
 $(document).ready(function () {
   
+  //when the page is resfershed, the dashboard is loaded
+  $("#dashboard-link").click();
 
   $(".nav-link").on("click", function (e) {
     e.preventDefault();
@@ -13,8 +15,6 @@ $(document).ready(function () {
     $(this).addClass("bg-red-600 text-white").removeClass("text-gray-800");
 
     // Update URL without reloading
-    let url = $(this).attr("href");
-    window.history.pushState({ path: url }, "", url);
   });
 
   $("#dashboard-link").on("click", function (e) {
@@ -81,47 +81,6 @@ $(document).ready(function () {
   e.preventDefault();
   confirmshowModal("Are you sure you want to logout?", adminLogout, "../images/black_ico.png");
   });
-
-// Link listeners
-let url = window.location.href;
-
-// Define a mapping between URL endings and link IDs
-const linkMappings = {
-    "dashboard": "#dashboard-link",
-    "venue-management": "#venue-management-link",
-    "reservation-management": "#reservation-management-link",
-    "financial-management": "#financial-management-link",
-    "reports-analytics": "#reports-analytics-link",
-    "notifications-alerts": "#notifications-alerts-link",
-    "content-management": "#content-management-link",
-    "promotions-marketing": "#promotions-marketing-link",
-    "support-helpdesk": "#support-helpdesk-link",
-    "settings": "#settings-link",
-    "audit-logs": "#audit-logs-link",
-    "user-management": "#user-management-link",
-    // Venue management subviews
-    "venue-management/add": "#add-venue-link",
-    "venue-management/manage": "#manage-venues-link",
-    "venue-management/pricing": "#venue-rates-link",
-    "venue-management/availability": "#venue-availability-link"
-};
-
-// Loop through each mapping to find a matching URL ending
-let linkFound = false;
-for (const [key, linkId] of Object.entries(linkMappings)) {
-    if (url.endsWith(key)) {
-        $(linkId).trigger("click");
-        linkFound = true;
-        break;
-    }
-}
-
-// Default to the dashboard link if no match was found
-if (!linkFound) {
-    $("#dashboard-link").trigger("click");
-}
-
-
 
   //main views
   function viewDashboard(){
