@@ -18,41 +18,6 @@ function isActive($page_name) {
             <img src="../images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
         </a>
 
-        <!-- Center Section - Navigation Links -->
-        <div class="flex items-center justify-between" id="navbar-sticky">
-            <ul class="flex space-x-8 font-medium">
-                <li>
-                    <a href="/web-hubvenue/profile/profile.php" 
-                        class="<?php echo isActive('profile.php'); ?> block py-2 px-3">
-                        Rent History
-                    </a>
-                </li>
-                <li>
-                    <a href="/web-hubvenue/profile/venue-owner.php" 
-                        class="<?php echo isActive('venue-owner.php'); ?> block py-2 px-3">
-                        Today
-                    </a>
-                </li>
-                <li>
-                    <a href="/web-hubvenue/profile/calendar.php" 
-                        class="<?php echo isActive('calendar.php'); ?> block py-2 px-3">
-                        Calendar
-                    </a>
-                </li>
-                <li>
-                    <a href="/web-hubvenue/profile/listings.php" 
-                        class="<?php echo isActive('listings.php'); ?> block py-2 px-3">
-                        Listings
-                    </a>
-                </li>
-                <li>
-                    <a href="/web-hubvenue/profile/messages.php" 
-                        class="<?php echo isActive('messages.php'); ?> block py-2 px-3">
-                        Messages
-                    </a>
-                </li>
-            </ul>
-        </div>
 
         <!-- Right Section -->
         <div class="flex items-center space-x-4">

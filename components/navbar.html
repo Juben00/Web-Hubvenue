@@ -1,18 +1,16 @@
 <nav id="main-nav" class="backdrop-blur-xl z-40 fixed w-full px-8">
   <div class="mx-auto flex items-center justify-between">
-    <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
-      <button onclick="openModal()" class="flex gap-2 items-center">
-        <span
-          class="text-gray-500 nav-buttons hover:text-gray-200 duration-150"
-        >
-          Sign Up
-        </span>
-        <span
-          class="text-gray-500 border nav-buttons border-white px-4 py-2 rounded hover:bg-slate-200 hover:text-blue-600 duration-150"
-        >
-          Log In
-        </span>
-      </button>
+    <a href="./">
+      <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
+    </a>
+    <button onclick="openModal()" class="flex gap-2 items-center">
+      <span class="text-gray-500 nav-buttons hover:text-gray-200 duration-150">
+        Sign Up
+      </span>
+      <span class="text-gray-500 border nav-buttons border-white px-4 py-2 rounded hover:bg-slate-200 hover:text-blue-600 duration-150">
+        Log In
+      </span>
+    </button>
   </div>
 </nav>
 
@@ -23,16 +21,14 @@
     const firstSection = document.querySelector(".first-section");
     const mnButtons = document.querySelectorAll(".nav-buttons");
 
-    // Check if firstSection exists
     if (firstSection) {
-      const firstSectionBottom =
-        firstSection.offsetTop + firstSection.offsetHeight;
+      const firstSectionBottom = firstSection.offsetTop + firstSection.offsetHeight;
       const scrollPosition = window.scrollY;
 
       // Update button colors based on scroll position
       if (scrollPosition >= firstSectionBottom - mn.offsetHeight / 2) {
         mnButtons.forEach((button) => {
-          button.style.color = "#4A5568"; // Change to a dark color that matches your design
+          button.style.color = "#4A5568";
         });
       } else {
         mnButtons.forEach((button) => {
@@ -45,7 +41,7 @@
   }
 
   // Add scroll event listener
-  window.addEventListener("scroll", updatemnColor);
+  window.addEventListener("scroll", () => updatemnColor());
   // Initial call to set correct color on page load
   updatemnColor();
 </script>

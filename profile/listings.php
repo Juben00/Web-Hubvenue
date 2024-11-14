@@ -9,7 +9,7 @@
 </head>
 <body class="bg-gray-50">
    
-    <?php include __DIR__ . '/includes/nav.php'; ?>
+    <?php include __DIR__ . '/../components/profile.nav.php'; ?>
     <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">
         <div class="px-4 sm:px-0">
             <div class="flex justify-between items-center mb-6">

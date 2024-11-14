@@ -1,8 +1,8 @@
-<nav id="main-nav" class="bg-blue-500/20 backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8">
+<nav id="main-nav" class="bg-transparent backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8">
   <!-- logged in -->
   <div class="flex items-center justify-between md:px-4">
     <!-- Left Section -->
-    <a class="flex items-center space-x-2 hover:cursor-pointer" id="HubvenueLogo">
+    <a href="./" class="flex items-center space-x-2 hover:cursor-pointer" id="HubvenueLogo">
       <img src="./images/black_ico.png" alt="HubVenue_Logo" class="h-[80px]" />
     </a>
     <!-- Center Section -->
@@ -65,14 +65,6 @@
 
 <script>
   // Function to update navigation color based on scroll position
-
-  // Add scroll event listener
-  window.addEventListener("scroll", updateNavColor());
-  // Initial call to set correct color on page load
-  updateNavColor();
-
-
-
   function updateNavColor() {
     const mainNav = document.getElementById("main-nav");
     const firstSection = document.querySelector(".first-section");
@@ -80,8 +72,7 @@
     const navButtons = mainNav.querySelectorAll(".nav-buttons");
 
     if (firstSection) {
-      const firstSectionBottom =
-        firstSection.offsetTop + firstSection.offsetHeight;
+      const firstSectionBottom = firstSection.offsetTop + firstSection.offsetHeight;
       const scrollPosition = window.scrollY;
 
       // Update nav buttons' color based on scroll position
@@ -108,5 +99,8 @@
     }
   }
 
-
+  // Add scroll event listener
+  window.addEventListener("scroll", () => updateNavColor());
+  // Initial call to set correct color on page load
+  updateNavColor();
 </script>

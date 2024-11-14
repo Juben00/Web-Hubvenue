@@ -10,7 +10,7 @@
 </head>
 
 <body class="bg-gray-50">
-    <?php include __DIR__ . '/components/profile.nav.php'; ?>
+    <?php include __DIR__ . '/../components/profile.nav.php'; ?>
 
     <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
         <div class="px-4 sm:px-0">

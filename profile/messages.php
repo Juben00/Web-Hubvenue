@@ -8,7 +8,7 @@
     <base href="/">
 </head>
 <body class="bg-gray-50">
-    <?php include __DIR__ . '/includes/nav.php'; ?>
+    <?php include __DIR__ . '/../components/profile.nav.php'; ?>
 
     <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
         <div class="bg-white rounded-lg shadow min-h-[600px]">

@@ -8,7 +8,7 @@
     <base href="/">
 </head>
 <body class="bg-gray-50">
-<?php include __DIR__ . '/includes/nav.php'; ?>
+<?php include __DIR__ . '/../components/profile.nav.php'; ?>
 
     <!-- Main Content -->
     <main class="max-w-7xl pt-20 mx-auto py-6 sm:px-6 lg:px-8">
@@ -61,20 +61,7 @@
             </div>
         </div>
 
-        <!-- Help Section -->
-        <div class="mt-8 px-4 sm:px-0">
-            <h2 class="text-xl font-bold text-gray-900">We're here to help</h2>
-            <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="font-semibold">Guidance from a Superhost</h3>
-                    <!-- Add content -->
-                </div>
-                <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="font-semibold">Contact specialized support</h3>
-                    <!-- Add content -->
-                </div>
-            </div>
-        </div>
+       
     </main>
 </body>
 </html> 

@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white">
-    <?php include __DIR__ . '/includes/nav.php'; ?>
+<?php include __DIR__ . '/../components/profile.nav.php'; ?>
 
     <div class="flex pt-20">
         <!-- Main Calendar Section -->
