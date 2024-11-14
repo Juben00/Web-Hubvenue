@@ -3,7 +3,7 @@ session_start();
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
-        header('Location: admin/dashboard');
+        header('Location: admin/');
     }
 }
 
