@@ -9,7 +9,7 @@
 <body class="bg-white">
     <?php include __DIR__ . '/includes/nav.php'; ?>
 
-    <div class="flex">
+    <div class="flex pt-20">
         <!-- Main Calendar Section -->
         <div class="flex-1">
             <!-- Header Section -->

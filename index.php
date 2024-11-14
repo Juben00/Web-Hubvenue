@@ -35,12 +35,18 @@ $venues = $venueObj->getAllVenues('2');
         .slideshow-container .slide {
             display: none;
             opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 0.5s ease-in-out;
         }
 
         .slideshow-container .slide.active {
             display: block;
             opacity: 1;
-            transition: opacity 1s ease-in-out;
+            z-index: 1;
         }
 
 
@@ -97,6 +103,14 @@ $venues = $venueObj->getAllVenues('2');
             transition: opacity 0.3s ease-in-out;
         }
     </style>
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen text-gray-900 flex flex-col">
@@ -132,7 +146,7 @@ $venues = $venueObj->getAllVenues('2');
             </div>
 
             <!-- New second section -->
-            <section class="bg-white py-16">
+            <section class="bg-white py-16 ">
                 <div class=" container mx-auto px-4 md:px-8">
                     <div class="ml-16 max-w-6xl mx-auto">
                         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
@@ -247,31 +261,11 @@ $venues = $venueObj->getAllVenues('2');
                                                 </div>
                                             </div>
 
-                                            <p class="text-sm text-gray-500 leading-tight">
+                                            <p class="text-sm text-gray-500 leading-tight line-clamp-2">
                                                 <?= htmlspecialchars($venue['description']) ?>
                                             </p>
 
-                                            <div class="my-2">
-                                                <!-- Amenities Section -->
-                                                <?php if (!empty($venue['amenities'])): ?>
-                                                    <?php
-                                                    $amenities = json_decode($venue['amenities'], true);
-                                                    if ($amenities):
-                                                        ?>
-                                                        <ul class="list-disc pl-5 space-y-1">
-                                                            <?php foreach ($amenities as $amenity): ?>
-                                                                <li class="text-sm text-gray-500 leading-tight">
-                                                                    <?= htmlspecialchars($amenity) ?>
-                                                                </li>
-                                                            <?php endforeach; ?>
-                                                        </ul>
-                                                    <?php else: ?>
-                                                        <p class="text-sm text-gray-500">No amenities available</p>
-                                                    <?php endif; ?>
-                                                <?php else: ?>
-                                                    <p class="text-sm text-gray-500">No amenities available</p>
-                                                <?php endif; ?>
-                                            </div>
+                                      
 
                                             <p class="mt-2">
                                                 <span
@@ -472,28 +466,42 @@ $venues = $venueObj->getAllVenues('2');
         document.addEventListener('DOMContentLoaded', () => {
             const venueSlideshows = document.querySelectorAll('.slideshow-container');
 
-            venueSlideshows.forEach((slideshow, index) => {
+            venueSlideshows.forEach((slideshow) => {
                 let currentSlide = 0;
                 const slides = slideshow.querySelectorAll('.slide');
 
                 function showSlide(index) {
-                    // Hide all slides
-                    slides.forEach((slide, i) => {
-                        slide.classList.remove('active');
-                        slide.style.opacity = 0;
-                        slide.style.transition = 'opacity 1s ease-out'; // Ensuring smooth transition
-                    });
+                    // First set display:block on next slide before starting transition
+                    slides[index].style.display = 'block';
+                    
+                    // Small delay to ensure display:block is processed
+                    setTimeout(() => {
+                        // Hide all slides
+                        slides.forEach((slide) => {
+                            slide.classList.remove('active');
+                            slide.style.opacity = '0';
+                        });
 
-                    // Show the current slide
-                    slides[index].classList.add('active');
-                    slides[index].style.opacity = 1;
+                        // Show and fade in the current slide
+                        slides[index].classList.add('active');
+                        slides[index].style.opacity = '1';
+
+                        // Clean up non-active slides after transition
+                        setTimeout(() => {
+                            slides.forEach((slide, i) => {
+                                if (i !== index) {
+                                    slide.style.display = 'none';
+                                }
+                            });
+                        }, 500); // Match this to transition duration
+                    }, 10);
                 }
 
                 // Show next slide every 4 seconds
                 setInterval(() => {
                     currentSlide = (currentSlide + 1) % slides.length;
                     showSlide(currentSlide);
-                }, 4000); // Change interval to 4000 ms (4 seconds)
+                }, 4000);
 
                 // Initialize the first slide
                 showSlide(currentSlide);

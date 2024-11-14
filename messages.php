@@ -10,7 +10,7 @@
 <body class="bg-gray-50">
     <?php include __DIR__ . '/includes/nav.php'; ?>
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
         <div class="bg-white rounded-lg shadow min-h-[600px]">
             <div class="grid grid-cols-3">
                 <!-- Messages List -->

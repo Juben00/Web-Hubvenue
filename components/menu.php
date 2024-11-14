@@ -5,7 +5,7 @@
     <ul class="divide-y divide-gray-200 hover:cursor-pointer">
       <li
         class="px-4 py-3 flex justify-between items-center hover:bg-slate-100 hover:font-semibold duration-150"
-        data-url="venue-owner.php"
+        data-url="rent-history.php"
         id="profileBtn"
       >
         <span>Profile</span>

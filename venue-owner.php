@@ -11,7 +11,7 @@
 <?php include __DIR__ . '/includes/nav.php'; ?>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <main class="max-w-7xl pt-20 mx-auto py-6 sm:px-6 lg:px-8">
         <!-- Welcome Section -->
         <div class="px-4 sm:px-0">
             <h1 class="text-2xl font-bold text-gray-900">Welcome back, Rezier John</h1>

@@ -10,7 +10,7 @@
 <body class="bg-gray-50">
    
     <?php include __DIR__ . '/includes/nav.php'; ?>
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">
         <div class="px-4 sm:px-0">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold">Your listings</h1>
