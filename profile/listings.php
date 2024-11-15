@@ -15,7 +15,8 @@
                             d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
-                <button class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">+</button>
+                <button class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                    id="addVenueButton">+</button>
             </div>
         </div>
 

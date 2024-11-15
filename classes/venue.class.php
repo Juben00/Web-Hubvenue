@@ -13,7 +13,7 @@ class Venue
     public $tag;
     public $entrance;
     public $cleaning;
-    public $host_id = 1;
+    public $host_id = 2;
     public $status = 1;
     public $availability = 1;
     public $image_url;

@@ -1,8 +1,15 @@
 <!-- Main Content -->
+
+<?php
+session_start();
+$fullname = $_SESSION['user']['firstname'] . ' ' . $_SESSION['user']['lastname'];
+?>
 <main class="max-w-7xl pt-20 mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Welcome Section -->
     <div class="px-4 sm:px-0">
-        <h1 class="text-2xl font-bold text-gray-900">Welcome back, Rezier John</h1>
+        <h1 class="text-2xl font-bold text-gray-900">Welcome back,
+            <?php echo $fullname; ?>
+        </h1>
 
         <!-- Verification Notice -->
         <div class="mt-4 bg-white rounded-lg shadow p-4">

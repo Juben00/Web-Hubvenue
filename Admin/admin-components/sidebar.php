@@ -1,6 +1,6 @@
 <div id="sidebar" class="w-64 bg-gray-50 transition-all duration-300 flex flex-col h-screen text-sm">
     <div class="p-4 w-full flex justify-center">
-        <img src="logo only.png" alt="Archon Logo" class="transition-all duration-300">
+        <img src="./../images/black_ico.png" alt="HubVenue Logo" class="transition-all duration-300">
     </div>
     <div class="px-4 w-full mb-4 sidebar-full">
         <div class="flex">
