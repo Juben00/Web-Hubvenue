@@ -33,6 +33,12 @@ $(document).ready(function () {
         signup(formElement);
     });
 
+    //logout button
+    $('#logoutBtn').on('click', function (e) {
+        e.preventDefault();
+        logout();
+    });
+
     // maps
     $(".maps-button").on("click", function (e) {
         e.preventDefault();
@@ -58,9 +64,23 @@ $(document).ready(function () {
         if (isLogged === true) {  
             viewVenue(venueUrl);
         } else {
-            showModal("Please login to view the venue", "./images/black_ico.png");
+            showModal("Please login to view the venue", "black_ico.png");
         }
     });
+
+    //profile navigation
+    $('.profileNav').on('click', function (e) {
+        e.preventDefault();
+        let url = $(this).attr("data-profileUrl");
+        
+         $('.profileNav').removeClass('active');
+         $(this).addClass('active');
+    
+        openProfileNav(url);
+    })
+
+
+    
 
     //host account button
     $("#hostAccountBtn").on("click", function () {
@@ -109,11 +129,11 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
-                    showModal(response.message, "./images/black_ico.png");
+                    showModal(response.message, "black_ico.png");
                     formElement[0].reset();
                     $('#authModal').addClass("hidden");
                 } else {
-                    showModal(response.message, "./images/black_ico.png");
+                    showModal(response.message, "black_ico.png");
                 }
             },
         });
@@ -130,12 +150,12 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
-                    showModal(response.message, "./images/black_ico.png");
+                    showModal(response.message, "black_ico.png");
                     formElement[0].reset();
                     $('#authModal').addClass("hidden");
                     $('#loginTab').click();
                 } else {
-                    showModal(response.message, "./images/black_ico.png");
+                    showModal(response.message, "black_ico.png");
                 }
             },
             });
@@ -146,7 +166,7 @@ $(document).ready(function () {
     }
 
     function menuRedirection(url){
-        window.location.href = "./" + url;
+        window.location.href = url;
     }
 
     function hostApplication(formElement) {
@@ -163,13 +183,33 @@ $(document).ready(function () {
             formElement[0].reset();
             $("#hostAccountBtn").click();
         } else {
-            showModal(response.message, "./images/black_ico.png");
+            showModal(response.message, "black_ico.png");
         }
     }
     });
     }
 
+    function logout(){
+        confirmshowModal('Are you sure you want to log out?', function () {
+            window.location.href = "./logout.php";
+        }, 'black_ico.png');
+    }
 
+    function openProfileNav(url) {
+        $.ajax(
+            {
+                type: "GET",
+                url: '../profile/' + url + '.php',
+                success: function (data) {
+                    $('#profileDisplay').html(data);
+                }
+            }
+        )
+    }
+
+
+    // setting default view for profile
+    openProfileNav('profile');
 
 
 });

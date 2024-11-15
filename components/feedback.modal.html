@@ -40,10 +40,13 @@
   const modalLogo = document.getElementById("feedbackModalLogo");
   // Function to show the modal with a custom message
   function showModal(message, logo) {
+    const basePath = window.location.origin + window.location.pathname.split('/').slice(0, 2).join('/');
+    const logoPath = `${basePath}/images/${logo}`;
+    
     modalMessage.innerHTML = message; // Set the custom message
     modal.classList.remove("hidden"); // Show the modal
     modal.classList.add("flex"); // Show the modal
-    modalLogo.src = logo; // Set the logo
+    modalLogo.src = logoPath; // Set the logo
   }
 
   // Close modal on "Okay" button click
