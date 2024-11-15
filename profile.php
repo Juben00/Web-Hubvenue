@@ -18,12 +18,12 @@
 
 <body class="bg-gray-50">
     <?php
-    require_once '../components/profile.nav.php';
+    require_once './components/profile.nav.php';
 
-    include_once '../components/SignupForm.html';
-    include_once '../components/feedback.modal.html';
-    include_once '../components/confirm.feedback.modal.html';
-    include_once '../components/Menu.html';
+    include_once './components/SignupForm.html';
+    include_once './components/feedback.modal.html';
+    include_once './components/confirm.feedback.modal.html';
+    include_once './components/Menu.html';
 
     ?>
 
@@ -31,6 +31,6 @@
 
     </div>
 
-    <script src="../vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
-    <script src="../js/user.jquery.js"></script>
+    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
 </body>

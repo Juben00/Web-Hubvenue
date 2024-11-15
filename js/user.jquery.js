@@ -80,7 +80,10 @@ $(document).ready(function () {
     })
 
 
-    
+    $('#profileBtn').on('click', function (e) {
+        const url = $(this).data("url");
+        menuRedirection(url);
+    });
 
     //host account button
     $("#hostAccountBtn").on("click", function () {
@@ -199,9 +202,9 @@ $(document).ready(function () {
         $.ajax(
             {
                 type: "GET",
-                url: '../profile/' + url + '.php',
-                success: function (data) {
-                    $('#profileDisplay').html(data);
+                url: './profile/' + url + '.php',
+                success: function (response) {
+                    $('#profileDisplay').html(response);
                 }
             }
         )
@@ -209,7 +212,8 @@ $(document).ready(function () {
 
 
     // setting default view for profile
-    openProfileNav('profile');
+    
+    openProfileNav('rent-history');
 
 
 });

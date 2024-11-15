@@ -26,7 +26,7 @@
                             class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
                     </div>
                     <div class="flex flex-col md:flex-row gap-6">
-                        <img src="../images/black_ico.png" alt="Garden Orchid Room"
+                        <img src="./images/black_ico.png" alt="Garden Orchid Room"
                             class="w-full md:w-40 h-40 object-cover rounded-lg">
                         <div>
                             <p class="text-lg font-medium">Garden Orchid Hotel and Resort Corporation</p>
@@ -48,7 +48,7 @@
                 <div class="p-6">
                     <div class="space-y-6">
                         <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
-                            <img src="../images/black_ico.png" alt="Previous Property"
+                            <img src="./images/black_ico.png" alt="Previous Property"
                                 class="w-full md:w-40 h-40 object-cover rounded-lg">
                             <div>
                                 <p class="text-lg font-medium">Garden View Suite 205</p>
@@ -81,17 +81,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <div class="mb-4">
-                                <img id="modal-main-image" src="../images/black_ico.png" alt="Venue Main Image"
+                                <img id="modal-main-image" src="./images/black_ico.png" alt="Venue Main Image"
                                     class="w-full h-64 object-cover rounded-lg">
                             </div>
                             <div class="grid grid-cols-3 gap-2">
-                                <img src="../images/black_ico.png" alt="Venue Image 1"
+                                <img src="./images/black_ico.png" alt="Venue Image 1"
                                     class="w-full h-20 object-cover rounded-lg cursor-pointer"
                                     onclick="changeMainImage(this.src)">
-                                <img src="../images/black_ico.png" alt="Venue Image 2"
+                                <img src="./images/black_ico.png" alt="Venue Image 2"
                                     class="w-full h-20 object-cover rounded-lg cursor-pointer"
                                     onclick="changeMainImage(this.src)">
-                                <img src="../images/black_ico.png" alt="Venue Image 3"
+                                <img src="./images/black_ico.png" alt="Venue Image 3"
                                     class="w-full h-20 object-cover rounded-lg cursor-pointer"
                                     onclick="changeMainImage(this.src)">
                             </div>

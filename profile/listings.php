@@ -27,7 +27,7 @@
                     <div class="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
                         Verification required
                     </div>
-                    <img src="path-to-venue-image" alt="Venue" class="w-full h-48 object-cover">
+                    <img src="./images/black_ico.png" alt="Venue" class="w-full h-48 object-cover">
                 </div>
                 <div class="p-4">
                     <h3 class="font-medium">asdas</h3>

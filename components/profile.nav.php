@@ -7,15 +7,16 @@ session_start();
 <nav id="main-nav" class="bg-transparent backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8">
   <div class="flex items-center justify-between md:px-4">
     <!-- Left Section - Logo -->
-    <a href="../index.php" class="flex items-center space-x-2 hover:cursor-pointer" id="HubvenueLogo">
-      <img src='../images/black_ico.png' alt="HubVenue_Logo" class="h-[80px]" />
+    <a class="flex items-center space-x-2 hover:cursor-pointer" id="HubvenueLogo">
+      <img src='./images/black_ico.png' alt="HubVenue_Logo" class="h-[80px]" />
     </a>
 
     <!-- Center Section - Navigation Links -->
     <div class="flex items-center justify-between" id="navbar-sticky">
       <ul class="flex space-x-8 font-medium text-center">
         <li>
-          <a id="profile" data-profileUrl="profile" class="profileNav active w-[120px] cursor-pointer block py-2 px-3">
+          <a id="rent-history" data-profileUrl="rent-history"
+            class="profileNav active w-[120px] cursor-pointer block py-2 px-3">
             Rent History
           </a>
         </li>

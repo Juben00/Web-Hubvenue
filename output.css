@@ -1094,6 +1094,14 @@ video {
   width: 24rem;
 }
 
+.w-\[100px\] {
+  width: 100px;
+}
+
+.w-\[120px\] {
+  width: 120px;
+}
+
 .w-\[400px\] {
   width: 400px;
 }
