@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+    console.log("User jQuery loaded");
+    
+
     // signup terms and conditions checker
     const signupAgreeTerms = $("#agreeTerms");
     const signupButton = $("#signupSubmit");
@@ -39,12 +42,6 @@ $(document).ready(function () {
         logout();
     });
 
-    // maps
-    $(".maps-button").on("click", function (e) {
-        e.preventDefault();
-        viewOpenStreetMap(); 
-    });
-
     //menu trigger buttons open
     $("#menutabtrigger").on("click", function (e) {
         e.preventDefault();
@@ -55,6 +52,18 @@ $(document).ready(function () {
     $('#menutab').on("dblclick", function (e) {
         e.preventDefault();
         $("#menutab").toggleClass("hidden");
+    });
+
+    //map trigger buttons open
+    $("#maps-button").on("click", function (e) {
+        e.preventDefault();
+        viewOpenStreetMap();  // Open the map for user interaction
+    });
+
+    //add venue trigger button
+    $('#add-venue-form').on("submit", function (e) {
+        e.preventDefault();
+        addVenue();
     });
 
     $(".venueCard").on("click", function () {
@@ -79,10 +88,17 @@ $(document).ready(function () {
         openProfileNav(url);
     })
 
-
     $('#profileBtn').on('click', function (e) {
         const url = $(this).data("url");
         menuRedirection(url);
+    });
+    
+    //add venue button
+    $(document).on('click', '#addVenueButton', function (e) {
+        e.preventDefault();
+        console.log("add venue button clicked");
+        $('#userAddVenueForm').removeClass('hidden');
+        $('#userAddVenueForm').addClass('flex');
     });
 
     //host account button
@@ -209,6 +225,34 @@ $(document).ready(function () {
             }
         )
     }
+
+    function addVenue(){
+    let form = new FormData($("#add-venue-form")[0]);
+    $.ajax({
+        type: "POST",
+        url: "./api/AddVenue.api.php",
+        data: form,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response.status == "success") {
+                showModal(
+                    "Venue added successfully",
+                    "black_ico.png"
+                );
+                $('#userAddVenueForm').removeClass('flex');
+                $('#userAddVenueForm').addClass('hidden');
+                $("#add-venue-form")[0].reset();
+            } else {
+                showModal(
+                    "Venue not added",
+                    "black_ico.png"
+                );
+            }
+        },
+    });
+  }
 
 
     // setting default view for profile

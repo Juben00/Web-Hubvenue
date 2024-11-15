@@ -1,5 +1,8 @@
 $(document).ready(function () {
   
+  console.log("admin jquery loaded");
+  
+
   //when the page is resfershed, the dashboard is loaded
   $("#dashboard-link").click();
 
