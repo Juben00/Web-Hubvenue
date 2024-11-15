@@ -10,7 +10,7 @@
             <div class="flex items-center gap-4">
                 <!-- User Selector -->
                 <div class="flex items-center gap-2">
-                    <img src="/SEUser/assets/images/profile.jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                    <img src="./images/black_ico.png" alt="Profile" class="w-8 h-8 rounded-full">
                     <span>asdas</span>
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
                         <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />

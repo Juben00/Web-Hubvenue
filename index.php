@@ -265,7 +265,7 @@ $venues = $venueObj->getAllVenues('2');
                                                 <?= htmlspecialchars($venue['description']) ?>
                                             </p>
 
-                                      
+
 
                                             <p class="mt-2">
                                                 <span
@@ -473,7 +473,7 @@ $venues = $venueObj->getAllVenues('2');
                 function showSlide(index) {
                     // First set display:block on next slide before starting transition
                     slides[index].style.display = 'block';
-                    
+
                     // Small delay to ensure display:block is processed
                     setTimeout(() => {
                         // Hide all slides
