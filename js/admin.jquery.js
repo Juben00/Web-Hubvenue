@@ -79,7 +79,7 @@ $(document).ready(function () {
 
   $("#admin-logout").on("click", function (e) {
   e.preventDefault();
-  confirmshowModal("Are you sure you want to logout?", adminLogout, "../images/black_ico.png");
+  confirmshowModal("Are you sure you want to logout?", adminLogout, "black_ico.png");
   });
 
   //main views
@@ -317,7 +317,7 @@ $(document).ready(function () {
                     function() {
                         approveVenue(formElement); // Call approveVenue only after confirmation
                     },
-                    "../images/black_ico.png"
+                    "black_ico.png"
                 );
             });
 
@@ -332,7 +332,7 @@ $(document).ready(function () {
                     function() {
                         rejectVenue(formElement); // Call rejectVenue only after confirmation
                     },
-                    "../images/black_ico.png"
+                    "black_ico.png"
                 );
             });
         },
@@ -402,13 +402,13 @@ $(document).ready(function () {
             if (response.status == "success") {
                 showModal(
                     "Venue added successfully",
-                    "../images/black_ico.png"
+                    "black_ico.png"
                 );
                 $("#add-venue-form")[0].reset();
             } else {
                 showModal(
                     "Venue not added",
-                    "../images/black_ico.png"
+                    "black_ico.png"
                 );
             }
         },
