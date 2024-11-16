@@ -8,7 +8,7 @@ class Account
     public $lastname;
     public $middlename;
     public $sex;
-    public $usertype = 2;
+    public $usertype;
     public $birthdate;
     public $address;
     public $contact_number;

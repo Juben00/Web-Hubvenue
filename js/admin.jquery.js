@@ -272,7 +272,26 @@ $(document).ready(function () {
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
+        
+        $('#createUserBtn').on("click", function (e) {
+            e.preventDefault();
+            $('#createUserModal').addClass("flex");
+            $('#createUserModal').removeClass("hidden");
+
+          });
+          
+        $("#maps-button").on("click", function (e) {
+            e.preventDefault();
+            viewOpenStreetMap();  // Open the map for user interaction
+        });
+
+        $('#CreateAccount').on('submit', function (e) {
+          e.preventDefault();
+          const formElement = $(this);
+          signup(formElement);
+        })
         },
+        
       })
   }
 
@@ -560,4 +579,26 @@ $(document).ready(function () {
         },
     });
   }
+
+  function signup(formElement) {
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "../api/Signup.api.php",
+            data: form,
+            processData: false,  
+            contentType: false, 
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.status === "success") {
+                    showModal(response.message, "black_ico.png");
+                    formElement[0].reset();
+                     $('#createUserModal').addClass("hidden");
+                      $('#createUserModal').removeClass("flex");
+                } else {
+                    showModal(response.message, "black_ico.png");
+                }
+            },
+            });
+    }
 });
