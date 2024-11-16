@@ -221,6 +221,80 @@ class Account
         return false;
     }
 
+    public function getHostApplications($userId = null, $status = null)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            // Build query
+            $sql = "SELECT ha.*, hs.name AS status, hi.idOne_image_url AS idOne, hi.idTwo_image_url AS idTwo
+                FROM host_application ha 
+                JOIN host_application_status_sub hs ON ha.status_id = hs.id 
+                LEFT JOIN host_id_images hi ON ha.id = hi.id";
+
+            $conditions = [];
+            $params = [];
+
+            if (!empty($userId)) {
+                $conditions[] = "ha.userId = :userId";
+                $params[':userId'] = $userId;
+            }
+
+            if (!empty($status)) {
+                $conditions[] = "ha.status_id LIKE :status";
+                $params[':status'] = "%" . $status . "%";
+            }
+
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            // Prepare and execute statement
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            // Log error and return empty array
+            error_log("Error fetching host applications: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function approveHost($host_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $conn->beginTransaction();
+
+            // Update host application status
+            $sql = "UPDATE host_application SET status_id = 2 WHERE userId = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $host_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to update host application status');
+            }
+
+            // Update host account
+            $sql = "UPDATE users SET user_type_id = 1 WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $host_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to update user type');
+            }
+
+            // Commit transaction
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Host application approved successfully'];
+        } catch (Exception $e) {
+            $conn->rollBack();
+            error_log("Error approving host application: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+
+
 
 }
 
@@ -230,4 +304,4 @@ class Account
 $accountObj = new Account();
 
 
-// var_dump($accountObj->getUser($_SESSION['user']['id']));
+// var_dump($accountObj->getHostApplications("", ""));

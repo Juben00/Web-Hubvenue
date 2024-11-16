@@ -80,6 +80,11 @@ $(document).ready(function () {
   viewUserManagement();
   });
 
+  $("#host-application-link").on("click", function (e) {
+  e.preventDefault();
+  viewHostApplication();
+  });
+
   $("#admin-logout").on("click", function (e) {
   e.preventDefault();
   confirmshowModal("Are you sure you want to logout?", adminLogout, "black_ico.png");
@@ -272,6 +277,30 @@ $(document).ready(function () {
       })
   }
 
+  function viewHostApplication(){
+    $.ajax({
+      type: "GET",
+      url: "../host-application/host-application.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+
+        $('.approveHostApplication').on("submit", function (e) {
+            e.preventDefault();
+            const formElement = $(this); // Capture the form element for use in confirm function
+
+            // Show confirmation modal and only proceed if confirmed
+            confirmshowModal(
+                "Are you sure you want to approve this post?",
+                function() {
+                    approveHost(formElement); // Call approveVenue only after confirmation
+                },
+                "black_ico.png"
+            );
+        });
+        },
+      })
+  }
 
     //sub views
   function viewVmAddVenue() {
@@ -435,6 +464,34 @@ $(document).ready(function () {
                 viewVmManageVenue();
             } else {
                 console.log("Venue not approved");
+            }
+        },
+    });
+  }
+
+  function approveHost(formElement) {
+    let form = new FormData(formElement[0]);
+    $.ajax({
+        type: "POST",
+        url: "../api/ApproveHost.api.php",
+        data: form,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response.status === "success") {
+                showModal(
+                    response.message,
+                    "black_ico.png"
+                );
+                formElement[0].reset();
+                //refresh the page
+                viewHostApplication();
+            } else {
+                showModal(
+                    response.message,
+                    "black_ico.png"
+                );
             }
         },
     });
