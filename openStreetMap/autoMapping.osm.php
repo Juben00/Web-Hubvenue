@@ -38,12 +38,11 @@
                     const { lat, lon } = data[0];
                     setLocationOnMap(parseFloat(lat), parseFloat(lon), autoOsmValue);
                 } else {
-                    alert("Address not found. Showing default location.");
+                    showModal("Address not found. Showing default location.", 'black_ico.png');
                 }
             })
             .catch(error => {
-                console.error("Error fetching geocode data:", error);
-                alert("Error retrieving location.");
+                showModal("Error retrieving location.", 'black_ico.png');
             });
     } else if (navigator.geolocation) {
         // Fallback to user's current location if autoOsm doesn't have coordinates or an address
@@ -53,11 +52,10 @@
                 setLocationOnMap(latitude, longitude, "Current Location");
             },
             error => {
-                console.error("Geolocation error:", error);
-                alert("Unable to retrieve your location.");
+                showModal("Unable to retrieve your location.", 'black_ico.png');
             }
         );
     } else {
-        alert("Geolocation is not supported by your browser.");
+        showModal("Geolocation is not supported by your browser.");
     }
 </script>
