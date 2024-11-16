@@ -49,12 +49,22 @@ $users = $account->getHostApplications("", "");
                                 </td>
                                 <td class="py-2 px-4 border-b"><?= $user['status'] ?></td>
                                 <td class="py-2 px-4 border-b">
-                                    <form class="approveHostApplication" method="POST">
-                                        <input type="hidden" name="host_id"
-                                            value="<?php echo htmlspecialchars($user['userId']) ?>">
-                                        <button type="submit"
-                                            class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 h-9 px-3 mr-2">Approve</button>
-                                    </form>
+                                    <?php
+                                    if ($user['status'] === 'Approved') {
+                                        echo '<form class="rejectHostApplication" method="POST">
+                                                <input type="hidden" name="host_id" value="' . htmlspecialchars($user['userId']) . '">
+                                                <button type="submit"
+                                                    class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-red-500 text-white hover:bg-blue-600 h-9 px-3 mr-2">Reject</button>
+                                            </form>';
+                                    } else {
+                                        echo '<form class="approveHostApplication" method="POST">
+                                                <input type="hidden" name="host_id" value="' . htmlspecialchars($user['userId']) . '">
+                                                <button type="submit"
+                                                    class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 h-9 px-3 mr-2">Approve</button>
+                                            </form>';
+                                    }
+                                    ?>
+
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -293,6 +293,38 @@ class Account
         }
     }
 
+    public function rejectHost($host_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $conn->beginTransaction();
+
+            // Update host application status
+            $sql = "UPDATE host_application SET status_id = 3 WHERE userId = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $host_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to update host application status');
+            }
+
+            // Update host account
+            $sql = "UPDATE users SET user_type_id = 2 WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $host_id);
+            if (!$stmt->execute()) {
+                throw new Exception('Failed to update user type');
+            }
+
+            // Commit transaction
+            $conn->commit();
+            return ['status' => 'success', 'message' => 'Host application Rejected successfully'];
+        } catch (Exception $e) {
+            $conn->rollBack();
+            error_log("Error approving host application: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 
 
 
