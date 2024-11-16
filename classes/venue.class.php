@@ -93,7 +93,7 @@ class Venue
     }
 
 
-    function getAllVenues($status = '')
+    function getAllVenues($status = '', $host_id = '')
     {
         try {
             // Establish database connection
@@ -119,6 +119,11 @@ class Venue
             if ($status) {
                 $conditions[] = "v.status_id LIKE :status";
                 $params[':status'] = "%$status%";
+            }
+
+            if ($host_id) {
+                $conditions[] = "v.host_id = :host_id";
+                $params[':host_id'] = $host_id;
             }
 
             // Add WHERE clause if conditions are present
@@ -246,3 +251,7 @@ class Venue
     }
 
 }
+
+$venueObj = new Venue();
+
+// var_dump($venueObj->getAllVenues('', 3));
