@@ -110,8 +110,6 @@ $(document).ready(function () {
     //host application button
     $('#hostApplicationForm').on("submit", function (e) {
         e.preventDefault();
-        console.log("host application form submitted");
-        
         const formElement = $(this);
         hostApplication(formElement);
     });
@@ -191,21 +189,21 @@ $(document).ready(function () {
     function hostApplication(formElement) {
         let form = new FormData(formElement[0]);
         $.ajax({
-    type: "POST",
-    url: "./api/HostApplication.api.php",
-    data: form,
-    processData: false,
-    contentType: false,
-    success: function (response) {
-        response = JSON.parse(response);
-        if (response.status === "success") {
-            formElement[0].reset();
-            $("#hostAccountBtn").click();
-        } else {
-            showModal(response.message, "black_ico.png");
-        }
-    }
-    });
+            type: "POST",
+            url: "./api/HostApplication.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.status === "success") {
+                    formElement[0].reset();
+                    $("#hostAccountBtn").click();
+                } else {
+                    showModal(response.message, "black_ico.png");
+                }
+            }
+            });
     }
 
     function logout(){

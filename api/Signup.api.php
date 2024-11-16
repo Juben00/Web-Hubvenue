@@ -4,7 +4,7 @@ require_once '../sanitize.php';
 
 $accountObj = new Account();
 
-$firstname = $lastname = $middlename = $sex = $birthdate = $contact_number = $address = $email = $password = '';
+$firstname = $lastname = $middlename = $sex = $birthdate = $contact_number = $address = $email = $password = $user_type = '';
 $firstnameErr = $lastnameErr = $middlenameErr = $sexErr = $birthdateErr = $contact_numberErr = $addressErr = $emailErr = $passwordErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $address = clean_input($_POST['signupaddress']);
     $email = clean_input($_POST['email']);
     $password = clean_input($_POST['password']);
+    $user_type = clean_input(isset($_POST['userRole']) ? $_POST['userRole'] : '2');
 
     if (empty($firstname)) {
         $firstnameErr = 'First name is required';
@@ -70,6 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $passwordErr = 'Password must contain at least one number';
     }
 
+    if (empty($user_type)) {
+        $user_type = '2';
+    }
+
     if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($sexErr) && empty($birthdateErr) && empty($contact_numberErr) && empty($addressErr) && empty($emailErr) && empty($passwordErr)) {
         $accountObj->firstname = $firstname;
         $accountObj->lastname = $lastname;
@@ -80,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $accountObj->address = $address;
         $accountObj->email = $email;
         $accountObj->password = $password;
+        $accountObj->usertype = $user_type;
 
         $result = $accountObj->signup();
 

@@ -397,7 +397,6 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
     </script>
 
 
-
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
     <script>
