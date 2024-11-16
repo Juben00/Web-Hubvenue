@@ -154,7 +154,6 @@ $(document).ready(function () {
           .removeClass("text-gray-800");         // Remove default text color for active tab
   }
 
-
   function viewReservationManagement(){
     $.ajax({
         type: "GET",
@@ -294,6 +293,20 @@ $(document).ready(function () {
                 "Are you sure you want to approve this post?",
                 function() {
                     approveHost(formElement); // Call approveVenue only after confirmation
+                },
+                "black_ico.png"
+            );
+        });
+
+        $('.rejectHostApplication').on("submit", function (e) {
+            e.preventDefault();
+            const formElement = $(this); // Capture the form element for use in confirm function
+
+            // Show confirmation modal and only proceed if confirmed
+            confirmshowModal(
+                "Are you sure you want to reject this post?",
+                function() {
+                    rejectHost(formElement); // Call approveVenue only after confirmation
                 },
                 "black_ico.png"
             );
@@ -469,6 +482,29 @@ $(document).ready(function () {
     });
   }
 
+  function rejectVenue(formElement) {
+    let form = new FormData(formElement[0]);
+    $.ajax({
+        type: "POST",
+        url: "../api/RejectVenue.api.php",
+        data: form,
+        dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            if (response.status === "success") {
+                console.log("Venue rejected successfully");
+                formElement[0].reset();
+                //refresh the page
+                viewVmManageVenue();
+            } else {
+                console.log("Venue not rejected");
+            }
+        },
+    });
+  }
+  
+  
   function approveHost(formElement) {
     let form = new FormData(formElement[0]);
     $.ajax({
@@ -497,26 +533,31 @@ $(document).ready(function () {
     });
   }
 
-  function rejectVenue(formElement) {
+  function rejectHost(formElement) {
     let form = new FormData(formElement[0]);
     $.ajax({
         type: "POST",
-        url: "../api/RejectVenue.api.php",
+        url: "../api/RejectHost.api.php",
         data: form,
         dataType: "json",
         contentType: false,
         processData: false,
         success: function (response) {
             if (response.status === "success") {
-                console.log("Venue rejected successfully");
+                showModal(
+                    response.message,
+                    "black_ico.png"
+                );
                 formElement[0].reset();
                 //refresh the page
-                viewVmManageVenue();
+                viewHostApplication();
             } else {
-                console.log("Venue not rejected");
+                showModal(
+                    response.message,
+                    "black_ico.png"
+                );
             }
         },
     });
   }
-
 });
