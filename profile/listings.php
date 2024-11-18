@@ -52,7 +52,7 @@ $venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php
             foreach ($venuePost as $venue): ?>
-                <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-white rounded-xl shadow overflow-hidden">
                     <div class="relative">
                         <?php if ($venue['status'] !== "Approved"): ?>
                             <div class="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm">

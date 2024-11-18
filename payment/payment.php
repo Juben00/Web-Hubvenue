@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,14 +19,16 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen flex flex-col bg-white">
-<?php include __DIR__ . '/../components/payment.nav.php'; ?>
+    <?php include __DIR__ . '/../components/payment.nav.php'; ?>
 
 
     <main class="pt-20 flex-grow flex flex-col justify-between p-6 pb-24">
         <div class="max-w-3xl mx-auto w-full">
             <div class="mb-8">
-                <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span id="totalSteps">5</span></h2>
+                <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span
+                        id="totalSteps">5</span></h2>
                 <h1 id="stepTitle" class="text-3xl font-bold mb-4">Venue Details</h1>
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
@@ -43,10 +46,12 @@
                 </button>
                 <div class="flex-grow mx-8">
                     <div class="bg-gray-200 h-1 rounded-full">
-                        <div id="progressBar" class="bg-black h-1 rounded-full transition-all duration-300 ease-in-out" style="width: 0%"></div>
+                        <div id="progressBar" class="bg-black h-1 rounded-full transition-all duration-300 ease-in-out"
+                            style="width: 0%"></div>
                     </div>
                 </div>
-                <button id="nextBtn" class="flex items-center px-6 py-2 bg-black text-white rounded-md text-sm font-medium">
+                <button id="nextBtn"
+                    class="flex items-center px-6 py-2 bg-black text-white rounded-md text-sm font-medium">
                     Next
                     <i class="lucide-chevron-right h-5 w-5 ml-1"></i>
                 </button>
@@ -84,10 +89,10 @@
             document.getElementById('stepTitle').textContent = steps[currentStep - 1].title;
             document.getElementById('stepDescription').textContent = steps[currentStep - 1].description;
             document.getElementById('progressBar').style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
-            
+
             document.getElementById('backBtn').disabled = currentStep === 1;
             document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'Confirm Reservation' : 'Next';
-            
+
             if (currentStep !== totalSteps) {
                 document.getElementById('nextBtn').innerHTML += '<i class="lucide-chevron-right h-5 w-5 ml-1"></i>';
             }
@@ -341,4 +346,5 @@
         updateStep();
     </script>
 </body>
+
 </html>

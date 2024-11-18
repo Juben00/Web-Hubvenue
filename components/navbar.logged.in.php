@@ -9,7 +9,7 @@
     <div id="bottom-search"
       class="bg-slate-100 text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
       <div class="flex-1 min-w-0 px-4">
-        <button id="checkInBtn" class="w-full text-left font-normal">
+        <button id="checkInBtn" class="w-full text-left flex items-center font-normal">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -20,7 +20,7 @@
       </div>
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
       <div class="flex-1 min-w-0 px-4">
-        <button id="checkOutBtn" class="w-full text-left font-normal">
+        <button id="checkOutBtn" class="w-full text-left font-normal flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none" viewBox="0 0 24 24"
             stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,9 +31,9 @@
       </div>
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
       <div class="flex-1 min-w-0 px-4 relative">
-        <label for="guests" class="block text-sm font-medium text-gray-700">Who</label>
+        <label for="guests" class="block text-xs font-medium text-gray-700">Who</label>
         <input type="text" id="guests" readonly placeholder="Add guests"
-          class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent cursor-pointer">
+          class="w-full border-0 text-xs focus:ring-0 focus:outline-none  bg-transparent cursor-pointer">
 
         <!-- Guest counter dropdown -->
         <div id="guestDropdown"
@@ -99,7 +99,7 @@
           </div>
         </div>
       </div>
-      <button class="rounded-full bg-red-500 hover:bg-red-600 text-white p-2 mx-2">
+      <button class="rounded-full bg-red-500 hover:bg-red-600 text-white p-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
