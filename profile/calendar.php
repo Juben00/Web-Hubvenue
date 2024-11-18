@@ -1,4 +1,4 @@
-<div class="flex pt-20">
+<div class="flex pt-20 container mx-auto">
     <!-- Main Calendar Section -->
     <div class="flex-1">
         <!-- Header Section -->
