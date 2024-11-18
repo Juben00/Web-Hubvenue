@@ -291,7 +291,7 @@
                             <div class="grid grid-cols-2 gap-6">
                                 <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('gcash')">
                                     <div class="flex items-center justify-between mb-4">
-                                        <img src="/assets/images/gcash-logo.png" alt="GCash" class="h-8">
+                                        <img src="gcash.png" alt="GCash" class="h-8">
                                         <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4">
                                     </div>
                                     <p class="text-sm text-gray-600">Pay securely using your GCash account</p>
@@ -299,7 +299,7 @@
                                 
                                 <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('paymaya')">
                                     <div class="flex items-center justify-between mb-4">
-                                        <img src="/assets/images/paymaya-logo.png" alt="PayMaya" class="h-8">
+                                        <img src="paymaya.png" alt="PayMaya" class="h-8">
                                         <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
                                     </div>
                                     <p class="text-sm text-gray-600">Pay using your PayMaya account</p>
