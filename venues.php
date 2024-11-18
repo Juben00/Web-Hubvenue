@@ -294,7 +294,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">HubVenue service fee</span>
-                                <span>₱{{Service Fee}}</span>
+                                <span>₱ <?php echo htmlspecialchars($venue['price']) * .15 ?> </span>
                             </div>
                         </div>
                         <hr class="my-4">

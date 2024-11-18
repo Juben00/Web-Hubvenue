@@ -228,7 +228,7 @@ $venues = $venueObj->getAllVenues('2');
                                             </div>
 
                                             <!-- Button (can be used for manual control) -->
-                                            <button class="absolute top-3 right-3 text-white">
+                                            <button class="absolute top-3 right-3 text-white z-50">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
                                                     fill="currentColor">
                                                     <path fill-rule="evenodd"

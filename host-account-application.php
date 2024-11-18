@@ -156,163 +156,163 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
     ?>
 
     <!-- Main Content -->
-    <main class="flex-1 mt-20 container mx-auto px-4 py-8 relative ">
-
-        <h1 class="text-2xl md:text-4xl font-bold mb-4 text-center">Host Account Application</h1>
-        <form id="hostApplicationForm" method="POST" class="max-w-2xl mx-auto">
-            <!-- Step 1: Personal Information -->
-            <div id="step1" class="step">
-                <h1 class="text-2xl font-bold mb-2">Personal Details</h1>
-                <p class="text-gray-600 mb-6">Let's start with your personal information.</p>
-                <div class="flex flex-col gap-4">
-
-                    <?php
-                    foreach ($user as $index): ?>
-                        <div>
-                            <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                            <input type="text" id="fullName" name="fullName" placeholder="Last Name, First Name M.I."
-                                required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                value="<?php echo htmlspecialchars($index['lastname'] . ', ' . $index['firstname'] . ' ' . $index['middlename']) . '.'; ?>"
-                                readonly>
-                        </div>
-                        <div>
-                            <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                            <span class="flex items-center space-x-2">
-                                <input type="text" id="address" name="address" placeholder="Where do you live?" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                    value="<?php echo htmlspecialchars($index['address']); ?>" readonly>
-                                <button class="maps-button border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
-                                    <svg height="24px" width="24px" version="1.1" id="Layer_1"
-                                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                        viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
-                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                        <g id="SVGRepo_iconCarrier">
-                                            <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon>
-                                            <polygon style="fill:#d3d5de;"
-                                                points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
-                                            </polygon>
-                                            <polygon
-                                                points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
-                                            </polygon>
-                                            <path style="fill:#e73023;"
-                                                d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
-                                            </path>
-                                            <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
-                                        </g>
-                                    </svg>
-                                </button>
-                            </span>
-                        </div>
-                        <div>
-                            <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
-                            <input type="date" id="hostBd" name="birthdate" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                value="<?php echo htmlspecialchars($index['birthdate']); ?>" readonly>
-                        </div>
-                    <?php endforeach; ?>
-
-                </div>
-            </div>
-
-            <!-- Step 2: Venue Details -->
-            <div id="step2" class="step hidden">
-                <h1 class="text-2xl font-bold mb-2">Identification card number 1 details</h1>
-                <p class="text-gray-600 mb-6">Identify your card and upload an image.</p>
-                <div class="space-y-4">
-                    <div>
-                        <label for="idType" class="block text-sm font-medium text-gray-700">Identification Card</label>
-                        <select name="idType" id="idType"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
-                            <option value="" disabled selected>Please choose Identification Card Type</option>
-                            <option value="Philippine Passport">Philippine Passport</option>
-                            <option value="UMID Card">UMID Card</option>
-                            <option value="National ID">National ID</option>
-                            <option value="Driver's License">Driver's License</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="idImage">Take a picture of your ID card <span
-                                class="text-xs font-thin text-gray-500">*Upload only
-                                1 image of
-                                your ID
-                                (front)</span></label>
-                        <input type="file" name="idImage" id="idImage"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3: Online Presence -->
-            <div id="step3" class="step hidden">
-                <h1 class="text-2xl font-bold mb-2">Identification card number 2 details</h1>
-                <p class="text-gray-600 mb-6">Identify your card and upload an image.</p>
-                <div class="space-y-4">
-                    <div>
-                        <label for="idType" class="block text-sm font-medium text-gray-700">Identification Card</label>
-                        <select name="idType2" id="idType2"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
-                            <option value="" disabled selected>Please choose Identification Card Type</option>
-                            <option value="Philippine Passport">Philippine Passport</option>
-                            <option value="UMID Card">UMID Card</option>
-                            <option value="National ID">National ID</option>
-                            <option value="Driver's License">Driver's License</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="idImage">Take a picture of your ID card <span
-                                class="text-xs font-thin text-gray-500">*Upload only
-                                1 image of
-                                your ID
-                                (front)</span></label>
-                        <input type="file" name="idImage2" id="idImage2"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Step 4: Review and Submit -->
-            <div id="step5" class="step hidden">
-                <h1 class="text-2xl font-bold mb-2">Review and Submit</h1>
-                <p class="text-gray-600 mb-6">Please review your information before submitting.</p>
-                <div id="reviewContent" class="space-y-2"></div>
-                <button type="submit" id="sform" class="hidden">Submit Form</button>
-            </div>
-
-        </form>
-        <div id="openstreetmapplaceholder"></div>
-        <?php
-        if ($appliedHost) {
-            echo '<div class="bg-yellow-400 mt-4 text-center inline-block absolute -translate-x-1/2 left-1/2 p-3 rounded-lg text-xl font-semibold">
+    <?php
+    if ($appliedHost) {
+        echo '<div class="bg-yellow-400 mt-4 text-center h-[150px] items-center flex-wrap flex absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 p-3 rounded-lg text-xl font-semibold">
             Your host application is currently under review. Please allow some time for the admin to process your request.
           </div>';
-        } else if ($isHost) {
-            echo '<div class="bg-green-400 mt-4 text-center inline-block absolute -translate-x-1/2 left-1/2 p-3 rounded-lg text-xl font-semibold">
+    } else if ($isHost) {
+        echo '<div class="bg-green-400 mt-4 text-center h-[150px] items-center flex-wrap flex absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 p-3 rounded-lg text-xl font-semibold">
             Congratulations! Your host account is now active. You may start posting and managing your listings.
           </div>';
-        }
+    } else {
         ?>
+            <main class="flex-1 mt-20 container mx-auto px-4 py-8 relative ">
 
-    </main>
-    <!-- Bottom Navigation -->
-    <footer class="bg-white border-t">
-        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
-            <button id="prevBtn" class="text-gray-900 font-medium">Back</button>
-            <div class="flex-1 flex justify-center">
-                <div class="w-1/2 relative">
-                    <div class="h-1 bg-gray-200 rounded-full">
-                        <div id="progressBarFill" class="h-1 bg-gray-900 rounded-full transition-all duration-300"
-                            style="width: 20%"></div>
+                <h1 class="text-2xl md:text-4xl font-bold mb-4 text-center">Host Account Application</h1>
+                <form id="hostApplicationForm" method="POST" class="max-w-2xl mx-auto">
+                    <!-- Step 1: Personal Information -->
+                    <div id="step1" class="step">
+                        <h1 class="text-2xl font-bold mb-2">Personal Details</h1>
+                        <p class="text-gray-600 mb-6">Let's start with your personal information.</p>
+                        <div class="flex flex-col gap-4">
+
+                            <?php
+                            foreach ($user as $index): ?>
+                                <div>
+                                    <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                    <input type="text" id="fullName" name="fullName" placeholder="Last Name, First Name M.I."
+                                        required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                        value="<?php echo htmlspecialchars($index['lastname'] . ', ' . $index['firstname'] . ' ' . $index['middlename']) . '.'; ?>"
+                                        readonly>
+                                </div>
+                                <div>
+                                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                    <span class="flex items-center space-x-2">
+                                        <input type="text" id="address" name="address" placeholder="Where do you live?" required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                            value="<?php echo htmlspecialchars($index['address']); ?>" readonly>
+                                        <button class="maps-button border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
+                                            <svg height="24px" width="24px" version="1.1" id="Layer_1"
+                                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                                viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon>
+                                                    <polygon style="fill:#d3d5de;"
+                                                        points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
+                                                    </polygon>
+                                                    <polygon
+                                                        points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
+                                                    </polygon>
+                                                    <path style="fill:#e73023;"
+                                                        d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
+                                                    </path>
+                                                    <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </div>
+                                <div>
+                                    <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
+                                    <input type="date" id="hostBd" name="birthdate" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                        value="<?php echo htmlspecialchars($index['birthdate']); ?>" readonly>
+                                </div>
+                        <?php endforeach; ?>
+
+                        </div>
                     </div>
-                </div>
-            </div>
-            <button id="nextBtn" class="bg-black text-white px-6 py-2 rounded-md">Next</button>
-        </div>
-    </footer>
 
+                    <!-- Step 2: Venue Details -->
+                    <div id="step2" class="step hidden">
+                        <h1 class="text-2xl font-bold mb-2">Identification card number 1 details</h1>
+                        <p class="text-gray-600 mb-6">Identify your card and upload an image.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="idType" class="block text-sm font-medium text-gray-700">Identification Card</label>
+                                <select name="idType" id="idType"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
+                                    <option value="" disabled selected>Please choose Identification Card Type</option>
+                                    <option value="Philippine Passport">Philippine Passport</option>
+                                    <option value="UMID Card">UMID Card</option>
+                                    <option value="National ID">National ID</option>
+                                    <option value="Driver's License">Driver's License</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="idImage">Take a picture of your ID card <span
+                                        class="text-xs font-thin text-gray-500">*Upload only
+                                        1 image of
+                                        your ID
+                                        (front)</span></label>
+                                <input type="file" name="idImage" id="idImage"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Online Presence -->
+                    <div id="step3" class="step hidden">
+                        <h1 class="text-2xl font-bold mb-2">Identification card number 2 details</h1>
+                        <p class="text-gray-600 mb-6">Identify your card and upload an image.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="idType" class="block text-sm font-medium text-gray-700">Identification Card</label>
+                                <select name="idType2" id="idType2"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
+                                    <option value="" disabled selected>Please choose Identification Card Type</option>
+                                    <option value="Philippine Passport">Philippine Passport</option>
+                                    <option value="UMID Card">UMID Card</option>
+                                    <option value="National ID">National ID</option>
+                                    <option value="Driver's License">Driver's License</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="idImage">Take a picture of your ID card <span
+                                        class="text-xs font-thin text-gray-500">*Upload only
+                                        1 image of
+                                        your ID
+                                        (front)</span></label>
+                                <input type="file" name="idImage2" id="idImage2"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Step 4: Review and Submit -->
+                    <div id="step5" class="step hidden">
+                        <h1 class="text-2xl font-bold mb-2">Review and Submit</h1>
+                        <p class="text-gray-600 mb-6">Please review your information before submitting.</p>
+                        <div id="reviewContent" class="space-y-2"></div>
+                        <button type="submit" id="sform" class="hidden">Submit Form</button>
+                    </div>
+
+                </form>
+                <div id="openstreetmapplaceholder"></div>
+            </main>
+            <!-- Bottom Navigation -->
+            <footer class="bg-white border-t">
+                <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+                    <button id="prevBtn" class="text-gray-900 font-medium">Back</button>
+                    <div class="flex-1 flex justify-center">
+                        <div class="w-1/2 relative">
+                            <div class="h-1 bg-gray-200 rounded-full">
+                                <div id="progressBarFill" class="h-1 bg-gray-900 rounded-full transition-all duration-300"
+                                    style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="nextBtn" class="bg-black text-white px-6 py-2 rounded-md">Next</button>
+                </div>
+            </footer>
+
+    <?php } ?>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
