@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,8 +63,8 @@
             { title: "Venue Details", description: "Review the details of your selected venue." },
             { title: "Date and Time", description: "Choose your reservation date and time." },
             { title: "Guest Information", description: "Provide details about your event and guests." },
-            { title: "Payment", description: "Enter your payment information." },
-            { title: "Confirmation", description: "Review and confirm your reservation." }
+            { title: "Confirmation", description: "Review and confirm your reservation." },
+            { title: "Payment", description: "Complete your payment to secure the reservation." }
         ];
 
         let currentStep = 1;
@@ -241,34 +240,6 @@
                 case 4:
                     stepContent.innerHTML = `
                         <div class="space-y-6">
-                            <h3 class="text-2xl font-semibold mb-4">Payment Details</h3>
-                            <div>
-                                <label for="cardName" class="block text-sm font-medium text-gray-700 mb-1">Name on Card</label>
-                                <input type="text" id="cardName" name="cardName" value="${formData.cardName}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary" required>
-                            </div>
-                            <div>
-                                <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                                <div class="relative">
-                                    <input type="text" id="cardNumber" name="cardNumber" value="${formData.cardNumber}" placeholder="1234 5678 9012 3456" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary" required>
-                                    <i class="lucide-credit-card absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"></i>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="expirationDate" class="block text-sm font-medium text-gray-700 mb-1">Expiration Date</label>
-                                    <input type="text" id="expirationDate" name="expirationDate" value="${formData.expirationDate}" placeholder="MM/YY" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary" required>
-                                </div>
-                                <div>
-                                    <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
-                                    <input type="text" id="cvv" name="cvv" value="${formData.cvv}" placeholder="123" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary" required>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    break;
-                case 5:
-                    stepContent.innerHTML = `
-                        <div class="space-y-6">
                             <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
                             <div class="bg-gray-100 p-6 rounded-lg">
                                 <h4 class="font-semibold text-lg mb-4">Santiago Resort Room 1</h4>
@@ -308,10 +279,156 @@
                             </div>
                             <div class="flex items-center">
                                 <i class="lucide-check h-5 w-5 text-green-500 mr-2"></i>
-                                <p class="text-sm text-gray-600">By clicking "Confirm Reservation", you agree to our terms and conditions.</p>
+                                <p class="text-sm text-gray-600">Please review all details before proceeding to payment.</p>
                             </div>
                         </div>
                     `;
+                    break;
+                case 5:
+                    stepContent.innerHTML = `
+                        <div class="space-y-6">
+                            <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('gcash')">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <img src="/assets/images/gcash-logo.png" alt="GCash" class="h-8">
+                                        <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4">
+                                    </div>
+                                    <p class="text-sm text-gray-600">Pay securely using your GCash account</p>
+                                </div>
+                                
+                                <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('paymaya')">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <img src="/assets/images/paymaya-logo.png" alt="PayMaya" class="h-8">
+                                        <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
+                                    </div>
+                                    <p class="text-sm text-gray-600">Pay using your PayMaya account</p>
+                                </div>
+                            </div>
+
+                            <div id="qrCodeContainer" class="hidden mt-8">
+                                <div class="text-center">
+                                    <h4 class="text-lg font-semibold mb-4">Scan QR Code to Pay</h4>
+                                    <div class="bg-gray-100 p-8 rounded-lg inline-block">
+                                        <img id="qrCodeImage" src="" alt="Payment QR Code" class="mx-auto mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Total Amount: ₱<span id="qrPaymentAmount">0</span></p>
+                                        <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod"></span> app</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p class="text-sm text-gray-600 mb-2">Payment Status: <span id="paymentStatus" class="font-medium">Waiting for payment...</span></p>
+                                        <div class="animate-pulse" id="loadingIndicator">
+                                            <div class="h-1 w-full bg-gray-200 rounded">
+                                                <div class="h-1 bg-blue-500 rounded" style="width: 0%" id="paymentProgress"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add the following JavaScript right after the HTML template
+                    const script = document.createElement('script');
+                    script.textContent = `
+                        async function selectPaymentMethod(method) {
+                            // Update radio button
+                            document.querySelector(\`input[value="\${method}"]\`).checked = true;
+                            
+                            // Show QR code container
+                            const qrContainer = document.getElementById('qrCodeContainer');
+                            qrContainer.classList.remove('hidden');
+                            
+                            // Update payment method text
+                            document.getElementById('selectedPaymentMethod').textContent = 
+                                method === 'gcash' ? 'GCash' : 'PayMaya';
+                            
+                            // Calculate total amount
+                            const basePrice = 500 * parseInt(formData.durationValue);
+                            const totalAmount = basePrice + 100 + 250 + 50;
+                            document.getElementById('qrPaymentAmount').textContent = totalAmount;
+                            
+                            try {
+                                // Initiate payment
+                                const response = await fetch('../payment/process-payment.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        paymentMethod: method,
+                                        amount: totalAmount,
+                                        reservationDetails: formData
+                                    })
+                                });
+                                
+                                const data = await response.json();
+                                
+                                if (data.success) {
+                                    // Display QR code
+                                    document.getElementById('qrCodeImage').src = data.qrCode;
+                                    // Store reference number
+                                    formData.paymentReference = data.reference;
+                                    // Start checking payment status
+                                    checkPaymentStatus(data.reference);
+                                } else {
+                                    throw new Error(data.message);
+                                }
+                            } catch (error) {
+                                alert('Error initiating payment: ' + error.message);
+                            }
+                        }
+
+                        async function checkPaymentStatus(reference) {
+                            const progressBar = document.getElementById('paymentProgress');
+                            const paymentStatus = document.getElementById('paymentStatus');
+                            const loadingIndicator = document.getElementById('loadingIndicator');
+                            const nextBtn = document.getElementById('nextBtn');
+                            
+                            let retryCount = 0;
+                            const maxRetries = 20; // Maximum number of retries (60 seconds total)
+                            
+                            async function checkStatus() {
+                                try {
+                                    const response = await fetch(\`../payment/process-payment.php?reference=\${reference}\`);
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    
+                                    const data = await response.json();
+                                    
+                                    if (data.status === 'completed') {
+                                        progressBar.style.width = '100%';
+                                        paymentStatus.textContent = 'Payment completed!';
+                                        paymentStatus.classList.add('text-green-600');
+                                        loadingIndicator.classList.remove('animate-pulse');
+                                        nextBtn.disabled = false;
+                                        return;
+                                    }
+                                    
+                                    // Update progress bar
+                                    progressBar.style.width = \`\${(retryCount / maxRetries) * 100}%\`;
+                                    
+                                    retryCount++;
+                                    if (retryCount < maxRetries) {
+                                        setTimeout(checkStatus, 3000);
+                                    } else {
+                                        paymentStatus.textContent = 'Payment verification timed out. Please contact support.';
+                                        paymentStatus.classList.add('text-red-600');
+                                        loadingIndicator.classList.remove('animate-pulse');
+                                    }
+                                    
+                                } catch (error) {
+                                    console.error('Payment status check error:', error);
+                                    paymentStatus.textContent = 'Unable to verify payment. Please refresh or contact support.';
+                                    paymentStatus.classList.add('text-red-600');
+                                    loadingIndicator.classList.remove('animate-pulse');
+                                }
+                            }
+                            
+                            checkStatus();
+                        }
+                    `;
+                    document.body.appendChild(script);
                     break;
             }
 
