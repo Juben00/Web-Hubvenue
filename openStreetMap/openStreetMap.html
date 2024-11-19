@@ -1,9 +1,9 @@
-<style>
+<!-- <style>
   #map {
     height: 500px;
     width: 100%;
   }
-</style>
+</style> -->
 
 <div id="openStreetMapDiv" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 ">
 
@@ -36,7 +36,7 @@
 
         marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
 
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+        fetch(`./proxy.php?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);

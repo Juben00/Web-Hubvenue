@@ -14,7 +14,7 @@ $venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
             <h1 class="text-2xl font-bold">Your listings</h1>
             <?php
             // Ensure the session variable is set and valid
-            if ($_SESSION['user']['user_type_id'] !== 2) {
+            if ($_SESSION['user']['user_type_id'] === 2) {
                 ?>
                 <!-- Render the buttons for non-user type 1 -->
                 <div class="flex items-center space-x-4">
@@ -41,7 +41,7 @@ $venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
         <!-- Listings Grid -->
 
         <?php
-        if ($_SESSION['user']['user_type_id'] !== 1) {
+        if ($_SESSION['user']['user_type_id'] !== 2) {
             echo '<p class=" text-gray-500 text-left">You need to apply for Host Account before you can list your venue.</p>';
         }
 
