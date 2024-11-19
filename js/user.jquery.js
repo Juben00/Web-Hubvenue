@@ -2,7 +2,6 @@ $(document).ready(function () {
 
     console.log("User jQuery loaded");
     
-
     // signup terms and conditions checker
     const signupAgreeTerms = $("#agreeTerms");
     const signupButton = $("#signupSubmit");
@@ -82,8 +81,8 @@ $(document).ready(function () {
         e.preventDefault();
         let url = $(this).attr("data-profileUrl");
         
-         $('.profileNav').removeClass('active');
-         $(this).addClass('active');
+        $('.profileNav').removeClass('active');
+        $(this).addClass('active');
     
         openProfileNav(url);
     })
@@ -91,14 +90,12 @@ $(document).ready(function () {
     $('#profileBtn').on('click', function (e) {
         const url = $(this).data("url");
         menuRedirection(url);
+        openProfileNav('rent-history');
     });
     
     //add venue button
     $(document).on('click', '#addVenueButton', function (e) {
-        e.preventDefault();
-        console.log("add venue button clicked");
-        $('#userAddVenueForm').removeClass('hidden');
-        $('#userAddVenueForm').addClass('flex');
+        window.location.href = './list-your-venue.php';
     });
 
     //host account button
@@ -228,7 +225,7 @@ $(document).ready(function () {
     let form = new FormData($("#add-venue-form")[0]);
     $.ajax({
         type: "POST",
-        url: "./api/AddVenue.api.php",
+        url: "./api/hostAddVenue.api.php",
         data: form,
         dataType: "json",
         contentType: false,
@@ -239,8 +236,8 @@ $(document).ready(function () {
                     "Venue added successfully",
                     "black_ico.png"
                 );
-                $('#userAddVenueForm').removeClass('flex');
-                $('#userAddVenueForm').addClass('hidden');
+                window.location.href = "./profile.php"
+                
                 $("#add-venue-form")[0].reset();
             } else {
                 showModal(
@@ -252,10 +249,7 @@ $(document).ready(function () {
     });
   }
 
-
     // setting default view for profile
-    
     openProfileNav('rent-history');
-
 
 });
