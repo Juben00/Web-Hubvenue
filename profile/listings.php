@@ -54,11 +54,22 @@ $venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
             foreach ($venuePost as $venue): ?>
                 <div class="bg-white rounded-xl shadow overflow-hidden">
                     <div class="relative">
-                        <?php if ($venue['status'] !== "Approved"): ?>
-                            <div class="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
+                        <?php if ($venue['status'] === "Pending") { ?>
+                            <div
+                                class="absolute top-2 right-2 border border-yellow-600 bg-yellow-500 text-white px-2 py-1 rounded-full text-sm">
                                 Verification required
                             </div>
-                        <?php endif; ?>
+                        <?php } else if ($venue['status'] === "Declined") { ?>
+                                <div
+                                    class="absolute top-2 right-2 border border-red-600 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
+                                    Post Declined
+                                </div>
+                        <?php } else if ($venue['status'] === "Approved") { ?>
+                                    <div
+                                        class="absolute top-2 right-2 border border-green-600 bg-green-500 text-white px-2 py-1 rounded-full text-sm">
+                                        Venue Approved
+                                    </div>
+                        <?php } ?>
                         <img src="./<?php echo !empty($venue['image_urls'][0])
                             ? htmlspecialchars($venue['image_urls'][0])
                             : './images/black_ico.png'; ?>"

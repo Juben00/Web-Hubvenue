@@ -241,14 +241,10 @@ $(document).ready(function () {
                     "Venue added successfully",
                     function () {
                         $("#add-venue-form")[0].reset();
-                        window.location.href = "../profile.php";
+                        window.location.href = "./profile.php";
                     },
                     "black_ico.png"
                 );
-                
-                window.location.href = "./profile.php"
-                
-                $("#add-venue-form")[0].reset();
             } else {
                 showModal(
                     "Venue not added",
