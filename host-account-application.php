@@ -379,7 +379,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
                         document.getElementById('sform').click();
                     }
                 } else {
-                    showModal('Please fill in all required fields before proceeding.', "black_ico.png");
+                    showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
                 }
             });
 

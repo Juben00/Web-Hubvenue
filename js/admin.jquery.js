@@ -465,13 +465,14 @@ $(document).ready(function () {
         success: function (response) {
             if (response.status == "success") {
                 showModal(
-                    "Venue added successfully",
+                    "Venue added successfully", function () {
+                      $("#add-venue-form")[0].reset();
+                    },
                     "black_ico.png"
                 );
-                $("#add-venue-form")[0].reset();
             } else {
                 showModal(
-                    "Venue not added",
+                    "Venue not added", undefined,
                     "black_ico.png"
                 );
             }
@@ -536,15 +537,15 @@ $(document).ready(function () {
         success: function (response) {
             if (response.status === "success") {
                 showModal(
-                    response.message,
+                    response.message, function () {
+                      formElement[0].reset();
+                      viewHostApplication();
+                    },
                     "black_ico.png"
                 );
-                formElement[0].reset();
-                //refresh the page
-                viewHostApplication();
             } else {
                 showModal(
-                    response.message,
+                    response.message, undefined,
                     "black_ico.png"
                 );
             }
@@ -564,15 +565,15 @@ $(document).ready(function () {
         success: function (response) {
             if (response.status === "success") {
                 showModal(
-                    response.message,
+                    response.message, function () {
+                      formElement[0].reset();
+                      viewHostApplication();
+                    },
                     "black_ico.png"
                 );
-                formElement[0].reset();
-                //refresh the page
-                viewHostApplication();
             } else {
                 showModal(
-                    response.message,
+                    response.message, undefined,
                     "black_ico.png"
                 );
             }
@@ -591,12 +592,14 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
-                    showModal(response.message, "black_ico.png");
+                    showModal(response.message,
+                      function () {
+                        $('#createUserModal').addClass("hidden");
+                        $('#createUserModal').removeClass("flex");
+                      },"black_ico.png");
                     formElement[0].reset();
-                     $('#createUserModal').addClass("hidden");
-                      $('#createUserModal').removeClass("flex");
                 } else {
-                    showModal(response.message, "black_ico.png");
+                    showModal(response.message, undefined, "black_ico.png");
                 }
             },
             });

@@ -72,7 +72,7 @@ $(document).ready(function () {
         if (isLogged === true) {  
             viewVenue(venueUrl);
         } else {
-            showModal("Please login to view the venue", "black_ico.png");
+            showModal("Please login to view the venue", undefined, "black_ico.png");
         }
     });
 
@@ -143,11 +143,13 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
-                    showModal(response.message, "black_ico.png");
-                    formElement[0].reset();
-                    $('#authModal').addClass("hidden");
+                    showModal(response.message, function () {
+                        formElement[0].reset();
+                        $('#authModal').addClass("hidden");
+                        window.location.reload();
+                    }, "black_ico.png");
                 } else {
-                    showModal(response.message, "black_ico.png");
+                    showModal(response.message, undefined, "black_ico.png");
                 }
             },
         });
@@ -164,12 +166,13 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
-                    showModal(response.message, "black_ico.png");
-                    formElement[0].reset();
-                    $('#authModal').addClass("hidden");
-                    $('#loginTab').click();
+                    showModal(response.message, function () {
+                        formElement[0].reset();
+                        $('#authModal').addClass("hidden");
+                        $('#loginTab').click();
+                    }, "black_ico.png");
                 } else {
-                    showModal(response.message, "black_ico.png");
+                    showModal(response.message, undefined, "black_ico.png");
                 }
             },
             });
@@ -195,9 +198,11 @@ $(document).ready(function () {
                 response = JSON.parse(response);
                 if (response.status === "success") {
                     formElement[0].reset();
-                    $("#hostAccountBtn").click();
+                    showModal(response.message, function () {
+                        $("#hostAccountBtn").click();
+                    }, "black_ico.png");
                 } else {
-                    showModal(response.message, "black_ico.png");
+                    showModal(response.message, undefined, "black_ico.png");
                 }
             }
             });
@@ -234,14 +239,16 @@ $(document).ready(function () {
             if (response.status == "success") {
                 showModal(
                     "Venue added successfully",
+                    function () {
+                        $("#add-venue-form")[0].reset();
+                        window.location.href = "./profile.php";
+                    },
                     "black_ico.png"
                 );
-                window.location.href = "./profile.php"
-                
-                $("#add-venue-form")[0].reset();
             } else {
                 showModal(
                     "Venue not added",
+                    undefined,
                     "black_ico.png"
                 );
             }
