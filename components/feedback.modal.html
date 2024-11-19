@@ -38,23 +38,21 @@
   const modalMessage = document.getElementById("feedbackModalMessage");
   const btn = document.getElementById("feedbackModalButton");
   const modalLogo = document.getElementById("feedbackModalLogo");
+
   // Function to show the modal with a custom message
-  function showModal(message, logo) {
-    const basePath = window.location.origin + window.location.pathname.split('/').slice(0, 2).join('/');
+  function showModal(message, callback = () => {}, logo) {
+    const basePath = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
     const logoPath = `${basePath}/images/${logo}`;
-    
+
     modalMessage.innerHTML = message; // Set the custom message
     modal.classList.remove("hidden"); // Show the modal
     modal.classList.add("flex"); // Show the modal
     modalLogo.src = logoPath; // Set the logo
+
+    // Dynamically assign the click handler for the "Okay" button
+    btn.onclick = function () {
+      callback(); // Execute the callback if provided
+      modal.classList.add("hidden"); // Hide the modal
+    };
   }
-
-  // Close modal on "Okay" button click
-  btn.onclick = function () {
-    if (modalMessage.innerHTML === "Login successful") {
-      window.location.reload();
-    }
-
-    modal.classList.add("hidden");
-  };
 </script>
