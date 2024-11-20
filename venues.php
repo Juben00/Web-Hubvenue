@@ -163,6 +163,158 @@ $owner = $accountObj->getUser($venue['host_id']);
 
                     <hr class="my-6">
 
+                    <h3 class="text-xl font-semibold mb-4">Location</h3>
+                    <div class="bg-gray-100 rounded-lg h-96 w-full mb-4" id="map">
+                        <?php include_once './openStreetMap/autoMapping.osm.php' ?>
+                    </div>
+
+                    <hr class="my-6">
+
+                    <h3 class="text-xl font-semibold mb-4">Ratings & Reviews</h3>
+                    <div class="mb-8">
+                        <div class="flex items-start gap-8">
+                            <!-- Overall Rating -->
+                            <div class="text-center">
+                                <div class="text-5xl font-bold mb-1">4.8</div>
+                                <div class="flex items-center justify-center text-yellow-400 mb-1">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="text-sm text-gray-600">128 reviews</div>
+                            </div>
+
+                            <!-- Rating Bars -->
+                            <div class="flex-grow">
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm w-16">5 stars</span>
+                                        <div class="flex-grow h-2 bg-gray-200 rounded">
+                                            <div class="h-full bg-yellow-400 rounded" style="width: 75%"></div>
+                                        </div>
+                                        <span class="text-sm w-8">30</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm w-16">4 stars</span>
+                                        <div class="flex-grow h-2 bg-gray-200 rounded">
+                                            <div class="h-full bg-yellow-400 rounded" style="width: 60%"></div>
+                                        </div>
+                                        <span class="text-sm w-8">20</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm w-16">3 stars</span>
+                                        <div class="flex-grow h-2 bg-gray-200 rounded">
+                                            <div class="h-full bg-yellow-400 rounded" style="width: 45%"></div>
+                                        </div>
+                                        <span class="text-sm w-8">92</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm w-16">2 stars</span>
+                                        <div class="flex-grow h-2 bg-gray-200 rounded">
+                                            <div class="h-full bg-yellow-400 rounded" style="width: 15%"></div>
+                                        </div>
+                                        <span class="text-sm w-8">3</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm w-16">1 star</span>
+                                        <div class="flex-grow h-2 bg-gray-200 rounded">
+                                            <div class="h-full bg-yellow-400 rounded" style="width: 30%"></div>
+                                        </div>
+                                        <span class="text-sm w-8">72</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Individual Reviews -->
+                        <div class="mt-8 space-y-6">
+                            <div class="border-b pb-6">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
+                                    <div>
+                                        <h4 class="font-semibold">Sarah Johnson</h4>
+                                        <p class="text-sm text-gray-500">2 weeks ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex text-yellow-400 mb-2">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff was very accommodating and professional. The place was exactly as described and the amenities were all in great condition.</p>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="flex items-center justify-center gap-2 mt-6">
+                            <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Previous</button>
+                            <button class="px-4 py-2 text-sm bg-gray-900 text-white rounded">1</button>
+                            <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">2</button>
+                            <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">3</button>
+                            <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Next</button>
+                        </div>
+                    </div>
+
+                    <hr class="my-6">
+
+                    <!-- New Section: Things You Should Know -->
+                    <h3 class="text-xl font-semibold mb-4">Things You Should Know</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <!-- House Rules -->
+                        <div>
+                            <h4 class="font-semibold text-lg mb-3">House Rules</h4>
+                            <ul class="space-y-2">
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-clock text-gray-600"></i>
+                                    <span>Check-in: After 2:00 PM</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-clock text-gray-600"></i>
+                                    <span>Checkout: Before 12:00 PM</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-users text-gray-600"></i>
+                                    <span>Maximum <?php echo htmlspecialchars($venue['capacity']) ?> guests</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-smoking-ban text-gray-600"></i>
+                                    <span>No smoking</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-paw text-gray-600"></i>
+                                    <span>No pets</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-music text-gray-600"></i>
+                                    <span>No parties or events</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Cancellation Policy -->
+                        <div>
+                            <h4 class="font-semibold text-lg mb-3">Cancellation Policy</h4>
+                            <div class="space-y-3">
+                                <p class="text-gray-700">Free cancellation for 48 hours after booking.</p>
+                                <p class="text-gray-700">Cancel before check-in and get a full refund, minus the service fee.</p>
+                                <div class="mt-4">
+                                    <h5 class="font-medium mb-2">Refund Policy:</h5>
+                                    <ul class="space-y-2 text-gray-700">
+                                        <li class="flex items-center gap-2">
+                                            <i class="fas fa-check text-green-600"></i>
+                                            <span>100% refund: Cancel 7 days before check-in</span>
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <i class="fas fa-check text-green-600"></i>
+                                            <span>50% refund: Cancel 3-7 days before check-in</span>
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <i class="fas fa-times text-red-600"></i>
+                                            <span>No refund: Cancel less than 3 days before check-in</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-6">
 
                     <h3 class="text-xl font-semibold mb-4">The Owner</h3>
                     <div class="flex gap-4 mb-6">
@@ -240,9 +392,27 @@ $owner = $accountObj->getUser($venue['host_id']);
 
                 <div class="md:w-1/3">
                     <div class="border rounded-xl p-6 shadow-lg mb-6">
-                        <h3 class="text-xl font-semibold mb-4">Location</h3>
-                        <div class="bg-gray-100 rounded-lg h-48 w-full mb-4">
-                            <?php include_once './openStreetMap/autoMapping.osm.php' ?>
+                        <h3 class="text-xl font-semibold mb-4">The Owner</h3>
+                        <div class="flex gap-4">
+                            <div class="bg-slate-50 shadow-lg rounded-lg p-6 w-full">
+                                <!-- Card Header -->
+                                <div class="text-center mb-6">
+                                    <div class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
+                                        <?php
+                                        if (isset($owner)) {
+                                            echo $owner[0]['firstname'][0];
+                                        } else {
+                                            echo "U";
+                                        }
+                                        ?>
+                                    </div>
+                                    <h2 class="text-xl font-semibold text-gray-800">HubVenue ID</h2>
+                                    <p class="text-sm text-gray-500">Virtual Identification Card</p>
+                                </div>
+
+                                <!-- Rest of the owner card content remains the same -->
+                                <!-- ... -->
+                            </div>
                         </div>
                     </div>
 

@@ -1,6 +1,6 @@
 <div>
     <!-- Map Container -->
-    <div id="map" class="h-48 w-auto z-20"></div>
+    <div id="map" class="h-96 w-auto z-20"></div>
 
     <!-- Hidden Input for OpenStreet Address (with pre-stored location) -->
     <input type="hidden" id="autoOsm" value="<?php echo htmlspecialchars($venue['location']) ?>" />
@@ -8,54 +8,30 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    // Initialize the map to a default position (world view)
-    const autoMap = L.map('map').setView([0, 0], 2);
+    // Initialize the map
+    var map = L.map('map').setView([6.9214, 122.0790], 13); // Default to Zamboanga City coordinates
 
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(autoMap);
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-    // Retrieve the saved location from the hidden input
-    const autoOsmValue = document.getElementById('autoOsm').value;
+    // Add a marker for the venue location
+    var marker = L.marker([<?php echo $venue['latitude'] ?? '6.9214' ?>, <?php echo $venue['longitude'] ?? '122.0790' ?>]).addTo(map);
+    
+    // Add a popup to the marker
+    marker.bindPopup("<?php echo htmlspecialchars($venue['location']) ?>").openPopup();
 
-    // Function to set a specific location on the map
-    function setLocationOnMap(lat, lng, address = null) {
-        autoMap.setView([lat, lng], 13);
-        const marker = L.marker([lat, lng]).addTo(autoMap);
-        if (address) {
-            marker.bindPopup(address).openPopup();
-        }
-    }
-
-    // Check if autoOsmValue contains an address
-    if (autoOsmValue) {
-        // Use OpenStreetMap's Nominatim API to geocode the address
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(autoOsmValue)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.length > 0) {
-                    const { lat, lon } = data[0];
-                    setLocationOnMap(parseFloat(lat), parseFloat(lon), autoOsmValue);
-                } else {
-                    showModal("Address not found. Showing default location.", 'black_ico.png');
-                }
-            })
-            .catch(error => {
-                showModal("Error retrieving location.", 'black_ico.png');
-            });
-    } else if (navigator.geolocation) {
-        // Fallback to user's current location if autoOsm doesn't have coordinates or an address
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                const { latitude, longitude } = position.coords;
-                setLocationOnMap(latitude, longitude, "Current Location");
-            },
-            error => {
-                showModal("Unable to retrieve your location.", 'black_ico.png');
-            }
-        );
-    } else {
-        showModal("Geolocation is not supported by your browser.");
-    }
+    // Ensure the map container fills its parent
+    document.addEventListener('DOMContentLoaded', function() {
+        map.invalidateSize();
+    });
 </script>
+
+<style>
+    #map {
+        width: 100%;
+        z-index: 1;
+    }
+</style>
