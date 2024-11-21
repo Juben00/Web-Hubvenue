@@ -212,10 +212,9 @@
     }
 
     function cancelBooking() {
-        if (confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
-            // Add your cancellation logic here
-            alert('Booking has been cancelled');
-            // You should add AJAX call to your backend to process the cancellation
+        if (confirm('Are you sure you want to proceed to cancel this booking?')) {
+            // Redirect to the cancellation page
+            window.location.href = '../web-hubvenue/cancel_booking/cancelation.php';
         }
     }
 
