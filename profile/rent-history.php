@@ -33,9 +33,14 @@
                             <p class="text-gray-600 mt-2">Governor Camins Avenue, Zone II, Baliwasan</p>
                             <p class="text-gray-600">Zamboanga City, Zamboanga Peninsula, 7000</p>
                             <p class="text-gray-600 mt-2">₱4,800/night</p>
-                            <button onclick="showDetails('current')"
-                                class="mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
-                                Details</button>
+                            <div class="mt-4 space-x-4">
+                                <button onclick="showDetails('current')"
+                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                    Details</button>
+                                <button onclick="cancelBooking()"
+                                    class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                    Booking</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -54,13 +59,35 @@
                                 <p class="text-lg font-medium">Garden View Suite 205</p>
                                 <p class="text-gray-600 mt-2">Jan 2023 - Dec 2023</p>
                                 <p class="text-gray-600">₱4,500/night</p>
-                                <div class="mt-4 space-x-4">
-                                    <button onclick="showDetails('prev1')"
-                                        class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
-                                        Details</button>
-                                    <button onclick="bookAgain('prev1')"
-                                        class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Book
-                                        Again</button>
+                                <div class="mt-4">
+                                    <div class="flex items-center mb-3">
+                                        <div class="flex items-center space-x-1">
+                                            <button onclick="rate(1)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="1">★</button>
+                                            <button onclick="rate(2)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="2">★</button>
+                                            <button onclick="rate(3)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="3">★</button>
+                                            <button onclick="rate(4)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="4">★</button>
+                                            <button onclick="rate(5)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="5">★</button>
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
+                                    </div>
+                                    <div class="mb-4">
+                                        <textarea id="review-text" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                                            rows="3"
+                                            placeholder="Share your experience (optional)"></textarea>
+                                    </div>
+                                    <div class="flex space-x-4">
+                                        <button onclick="submitReview()" 
+                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                            Submit Review
+                                        </button>
+                                        <button onclick="showDetails('prev1')"
+                                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
+                                            Details</button>
+                                        <button onclick="bookAgain('prev1')"
+                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Book
+                                            Again</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -130,6 +157,12 @@
                         </div>
                     </div>
                 </div>
+                <div id="reviews-section" class="mt-6 border-t pt-6">
+                    <h4 class="font-semibold mb-4">Reviews</h4>
+                    <div id="reviews-container" class="space-y-4">
+                        <!-- Reviews will be dynamically loaded here -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -176,6 +209,81 @@
     function bookAgain(type) {
         alert('Booking process initiated for ' + (type === 'modal' ? document.getElementById('modal-title').textContent : 'Garden View Suite 205'));
         // Implement actual booking logic here
+    }
+
+    function cancelBooking() {
+        if (confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) {
+            // Add your cancellation logic here
+            alert('Booking has been cancelled');
+            // You should add AJAX call to your backend to process the cancellation
+        }
+    }
+
+    let currentRating = 0;
+
+    function rate(rating) {
+        currentRating = rating;
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('text-gray-300');
+                star.classList.add('text-yellow-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300');
+            }
+        });
+    }
+
+    function submitReview() {
+        if (currentRating === 0) {
+            alert('Please select a rating before submitting your review.');
+            return;
+        }
+
+        const reviewText = document.getElementById('review-text').value;
+        const review = {
+            rating: currentRating,
+            comment: reviewText,
+            date: new Date().toISOString(),
+            // Add other relevant data like booking_id, venue_id, etc.
+        };
+
+        // Here you would typically make an AJAX call to your backend
+        console.log('Submitting review:', review);
+
+        // Simulate successful submission
+        alert('Thank you for your review!');
+        
+        // Clear the form
+        currentRating = 0;
+        document.getElementById('review-text').value = '';
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.classList.remove('text-yellow-400');
+            star.classList.add('text-gray-300');
+        });
+
+        // Add the review to the reviews section
+        addReviewToDisplay(review);
+    }
+
+    function addReviewToDisplay(review) {
+        const reviewsContainer = document.getElementById('reviews-container');
+        const reviewElement = document.createElement('div');
+        reviewElement.className = 'border-b pb-4';
+        reviewElement.innerHTML = `
+            <div class="flex items-center mb-2">
+                <div class="flex text-yellow-400">
+                    ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                </div>
+                <span class="ml-2 text-sm text-gray-600">
+                    ${new Date(review.date).toLocaleDateString()}
+                </span>
+            </div>
+            <p class="text-gray-700">${review.comment || 'No comment provided.'}</p>
+        `;
+        reviewsContainer.prepend(reviewElement);
     }
 
     window.onclick = function (event) {

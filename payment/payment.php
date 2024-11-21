@@ -226,8 +226,15 @@
                             <div>
                                 <label for="guestCount" class="block text-sm font-medium text-gray-700 mb-1">Number of Guests</label>
                                 <div class="flex items-center space-x-2">
-                                    <input type="range" id="guestCount" name="guestCount" value="${formData.guestCount}" min="1" max="50" class="w-full">
-                                    <span class="text-gray-700">${formData.guestCount}</span>
+                                    <input type="number" 
+                                           id="guestCount" 
+                                           name="guestCount" 
+                                           value="${formData.guestCount}" 
+                                           min="1" 
+                                           max="50" 
+                                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                                           required>
+                                    <span class="text-sm text-gray-500">Max: 50</span>
                                 </div>
                             </div>
                             <div>
@@ -288,6 +295,23 @@
                     stepContent.innerHTML = `
                         <div class="space-y-6">
                             <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+                            
+                            <div class="mb-6">
+                                <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-1">Reference Number (Optional)</label>
+                                <div class="flex gap-2">
+                                    <input type="text" 
+                                           id="referenceNumber" 
+                                           name="referenceNumber" 
+                                           placeholder="Enter your payment reference number"
+                                           class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                                    <button onclick="checkManualReference()" 
+                                            class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:bg-gray-800">
+                                        Verify
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-500 mt-1">If you already have a reference number, enter it here to verify your payment</p>
+                            </div>
+
                             <div class="grid grid-cols-2 gap-6">
                                 <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('gcash')">
                                     <div class="flex items-center justify-between mb-4">
@@ -426,6 +450,43 @@
                             }
                             
                             checkStatus();
+                        }
+
+                        async function checkManualReference() {
+                            const referenceInput = document.getElementById('referenceNumber');
+                            const reference = referenceInput.value.trim();
+                            
+                            if (!reference) {
+                                alert('Please enter a reference number');
+                                return;
+                            }
+                            
+                            // Show QR code container and update UI
+                            const qrContainer = document.getElementById('qrCodeContainer');
+                            qrContainer.classList.remove('hidden');
+                            
+                            // Update payment status elements
+                            const progressBar = document.getElementById('paymentProgress');
+                            const paymentStatus = document.getElementById('paymentStatus');
+                            const loadingIndicator = document.getElementById('loadingIndicator');
+                            
+                            try {
+                                // Start checking payment status
+                                paymentStatus.textContent = 'Verifying payment...';
+                                loadingIndicator.classList.add('animate-pulse');
+                                
+                                // Store reference number in formData
+                                formData.paymentReference = reference;
+                                
+                                // Begin status checking
+                                checkPaymentStatus(reference);
+                                
+                            } catch (error) {
+                                console.error('Error verifying reference:', error);
+                                paymentStatus.textContent = 'Error verifying reference number';
+                                paymentStatus.classList.add('text-red-600');
+                                loadingIndicator.classList.remove('animate-pulse');
+                            }
                         }
                     `;
                     document.body.appendChild(script);

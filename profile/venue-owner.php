@@ -10,15 +10,7 @@ $fullname = $_SESSION['user']['firstname'] . ' ' . $_SESSION['user']['lastname']
         <h1 class="text-2xl font-bold text-gray-900">Welcome back,
             <?php echo $fullname; ?>
         </h1>
-
-        <!-- Verification Notice -->
-        <div class="mt-4 bg-white rounded-lg shadow p-4">
-            <h2 class="font-semibold">Confirm important details</h2>
-            <p class="text-red-600 text-sm">Required to publish</p>
-            <p class="text-gray-600">asdas</p>
-            <button class="mt-2 text-gray-900 font-semibold">Start</button>
-        </div>
-    </div>
+      
 
     <!-- Reservations Section -->
     <div class="mt-8">
@@ -32,15 +24,15 @@ $fullname = $_SESSION['user']['firstname'] . ' ' . $_SESSION['user']['lastname']
             <nav class="-mb-px flex space-x-8">
                 <a href="#"
                     class="border-black text-gray-900 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Checking out (0)
+                    Confirm Bookings (0)
                 </a>
                 <a href="#"
                     class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Currently hosting (0)
+                    Current Bookings (0)
                 </a>
                 <a href="#"
                     class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Arriving soon (0)
+                    Booking History (0)
                 </a>
                 <!-- Add more tabs as needed -->
             </nav>
