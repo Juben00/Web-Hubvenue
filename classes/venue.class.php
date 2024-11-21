@@ -165,6 +165,8 @@ class Venue
             // Start building the SQL query
             $sql = "SELECT 
             v.id AS venue_id,
+            v.name AS venue_name,
+            v.description AS venue_description,
             v.*, 
             vt.tag_name AS tag,
             vss.name AS status, 
