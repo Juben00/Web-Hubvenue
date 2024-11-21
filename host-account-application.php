@@ -158,13 +158,13 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
     <!-- Main Content -->
     <?php
     if ($appliedHost) {
-        echo '<div class="bg-yellow-400 mt-4 text-center h-[150px] items-center flex-wrap flex absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 p-3 rounded-lg text-xl font-semibold">
-            Your host application is currently under review. Please allow some time for the admin to process your request.
-          </div>';
+        echo '<div class="backdrop-blur-md backdrop-brightness-150 text-neutral-800 mt-4 text-center h-[150px] items-center flex-wrap flex absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 p-6 rounded-lg text-xl font-semibold border border-gray-400 shadow-md shadow-cyan-500/50">
+        Your host application is currently under review. <br> Please allow some time for the admin to process your request.
+      </div>';
     } else if ($isHost) {
-        echo '<div class="bg-green-400 mt-4 text-center h-[150px] items-center flex-wrap flex absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 p-3 rounded-lg text-xl font-semibold">
-            Congratulations! Your host account is now active. You may start posting and managing your listings.
-          </div>';
+        echo '<div class="backdrop-blur-md backdrop-brightness-150 text-neutral-800 mt-4 text-center h-[150px] items-center flex-wrap flex absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 p-6 rounded-lg text-xl font-semibold border border-gray-400 shadow-md shadow-green-500/50">
+        Congratulations! Your host account is now active. <br> You may start posting and managing your listings.
+      </div>';
     } else {
         ?>
             <main class="flex-1 mt-20 container mx-auto px-4 py-8 relative ">
