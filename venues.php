@@ -237,7 +237,9 @@ $owner = $accountObj->getUser($venue['host_id']);
                                 <div class="flex text-yellow-400 mb-2">
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff was very accommodating and professional. The place was exactly as described and the amenities were all in great condition.</p>
+                                <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff was
+                                    very accommodating and professional. The place was exactly as described and the
+                                    amenities were all in great condition.</p>
                             </div>
                         </div>
 
@@ -292,7 +294,8 @@ $owner = $accountObj->getUser($venue['host_id']);
                             <h4 class="font-semibold text-lg mb-3">Cancellation Policy</h4>
                             <div class="space-y-3">
                                 <p class="text-gray-700">Free cancellation for 48 hours after booking.</p>
-                                <p class="text-gray-700">Cancel before check-in and get a full refund, minus the service fee.</p>
+                                <p class="text-gray-700">Cancel before check-in and get a full refund, minus the service
+                                    fee.</p>
                                 <div class="mt-4">
                                     <h5 class="font-medium mb-2">Refund Policy:</h5>
                                     <ul class="space-y-2 text-gray-700">
@@ -316,88 +319,18 @@ $owner = $accountObj->getUser($venue['host_id']);
 
                     <hr class="my-6">
 
-                    <h3 class="text-xl font-semibold mb-4">The Owner</h3>
-                    <div class="flex gap-4 mb-6">
-                        <div class="bg-slate-50 shadow-lg rounded-lg p-6 w-80">
-                            <!-- Card Header -->
-                            <div class="text-center mb-6">
-                                <div
-                                    class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
-                                    <?php
-                                    if (isset($owner)) {
-                                        echo $owner[0]['firstname'][0];
-                                    } else {
-                                        echo "U";
-                                    }
-                                    ?>
-                                </div>
-                                <!-- Placeholder for User Photo -->
-                                <h2 class="text-xl font-semibold text-gray-800">HubVenue ID</h2>
-                                <p class="text-sm text-gray-500">Virtual Identification Card</p>
-                            </div>
 
-                            <!-- Card Body -->
-                            <div class="space-y-4">
-                                <!-- First Name -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">First Name:</span>
-                                    <span><?= htmlspecialchars($owner[0]['firstname']) ?></span>
-                                </div>
-                                <!-- Last Name -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">Last Name:</span>
-                                    <span><?= htmlspecialchars($owner[0]['lastname']) ?></span>
-                                </div>
-                                <!-- Middle Name -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">Middle Initial:</span>
-                                    <span><?= htmlspecialchars($owner[0]['middlename']) ?>.</span>
-                                </div>
-                                <!-- Sex -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">Sex:</span>
-                                    <span><?= htmlspecialchars($owner[0]['sex']) ?></span>
-                                </div>
-                                <!-- User Type -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">User Type:</span>
-                                    <span><?= htmlspecialchars($owner[0]['user_type']) ?></span>
-                                </div>
-                                <!-- Birthdate -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">Birthdate:</span>
-                                    <span><?= htmlspecialchars($owner[0]['birthdate']) ?></span>
-                                </div>
-                                <!-- Contact Number -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">Contact Number:</span>
-                                    <span><?= htmlspecialchars($owner[0]['contact_number']) ?></span>
-                                </div>
-                                <!-- Email -->
-                                <div class="flex justify-between text-gray-700">
-                                    <span class="font-semibold">Email:</span>
-                                    <span><?= htmlspecialchars($owner[0]['email']) ?></span>
-                                </div>
-                            </div>
-
-                            <!-- Footer -->
-                            <div class="mt-6 text-center text-gray-500 text-xs">
-                                <p>For inquiries, contact <a href="mailto:<?= htmlspecialchars($owner[0]['email']) ?>"
-                                        class="text-blue-500 hover:underline"><?= htmlspecialchars($owner[0]['email']) ?></a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="md:w-1/3">
                     <div class="border rounded-xl p-6 shadow-lg mb-6">
                         <h3 class="text-xl font-semibold mb-4">The Owner</h3>
                         <div class="flex gap-4">
-                            <div class="bg-slate-50 shadow-lg rounded-lg p-6 w-full">
+                            <div class="bg-slate-50 p-6 w-full">
                                 <!-- Card Header -->
-                                <div class="text-center mb-6">
-                                    <div class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
+                                <div class="text-center mb-4">
+                                    <div
+                                        class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
                                         <?php
                                         if (isset($owner)) {
                                             echo $owner[0]['firstname'][0];
@@ -406,8 +339,10 @@ $owner = $accountObj->getUser($venue['host_id']);
                                         }
                                         ?>
                                     </div>
-                                    <h2 class="text-xl font-semibold text-gray-800">HubVenue ID</h2>
-                                    <p class="text-sm text-gray-500">Virtual Identification Card</p>
+                                    <h2 class="text-xl font-semibold text-gray-800">
+                                        <?php echo htmlspecialchars($owner[0]['firstname'] . " " . $owner[0]['lastname']); ?>
+                                    </h2>
+                                    <p class="text-xs text-gray-500">Owner</p>
                                 </div>
 
                                 <!-- Rest of the owner card content remains the same -->
@@ -432,16 +367,16 @@ $owner = $accountObj->getUser($venue['host_id']);
                             <div class="flex">
                                 <div class="w-1/2 p-2 border-r">
                                     <label class="block text-xs font-semibold">CHECK-IN</label>
-                                    <input type="text" value="11/3/2024" class="w-full">
+                                    <input type="text" value="11/3/2024" class="w-full bg-transparent">
                                 </div>
                                 <div class="w-1/2 p-2">
                                     <label class="block text-xs font-semibold">CHECKOUT</label>
-                                    <input type="text" value="11/8/2024" class="w-full">
+                                    <input type="text" value="11/8/2024" class="w-full bg-transparent">
                                 </div>
                             </div>
                             <div class="border-t p-2">
                                 <label class="block text-xs font-semibold">GUESTS</label>
-                                <select class="w-full">
+                                <select class="w-full bg-transparent">
                                     <option>1 guest</option>
                                 </select>
                             </div>
