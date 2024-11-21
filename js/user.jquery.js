@@ -222,12 +222,11 @@ $(document).ready(function () {
                     $('#profileDisplay').html(response);
 
                     //view listing
-                $('.venue-card').on('click', function (e) {
-                    e.preventDefault();
-                    const url = $(this).data("id");
-                    viewListing(url);
-                    console.log(url);
-                });
+                    $('.venue-card').on('click', function (e) {
+                        e.preventDefault();
+                        const url = $(this).data("id");
+                        viewListing(url);
+                    });
                 }
             }
         )
@@ -242,6 +241,12 @@ $(document).ready(function () {
             },
             success: function (response) {
                 $('#profileDisplay').html(response);
+
+                //back to listing
+                $('#backToListing').on('click', function(e) {
+                    e.preventDefault();
+                    openProfileNav('listings');
+                })
             }
         });
     }

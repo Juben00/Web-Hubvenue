@@ -3,7 +3,6 @@ require_once '../classes/venue.class.php';
 
 session_start();
 
-$status = "";
 $venueObj = new Venue();
 $venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
 

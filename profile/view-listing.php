@@ -5,169 +5,19 @@ session_start();
 $venueObj = new Venue();
 $venuePost = null;
 
-// Add sample venues if no real listings exist
-if (empty($venuePost)) {
-    $venuePost = [
-        [
-            'id' => '1',
-            'name' => 'Sunset Beach Resort',
-            'location' => 'Boracay Island, Philippines',
-            'status' => 'Approved',
-            'image_urls' => ['../images/venues/beach-resort.jpg'],
-            'price' => '₱15,000',
-            'description' => 'This Resort offers wide range of activities suitable for all ages.',
-            'capacity' => '50',
-            'amenities' => [
-                'Swimming Pool' => ['icon' => 'pool', 'description' => 'Outdoor infinity pool with ocean view'],
-                'Parking' => ['icon' => 'car', 'description' => 'Free parking for up to 20 vehicles'],
-                'Kitchen' => ['icon' => 'kitchen', 'description' => 'Fully equipped commercial kitchen'],
-                'Sound System' => ['icon' => 'music', 'description' => 'Professional audio equipment'],
-                'Air Conditioning' => ['icon' => 'ac', 'description' => 'Climate controlled indoor spaces'],
-                'WiFi' => ['icon' => 'wifi', 'description' => 'High-speed internet throughout'],
-                'Security' => ['icon' => 'security', 'description' => '24/7 security personnel'],
-                'Backup Power' => ['icon' => 'power', 'description' => 'Automatic generator system'],
-                'Restrooms' => ['icon' => 'bathroom', 'description' => '6 well-maintained comfort rooms']
-            ],
-            'owner' => [
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'contact' => '09123456789',
-                'email' => 'john.doe@example.com'
-            ],
-            'rules' => [
-                'Check-in & Checkout' => 'Check-in time is 8:00 AM and checkout is 10:00 PM',
-                'Noise Restrictions' => 'Music must be turned down by 10:00 PM to comply with local regulations',
-                'Smoking Policy' => 'No smoking inside the venue. Designated smoking areas are provided outside',
-                'Decorations' => 'No confetti, glitter, or adhesive decorations on walls. All decorations must be removed after the event',
-                'Outside Vendors' => 'All outside vendors must be approved and provide necessary permits',
-                'Cleaning' => 'Basic cleaning is included, but excessive mess may incur additional charges',
-                'Damage Policy' => 'Security deposit will be held for any damages to the property or equipment',
-                'Parking Rules' => 'Parking only in designated areas. Valet service available upon request',
-                'Children' => 'Children must be supervised at all times, especially near the pool area'
-            ],
-            'cancellation_policy' => [
-                'policy_type' => 'Flexible',
-                'full_refund_period' => '7 days',
-                'partial_refund_period' => '3 days',
-                'partial_refund_amount' => '50%',
-                'details' => [
-                    'Cancel up to 7 days before check-in and get a full refund',
-                    'Cancel between 3-7 days before check-in and get a 50% refund',
-                    'Cancel less than 3 days before check-in and no refund',
-                    'Service fees are non-refundable',
-                    'Cancellation requests must be made in writing'
-                ],
-                'special_circumstances' => 'Force majeure events will be evaluated case by case'
-            ],
-        ],
-        [
-            'id' => '2',
-            'name' => 'Mountain View Villa',
-            'location' => 'Tagaytay City, Philippines',
-            'status' => 'Pending',
-            'image_urls' => ['../images/venues/mountain-villa.jpg'],
-            'price' => '₱12,000',
-            'description' => 'Perfect venue for intimate gatherings with a stunning view of Taal Lake.',
-            'capacity' => '30',
-            'amenities' => [
-                'Garden Area',
-                'Function Hall',
-                'Kitchen',
-                'Parking',
-                'WiFi'
-            ],
-            'owner' => [
-                'first_name' => 'Maria',
-                'last_name' => 'Santos',
-                'contact' => '09187654321',
-                'email' => 'maria.santos@example.com'
-            ],
-            'rules' => [],
-            'cancellation_policy' => '',
-            'completion_status' => [
-                'rules' => 'missing',
-                'policy' => 'missing'
-            ],
-            'required_fields_missing' => [
-                'Venue Rules',
-                'Cancellation Policy'
-            ]
-        ],
-        [
-            'id' => '3',
-            'name' => 'Garden Wedding Venue',
-            'location' => 'Antipolo, Rizal',
-            'status' => 'Declined',
-            'image_urls' => ['../images/venues/garden-venue.jpg'],
-            'price' => '₱18,000',
-            'description' => 'Beautiful garden venue perfect for weddings and special events.',
-            'capacity' => '100',
-            'amenities' => [
-                'Garden',
-                'Chapel',
-                'Bridal Room',
-                'Catering Kitchen',
-                'Parking Area'
-            ],
-            'owner' => [
-                'first_name' => 'Robert',
-                'last_name' => 'Cruz',
-                'contact' => '09198765432',
-                'email' => 'robert.cruz@example.com'
-            ],
-            'rules' => [
-                'No smoking inside the venue',
-                'No loud music after 10 PM',
-                'No confetti or glitter',
-                'Clean-up must be completed by check-out time',
-                'Pets must be pre-approved'
-            ],
-            'cancellation_policy' => 'Flexible - Full refund available for cancellations made 24 hours before check-in time.',
-            'decline_reason' => 'Venue does not meet safety standards. Please update safety certificates and resubmit.',
-        ],
-        [
-            'id' => '4',
-            'name' => 'City View Events Place',
-            'location' => 'Makati City, Philippines',
-            'status' => 'Complete Listing',
-            'image_urls' => ['../images/venues/city-view.jpg'],
-            'price' => '₱25,000',
-            'description' => 'Modern event space in the heart of Makati, perfect for corporate events and social gatherings.',
-            'capacity' => '150',
-            'amenities' => [
-                'Function Hall' => ['icon' => 'hall', 'description' => 'Spacious air-conditioned hall'],
-                'Parking' => ['icon' => 'car', 'description' => 'Basement parking available'],
-                'Sound System' => ['icon' => 'music', 'description' => 'Built-in audio equipment'],
-                'Catering Kitchen' => ['icon' => 'kitchen', 'description' => 'Prep area for caterers']
-            ],
-            'owner' => [
-                'first_name' => 'Patricia',
-                'last_name' => 'Reyes',
-                'contact' => '09123456789',
-                'email' => 'patricia.reyes@example.com'
-            ],
-            'rules' => [
-                'No smoking inside the venue',
-                'Music must end by 11 PM',
-                'Outside catering allowed with additional fee',
-                'Security deposit required'
-            ],
-            'cancellation_policy' => 'Moderate - Full refund up to 7 days before event date',
-            'ready_to_submit' => true
-        ]
-    ];
-}
+$getParams = $_GET['id'];
+$venueView = $venueObj->getSingleVenue($getParams);
 
 ?>
 <!-- Venue Details View (Initially Hidden) -->
 <div id="venueDetailsView" class="container mx-auto pt-20">
-    <div class="mb-6">
-        <button onclick="showListings()" class="flex items-center text-gray-600 hover:text-gray-900">
+    <div class="mb-4">
+        <a id="backToListing" class="flex items-center text-xs cursor-pointer text-gray-600 hover:text-gray-900">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             Back to Listings
-        </button>
+        </a>
     </div>
 
     <div class="flex gap-6">
@@ -190,15 +40,44 @@ if (empty($venuePost)) {
                     <!-- Image Gallery -->
                     <div class="mb-6 grid grid-cols-2 gap-4">
                         <div class="col-span-2">
-                            <img id="mainImage" src="" alt="" class="w-full h-96 object-cover rounded-lg">
+                            <?php if (!empty($venueView['image_urls'])): ?>
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][0]) ?>" alt="Venue Image"
+                                    class="w-full h-96 object-cover rounded-lg">
+                            <?php else: ?>
+                                <img src="default-image.jpg" alt="Default Venue Image"
+                                    class="bg-slate-50 w-full h-96 object-cover rounded-lg">
+                            <?php endif; ?>
                         </div>
                         <div class="grid grid-cols-3 col-span-2 gap-2">
-                            <img src="" alt=""
-                                class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
-                            <img src="" alt=""
-                                class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
-                            <img src="" alt=""
-                                class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                            <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 1): ?>
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][1]) ?>" alt="Venue Image"
+                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                            <?php else: ?>
+                                <div
+                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                    <p class="text-center">No more image to show</p>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 2): ?>
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][2]) ?>" alt="Venue Image"
+                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                            <?php else: ?>
+                                <div
+                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                    <p class="text-center">No more image to show</p>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 3): ?>
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][3]) ?>" alt="Venue Image"
+                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                            <?php else: ?>
+                                <div
+                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                    <p class="text-center">No more image to show</p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -752,12 +631,6 @@ if (empty($venuePost)) {
             ? venue.image_urls[0]
             : '../images/black_ico.png';
         mainImage.alt = venue.name || 'Venue image';
-    }
-
-    function showListings() {
-        // Hide details view and show listings view
-        document.getElementById('venueDetailsView').classList.add('hidden');
-        document.getElementById('listingsView').classList.remove('hidden');
     }
 
     function toggleEditMode() {
