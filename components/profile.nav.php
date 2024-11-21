@@ -21,11 +21,11 @@
             Today
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a id="calendar" data-profileUrl="calendar" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
             Calendar
           </a>
-        </li>
+        </li> -->
         <li>
           <a id="listing" data-profileUrl="listings" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
             Listings

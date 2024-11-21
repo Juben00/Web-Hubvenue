@@ -109,8 +109,7 @@ $(document).ready(function () {
         e.preventDefault();
         const formElement = $(this);
         hostApplication(formElement);
-    });
-
+    });  
 
 
     function viewOpenStreetMap(){
@@ -221,9 +220,30 @@ $(document).ready(function () {
                 url: './profile/' + url + '.php',
                 success: function (response) {
                     $('#profileDisplay').html(response);
+
+                    //view listing
+                $('.venue-card').on('click', function (e) {
+                    e.preventDefault();
+                    const url = $(this).data("id");
+                    viewListing(url);
+                    console.log(url);
+                });
                 }
             }
         )
+    }
+    
+    function viewListing(url) {
+        $.ajax({
+            type: "GET",
+            url: "./profile/view-listing.php?id=" + url,
+            data: {
+                id: url
+            },
+            success: function (response) {
+                $('#profileDisplay').html(response);
+            }
+        });
     }
 
     function addVenue(){
@@ -254,8 +274,7 @@ $(document).ready(function () {
             }
         },
     });
-  }
-
+    }
     // setting default view for profile
     openProfileNav('rent-history');
 
