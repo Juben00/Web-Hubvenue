@@ -94,8 +94,6 @@ class Venue
         }
 
     }
-
-
     function getAllVenues($status = '', $host_id = '')
     {
         try {
@@ -157,6 +155,7 @@ class Venue
             return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
         }
     }
+
     function getSingleVenue($venue_id = '')
     {
         try {
