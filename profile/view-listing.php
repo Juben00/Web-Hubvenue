@@ -23,22 +23,23 @@ $venueView = $venueObj->getSingleVenue($getParams);
     <div class="flex gap-6">
         <!-- Main Content -->
         <div class="flex-grow">
-            <div class="bg-white rounded-lg shadow-sm">
+            <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
                 <div class="p-6">
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 id="detailVenueName" class="text-2xl font-bold"></h2>
-                        <button onclick="toggleEditMode()"
-                            class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <input id="detailVenueName" class="text-2xl font-bold w-full"
+                            value="<?php echo htmlspecialchars($venueView['venue_name']); ?>">
+                        <button"
+                            class="text-xs px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                             Edit Details
-                        </button>
+                            </button>
                     </div>
 
                     <!-- Image Gallery -->
-                    <div class="mb-6 grid grid-cols-2 gap-4">
+                    <div class="mb-6 grid grid-cols-2 gap-4 relative">
                         <div class="col-span-2">
                             <?php if (!empty($venueView['image_urls'])): ?>
                                 <img src="./<?= htmlspecialchars($venueView['image_urls'][0]) ?>" alt="Venue Image"
@@ -79,6 +80,10 @@ $venueView = $venueObj->getSingleVenue($getParams);
                                 </div>
                             <?php endif; ?>
                         </div>
+                        <button
+                            class="absolute text-xs border-2 border-gray-500 bottom-4 right-4 bg-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
+                            Show all photos
+                        </button>
                     </div>
 
                     <div class="grid grid-cols-2 gap-6">
@@ -96,7 +101,8 @@ $venueView = $venueObj->getSingleVenue($getParams);
                                 <h3 class="text-lg font-semibold mb-2">Description</h3>
                                 <p id="detailVenueDescription" class="text-gray-600 view-mode"></p>
                                 <textarea id="editVenueDescription"
-                                    class="form-textarea w-full rounded-md edit-mode hidden" rows="4"></textarea>
+                                    value="<?php echo htmlspecialchars($venueView['venue_description']) ?>"
+                                    class="form-textarea w-full rounded-md edit-mode " rows="4"></textarea>
                             </div>
 
                             <!-- Capacity -->
