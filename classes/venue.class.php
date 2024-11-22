@@ -167,6 +167,7 @@ class Venue
             v.id AS venue_id,
             v.name AS venue_name,
             v.description AS venue_description,
+            v.location AS venue_location,
             v.*, 
             vt.tag_name AS tag,
             vss.name AS status, 

@@ -26,16 +26,19 @@ $venueView = $venueObj->getSingleVenue($getParams);
             <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <input id="detailVenueName" class="text-2xl font-bold w-full"
-                            value="<?php echo htmlspecialchars($venueView['venue_name']); ?>">
-                        <button"
+                        <h1 id="detailVenueName" class="text-gray-600 text-2xl view-mode">
+                            <?php echo htmlspecialchars($venueView['venue_name']); ?>
+                        </h1>
+                        <input id="editVenueName" class="text-2xl font-bold w-full edit-mode hidden"
+                            value="<?php echo htmlspecialchars(trim($venueView['venue_name'])); ?>">
+                        <button onclick="toggleEditMode()"
                             class="text-xs px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                             Edit Details
-                            </button>
+                        </button>
                     </div>
 
                     <!-- Image Gallery -->
@@ -86,38 +89,62 @@ $venueView = $venueObj->getSingleVenue($getParams);
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
+                    <div class="flex gap-6 w-full ">
+                        <div class=" w-full">
                             <!-- Location -->
-                            <div class="mb-6">
+                            <div class="mb-6  w-full">
                                 <h3 class="text-lg font-semibold mb-2">Location</h3>
-                                <p id="detailVenueLocation" class="text-gray-600 view-mode"></p>
+                                <p id="detailVenueLocation" class="text-gray-600 view-mode">
+                                    <?php echo htmlspecialchars(trim($venueView['venue_location'])); ?>
+                                </p>
                                 <input type="text" id="editVenueLocation"
-                                    class="form-input w-full rounded-md edit-mode hidden">
+                                    class="form-input w-full rounded-md edit-mode hidden"
+                                    value="<?php echo htmlspecialchars(trim($venueView['venue_location'])); ?>">
                             </div>
 
                             <!-- Description -->
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">Description</h3>
-                                <p id="detailVenueDescription" class="text-gray-600 view-mode"></p>
+                                <p id="detailVenueDescription" class="text-gray-600 view-mode">
+                                    <?php echo trim(htmlspecialchars($venueView['venue_description'])); ?>
+                                </p>
                                 <textarea id="editVenueDescription"
-                                    value="<?php echo htmlspecialchars($venueView['venue_description']) ?>"
-                                    class="form-textarea w-full rounded-md edit-mode " rows="4"></textarea>
+                                    class="form-textarea w-full rounded-md edit-mode hidden"
+                                    rows="4"><?php echo trim(htmlspecialchars($venueView['venue_description'])); ?></textarea>
                             </div>
 
                             <!-- Capacity -->
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">Capacity</h3>
-                                <p id="detailVenueCapacity" class="text-gray-600 view-mode"></p>
+                                <p id="detailVenueCapacity" class="text-gray-600 view-mode">
+                                    <?php echo trim(htmlspecialchars($venueView['capacity'])); ?> guests
+                                </p>
                                 <input type="number" id="editVenueCapacity"
-                                    class="form-input w-full rounded-md edit-mode hidden">
+                                    class="form-input w-full rounded-md edit-mode hidden"
+                                    value="<?php echo trim(htmlspecialchars($venueView['capacity'])); ?>">
                             </div>
 
                             <!-- Amenities -->
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">What this place offers</h3>
-                                <ul id="detailVenueAmenities" class="list-disc list-inside text-gray-600 view-mode">
-                                </ul>
+                                <?php if (!empty($venueView['amenities'])): ?>
+                                    <?php
+                                    $amenities = json_decode($venueView['amenities'], true);
+                                    if ($amenities):
+                                        ?>
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            <?php foreach ($amenities as $amenity): ?>
+                                                <li class="text-sm text-gray-800 leading-tight">
+                                                    <?= htmlspecialchars($amenity) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php else: ?>
+                                        <p class="text-sm text-gray-500">No amenities available</p>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <p class="text-sm text-gray-500">No amenities available</p>
+                                <?php endif; ?>
                                 <div id="editVenueAmenities" class="edit-mode hidden space-y-2">
                                     <div id="amenitiesList"></div>
                                     <button onclick="addAmenityField()"
@@ -154,11 +181,6 @@ $venueView = $venueObj->getSingleVenue($getParams);
                                         rows="4" placeholder="Enter your custom cancellation policy..."></textarea>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Right column -->
-                        <div>
-                            <!-- Any other venue details can go here -->
                         </div>
                     </div>
                 </div>
@@ -308,7 +330,7 @@ $venueView = $venueObj->getSingleVenue($getParams);
                             echo '<div class="relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer">';
                             echo '<div class="text-sm ' . ($isToday ? 'font-bold' : '') . '">' . $day . '</div>';
                             if ($hasPrice) {
-                                echo '<div class="text-xs text-gray-600">₱2,341</div>';
+                                echo '<div class="text-xs text-gray-600"> ₱' . $venueView['price'] . '</div>';
                             }
                             echo '</div>';
                         }
@@ -330,7 +352,7 @@ $venueView = $venueObj->getSingleVenue($getParams);
                         </div>
                         <div class="mt-2">
                             <label class="block text-sm text-gray-600 mb-1">Per night</label>
-                            <input type="number" value="2341" class="form-input rounded-md w-full">
+                            <p>₱ <?php echo htmlspecialchars($venueView['price']) ?></p>
                         </div>
                     </div>
 
@@ -371,7 +393,8 @@ $venueView = $venueObj->getSingleVenue($getParams);
                         <label class="block text-sm font-medium text-gray-700 mb-2">Price per day</label>
                         <div class="flex items-center">
                             <span class="text-gray-500 mr-2">₱</span>
-                            <input type="number" id="venuePrice" class="form-input rounded-md w-full" value="15000">
+                            <input type="number" id="venuePrice" class="form-input rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['price']) ?>">
                         </div>
                     </div>
 
@@ -406,7 +429,8 @@ $venueView = $venueObj->getSingleVenue($getParams);
                     </div>
 
                     <!-- Save Changes Button -->
-                    <button class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 mt-4">
+                    <button onclick="saveChanges()"
+                        class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 mt-4">
                         Save Changes
                     </button>
                 </div>
@@ -648,14 +672,15 @@ $venueView = $venueObj->getSingleVenue($getParams);
 
         // Populate edit fields with current values
         if (!editElements[0].classList.contains('hidden')) {
-            document.getElementById('editVenueLocation').value = document.getElementById('detailVenueLocation').textContent;
-            document.getElementById('editVenueDescription').value = document.getElementById('detailVenueDescription').textContent;
-            document.getElementById('editVenueCapacity').value = document.getElementById('detailVenueCapacity').textContent.split(' ')[0];
+            document.getElementById('editVenueName').value = document.getElementById('detailVenueName').textContent.trim();
+            document.getElementById('editVenueLocation').value = document.getElementById('detailVenueLocation').textContent.trim();
+            document.getElementById('editVenueDescription').value = document.getElementById('detailVenueDescription').textContent.trim();
+            document.getElementById('editVenueCapacity').value = document.getElementById('detailVenueCapacity').textContent.split(' ')[0].trim();
             populateAmenitiesEdit();
 
             // Populate rules edit fields
             const currentRules = Array.from(document.getElementById('detailVenueRules').children)
-                .map(li => li.textContent);
+                .map(li => li.textContent.trim());
             const rulesList = document.getElementById('rulesList');
             rulesList.innerHTML = '';
             currentRules.forEach(rule => {
@@ -672,6 +697,50 @@ $venueView = $venueObj->getSingleVenue($getParams);
                 }
             });
         }
+    }
+
+    function saveChanges() {
+        // Collect values from input fields
+        const venueName = document.getElementById('detailVenueName').value;
+        const venueLocation = document.getElementById('editVenueLocation').value;
+        const venueDescription = document.getElementById('editVenueDescription').value;
+        const venueCapacity = document.getElementById('editVenueCapacity').value;
+        // Collect other values as needed
+
+        // Send data to server to save changes
+        // Example using fetch API
+        fetch('save-venue-details.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                venue_name: venueName,
+                venue_location: venueLocation,
+                venue_description: venueDescription,
+                venue_capacity: venueCapacity,
+                // Include other fields as needed
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update view mode with new values
+                    document.getElementById('detailVenueLocation').textContent = venueLocation;
+                    document.getElementById('detailVenueDescription').textContent = venueDescription;
+                    document.getElementById('detailVenueCapacity').textContent = `${venueCapacity} guests`;
+                    // Update other fields as needed
+
+                    // Switch back to view mode
+                    toggleEditMode();
+                } else {
+                    alert('Failed to save changes');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to save changes');
+            });
     }
 
     function populateAmenitiesEdit() {
