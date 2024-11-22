@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2024 at 04:42 PM
+-- Generation Time: Nov 21, 2024 at 10:54 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,7 +41,8 @@ CREATE TABLE `host_application` (
 --
 
 INSERT INTO `host_application` (`id`, `userId`, `fullname`, `address`, `birthdate`, `status_id`) VALUES
-(5, 2, 'Ansoc, Joevin C.', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', '2003-09-28', 1);
+(5, 2, 'Ansoc, Joevin C.', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', '2003-09-28', 2),
+(6, 3, 'Alejandro, Jorica Sher L.', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', '2004-06-17', 2);
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,8 @@ CREATE TABLE `host_id_images` (
 --
 
 INSERT INTO `host_id_images` (`id`, `idOne_type`, `idOne_image_url`, `idTwo_type`, `idTwo_image_url`, `created_at`) VALUES
-(5, 'Philippine Passport', '/host_id_image/67321f17c3abe.jpg', 'Driver&#039;s License', '/host_id_image/67321f17c3eb9.jpg', '2024-11-11 15:13:27');
+(5, 'Philippine Passport', '/host_id_image/67321f17c3abe.jpg', 'Driver&#039;s License', '/host_id_image/67321f17c3eb9.jpg', '2024-11-11 15:13:27'),
+(6, 'Philippine Passport', '/host_id_image/673847894a977.jpg', 'National ID', '/host_id_image/673847894b255.jpg', '2024-11-16 07:19:37');
 
 -- --------------------------------------------------------
 
@@ -148,10 +150,11 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `middlename`, `sex_id`, `user_type_id`, `birthdate`, `contact_number`, `address`, `email`, `password`, `created_at`, `updated_at`) VALUES
 (1, 'Joevin', 'Ansoc', 'C', 1, 3, '2003-09-28', '09053258512', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'joevinansoc870@gmail.com', '$2y$10$oZOd4iRtyixA/HUBET5Wmuj.6I6jvJ911JtmUBFAUjlOIb.ckS4Km', '2024-11-06 18:18:45', '2024-11-11 00:48:03'),
-(2, 'Joevin', 'Ansoc', 'C', 1, 2, '2003-09-28', '09053258512', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'joevinansoc871@gmail.com', '$2y$10$l365/PHYVfu0zelT5t9YNO6R4ihGg6oOGNMKE2OS8hGTPRBV3za2e', '2024-11-07 03:19:46', '2024-11-11 00:47:57'),
-(3, 'Jorica Sher', 'Alejandro', 'L', 2, 2, '2004-06-17', '09053258512', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'joricasheralejandro@yahoo.com', '$2y$10$09zM7efNo0nYI7TTKCdc3u/ByH7HmMKrBZq8bif1QfODcL9VJ4Isa', '2024-11-09 14:50:31', '2024-11-11 00:47:50'),
+(2, 'Joevin', 'Ansoc', 'C', 1, 2, '2003-09-28', '09053258512', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'joevinansoc871@gmail.com', '$2y$10$l365/PHYVfu0zelT5t9YNO6R4ihGg6oOGNMKE2OS8hGTPRBV3za2e', '2024-11-07 03:19:46', '2024-11-18 10:10:32'),
+(3, 'Jorica Sher', 'Alejandro', 'L', 2, 1, '2004-06-17', '09053258512', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'joricasheralejandro@yahoo.com', '$2y$10$09zM7efNo0nYI7TTKCdc3u/ByH7HmMKrBZq8bif1QfODcL9VJ4Isa', '2024-11-09 14:50:31', '2024-11-18 07:38:43'),
 (4, 'Joreen Jeay', 'Alejandro', 'L', 2, 2, '2004-06-17', '09954687923', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'joreenjeayalejandro@yahoo.com', '$2y$10$.7iXs5OGrAZ3jHdADTyd2.omDREXvaRgwtCv3hcs/O/DO/YhYMUsu', '2024-11-09 14:53:25', '2024-11-11 00:47:43'),
-(5, 'Ray Vincent', 'Concepcion', 'D.S', 1, 2, '2003-04-04', '09950331778', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'rayvincent@gmail.com', '$2y$10$QdJ9AkFqFm.gEEP3Vs/d9.oNVc0HbNw.Iw.z0qGJMp5IQvuj1KS2a', '2024-11-11 00:46:32', '2024-11-11 00:46:32');
+(5, 'Ray Vincent', 'Concepcion', 'D.S', 1, 2, '2003-04-04', '09950331778', 'Veterans Avenue, Zone III, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'rayvincent@gmail.com', '$2y$10$QdJ9AkFqFm.gEEP3Vs/d9.oNVc0HbNw.Iw.z0qGJMp5IQvuj1KS2a', '2024-11-11 00:46:32', '2024-11-11 00:46:32'),
+(6, 'Irene', 'Ansoc', 'Concepcion', 2, 3, '1984-12-06', '09253258512', 'Pasonanca Road, Luyahan Urban Poor Subdivision, Pasonanca, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 'ireneansoc@gmail.com', '$2y$10$vPPD8NCxrjfSk3flTVjP9ebbYzKprO361ajYn6852tbGncj9.CICu', '2024-11-16 14:26:53', '2024-11-16 14:26:53');
 
 -- --------------------------------------------------------
 
@@ -187,6 +190,7 @@ CREATE TABLE `venues` (
   `price` decimal(10,2) NOT NULL,
   `capacity` int(11) NOT NULL,
   `amenities` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`amenities`)),
+  `rules` longtext NOT NULL,
   `entrance` int(11) NOT NULL,
   `cleaning` int(11) NOT NULL,
   `venue_tag` int(11) NOT NULL,
@@ -201,13 +205,20 @@ CREATE TABLE `venues` (
 -- Dumping data for table `venues`
 --
 
-INSERT INTO `venues` (`id`, `name`, `description`, `location`, `price`, `capacity`, `amenities`, `entrance`, `cleaning`, `venue_tag`, `host_id`, `status_id`, `availability_id`, `created_at`, `updated_at`) VALUES
-(22, 'Santiago Resort Room 1', 'This Resort offers wide range of activities suitable for all ages.', 'Cabatangan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 500.00, 5, '[\"Pool\",\"Karaoke\",\"Duyan Spot\",\"Shower\",\"Comfort Rooms\",\"Cottages\"]', 100, 250, 1, 1, 2, 1, '2024-11-07 04:10:40', '2024-11-08 17:17:47'),
-(23, 'Garden Orchid Room 301', 'Garden Orchid Room 301 offers a serene and luxurious escape, perfectly blending comfort and elegance. Located on the garden side of the resort, this room provides a peaceful view of lush greenery and vibrant orchids in bloom. Designed with a modern aesthetic and warm tones, it features a plush king-size bed, soft lighting, and natural wood accents that enhance the tranquil atmosphere.', 'Garden Orchid Hotel and Resort Corporation, Governor Camins Avenue, Zone Ⅱ, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 4800.00, 3, '[\"Pool\",\"WiFi\",\"Air-conditioned Room\",\"Smart TV\"]', 0, 500, 1, 1, 2, 1, '2024-11-07 07:14:47', '2024-11-11 15:22:55'),
-(24, 'Rest House', 'Escape to tranquility at our charming rest house, designed for relaxation and comfort. Nestled in a quiet, scenic area, this spacious and well-furnished rest house offers a serene atmosphere perfect for families, couples, or solo travelers. Featuring a warm, welcoming ambiance, the interior boasts comfortable living spaces, a fully-equipped kitchen, and cozy bedrooms that ensure a restful stay.', 'Sinunoc, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5600.00, 15, '[\"Private Pool\",\"Billiard Hall\",\"2 Queen-size beds\",\"Air-conditioned\",\"Smart TV\"]', 0, 0, 1, 1, 2, 1, '2024-11-07 08:45:33', '2024-11-07 15:50:04'),
-(30, 'Astoria Regency', 'Astoria Regency is a stylish and versatile reception hall, perfect for hosting memorable events and gatherings. Known for its elegant design and spacious layout, it provides a sophisticated setting ideal for weddings, corporate functions, and social events.', 'Astoria Regency Convention Center, Pasonanca Road, Luyahan Urban Poor Subdivision, Pasonanca, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5000.00, 50, '[\"Pool\",\"Hall\",\"Sound System\",\"Free Parking Space\",\"Tables and Chairs\"]', 100, 0, 2, 1, 2, 1, '2024-11-08 17:49:18', '2024-11-08 17:49:48'),
-(31, 'Astoria Hotel', 'The venue offers exceptional amenities, flexible seating arrangements, and a warm ambiance, ensuring guests experience both comfort and luxury. With its commitment to quality service, Astoria Hotel makes any occasion truly unforgettable.', 'Astoria Hotel, Mayor Cesar C. Climaco Avenue, Zone IV, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5899.00, 100, '[\"Pool\",\"Hall\",\"Sound System\",\"Free Parking Space\",\"Tables and Chairs\"]', 0, 250, 2, 1, 2, 1, '2024-11-08 17:58:59', '2024-11-08 17:59:08'),
-(32, 'adasdasdasdas', 'asdasd', 'Zamboanga City Golf Club and Beach Resort, 1st Road, Lopez Subdivision, Calarian, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 123.00, 213, '[\"asdasdas\"]', 3123, 1, 1, 1, 1, 1, '2024-11-11 13:33:10', '2024-11-11 13:33:10');
+INSERT INTO `venues` (`id`, `name`, `description`, `location`, `price`, `capacity`, `amenities`, `rules`, `entrance`, `cleaning`, `venue_tag`, `host_id`, `status_id`, `availability_id`, `created_at`, `updated_at`) VALUES
+(22, 'Santiago Resort Room 1', 'This Resort offers wide range of activities suitable for all ages.', 'Cabatangan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 500.00, 5, '[\"Pool\",\"Karaoke\",\"Duyan Spot\",\"Shower\",\"Comfort Rooms\",\"Cottages\"]', '', 100, 250, 1, 2, 2, 1, '2024-11-07 04:10:40', '2024-11-16 16:49:02'),
+(23, 'Garden Orchid Room 301', 'Garden Orchid Room 301 offers a serene and luxurious escape, perfectly blending comfort and elegance. Located on the garden side of the resort, this room provides a peaceful view of lush greenery and vibrant orchids in bloom. Designed with a modern aesthetic and warm tones, it features a plush king-size bed, soft lighting, and natural wood accents that enhance the tranquil atmosphere.', 'Garden Orchid Hotel and Resort Corporation, Governor Camins Avenue, Zone Ⅱ, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 4800.00, 3, '[\"Pool\",\"WiFi\",\"Air-conditioned Room\",\"Smart TV\"]', '', 0, 500, 1, 2, 2, 1, '2024-11-07 07:14:47', '2024-11-16 16:49:11'),
+(24, 'Rest House', 'Escape to tranquility at our charming rest house, designed for relaxation and comfort. Nestled in a quiet, scenic area, this spacious and well-furnished rest house offers a serene atmosphere perfect for families, couples, or solo travelers. Featuring a warm, welcoming ambiance, the interior boasts comfortable living spaces, a fully-equipped kitchen, and cozy bedrooms that ensure a restful stay.', 'Sinunoc, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5600.00, 15, '[\"Private Pool\",\"Billiard Hall\",\"2 Queen-size beds\",\"Air-conditioned\",\"Smart TV\"]', '', 0, 0, 1, 1, 2, 1, '2024-11-07 08:45:33', '2024-11-07 15:50:04'),
+(30, 'Astoria Regency', 'Astoria Regency is a stylish and versatile reception hall, perfect for hosting memorable events and gatherings. Known for its elegant design and spacious layout, it provides a sophisticated setting ideal for weddings, corporate functions, and social events.', 'Astoria Regency Convention Center, Pasonanca Road, Luyahan Urban Poor Subdivision, Pasonanca, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5000.00, 50, '[\"Pool\",\"Hall\",\"Sound System\",\"Free Parking Space\",\"Tables and Chairs\"]', '', 100, 0, 2, 1, 2, 1, '2024-11-08 17:49:18', '2024-11-08 17:49:48'),
+(31, 'Astoria Hotel', 'The venue offers exceptional amenities, flexible seating arrangements, and a warm ambiance, ensuring guests experience both comfort and luxury. With its commitment to quality service, Astoria Hotel makes any occasion truly unforgettable.', 'Astoria Hotel, Mayor Cesar C. Climaco Avenue, Zone IV, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5899.00, 100, '[\"Pool\",\"Hall\",\"Sound System\",\"Free Parking Space\",\"Tables and Chairs\"]', '', 0, 250, 2, 2, 2, 1, '2024-11-08 17:58:59', '2024-11-16 16:49:21'),
+(32, 'adasdasdasdas', 'asdasd', 'Zamboanga City Golf Club and Beach Resort, 1st Road, Lopez Subdivision, Calarian, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 123.00, 213, '[\"asdasdas\"]', '', 3123, 1, 1, 1, 3, 1, '2024-11-11 13:33:10', '2024-11-15 19:08:41'),
+(33, 'Jo Residence', 'This venue is suitable for small gatherings such as schoolwork meetings', 'Al Zahra Mosque, Veterans Avenue, Tetuan, Santa Maria, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 1800.00, 20, '[\"Smart Tv\",\"Mini Pool\"]', '', 0, 500, 2, 3, 2, 1, '2024-11-15 19:05:23', '2024-11-15 19:12:15'),
+(39, 'For sale: Siopao, Suman, Siomai', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Bangayan B, Talon-talon, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 85422.00, 3, '[\"Wifi\",\"TV\",\"Free parking on premises\",\"Paid parking on premises\",\"BBQ grill\",\"Outdoor dining area\",\"Pool table\",\"Indoor fireplace\",\"Smoke alarm\",\"First aid kit\",\"Carbon monoxide alarm\"]', '[\"No smoking\",\"No parties or events\",\"Bawal pets kasi kinakain natin yan\",\"bawal smoking dapat usok lng ng nilulutong pusa\\/aso\"]', 1, 2, 2, 2, 2, 1, '2024-11-19 07:16:44', '2024-11-19 13:21:31'),
+(44, 'guayghfvg', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Camias Drive, Zone Ⅱ, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 3213.00, 123, '[\"Wifi\",\"TV\",\"Kitchen\",\"Air conditioning\"]', '[\"No smoking\",\"qweqw\",\"qweqwe\",\"qwe\"]', 0, 0, 1, 2, 3, 1, '2024-11-19 07:53:11', '2024-11-19 13:21:47'),
+(45, 'The balay is burning and going down down down syndrown', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Tugbungan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 4885.00, 123321, '[\"Wifi\",\"TV\"]', '[\"No smoking\",\"No parties or events\",\"No pets\",\"Bwala ang may alam\",\"dapat ikaw ay alam\"]', 0, 0, 3, 2, 3, 1, '2024-11-19 07:56:22', '2024-11-19 13:21:43'),
+(46, 'The siopao, siomai, siopdrenks', 'This is siopao', 'LTP Complex, Cabatangan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 7848.00, 69, '[\"Wifi\",\"TV\",\"Kitchen\",\"Free parking on premises\",\"Paid parking on premises\",\"Air conditioning\",\"Hot tub\",\"Patio\"]', '[\"No pets\",\"No pets because pets are food\"]', 7878, 7878, 1, 2, 2, 1, '2024-11-19 13:15:33', '2024-11-19 13:21:35'),
+(47, 'asdasd', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Layag-Layag, Zamboanga City, Zamboanga Peninsula, Pilipinas', 231.00, 213, '[\"Wifi\",\"TV\"]', '[\"No parties or events\"]', 0, 0, 3, 2, 3, 1, '2024-11-19 13:17:38', '2024-11-19 13:21:40'),
+(48, 'asdasdasdasdasdasd', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Kasanyangan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 123123.00, 2131, '[\"Wifi\",\"Free parking on premises\"]', '[\"No smoking\"]', 0, 0, 3, 2, 2, 1, '2024-11-19 13:20:54', '2024-11-19 13:21:38');
 
 -- --------------------------------------------------------
 
@@ -265,7 +276,37 @@ INSERT INTO `venue_images` (`id`, `venue_id`, `image_url`, `created_at`) VALUES
 (49, 31, '/venue_image_uploads/672e5163738e3.jpg', '2024-11-08 17:58:59'),
 (50, 31, '/venue_image_uploads/672e516373e1e.jpg', '2024-11-08 17:58:59'),
 (51, 31, '/venue_image_uploads/672e5163742fc.jpg', '2024-11-08 17:58:59'),
-(52, 32, '/venue_image_uploads/6732079604ac9.jpg', '2024-11-11 13:33:10');
+(52, 32, '/venue_image_uploads/6732079604ac9.jpg', '2024-11-11 13:33:10'),
+(53, 33, '/venue_image_uploads/67379b73ac637.jpg', '2024-11-15 19:05:23'),
+(54, 33, '/venue_image_uploads/67379b73ad598.jpg', '2024-11-15 19:05:23'),
+(55, 33, '/venue_image_uploads/67379b73ad777.jpg', '2024-11-15 19:05:23'),
+(56, 39, '/venue_image_uploads/673c3b5ca5b43.png', '2024-11-19 07:16:44'),
+(57, 39, '/venue_image_uploads/673c3b5ca9732.jpg', '2024-11-19 07:16:44'),
+(58, 39, '/venue_image_uploads/673c3b5ca9c7b.png', '2024-11-19 07:16:44'),
+(59, 39, '/venue_image_uploads/673c3b5caa0c4.png', '2024-11-19 07:16:44'),
+(60, 44, '/venue_image_uploads/673c43e74545e.jpg', '2024-11-19 07:53:11'),
+(61, 44, '/venue_image_uploads/673c43e7458b0.png', '2024-11-19 07:53:11'),
+(62, 44, '/venue_image_uploads/673c43e745b88.png', '2024-11-19 07:53:11'),
+(63, 44, '/venue_image_uploads/673c43e745df3.png', '2024-11-19 07:53:11'),
+(64, 44, '/venue_image_uploads/673c43e746032.png', '2024-11-19 07:53:11'),
+(65, 44, '/venue_image_uploads/673c43e746289.png', '2024-11-19 07:53:11'),
+(66, 44, '/venue_image_uploads/673c43e746582.png', '2024-11-19 07:53:11'),
+(67, 44, '/venue_image_uploads/673c43e746a08.png', '2024-11-19 07:53:11'),
+(68, 44, '/venue_image_uploads/673c43e74a32a.png', '2024-11-19 07:53:11'),
+(69, 45, '/venue_image_uploads/673c44a6bf016.png', '2024-11-19 07:56:22'),
+(70, 45, '/venue_image_uploads/673c44a6bf26d.png', '2024-11-19 07:56:22'),
+(71, 45, '/venue_image_uploads/673c44a6bf418.png', '2024-11-19 07:56:22'),
+(72, 45, '/venue_image_uploads/673c44a6bf873.png', '2024-11-19 07:56:22'),
+(73, 45, '/venue_image_uploads/673c44a6bfab1.png', '2024-11-19 07:56:22'),
+(74, 46, '/venue_image_uploads/673c8f75cca25.png', '2024-11-19 13:15:33'),
+(75, 46, '/venue_image_uploads/673c8f75cd102.png', '2024-11-19 13:15:33'),
+(76, 46, '/venue_image_uploads/673c8f75cd3ca.png', '2024-11-19 13:15:33'),
+(77, 47, '/venue_image_uploads/673c8ff22eec8.png', '2024-11-19 13:17:38'),
+(78, 47, '/venue_image_uploads/673c8ff22f10e.png', '2024-11-19 13:17:38'),
+(79, 47, '/venue_image_uploads/673c8ff22f364.png', '2024-11-19 13:17:38'),
+(80, 48, '/venue_image_uploads/673c90b6e93d9.jpg', '2024-11-19 13:20:54'),
+(81, 48, '/venue_image_uploads/673c90b6e99e4.jpg', '2024-11-19 13:20:54'),
+(82, 48, '/venue_image_uploads/673c90b6e9d80.jpg', '2024-11-19 13:20:54');
 
 -- --------------------------------------------------------
 
@@ -404,7 +445,7 @@ ALTER TABLE `venue_tag_sub`
 -- AUTO_INCREMENT for table `host_application`
 --
 ALTER TABLE `host_application`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `host_application_status_sub`
@@ -428,7 +469,7 @@ ALTER TABLE `sex_sub`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `user_types_sub`
@@ -440,7 +481,7 @@ ALTER TABLE `user_types_sub`
 -- AUTO_INCREMENT for table `venues`
 --
 ALTER TABLE `venues`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `venue_availability_sub`
@@ -452,7 +493,7 @@ ALTER TABLE `venue_availability_sub`
 -- AUTO_INCREMENT for table `venue_images`
 --
 ALTER TABLE `venue_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `venue_status_sub`

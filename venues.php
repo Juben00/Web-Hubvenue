@@ -374,12 +374,6 @@ $owner = $accountObj->getUser($venue['host_id']);
                                     <input type="text" value="11/8/2024" class="w-full bg-transparent">
                                 </div>
                             </div>
-                            <div class="border-t p-2">
-                                <label class="block text-xs font-semibold">GUESTS</label>
-                                <select class="w-full bg-transparent">
-                                    <option>1 guest</option>
-                                </select>
-                            </div>
                         </div>
                         <button class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
                         <p class="text-center text-gray-600 mb-4">You won't be charged yet</p>
