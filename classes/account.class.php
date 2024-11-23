@@ -34,100 +34,121 @@ class Account
 
     public function signup()
     {
-        // Check if the email already exists
-        $sql = 'SELECT * FROM users WHERE email = :email';
-        $chkstmt = $this->db->connect()->prepare($sql);
-        $chkstmt->bindParam(':email', $this->email);
-        $chkstmt->execute();
+        try {
 
-        if ($chkstmt->rowCount() > 0) {
-            return ['status' => 'error', 'message' => 'Account already exists'];
-        } else {
-            // Insert new account if email does not exist
-            $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, address ,email, password) VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number,:address, :email, :password)';
-            $stmt = $this->db->connect()->prepare($sql);
+            // Check if the email already exists
+            $sql = 'SELECT * FROM users WHERE email = :email';
+            $chkstmt = $this->db->connect()->prepare($sql);
+            $chkstmt->bindParam(':email', $this->email);
+            $chkstmt->execute();
 
-            $stmt->bindParam(':firstname', $this->firstname);
-            $stmt->bindParam(':lastname', $this->lastname);
-            $stmt->bindParam(':middlename', $this->middlename);
-
-            // Determine sex_id based on sex value
-            $sex_id = 3; // Default value for unspecified sex
-            if ($this->sex == "Male") {
-                $sex_id = 1;
-            } else if ($this->sex == "Female") {
-                $sex_id = 2;
-            }
-            $stmt->bindParam(':sex_id', $sex_id);
-            $stmt->bindParam(':user_type_id', $this->usertype);
-            $stmt->bindParam(':birthdate', $this->birthdate);
-            $stmt->bindParam(':contact_number', $this->contact_number);
-            $stmt->bindParam(':address', $this->address);
-            $stmt->bindParam(':email', $this->email);
-
-            // Hash the password before saving to the database
-            $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-
-            $stmt->bindParam(':password', $this->password);
-
-            if ($stmt->execute()) {
-                return ['status' => 'success', 'message' => 'Account created successfully'];
+            if ($chkstmt->rowCount() > 0) {
+                return ['status' => 'error', 'message' => 'Account already exists'];
             } else {
-                return ['status' => 'error', 'message' => 'Failed to create account'];
+                // Insert new account if email does not exist
+                $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, address ,email, password) VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number,:address, :email, :password)';
+                $stmt = $this->db->connect()->prepare($sql);
+
+                $stmt->bindParam(':firstname', $this->firstname);
+                $stmt->bindParam(':lastname', $this->lastname);
+                $stmt->bindParam(':middlename', $this->middlename);
+
+                // Determine sex_id based on sex value
+                $sex_id = 3; // Default value for unspecified sex
+                if ($this->sex == "Male") {
+                    $sex_id = 1;
+                } else if ($this->sex == "Female") {
+                    $sex_id = 2;
+                }
+                $stmt->bindParam(':sex_id', $sex_id);
+                $stmt->bindParam(':user_type_id', $this->usertype);
+                $stmt->bindParam(':birthdate', $this->birthdate);
+                $stmt->bindParam(':contact_number', $this->contact_number);
+                $stmt->bindParam(':address', $this->address);
+                $stmt->bindParam(':email', $this->email);
+
+                // Hash the password before saving to the database
+                $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+
+                $stmt->bindParam(':password', $this->password);
+
+                if ($stmt->execute()) {
+                    return ['status' => 'success', 'message' => 'Account created successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Failed to create account'];
+                }
             }
+        } catch (PDOException $e) {
+            // Log error and return empty array
+            error_log("Error creating account: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
     public function login()
     {
-        $sql = 'SELECT * FROM users WHERE email = :email';
-        $stmt = $this->db->connect()->prepare($sql);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->execute();
+        try {
 
-        if ($stmt->rowCount() > 0) {
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            if (password_verify($this->password, $user['password'])) {
+            $sql = 'SELECT * FROM users WHERE email = :email';
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':email', $this->email);
+            $stmt->execute();
 
-                session_start();
-                session_regenerate_id(delete_old_session: true);
-                $_SESSION['user'] = $user;
+            if ($stmt->rowCount() > 0) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (password_verify($this->password, $user['password'])) {
 
-                return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
+                    session_start();
+                    session_regenerate_id(delete_old_session: true);
+                    $_SESSION['user'] = $user;
+
+                    return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
+                } else {
+                    return ['status' => 'error', 'message' => 'Invalid email or password'];
+                }
             } else {
                 return ['status' => 'error', 'message' => 'Invalid email or password'];
             }
-        } else {
-            return ['status' => 'error', 'message' => 'Invalid email or password'];
+        } catch (PDOException $e) {
+            // Log error and return empty array
+            error_log("Error fetching user data: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
     public function getUser($user_id = '', $user_type = '')
     {
-        // Add wildcards to user_id and user_type for LIKE search
-        $user_id = "%" . $user_id . "%";
-        $user_type = "%" . $user_type . "%";
+        try {
 
-        // SQL query to fetch user data along with their sex and user type
-        $sql = 'SELECT u.*, ss.name AS sex, ust.name AS user_type 
+            // Add wildcards to user_id and user_type for LIKE search
+            $user_id = "%" . $user_id . "%";
+            $user_type = "%" . $user_type . "%";
+
+            // SQL query to fetch user data along with their sex and user type
+            $sql = 'SELECT u.*, ss.name AS sex, ust.name AS user_type 
             FROM users u 
             JOIN sex_sub ss ON u.sex_id = ss.id 
             JOIN user_types_sub ust ON ust.id = u.user_type_id 
             WHERE u.id LIKE :user_id AND u.user_type_id LIKE :user_type';
 
-        // Prepare the SQL statement
-        $stmt = $this->db->connect()->prepare($sql);
+            // Prepare the SQL statement
+            $stmt = $this->db->connect()->prepare($sql);
 
-        // Bind the parameters with wildcards for LIKE clause
-        $stmt->bindParam(':user_id', $user_id);
-        $stmt->bindParam(':user_type', $user_type);
+            // Bind the parameters with wildcards for LIKE clause
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':user_type', $user_type);
 
-        // Execute the SQL query
-        $stmt->execute();
+            // Execute the SQL query
+            $stmt->execute();
 
-        // Fetch the user data as an associative array
-        $user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // Fetch the user data as an associative array
+            $user = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Return the user data
-        return $user;
+            // Return the user data
+            return $user;
+        } catch (PDOException $e) {
+            // Log error and return empty array
+            error_log("Error fetching user data: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
     }
 
     public function upgradeUser()
@@ -198,27 +219,34 @@ class Account
 
     public function HostApplicationStats($userId, $status)
     {
-        // Establish database connection
-        $conn = $this->db->connect();
+        try {
 
-        // Prepare the status filter for LIKE query
-        $statusLike = "%" . $status . "%";
+            // Establish database connection
+            $conn = $this->db->connect();
 
-        // SQL query to fetch data
-        $sql = "SELECT * FROM host_application WHERE userId = :userId AND status_id LIKE :status;";
+            // Prepare the status filter for LIKE query
+            $statusLike = "%" . $status . "%";
 
-        // Prepare statement
-        $stmt = $conn->prepare($sql);
+            // SQL query to fetch data
+            $sql = "SELECT * FROM host_application WHERE userId = :userId AND status_id LIKE :status;";
 
-        // Bind parameters
-        $stmt->bindParam(':userId', $userId);
-        $stmt->bindParam(':status', $statusLike);
+            // Prepare statement
+            $stmt = $conn->prepare($sql);
 
-        // Execute the query
-        if ($stmt->execute()) {
-            return $stmt->rowCount() > 0; // Return true if records found, false if not
+            // Bind parameters
+            $stmt->bindParam(':userId', $userId);
+            $stmt->bindParam(':status', $statusLike);
+
+            // Execute the query
+            if ($stmt->execute()) {
+                return $stmt->rowCount() > 0; // Return true if records found, false if not
+            }
+            return false;
+        } catch (PDOException $e) {
+            // Log error and return false
+            error_log("Error fetching host application stats: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
-        return false;
     }
 
     public function getHostApplications($userId = null, $status = null)
@@ -257,7 +285,7 @@ class Account
         } catch (PDOException $e) {
             // Log error and return empty array
             error_log("Error fetching host applications: " . $e->getMessage());
-            return [];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
