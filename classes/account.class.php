@@ -429,11 +429,16 @@ class Account
             $bookmarks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Convert image_urls to an array
-            foreach ($bookmarks as &$bookmark) {
-                $bookmark['image_urls'] = explode(',', $bookmark['image_urls']);
+            foreach ($bookmarks as &$venue) {
+                if (!empty($venue['image_urls'])) {
+                    $venue['image_urls'] = explode(',', $venue['image_urls']); // Convert image URLs to an array
+                }
+                // Check if the venue is bookmarked
+                $venue['bookmarked'] = in_array($venue['venue_id'], $bookmarks);
             }
 
             return $bookmarks;
+
         } catch (PDOException $e) {
             error_log("Error fetching bookmarks: " . $e->getMessage());
             return [];

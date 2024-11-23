@@ -75,10 +75,10 @@ $(document).ready(function () {
         addVenue();
     });
 
-    $(".venueCard").on("click", function () {
+    $(document).on("click", '.venueCard', function () {
         let isLogged = $(this).data("isloggedin"); 
         let venueUrl = $(this).data("id");
-
+        
         if (isLogged === true) {  
             viewVenue(venueUrl);
         } else {

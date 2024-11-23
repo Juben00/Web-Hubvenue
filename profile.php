@@ -19,6 +19,22 @@ if (!isset($_SESSION['user'])) {
     <link rel="icon" href="./images/black_ico.png">
     <link rel="stylesheet" href="./output.css">
     <style>
+        .slideshow {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
         .active {
             border-bottom: 2px solid black;
             color: black;
@@ -69,4 +85,27 @@ if (!isset($_SESSION['user'])) {
         let marker;
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const slideshows = document.querySelectorAll('.slideshow');
+            slideshows.forEach(slideshow => {
+                let slides = slideshow.querySelectorAll('.slide');
+                let currentIndex = 0;
+
+                function showSlide(index) {
+                    slides.forEach((slide, i) => {
+                        slide.classList.toggle('active', i === index);
+                    });
+                }
+
+                function nextSlide() {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    showSlide(currentIndex);
+                }
+
+                showSlide(currentIndex);
+                setInterval(nextSlide, 3000); // Change slide every 3 seconds
+            });
+        });
+    </script>
 </body>
