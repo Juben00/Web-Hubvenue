@@ -250,22 +250,6 @@
                         <div class="space-y-6">
                             <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
                             
-                            <div class="mb-6">
-                                <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-1">Reference Number</label>
-                                <div class="flex gap-2">
-                                    <input type="text" 
-                                           id="referenceNumber" 
-                                           name="referenceNumber" 
-                                           placeholder="Enter your payment reference number"
-                                           class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                                    <button onclick="checkManualReference()" 
-                                            class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:bg-gray-800">
-                                        Verify
-                                    </button>
-                                </div>
-                                <p class="text-sm text-gray-500 mt-1">If you already have a reference number, enter it here to verify your payment</p>
-                            </div>
-
                             <div class="grid grid-cols-2 gap-6">
                                 <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('gcash')">
                                     <div class="flex items-center justify-between mb-4">
@@ -784,14 +768,16 @@
              id="qrModalContent">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h4 class="text-2xl font-bold text-gray-900">Scan QR Code to Pay</h4>
-                    <p class="text-sm text-gray-600 mt-2">Use your e-wallet app to complete the payment</p>
+                    <h4 class="text-2xl font-bold text-gray-900">Complete Payment</h4>
+                    <p class="text-sm text-gray-600 mt-2">Scan QR code to pay for your reservation</p>
                 </div>
                 <button onclick="closeQrModal()" 
                         class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
                     <i class="lucide-x h-5 w-5"></i>
                 </button>
             </div>
+
+            <!-- QR Code Section -->
             <div class="text-center">
                 <div class="bg-gray-50 p-8 rounded-xl mb-6 border border-gray-100">
                     <img id="qrCodeImage" src="" alt="Payment QR Code" class="mx-auto mb-4 rounded-lg shadow-md">
@@ -812,7 +798,24 @@
                         Copy Details
                     </button>
                 </div>
-                <div class="mt-4">
+
+                <!-- Reference Number Input -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid? Enter your reference number</label>
+                    <div class="flex gap-2">
+                        <input type="text" 
+                               id="referenceNumber" 
+                               name="referenceNumber" 
+                               placeholder="Enter your payment reference number"
+                               class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
+                        <button onclick="checkManualReference()" 
+                                class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">
+                            Verify
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-6">
                     <p class="text-sm text-gray-600 mb-2">Payment Status: 
                         <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
                     </p>
