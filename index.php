@@ -1,24 +1,25 @@
 <?php
+
+require_once './sanitize.php';
+require_once './classes/venue.class.php';
+require_once './classes/account.class.php';
+
 session_start();
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
     }
-    $bookmarks = $accountObj->getBookmarks($_SESSION['user']['id']);
-    $bookmarkIds = array_column($bookmarks, 'id');
-}
 
-require_once './sanitize.php';
-require_once './classes/venue.class.php';
-require_once './classes/account.class.php';
+}
 
 $venueObj = new Venue();
 $accountObj = new Account();
 
 // Get all venues
 $venues = $venueObj->getAllVenues('2');
-
+$bookmarks = $accountObj->getBookmarks(isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0);
+$bookmarkIds = array_column($bookmarks, 'venue_id');
 ?>
 
 <!DOCTYPE html>
@@ -456,8 +457,6 @@ $venues = $venueObj->getAllVenues('2');
             <?php require_once './components/footer.html' ?>
         </main>
     </div>
-
-
 
     <!-- jQuery -->
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>

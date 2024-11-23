@@ -406,19 +406,39 @@ class Account
         try {
             $conn = $this->db->connect();
 
-            $sql = "SELECT v.* FROM bookmarks b JOIN venues v ON b.venueId = v.id WHERE b.userId = :userId";
+            $sql = "SELECT 
+            v.id AS venue_id,
+            vtg.tag_name AS venue_tag_name,
+            v.*, 
+            vss.name AS status, 
+            vas.name AS availability, 
+            GROUP_CONCAT(vi.image_url) AS image_urls
+            FROM venues v 
+            JOIN venue_tag_sub vtg ON v.venue_tag = vtg.id
+            JOIN venue_status_sub vss ON v.status_id = vss.id 
+            JOIN venue_availability_sub vas ON v.availability_id = vas.id 
+            JOIN venue_images vi ON v.id = vi.venue_id
+            JOIN bookmarks b ON b.venueId = v.id
+            WHERE b.userId = :userId
+            GROUP BY v.id";
+
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':userId', $userId);
             $stmt->execute();
 
-            return $stmt->fetchAll();
+            $bookmarks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Convert image_urls to an array
+            foreach ($bookmarks as &$bookmark) {
+                $bookmark['image_urls'] = explode(',', $bookmark['image_urls']);
+            }
+
+            return $bookmarks;
         } catch (PDOException $e) {
             error_log("Error fetching bookmarks: " . $e->getMessage());
-            return ['status' => 'error', 'message' => $e->getMessage()];
+            return [];
         }
     }
-
-
 
 }
 
@@ -428,4 +448,4 @@ class Account
 $accountObj = new Account();
 
 
-// var_dump($accountObj->getHostApplications("", ""));
+// var_dump($accountObj->getBookmarks(2));
