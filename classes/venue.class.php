@@ -94,7 +94,7 @@ class Venue
         }
 
     }
-    function getAllVenues($status = '', $host_id = '')
+    function getAllVenues($status = '', $host_id = '', $bookmarks = [])
     {
         try {
             // Establish database connection
@@ -147,6 +147,8 @@ class Venue
                 if (!empty($venue['image_urls'])) {
                     $venue['image_urls'] = explode(',', $venue['image_urls']); // Convert image URLs to an array
                 }
+                // Check if the venue is bookmarked
+                $venue['bookmarked'] = in_array($venue['venue_id'], $bookmarks);
             }
 
             return $venues;
