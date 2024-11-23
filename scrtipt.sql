@@ -1,5 +1,5 @@
 CREATE TABLE bookings (
-    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     booking_start_date DATE,
     booking_end_date DATE,
     booking_start_time TIME,
@@ -10,6 +10,7 @@ CREATE TABLE bookings (
     booking_grand_total DECIMAL(10,2),
     booking_guest_id INT,
     booking_venue_id INT,
+    booking_discount_id INT,
     booking_payment_method INT,
     booking_payment_reference VARCHAR(255),
     booking_payment_status_id INT,
@@ -18,6 +19,7 @@ CREATE TABLE bookings (
     booking_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (booking_guest_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (booking_venue_id) REFERENCES venues(id) ON DELETE CASCADE,
+    FOREIGN KEY (booking_discount_id) REFERENCES booking_discount_sub(id),
     FOREIGN KEY (booking_status_id) REFERENCES bookings_status_sub(id) ON DELETE SET NULL,
     FOREIGN KEY (booking_payment_method) REFERENCES payment_method_sub(id),
     FOREIGN KEY (booking_payment_status_id) REFERENCES payment_status_sub(id)
@@ -52,3 +54,14 @@ INSERT INTO payment_status_sub (payment_status_name) VALUES
 ('Pending'), 
 ('Paid'), 
 ('Failed');
+
+CREATE TABLE booking_discount_sub (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_discount_name VARCHAR(50),
+    booking_discount_card TEXT,
+    booking_discount_value DECIMAL(10,2)
+)
+
+
+
+

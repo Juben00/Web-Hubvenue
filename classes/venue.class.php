@@ -90,7 +90,7 @@ class Venue
             $conn->rollBack();
             $errmess = "Database error: " . $e->getMessage();
             error_log($errmess);  // Log the error message
-            return ['status' => 'error', 'message' => $errmess];  // Return the error message
+            return ['status' => 'error', 'message' => $e->getMessage()];  // Return the error message
         }
 
     }
@@ -152,7 +152,7 @@ class Venue
         } catch (PDOException $e) {
             // Log error and return failure message
             error_log("Database error: " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
@@ -194,7 +194,7 @@ class Venue
         } catch (PDOException $e) {
             // Log error and return failure message
             error_log("Database error: " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'An error occurred while fetching venues'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
     function approveVenue($venue_id)
@@ -222,7 +222,7 @@ class Venue
         } catch (PDOException $e) {
             // Log error and return failure message
             error_log("Database error: " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'An error occurred while approving the venue'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
@@ -251,10 +251,55 @@ class Venue
         } catch (PDOException $e) {
             // Log error and return failure message
             error_log("Database error: " . $e->getMessage());
-            return ['status' => 'error', 'message' => 'An error occurred while declining the venue'];
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 
+    function bookVenue($booking_start_date, $booking_end_date, $booking_start_time, $booking_end_time, $booking_duration, $booking_status_id, $booking_participants, $booking_grand_total, $booking_guest_id, $booking_venue_id, $booking_payment_method, $booking_payment_reference, $booking_payment_status_id, $booking_discount_name = null, $booking_discount_card = null, $booking_discount_value = null)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "INSERT INTO bookings (booking_start_date, booking_end_date, booking_start_time, booking_end_time, booking_duration, booking_status_id, booking_participants, booking_grand_total, booking_guest_id, booking_venue_id, booking_payment_method, booking_payment_reference, booking_payment_status_id) VALUES (:booking_start_date, :booking_end_date, :booking_start_time, :booking_end_time, :booking_duration, :booking_status_id, :booking_participants, :booking_grand_total, :booking_guest_id, :booking_venue_id, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_start_date', $booking_start_date);
+            $stmt->bindParam(':booking_end_date', $booking_end_date);
+            $stmt->bindParam(':booking_start_time', $booking_start_time);
+            $stmt->bindParam(':booking_end_time', $booking_end_time);
+            $stmt->bindParam(':booking_duration', $booking_duration);
+            $stmt->bindParam(':booking_status_id', $booking_status_id);
+            $stmt->bindParam(':booking_participants', $booking_participants);
+            $stmt->bindParam(':booking_grand_total', $booking_grand_total);
+            $stmt->bindParam(':booking_guest_id', $booking_guest_id);
+            $stmt->bindParam(':booking_venue_id', $booking_venue_id);
+            $stmt->bindParam(':booking_payment_method', $booking_payment_method);
+            $stmt->bindParam(':booking_payment_reference', $booking_payment_reference);
+            $stmt->bindParam(':booking_payment_status_id', $booking_payment_status_id);
+
+            if ($stmt->execute()) {
+                $lastInsertedBookingId = $conn->lastInsertId();
+                if ($booking_discount_name && $booking_discount_card && $booking_discount_value) {
+                    $discountSql = "INSERT INTO booking_discount (booking_id, booking_discount_name, booking_discount_card, booking_discount_value) VALUES (:booking_id, :booking_discount_name, :booking_discount_card, :booking_discount_value)";
+                    $discountStmt = $conn->prepare($discountSql);
+                    $discountStmt->bindParam(':booking_id', $lastInsertedBookingId);
+                    $discountStmt->bindParam(':booking_discount_name', $booking_discount_name);
+                    $discountStmt->bindParam(':booking_discount_card', $booking_discount_card);
+                    $discountStmt->bindParam(':booking_discount_value', $booking_discount_value);
+
+                    if (!$discountStmt->execute()) {
+                        return ['status' => 'error', 'message' => 'Failed to add discount for the booking'];
+                    }
+                }
+                return ['status' => 'success', 'message' => 'Booking added successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to add booking'];
+            }
+        } catch (PDOException $e) {
+            // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 }
 
 $venueObj = new Venue();
