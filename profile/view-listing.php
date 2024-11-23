@@ -121,7 +121,7 @@ $venueView = $venueObj->getSingleVenue($getParams);
                                 </p>
                                 <input type="number" id="editVenueCapacity"
                                     class="form-input w-full rounded-md edit-mode hidden"
-                                    value="<?php echo trim(htmlspecialchars($venueView['capacity'])); ?>">
+                                    value=<?php echo trim(htmlspecialchars($venueView['capacity'])); ?>>
                             </div>
 
                             <!-- Amenities -->
