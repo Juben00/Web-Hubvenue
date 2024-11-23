@@ -367,25 +367,31 @@ $owner = $accountObj->getUser($venue['host_id']);
                             <div class="flex">
                                 <div class="w-1/2 p-2 border-r">
                                     <label class="block text-xs font-semibold">CHECK-IN</label>
-                                    <input type="text" value="11/3/2024" class="w-full bg-transparent">
+                                    <input type="date" name="checkin" class="w-full bg-transparent">
                                 </div>
                                 <div class="w-1/2 p-2">
                                     <label class="block text-xs font-semibold">CHECKOUT</label>
-                                    <input type="text" value="11/8/2024" class="w-full bg-transparent">
+                                    <input type="date" name="checkout" class="w-full bg-transparent">
                                 </div>
                             </div>
+                            <div class=" p-2">
+                                <label class="block text-xs font-semibold">Number of Guests (Max is
+                                    <span
+                                        class="text-red-500"><?php echo htmlspecialchars($venue['capacity']) ?></span>)</label>
+                                <input type="number" name="numberOfGuest" class="w-full bg-transparent p-1"
+                                    placeholder="Should not exceed the capacity">
+                            </div>
                         </div>
-                        <button class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
-                        <p class="text-center text-gray-600 mb-4">You won't be charged yet</p>
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span class="underline">₱ <?php echo htmlspecialchars($venue['price']) ?> x {{Nights}}
+                                <span class="underline">₱ <?php echo htmlspecialchars($venue['price']) ?> × <span
+                                        total-nights>0</span>
                                     nights</span>
-                                <span>₱{{Total Price for Nights}}</span>
+                                <span total-price-for-nights>₱ 000,000,00</span>
                             </div>
                             <div class="flex justify-between">
-                                <span class="underline">Entrance fee</span>
-                                <span>₱ <?php echo htmlspecialchars($venue['entrance']) ?></span>
+                                <span class="underline">Entrance fee × <span total-entrance-guests>0</span> guest</span>
+                                <span total-entrance-fee>₱ <?php echo htmlspecialchars($venue['entrance']) ?></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">Cleaning fee</span>
@@ -399,8 +405,11 @@ $owner = $accountObj->getUser($venue['host_id']);
                         <hr class="my-4">
                         <div class="flex justify-between font-semibold">
                             <span>Total </span>
-                            <span>₱{{Total Price}}</span>
+                            <span total-price>₱ 000,000,00</span>
                         </div>
+
+                        <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
+                        <button class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
                     </div>
                 </div>
             </div>
@@ -410,6 +419,94 @@ $owner = $accountObj->getUser($venue['host_id']);
 
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkinInput = document.querySelector('input[name="checkin"]');
+            const checkoutInput = document.querySelector('input[name="checkout"]');
+            const guestsInput = document.querySelector('input[name="numberOfGuest"]');
+            const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
+            const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
+            const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
+            const serviceFeeRate = 0.15;
+            const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
+
+            // Get today's date in YYYY-MM-DD format
+            const today = new Date();
+            const todayFormatted = today.toISOString().split('T')[0];
+
+            // Set 'min' attributes to today for both checkin and checkout inputs
+            checkinInput.setAttribute('min', todayFormatted);
+            checkoutInput.setAttribute('min', todayFormatted);
+
+            // Validate and correct selected date inputs
+            function validateDate(input) {
+                const selectedDate = new Date(input.value);
+                if (selectedDate < today) {
+                    input.value = todayFormatted; // Reset to today's date if past date is selected
+                }
+            }
+
+            function calculateTotal() {
+                validateDate(checkinInput);
+                validateDate(checkoutInput);
+
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+                const timeDiff = checkoutDate - checkinDate;
+                const days = timeDiff / (1000 * 3600 * 24);
+
+                let guests = parseInt(guestsInput.value);
+
+                if (isNaN(guests) || guests < 1) {
+                    guests = 1;
+                } else if (guests > maxGuests) {
+                    guests = maxGuests;
+                    guestsInput.value = maxGuests;
+                }
+
+                if (days > 0) {
+                    const totalPriceForNights = pricePerNight * days;
+                    const totalEntranceFee = entranceFee * guests;
+                    const serviceFee = totalPriceForNights * serviceFeeRate;
+                    const grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
+
+                    document.querySelector('span[total-nights]').textContent = days;
+                    document.querySelector('span[total-price-for-nights]').textContent = `₱${totalPriceForNights.toFixed(2)}`;
+                    document.querySelector('span[total-price]').textContent = `₱${grandTotal.toFixed(2)}`;
+                    document.querySelector('span[total-entrance-fee]').textContent = `₱${totalEntranceFee.toFixed(2)}`;
+                    document.querySelector('span[total-entrance-guests]').textContent = guests;
+                }
+            }
+
+            // Listen for changes to the date and guest inputs
+            checkinInput.addEventListener('change', function () {
+                validateDate(checkinInput);
+                // Ensure checkout date is not earlier than checkin date
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                if (checkoutDate <= checkinDate) {
+                    checkoutInput.value = ""; // Clear invalid checkout date
+                    checkoutInput.setAttribute('min', checkinInput.value); // Update min for checkout
+                }
+                calculateTotal();
+            });
+
+            checkoutInput.addEventListener('change', function () {
+                validateDate(checkoutInput);
+                calculateTotal();
+            });
+
+            guestsInput.addEventListener('input', calculateTotal);
+
+            // Set default min for checkout based on initial checkin value
+            checkinInput.addEventListener('input', () => {
+                const checkinDate = new Date(checkinInput.value);
+                const minCheckoutDate = new Date(checkinDate.getTime() + 24 * 60 * 60 * 1000);
+                checkoutInput.setAttribute('min', minCheckoutDate.toISOString().split('T')[0]);
+            });
+        });
+    </script>
 
 </body>
 
