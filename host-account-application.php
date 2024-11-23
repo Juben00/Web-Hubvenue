@@ -25,10 +25,10 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Host Account Application</title>
     <link rel="icon" href="./images/black_ico.png">
+    <link rel="stylesheet" href="./output.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Add custom styles -->
     <style>

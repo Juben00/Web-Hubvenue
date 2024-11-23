@@ -14,7 +14,6 @@ session_start();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link rel="icon" href="./images/black_ico.png">
     <link rel="stylesheet" href="./output.css">
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         /* General styling for the label */

@@ -18,7 +18,6 @@ if (!isset($_SESSION['user'])) {
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="icon" href="./images/black_ico.png">
     <link rel="stylesheet" href="./output.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .active {
             border-bottom: 2px solid black;
