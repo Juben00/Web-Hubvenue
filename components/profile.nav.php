@@ -15,22 +15,35 @@
             Rent History
           </a>
         </li>
-        <li>
-          <a id="venue-owner" data-profileUrl="venue-owner"
-            class="profileNav w-[100px]  cursor-pointer block py-2 px-3">
-            Today
-          </a>
+
+        <?php
+        if ($_SESSION['user']['user_type_id'] == 1) {
+          echo '
+            <li>
+              <a id="venue-owner" data-profileUrl="venue-owner"
+                class="profileNav w-[100px]  cursor-pointer block py-2 px-3">
+                Today
+              </a>
+            </li>
+            <li>';
+        }
+        ?>
+
+        <a id="bookmarks" data-profileUrl="bookmarks" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
+          Bookmarks
+        </a>
         </li>
-        <!-- <li>
-          <a id="calendar" data-profileUrl="calendar" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
-            Calendar
-          </a>
-        </li> -->
+
+        <?php
+        if ($_SESSION['user']['user_type_id'] == 1) {
+          echo '
         <li>
           <a id="listing" data-profileUrl="listings" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
             Listings
           </a>
-        </li>
+        </li>';
+        }
+        ?>
         <li>
           <a id="message" data-profileUrl="messages" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
             Messages

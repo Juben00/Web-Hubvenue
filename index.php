@@ -5,12 +5,16 @@ if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
     }
+    $bookmarks = $accountObj->getBookmarks($_SESSION['user']['id']);
+    $bookmarkIds = array_column($bookmarks, 'id');
 }
 
 require_once './sanitize.php';
 require_once './classes/venue.class.php';
+require_once './classes/account.class.php';
 
 $venueObj = new Venue();
+$accountObj = new Account();
 
 // Get all venues
 $venues = $venueObj->getAllVenues('2');
@@ -206,15 +210,16 @@ $venues = $venueObj->getAllVenues('2');
                             <!-- Venue cards will be dynamically inserted here -->
                             <?php
                             foreach ($venues as $venue) {
+                                $isBookmarked = in_array($venue['id'], $bookmarkIds);
                                 ?>
-                                <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer venueCard"
-                                    data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
-                                    data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
+                                <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-md cursor-pointer">
                                     <div class="relative">
                                         <!-- Slideshow Container for each venue -->
                                         <div class="relative w-full h-96 overflow-hidden">
                                             <!-- Image Slideshow for each venue -->
-                                            <div class="slideshow-container">
+                                            <div class="slideshow-container venueCard"
+                                                data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
+                                                data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
                                                 <?php if (!empty($venue['image_urls'])): ?>
                                                     <?php foreach ($venue['image_urls'] as $index => $imageUrl): ?>
                                                         <div class="slide <?= $index === 0 ? 'active' : '' ?>">
@@ -225,27 +230,28 @@ $venues = $venueObj->getAllVenues('2');
                                                     <?php endforeach; ?>
                                                 <?php endif; ?>
                                             </div>
-
-                                            <!-- Button (can be used for manual control) -->
-                                            <button class="absolute top-3 right-3 text-white z-50">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
-                                                    fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-
-                                            <?php if (!empty($venue['tag'])): ?>
+                                            <?php if (isset($venue['venue_tag_name'])): ?>
                                                 <span
-                                                    class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full">
-                                                    <?= htmlspecialchars($venue['tag']) ?>
+                                                    class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full z-50">
+                                                    <?= htmlspecialchars($venue['venue_tag_name']) ?>
                                                 </span>
                                             <?php endif; ?>
                                         </div>
+                                        <!-- Button (can be used for manual control) -->
+                                        <button id="bookmarkBtn" data-venueId="<?php echo htmlspecialchars($venue['id']) ?>"
+                                            data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']) ?>"
+                                            class="absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'text-red-500' : 'text-white'; ?>">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+
 
                                         <!-- Venue details below the slideshow -->
-                                        <div class="p-4">
+                                        <div class="p-4 ">
                                             <div class="flex justify-between items-center mb-1">
                                                 <h3 class="text-base font-semibold text-gray-900">
                                                     <?= htmlspecialchars($venue['name']) ?>

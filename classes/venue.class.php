@@ -103,11 +103,13 @@ class Venue
             // Start building the SQL query
             $sql = "SELECT 
             v.id AS venue_id,
+            vtg.tag_name AS venue_tag_name,
             v.*, 
             vss.name AS status, 
             vas.name AS availability, 
             GROUP_CONCAT(vi.image_url) AS image_urls
             FROM venues v 
+            JOIN venue_tag_sub vtg ON v.venue_tag = vtg.id
             JOIN venue_status_sub vss ON v.status_id = vss.id 
             JOIN venue_availability_sub vas ON v.availability_id = vas.id 
             JOIN venue_images vi ON v.id = vi.venue_id";
