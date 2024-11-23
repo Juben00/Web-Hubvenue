@@ -16,6 +16,16 @@ $(document).ready(function () {
         });
     }
 
+    //bookmark btn
+    $(document).on('click', '#bookmarkBtn', function (e) {
+        e.preventDefault();
+        const venueId = $(this).data("venueid");
+        const userId = $(this).data("userid");
+
+        bookmarkVenue(venueId, userId, this);
+    });
+
+
     $('#HubvenueLogo').on('click', function (e) {
         e.preventDefault();
         window.location.href = "index.php";
@@ -280,6 +290,40 @@ $(document).ready(function () {
         },
     });
     }
+
+    function bookmarkVenue(venueId, userId, buttonElement) {
+        console.log(`Venue ID: ${venueId}, User ID: ${userId}`); // Debugging
+        $.ajax({
+            type: "POST",
+            url: "./api/Bookmark.api.php",
+            data: {
+                userId: userId,
+                venueId: venueId,
+            },
+            success: function (response) {
+                console.log(response); // Log response for debugging
+                response = JSON.parse(response);
+
+                if (response.status === "success") {
+                    if (response.action === "bookmarked") {
+                        $(buttonElement).removeClass("text-white").addClass("text-red-500");
+                    } else if (response.action === "unbookmarked") {
+                        $(buttonElement).removeClass("text-red-500").addClass("text-white");
+                    }
+                    // showModal(response.message, undefined, "black_ico.png");
+                } else {
+                    showModal(response.message, undefined, "black_ico.png");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(`Error: ${error}`); // Log AJAX error
+            },
+        });
+}
+
+    
+
+    
     // setting default view for profile
     openProfileNav('rent-history');
 

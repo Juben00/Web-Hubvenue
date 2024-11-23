@@ -353,6 +353,70 @@ class Account
         }
     }
 
+    public function addBookmark($userId = "", $venueId = "")
+    {
+        try {
+            $conn = $this->db->connect();
+            $conn->beginTransaction();
+
+            $checkSql = "SELECT * FROM bookmarks WHERE userId = :userId AND venueId = :venueId";
+            $checkStmt = $conn->prepare($checkSql);
+            $checkStmt->bindParam(':userId', $userId);
+            $checkStmt->bindParam(':venueId', $venueId);
+
+            $checkStmt->execute();
+
+            if ($checkStmt->rowCount() > 0) {
+                $sql = "DELETE FROM bookmarks WHERE userId = :userId AND venueId = :venueId";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':userId', $userId);
+                $stmt->bindParam(':venueId', $venueId);
+                if (!$stmt->execute()) {
+                    $conn->rollBack();
+                    return ['status' => 'error', 'message' => 'Venue was not unbookmarked.'];
+                } else {
+                    $conn->commit();
+                    return ['status' => 'success', 'message' => 'Venue was unbookmarked.', 'action' => 'unbookmarked'];
+                }
+
+            } else {
+
+                $sql = "INSERT INTO bookmarks (userId, venueId) VALUES (:userId, :venueId)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':userId', $userId);
+                $stmt->bindParam(':venueId', $venueId);
+
+                if ($stmt->execute()) {
+                    $conn->commit();
+                    return ['status' => 'success', 'message' => 'Venue has been bookmarked.', 'action' => 'bookmarked'];
+                } else {
+                    $conn->rollBack();
+                    return ['status' => 'error', 'message' => 'Venue was not bookmarked.'];
+                }
+            }
+        } catch (PDOException $e) {
+            $conn->rollBack();
+            error_log("Error adding bookmark: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function getBookmarks($userId = "")
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "SELECT v.* FROM bookmarks b JOIN venues v ON b.venueId = v.id WHERE b.userId = :userId";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':userId', $userId);
+            $stmt->execute();
+
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error fetching bookmarks: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 
 
 
