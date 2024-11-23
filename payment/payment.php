@@ -27,7 +27,7 @@
         <div class="max-w-3xl mx-auto w-full">
             <div class="mb-8">
                 <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span
-                        id="totalSteps">2</span></h2>
+                        id="totalSteps">3</span></h2>
                 <h1 id="stepTitle" class="text-3xl font-bold mb-4">Venue Details</h1>
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
@@ -59,8 +59,56 @@
     </main>
 
     <script>
+        // Discount Modal Functions
+        function openDiscountModal() {
+            const modal = document.getElementById('discountModal');
+            const modalContent = document.getElementById('discountModalContent');
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            // Force a reflow
+            void modal.offsetWidth;
+            // Add flex and animate in
+            modal.classList.add('flex', 'opacity-100');
+            
+            // Animate content
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+                modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+            }, 50);
+        }
+
+        function closeDiscountModal() {
+            const modal = document.getElementById('discountModal');
+            const modalContent = document.getElementById('discountModalContent');
+            
+            // Animate out
+            modal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+            
+            // Hide modal after animation
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                
+                // Uncheck the discount checkbox if no data was entered
+                if (!formData.seniorPwdId) {
+                    document.getElementById('seniorPwdDiscount').checked = false;
+                }
+            }, 300);
+        }
+
+        function handleDiscountModalClick(event) {
+            const modalContent = document.querySelector('#discountModal > div');
+            if (!modalContent.contains(event.target)) {
+                closeDiscountModal();
+            }
+        }
+
         const steps = [
-            { title: "Confirmation", description: "Review and confirm your reservation." },
+            { title: "Discounts", description: "Apply any available discounts to your reservation." },
+            { title: "Review Details", description: "Review and confirm your reservation details." },
             { title: "Payment", description: "Complete your payment to secure the reservation." }
         ];
 
@@ -108,6 +156,49 @@
                 case 1:
                     stepContent.innerHTML = `
                         <div class="space-y-6">
+                            <h3 class="text-2xl font-semibold mb-4">Available Discounts</h3>
+                            
+                            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                                <div class="mb-6">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" id="seniorPwdDiscount" class="rounded text-primary focus:ring-primary">
+                                        <span>Senior Citizen / PWD Discount (20% off)</span>
+                                    </label>
+                                    <p id="discountStatus" class="text-sm text-green-600 mt-1 hidden"></p>
+                                </div>
+
+                                <div class="flex gap-2">
+                                    <input type="text" 
+                                           id="couponCode" 
+                                           name="couponCode" 
+                                           placeholder="Enter coupon code"
+                                           class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-10">
+                                    <button onclick="applyCoupon()" 
+                                            class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:bg-gray-800">
+                                        Apply
+                                    </button>
+                                </div>
+                                <p id="discountMessage" class="text-sm mt-2 hidden"></p>
+                            </div>
+
+                        </div>
+                    `;
+
+                    // Add event listener for senior/PWD discount checkbox
+                    const seniorPwdCheckbox = document.getElementById('seniorPwdDiscount');
+                    if (seniorPwdCheckbox) {
+                        seniorPwdCheckbox.addEventListener('change', function(e) {
+                            if (e.target.checked) {
+                                openDiscountModal();
+                            } else {
+                                clearDiscountData();
+                            }
+                        });
+                    }
+                    break;
+                case 2:
+                    stepContent.innerHTML = `
+                        <div class="space-y-6">
                             <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
                             <div class="bg-gray-100 p-6 rounded-lg">
                                 <h4 class="font-semibold text-lg mb-4">Santiago Resort Room 1</h4>
@@ -117,6 +208,7 @@
                                     <p><strong>Duration:</strong> ${formData.durationValue} ${formData.durationType}</p>
                                     <p><strong>Event Type:</strong> ${formData.eventType}</p>
                                     <p><strong>Guests:</strong> ${formData.guestCount}</p>
+                                    ${formData.appliedDiscount ? `<p><strong>Discount Applied:</strong> ${formData.discountType === 'senior_pwd' ? 'Senior/PWD (20%)' : 'Coupon (10%)'}</p>` : ''}
                                 </div>
                                 <div class="mt-6 pt-4 border-t border-gray-300">
                                     <h5 class="font-semibold mb-2">Price Breakdown</h5>
@@ -137,122 +229,27 @@
                                             <span>HubVenue Service Fee</span>
                                             <span>₱50</span>
                                         </div>
+                                        ${formData.appliedDiscount ? `
+                                        <div class="flex justify-between text-green-600">
+                                            <span>Discount Applied</span>
+                                            <span>-₱${(500 * parseInt(formData.durationValue) + 100 + 250 + 50) * formData.appliedDiscount}</span>
+                                        </div>
+                                        ` : ''}
                                     </div>
                                     <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                         <span>Total</span>
-                                        <span>₱${500 * parseInt(formData.durationValue) + 100 + 250 + 50}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex items-center">
-                                <i class="lucide-check h-5 w-5 text-green-500 mr-2"></i>
-                                <p class="text-sm text-gray-600">Please review all details before proceeding to payment.</p>
-                            </div>
-                        </div>
-                    `;
-                    break;
-                    stepContent.innerHTML = `
-                        <div class="space-y-6">
-                            <h3 class="text-2xl font-semibold mb-4">Santiago Resort Room 1</h3>
-                            <div class="flex items-center text-sm text-gray-500 mb-4">
-                                <i class="lucide-map-pin h-4 w-4 mr-1"></i>
-                                <span>Cabatangan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines</span>
-                            </div>
-                            <div class="grid grid-cols-3 gap-6 h-[600px]">
-                                <div class="col-span-2 row-span-2">
-                                    <img src="/placeholder.svg?height=600&width=800" alt="Santiago Resort Room 1 main image" class="rounded-lg object-cover w-full h-full">
-                                </div>
-                                <div class="h-[290px]">
-                                    <img src="/placeholder.svg?height=300&width=400" alt="Santiago Resort Room 1 image 2" class="rounded-lg object-cover w-full h-full">
-                                </div>
-                                <div class="relative h-[290px]">
-                                    <img src="/placeholder.svg?height=300&width=400" alt="Santiago Resort Room 1 image 3" class="rounded-lg object-cover w-full h-full">
-                                    <button class="absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center rounded-lg transition-opacity hover:bg-opacity-75">
-                                        Show all photos
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-8">
-                                <div>
-                                    <h4 class="text-lg font-semibold mb-2">Place Description</h4>
-                                    <p class="text-gray-600">This Resort offers a wide range of activities suitable for all ages.</p>
-                                    <h4 class="text-lg font-semibold mt-4 mb-2">What this place offers</h4>
-                                    <ul class="list-disc list-inside text-gray-600">
-                                        <li>Pool</li>
-                                        <li>Karaoke</li>
-                                        <li>Duyan Spot</li>
-                                        <li>Shower</li>
-                                        <li>Comfort Rooms</li>
-                                        <li>Cottages</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <div class="bg-gray-100 p-4 rounded-lg">
-                                        <div class="flex justify-between items-center mb-4">
-                                            <span class="text-2xl font-bold">₱500.00</span>
-                                            <span class="text-gray-500">per day</span>
-                                        </div>
-                                        <div class="flex items-center mb-4">
-                                            <i class="lucide-star h-5 w-5 text-yellow-400 mr-1"></i>
-                                            <span class="text-sm text-gray-600">New listing</span>
-                                        </div>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between">
-                                                <span>Entrance fee</span>
-                                                <span>₱100</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span>Cleaning fee</span>
-                                                <span>₱250</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span>HubVenue service fee</span>
-                                                <span>₱50</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <h4 class="text-lg font-semibold mb-2">Venue Capacity</h4>
-                                        <p class="flex items-center text-gray-600">
-                                            <i class="lucide-users h-5 w-5 mr-2"></i>
-                                            Up to 50 guests
-                                        </p>
+                                        <span>₱${(500 * parseInt(formData.durationValue) + 100 + 250 + 50) * (1 - (formData.appliedDiscount || 0))}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
                     break;
-                case 2:
+                case 3:
                     stepContent.innerHTML = `
                         <div class="space-y-6">
                             <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
                             
-                            <div class="bg-gray-50 p-6 rounded-lg mb-6">
-                                <h4 class="text-lg font-semibold mb-4">Available Discounts</h4>
-                                
-                                <div class="mb-4">
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" id="seniorPwdDiscount" class="rounded text-primary focus:ring-primary">
-                                        <span>Senior Citizen / PWD Discount (20% off)</span>
-                                    </label>
-                                    <p id="discountStatus" class="text-sm text-green-600 mt-1 hidden"></p>
-                                </div>
-
-                                <div class="flex gap-2">
-                                    <input type="text" 
-                                           id="couponCode" 
-                                           name="couponCode" 
-                                           placeholder="Enter coupon code"
-                                           class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                                    <button onclick="applyCoupon()" 
-                                            class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:bg-gray-800">
-                                        Apply
-                                    </button>
-                                </div>
-                                <p id="discountMessage" class="text-sm mt-2 hidden"></p>
-                            </div>
-
                             <div class="mb-6">
                                 <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-1">Reference Number</label>
                                 <div class="flex gap-2">
@@ -329,7 +326,7 @@
                                 modal.classList.remove('flex');
                                 
                                 // Uncheck the discount checkbox if no data was entered
-                                if (!formData.seniorPwdId || !formData.seniorPwdName || !formData.seniorPwdIdPhoto) {
+                                if (!formData.seniorPwdId) {
                                     document.getElementById('seniorPwdDiscount').checked = false;
                                 }
                             }, 200);
@@ -356,11 +353,14 @@
                         }
 
                         function applyDiscount() {
-                            const name = document.getElementById('seniorPwdName').value;
-                            const id = document.getElementById('seniorPwdId').value;
+                            if (!validateForm()) {
+                                return;
+                            }
+                            
+                            const name = document.getElementById('seniorPwdName').value.trim();
+                            const id = document.getElementById('seniorPwdId').value.trim();
                             const photo = document.getElementById('seniorPwdIdPhoto').files[0];
 
-                            if (name && id && photo) {
                                 formData.seniorPwdName = name;
                                 formData.seniorPwdId = id;
                                 formData.seniorPwdIdPhoto = photo;
@@ -369,33 +369,84 @@
                                 
                                 // Show success message
                                 const statusEl = document.getElementById('discountStatus');
-                                statusEl.textContent = 'Discount applied successfully!';
-                                statusEl.classList.remove('hidden');
+                            statusEl.textContent = 'Senior Citizen/PWD discount (20%) applied successfully!';
+                            statusEl.classList.remove('hidden', 'text-red-600');
+                            statusEl.classList.add('text-green-600');
                                 
                                 // Close modal
                                 closeDiscountModal();
                                 
                                 // Update price
                                 updatePriceBreakdown();
-                            } else {
-                                alert('Please fill in all required fields');
+                        }
+
+                        function validateForm() {
+                            const name = document.getElementById('seniorPwdName').value.trim();
+                            const id = document.getElementById('seniorPwdId').value.trim();
+                            const photo = document.getElementById('seniorPwdIdPhoto').files[0];
+                            const applyBtn = document.getElementById('applyDiscountBtn');
+                            
+                            // Show/hide error messages with animation
+                            ['nameError', 'idError', 'photoError'].forEach(errorId => {
+                                const errorElement = document.getElementById(errorId);
+                                if (errorElement) {
+                                    if (errorElement.classList.contains('hidden')) {
+                                        errorElement.style.maxHeight = '0';
+                                        errorElement.classList.remove('hidden');
+                                        void errorElement.offsetWidth;
+                                        errorElement.style.maxHeight = errorElement.scrollHeight + 'px';
+                                    } else {
+                                        errorElement.style.maxHeight = '0';
+                                        setTimeout(() => {
+                                            errorElement.classList.add('hidden');
+                                        }, 200);
+                                    }
+                                }
+                            });
+                            
+                            applyBtn.disabled = !(name && id && photo);
+                            
+                            // Add pulse animation when button becomes enabled
+                            if (!applyBtn.disabled) {
+                                applyBtn.classList.add('animate-pulse');
+                                setTimeout(() => {
+                                    applyBtn.classList.remove('animate-pulse');
+                                }, 1000);
                             }
                         }
 
-                        document.getElementById('seniorPwdId').addEventListener('change', function(e) {
-                            formData.seniorPwdId = e.target.value;
-                        });
-
-                        document.getElementById('seniorPwdName').addEventListener('change', function(e) {
-                            formData.seniorPwdName = e.target.value;
-                        });
-
-                        document.getElementById('seniorPwdIdPhoto').addEventListener('change', function(e) {
-                            const file = e.target.files[0];
-                            if (file) {
-                                formData.seniorPwdIdPhoto = file;
+                        function updateFileLabel(input) {
+                            const label = document.getElementById('fileLabel');
+                            const photoError = document.getElementById('photoError');
+                            
+                            if (input.files && input.files[0]) {
+                                const file = input.files[0];
+                                
+                                // Check file size (5MB limit)
+                                if (file.size > 5 * 1024 * 1024) {
+                                    photoError.textContent = 'File size must be less than 5MB';
+                                    photoError.classList.remove('hidden');
+                                    input.value = '';
+                                    label.textContent = 'Click to upload ID photo';
+                                    return;
+                                }
+                                
+                                // Check file type
+                                if (!file.type.startsWith('image/')) {
+                                    photoError.textContent = 'Please upload an image file';
+                                    photoError.classList.remove('hidden');
+                                    input.value = '';
+                                    label.textContent = 'Click to upload ID photo';
+                                    return;
+                                }
+                                
+                                label.textContent = file.name;
+                                photoError.classList.add('hidden');
+                            } else {
+                                label.textContent = 'Click to upload ID photo';
                             }
-                        });
+                            validateForm();
+                        }
 
                         async function applyCoupon() {
                             const couponCode = document.getElementById('couponCode').value;
@@ -506,6 +557,8 @@
                     document.getElementById('qrPaymentAmount').textContent = totalAmount;
                     document.getElementById('selectedPaymentMethod').textContent = 
                         method === 'gcash' ? 'GCash' : 'PayMaya';
+                    document.getElementById('appName').textContent = 
+                        method === 'gcash' ? 'GCash' : 'PayMaya';
                     
                     // Reset payment status
                     document.getElementById('paymentStatus').textContent = 'Waiting for payment...';
@@ -513,10 +566,8 @@
                     document.getElementById('paymentProgress').style.width = '0%';
                     document.getElementById('loadingIndicator').classList.add('animate-pulse');
                     
-                    // Show modal
-                    const modal = document.getElementById('qrModal');
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
+                    // Show modal with animation
+                    openQrModal();
                     
                     // Store reference number
                     formData.paymentReference = data.reference;
@@ -533,13 +584,18 @@
 
         function closeQrModal() {
             const modal = document.getElementById('qrModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            const modalContent = document.getElementById('qrModalContent');
             
-            // Reset payment status
-            document.getElementById('paymentStatus').textContent = 'Waiting for payment...';
-            document.getElementById('paymentProgress').style.width = '0%';
-            document.getElementById('loadingIndicator').classList.add('animate-pulse');
+            // Animate out
+            modal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+            
+            // Hide modal after animation
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
         }
 
         async function checkPaymentStatus(reference) {
@@ -593,7 +649,7 @@
         }
 
         function handleModalClick(event) {
-            const modalContent = document.querySelector('#qrModal > div');
+            const modalContent = document.getElementById('qrModalContent');
             if (!modalContent.contains(event.target)) {
                 closeQrModal();
             }
@@ -663,39 +719,109 @@
         // Add input event listeners for real-time validation
         document.getElementById('seniorPwdName').addEventListener('input', validateForm);
         document.getElementById('seniorPwdId').addEventListener('input', validateForm);
+
+        // Add this new function for input animations
+        function addInputFocusEffects() {
+            const inputs = document.querySelectorAll('input[type="text"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('ring-2', 'ring-primary', 'ring-opacity-50');
+                });
+                input.addEventListener('blur', () => {
+                    input.parentElement.classList.remove('ring-2', 'ring-primary', 'ring-opacity-50');
+                });
+            });
+        }
+
+        // Add these functions for the QR modal animations
+
+        function openQrModal() {
+            const modal = document.getElementById('qrModal');
+            const modalContent = document.getElementById('qrModalContent');
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            // Force a reflow
+            void modal.offsetWidth;
+            // Add flex and animate in
+            modal.classList.add('flex', 'opacity-100');
+            
+            // Animate content
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+                modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+            }, 50);
+        }
+
+        function closeQrModal() {
+            const modal = document.getElementById('qrModal');
+            const modalContent = document.getElementById('qrModalContent');
+            
+            // Animate out
+            modal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+            
+            // Hide modal after animation
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function handleModalClick(event) {
+            const modalContent = document.getElementById('qrModalContent');
+            if (!modalContent.contains(event.target)) {
+                closeQrModal();
+            }
+        }
     </script>
 
-    <div id="qrModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50" onclick="handleModalClick(event)">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <div class="flex justify-between items-center mb-6">
-                <h4 class="text-lg font-semibold">Scan QR Code to Pay</h4>
-                <button onclick="closeQrModal()" class="text-gray-500 hover:text-gray-700">
-                    <i class="lucide-x h-6 w-6"></i>
+    <div id="qrModal" 
+         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0" 
+         onclick="handleModalClick(event)">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
+             id="qrModalContent">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h4 class="text-2xl font-bold text-gray-900">Scan QR Code to Pay</h4>
+                    <p class="text-sm text-gray-600 mt-2">Use your e-wallet app to complete the payment</p>
+                </div>
+                <button onclick="closeQrModal()" 
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
+                    <i class="lucide-x h-5 w-5"></i>
                 </button>
             </div>
             <div class="text-center">
-                <div class="bg-gray-100 p-8 rounded-lg mb-6">
-                    <img id="qrCodeImage" src="" alt="Payment QR Code" class="mx-auto mb-4">
-                    <p class="text-sm text-gray-600 mb-2">Total Amount: ₱<span id="qrPaymentAmount">0</span></p>
-                    <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod"></span> app</p>
+                <div class="bg-gray-50 p-8 rounded-xl mb-6 border border-gray-100">
+                    <img id="qrCodeImage" src="" alt="Payment QR Code" class="mx-auto mb-4 rounded-lg shadow-md">
+                    <p class="text-sm text-gray-600 mb-2">Total Amount: <span class="font-semibold text-black">₱<span id="qrPaymentAmount">0</span></span></p>
+                    <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod" class="font-medium"></span> app</p>
                 </div>
                 <div class="flex justify-center gap-4 mb-6">
                     <button id="openAppButton" onclick="openPaymentApp()" 
-                            class="flex items-center px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:bg-gray-800">
+                            class="flex items-center px-4 py-2.5 bg-black text-white rounded-lg text-sm font-medium 
+                                   hover:bg-gray-800 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                         <i class="lucide-smartphone h-5 w-5 mr-2"></i>
                         Open <span id="appName"></span> App
                     </button>
                     <button onclick="copyPaymentDetails()" 
-                            class="flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50">
+                            class="flex items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium 
+                                   hover:bg-gray-50 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                         <i class="lucide-copy h-5 w-5 mr-2"></i>
                         Copy Details
                     </button>
                 </div>
                 <div class="mt-4">
-                    <p class="text-sm text-gray-600 mb-2">Payment Status: <span id="paymentStatus" class="font-medium">Waiting for payment...</span></p>
+                    <p class="text-sm text-gray-600 mb-2">Payment Status: 
+                        <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
+                    </p>
                     <div class="animate-pulse" id="loadingIndicator">
-                        <div class="h-1 w-full bg-gray-200 rounded">
-                            <div class="h-1 bg-blue-500 rounded" style="width: 0%" id="paymentProgress"></div>
+                        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-2 bg-blue-500 rounded-full transition-all duration-500 ease-out" 
+                                 style="width: 0%" 
+                                 id="paymentProgress">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -704,39 +830,46 @@
     </div>
 
     <div id="discountModal" 
-         class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 transition-opacity duration-300 ease-in-out" 
+         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0" 
          onclick="handleDiscountModalClick(event)">
-        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all duration-300 ease-in-out scale-95 opacity-0"
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
              id="discountModalContent">
-            <div class="flex justify-between items-center mb-8">
+            <!-- Header -->
+            <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h4 class="text-xl font-semibold text-gray-900">Senior Citizen / PWD Details</h4>
-                    <p class="text-sm text-gray-500 mt-1">Please provide the required information to apply the discount</p>
+                    <h4 class="text-2xl font-bold text-gray-900">Senior Citizen / PWD Details</h4>
+                    <p class="text-sm text-gray-600 mt-2">Please provide the required information to apply the discount</p>
                 </div>
                 <button onclick="closeDiscountModal()" 
-                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
-                    <i class="lucide-x h-6 w-6"></i>
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
+                    <i class="lucide-x h-5 w-5"></i>
                 </button>
             </div>
+
+            <!-- Form Content -->
             <div class="space-y-6">
-                <div class="transition-all duration-200 ease-in-out transform hover:translate-x-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ID Holder's Full Name</label>
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">ID Holder's Full Name</label>
                     <input type="text" 
                            id="seniorPwdName" 
                            name="seniorPwdName" 
                            placeholder="Enter the name as shown on the ID"
-                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-10 px-4">
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
+                    <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Please enter the ID holder's name</p>
                 </div>
-                <div class="transition-all duration-200 ease-in-out transform hover:translate-x-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ID Number</label>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">ID Number</label>
                     <input type="text" 
                            id="seniorPwdId" 
                            name="seniorPwdId" 
                            placeholder="Enter Senior Citizen/PWD ID Number"
-                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-10 px-4">
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
+                    <p id="idError" class="text-red-500 text-xs mt-1 hidden">Please enter a valid ID number</p>
                 </div>
-                <div class="transition-all duration-200 ease-in-out transform hover:translate-x-1">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload ID Photo</label>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Upload ID Photo</label>
                     <div class="relative">
                         <input type="file" 
                                id="seniorPwdIdPhoto" 
@@ -745,24 +878,24 @@
                                class="hidden"
                                onchange="updateFileLabel(this)">
                         <label for="seniorPwdIdPhoto" 
-                               class="flex items-center justify-center w-full h-10 px-4 border border-gray-300 rounded-md cursor-pointer hover:border-primary transition-colors duration-200 group">
+                               class="flex items-center justify-center w-full h-11 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors duration-200 group">
                             <i class="lucide-upload h-5 w-5 text-gray-400 group-hover:text-primary transition-colors duration-200 mr-2"></i>
-                            <span id="fileLabel" class="text-sm text-gray-500 group-hover:text-primary transition-colors duration-200">
-                                Click to upload ID photo
-                            </span>
+                            <span id="fileLabel" class="text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-200">Click to upload ID photo</span>
                         </label>
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">Please upload a clear photo of the valid ID (Max 5MB)</p>
+                    <p id="photoError" class="text-red-500 text-xs mt-1 hidden">Please upload a photo of the ID</p>
+                    <p class="text-xs text-gray-500 mt-1">Please upload a clear photo of the valid ID (Max 5MB)</p>
                 </div>
-                <div class="mt-8">
-                    <button onclick="applyDiscount()" 
-                            class="w-full h-10 bg-black text-white rounded-md text-sm font-medium 
-                                   hover:bg-gray-800 transform transition-all duration-200 ease-in-out 
-                                   hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                            id="applyDiscountBtn">
-                        Apply Discount
-                    </button>
-                </div>
+
+                <button onclick="applyDiscount()" 
+                        id="applyDiscountBtn"
+                        disabled
+                        class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium 
+                               hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed
+                               transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
+                               disabled:hover:scale-100">
+                    Apply Discount
+                </button>
             </div>
         </div>
     </div>
