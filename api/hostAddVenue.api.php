@@ -5,8 +5,8 @@ require_once '../sanitize.php';
 
 $venueObj = new Venue();
 
-$name = $description = $location = $price = $capacity = $amenities = $tag = $entrance = $cleaning = $rules = $addRules = "";
-$nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $tagErr = $entranceErr = $cleaningErr = $imageErr = $rulesErr = "";
+$name = $description = $location = $price = $capacity = $amenities = $tag = $entrance = $cleaning = $rules = $addRules = $checkIn = $checkOut = $check_inout = "";
+$nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $tagErr = $entranceErr = $cleaningErr = $imageErr = $rulesErr = $checkInErr = $checkOutErr = "";
 
 $uploadDir = '/venue_image_uploads/';
 $allowedType = ['jpg', 'jpeg', 'png'];
@@ -25,6 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rules = isset($_POST['fixedRules']) && is_array($_POST['fixedRules']) ? $_POST['fixedRules'] : [];
     $sanitizedRules = array_map('clean_input', $rules); // Sanitize each checkbox value
     $addRules = isset($_POST['additionalRules']) ? clean_input($_POST['additionalRules']) : '';
+    $checkIn = clean_input($_POST['check-in']);
+    $checkOut = clean_input($_POST['check-out']);
+    $check_inout = json_encode(['check_in' => $checkIn, 'check_out' => $checkOut]);
 
     // Validation for required fields
     if (empty($name))
@@ -47,6 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cleaningErr = "Cleaning field is required";
     if (empty($rules))
         $rulesErr = "Rules are required";
+    if (empty($checkIn))
+        $checkInErr = "Check-in time is required";
+    if (empty($checkOut))
+        $checkOutErr = "Check-out time is required";
+
 
 
     // Handle multiple image uploads
@@ -113,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->tag = $tag;
         $venueObj->entrance = $entrance;
         $venueObj->cleaning = $cleaning;
+        $venueObj->check_inout = $check_inout;
         $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
 
         // Add venue with image URLs to the database
@@ -137,6 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $entranceErr,
                 $cleaningErr,
                 $imageErr,
+                $checkInErr,
+                $checkOutErr,
             ]))
         ]);
     }
