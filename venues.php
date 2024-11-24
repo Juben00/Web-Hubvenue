@@ -351,6 +351,9 @@ $owner = $accountObj->getUser($venue['host_id']);
                         </div>
                     </div>
 
+
+
+
                     <form id="reservationForm" class="border rounded-xl p-6 shadow-lg sticky top-6">
                         <div class="flex justify-between items-center mb-4">
                             <div>
@@ -389,32 +392,40 @@ $owner = $accountObj->getUser($venue['host_id']);
                                 <span class="underline">₱ <?php echo htmlspecialchars($venue['price']) ?> × <span
                                         total-nights>0</span>
                                     nights</span>
-                                <span total-price-for-nights>₱ 000,000,00</span>
-
+                                <span>₱ <input type="number" class="text-right bg-transparent w-24"
+                                        name="totalPriceForNights" value="0" readonly></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">Entrance fee × <span total-entrance-guests>0</span> guest</span>
-                                <span total-entrance-fee>₱ <?php echo htmlspecialchars($venue['entrance']) ?></span>
+                                <span>₱ <input type="number" class="text-right bg-transparent w-24"
+                                        name="totalEntranceFee"
+                                        value="<?php echo htmlspecialchars($venue['entrance']) ?>" readonly></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">Cleaning fee</span>
-                                <span>₱ <?php echo htmlspecialchars($venue['cleaning']) ?></span>
+                                <span>₱ <input type="number" class="text-right bg-transparent w-24" name="cleaningFee"
+                                        value="<?php echo htmlspecialchars($venue['cleaning']) ?>" readonly></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">HubVenue service fee</span>
-                                <span>₱ <?php echo htmlspecialchars($venue['price']) * .15 ?> </span>
+                                <span>₱ <input type="number" class="text-right bg-transparent w-24" name="serviceFee"
+                                        value="0" readonly></span>
                             </div>
                         </div>
                         <hr class="my-4">
                         <div class="flex justify-between font-semibold">
                             <span>Total </span>
-                            <span>₱ <input type="number" class="text-right bg-transparent" name="totalPrice"
-                                    value="0.00" readonly></span>
+                            <span>₱ <input type="number" class="text-right bg-transparent w-24" name="totalPrice"
+                                    value="0" readonly></span>
                         </div>
 
                         <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
                         <button class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
                     </form>
+
+
+
+
                 </div>
             </div>
         </div>
@@ -429,6 +440,10 @@ $owner = $accountObj->getUser($venue['host_id']);
             const checkoutInput = document.querySelector('input[name="checkout"]');
             const guestsInput = document.querySelector('input[name="numberOfGuest"]');
             const totalPriceInput = document.querySelector('input[name="totalPrice"]');
+            const totalPriceForNightsInput = document.querySelector('input[name="totalPriceForNights"]');
+            const serviceFeeInput = document.querySelector('input[name="serviceFee"]');
+            const entranceFeeInput = document.querySelector('input[name="totalEntranceFee"]');
+            const cleaningFeeInput = document.querySelector('input[name="cleaningFee"]');
             const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
             const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
             const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
@@ -472,13 +487,14 @@ $owner = $accountObj->getUser($venue['host_id']);
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
                     const totalEntranceFee = entranceFee * guests;
-                    const serviceFee = totalPriceForNights * serviceFeeRate;
+                    const serviceFee = pricePerNight * serviceFeeRate;
                     const grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
 
                     document.querySelector('span[total-nights]').textContent = days;
-                    document.querySelector('span[total-price-for-nights]').textContent = `₱${totalPriceForNights.toFixed(2)}`;
-                    document.querySelector('span[total-entrance-fee]').textContent = `₱${totalEntranceFee.toFixed(2)}`;
                     document.querySelector('span[total-entrance-guests]').textContent = guests;
+                    totalPriceForNightsInput.value = totalPriceForNights.toFixed(2);
+                    entranceFeeInput.value = totalEntranceFee.toFixed(2);
+                    serviceFeeInput.value = serviceFee.toFixed(2);
                     totalPriceInput.value = grandTotal.toFixed(2);
                 }
             }
@@ -510,6 +526,9 @@ $owner = $accountObj->getUser($venue['host_id']);
                 const minCheckoutDate = new Date(checkinDate.getTime() + 24 * 60 * 60 * 1000);
                 checkoutInput.setAttribute('min', minCheckoutDate.toISOString().split('T')[0]);
             });
+
+            // Initial calculation
+            calculateTotal();
         });
     </script>
 

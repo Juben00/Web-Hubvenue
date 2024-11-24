@@ -518,7 +518,7 @@ session_start();
                         </p>
 
                     </div>
-                    <?php require_once './openStreetMap/openStreetMap.html' ?>
+                    <?php require_once './openStreetMap/userOpenStreetMap.html' ?>
                     <input type="text" id="venue-location" name="venue-location" class="hidden">
                 </div>
 
@@ -638,22 +638,29 @@ session_start();
                 <p class="text-gray-600 mb-6">You can change it anytime.</p>
 
                 <div class="text-center mb-8">
-                    <input type="number" name="price" id="price"
-                        class="w-full p-4 border rounded-lg text-center text-6xl font-bold focus:outline-none focus:ring-2 focus:ring-black mb-8"
-                        placeholder="₱**,***">
-                    <p class="text-gray-600">Remember that 15% of the total price will go to Hubvenue</p>
+                    <div class="text-center mb-8">
+                        <input type="number" name="price" id="price"
+                            class="w-full p-4 border rounded-lg text-center text-6xl font-bold focus:outline-none focus:ring-2 focus:ring-black mb-8"
+                            placeholder="₱**,***">
+                        <!-- Add preferred check-in and check-out times -->
+                        <div class="flex items-center w-full gap-4">
+                            <div class="w-full">
+                                <h2 class="text-xl font-semibold">Preferred Check-in Time</h2>
+                                <input type="time" name="checkin-time"
+                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                    placeholder="Check-in Time">
+                            </div>
+                            <div class="w-full">
+                                <h2 class="text-xl font-semibold">Preferred Check-out Time</h2>
+                                <input type="time" name="checkout-time"
+                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                    placeholder="Check-out Time">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- <div class="bg-gray-100 rounded-lg p-4 flex items-center justify-center mb-8">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                </svg>
-                <span>Similar listings ₱2,176 - ₱3,263</span>
-            </div> -->
+
             </div>
 
             <div id="step11" class="step">
@@ -689,6 +696,7 @@ session_start();
                     </div>
 
                     <!-- Cleaning Fee Section -->
+
                     <div>
                         <div class="flex justify-between items-center mb-4">
                             <div>

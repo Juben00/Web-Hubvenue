@@ -95,6 +95,8 @@ $(document).ready(function () {
         $(this).addClass('active');
     
         openProfileNav(url);
+        
+        
     })
 
     $('#profileBtn').on('click', function (e) {
@@ -117,11 +119,19 @@ $(document).ready(function () {
         hostApplication(formElement);
     });  
 
+    //reservation form
+    $('#reservationForm').on('submit', function (e) {
+        e.preventDefault();
+        const formElement = $(this);
+        // reserveVenue(formElement);
+        console.log(formElement);
+    });
+
 
     function viewOpenStreetMap(){
     $.ajax({
         type: "GET",
-        url: "./openStreetMap/openStreetMap.html",
+        url: "./openStreetMap/userOpenStreetMap.html",
         dataType: "html",
         success: function (response) {
           $("#openstreetmapplaceholder").html(response);
@@ -129,10 +139,16 @@ $(document).ready(function () {
           $('#openStreetMapSubmit').on("click", function (e) {
             
                 e.preventDefault();
+                console.log("hgloasd");
                 
+                // // Capture the value of #OpenStreetaddress
+                // let openStreetAddress = $('#OpenStreetaddress').val();
+                // // Set this value to #venue-location if it exists
+                // $('#venue-location').val(openStreetAddress);
                 $('#openStreetMapDiv').addClass("hidden"); // Hide the map modal
-            });
 
+                
+            });
         },
     })
     }
@@ -169,7 +185,6 @@ $(document).ready(function () {
             processData: false,  
             contentType: false, 
             success: function (response) {
-                response = JSON.parse(response);
                 if (response.status === "success") {
                     showModal(response.message, function () {
                         formElement[0].reset();
