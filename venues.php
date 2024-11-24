@@ -357,9 +357,6 @@ $owner = $accountObj->getUser($venue['host_id']);
                                     </h2>
                                     <p class="text-xs text-gray-500">Owner</p>
                                 </div>
-
-                                <!-- Rest of the owner card content remains the same -->
-                                <!-- ... -->
                             </div>
                         </div>
                     </div>
@@ -367,11 +364,12 @@ $owner = $accountObj->getUser($venue['host_id']);
 
 
 
-                    <form id="reservationForm" class="border rounded-xl p-6 shadow-lg sticky top-6">
+                    <form id="reservationForm" class="border rounded-xl p-6 shadow-lg sticky top-6" method="GET"
+                        action="payment.php">
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <span class="text-2xl font-semibold">₱
-                                    <?php echo htmlspecialchars($venue['price']) ?></span>
+                                    <?php echo htmlspecialchars($venue['price']); ?></span>
                                 <span class="text-lg">night</span>
                             </div>
                             <div class="text-sm">
@@ -382,7 +380,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                         <div class="border rounded-lg mb-4">
                             <div class="flex">
                                 <input type="hidden" name="venueId"
-                                    value="<?php echo htmlspecialchars($venue['id']) ?>">
+                                    value="<?php echo htmlspecialchars($venue['id']); ?>">
                                 <div class="w-1/2 p-2 border-r">
                                     <label class="block text-xs font-semibold">CHECK-IN</label>
                                     <input type="date" name="checkin" class="w-full bg-transparent">
@@ -392,17 +390,17 @@ $owner = $accountObj->getUser($venue['host_id']);
                                     <input type="date" name="checkout" class="w-full bg-transparent">
                                 </div>
                             </div>
-                            <div class=" p-2">
+                            <div class="p-2">
                                 <label class="block text-xs font-semibold">Number of Guests (Max is
                                     <span
-                                        class="text-red-500"><?php echo htmlspecialchars($venue['capacity']) ?></span>)</label>
+                                        class="text-red-500"><?php echo htmlspecialchars($venue['capacity']); ?></span>)</label>
                                 <input type="number" name="numberOfGuest" class="w-full bg-transparent p-1"
                                     placeholder="Should not exceed the capacity">
                             </div>
                         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span class="underline">₱ <?php echo htmlspecialchars($venue['price']) ?> × <span
+                                <span class="underline">₱ <?php echo htmlspecialchars($venue['price']); ?> × <span
                                         total-nights>0</span>
                                     nights</span>
                                 <span>₱ <input type="number" class="text-right bg-transparent w-24"
@@ -412,12 +410,12 @@ $owner = $accountObj->getUser($venue['host_id']);
                                 <span class="underline">Entrance fee × <span total-entrance-guests>0</span> guest</span>
                                 <span>₱ <input type="number" class="text-right bg-transparent w-24"
                                         name="totalEntranceFee"
-                                        value="<?php echo htmlspecialchars($venue['entrance']) ?>" readonly></span>
+                                        value="<?php echo htmlspecialchars($venue['entrance']); ?>" readonly></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">Cleaning fee</span>
                                 <span>₱ <input type="number" class="text-right bg-transparent w-24" name="cleaningFee"
-                                        value="<?php echo htmlspecialchars($venue['cleaning']) ?>" readonly></span>
+                                        value="<?php echo htmlspecialchars($venue['cleaning']); ?>" readonly></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">HubVenue service fee</span>
@@ -433,8 +431,10 @@ $owner = $accountObj->getUser($venue['host_id']);
                         </div>
 
                         <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
-                        <button class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
+                        <button type="submit"
+                            class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
                     </form>
+
 
 
 

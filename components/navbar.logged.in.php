@@ -157,13 +157,10 @@
         bottomSearch.classList.add("hidden");
         bottomSearch.classList.remove("flex");
       }
-    } else {
-      console.warn("No element with class 'first-section' found.");
     }
-  }
 
-  // Add scroll event listener
-  window.addEventListener("scroll", () => updateNavColor());
-  // Initial call to set correct color on page load
-  updateNavColor();
+    // Add scroll event listener
+    window.addEventListener("scroll", () => updateNavColor());
+    // Initial call to set correct color on page load
+    updateNavColor();
 </script>
