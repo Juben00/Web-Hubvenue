@@ -155,8 +155,24 @@ $venueView = $venueObj->getSingleVenue($getParams);
                             <!-- Venue Rules -->
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">Venue Rules</h3>
-                                <ul id="detailVenueRules" class="list-disc list-inside text-gray-600 view-mode">
-                                </ul>
+                                <?php if (!empty($venueView['rules'])): ?>
+                                    <?php
+                                    $rules = json_decode($venueView['rules'], true);
+                                    if ($rules):
+                                        ?>
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            <?php foreach ($rules as $rule): ?>
+                                                <li class="text-sm text-gray-800 leading-tight">
+                                                    <?= htmlspecialchars($rule) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php else: ?>
+                                        <p class="text-sm text-gray-500">No Rules Stated</p>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <p class="text-sm text-gray-500">No Rules Stated</p>
+                                <?php endif; ?>
                                 <div id="editVenueRules" class="edit-mode hidden space-y-2">
                                     <div id="rulesList"></div>
                                     <button onclick="addRuleField()" class="text-blue-600 hover:text-blue-800 text-sm">+
