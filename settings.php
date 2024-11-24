@@ -1,5 +1,18 @@
 <?php
+
+require_once './sanitize.php';
+require_once './classes/venue.class.php';
+require_once './classes/account.class.php';
+
 session_start();
+$accountObj = new Account();
+
+if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['user_type_id'] == 3) {
+        header('Location: admin/');
+    }
+
+}
 ?>
 
 <!DOCTYPE html>
@@ -8,12 +21,30 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HubVenue || Settings</title>
-    <link rel="icon" href="../images/black_ico.png">
-    <link rel="stylesheet" href="./dist/output.css">
+    <link rel="icon" href="./images/black_ico.png">
+    <link rel="stylesheet" href="./output.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-50">
- 
+        <!-- Header -->
+        <?php
+    // Check if the 'user' key exists in the session
+    if (isset($_SESSION['user'])) {
+        include_once './components/navbar.logged.in.php';
+    } else {
+        include_once './components/navbar.html';
+    }
+
+    include_once './components/SignupForm.html';
+    include_once './components/feedback.modal.html';
+    include_once './components/confirm.feedback.modal.html';
+    include_once './components/Menu.html';
+
+    ?>
 
     <main class="w-full px-4 py-8 min-h-screen">
         <div class="max-w-7xl mt-16 mx-auto">
@@ -44,7 +75,7 @@ session_start();
             <!-- Settings Content -->
             <div class="bg-white rounded-xl shadow-lg p-8">
                 <!-- Account Settings -->
-                <div id="account-settings" class="transition-all duration-300 ease-in-out transform opacity-100 translate-x-0 data-[hidden=true]:opacity-0 data-[hidden=true]:translate-x-8 data-[hidden=true]:hidden">
+                <div id="account-settings" class="transition-all duration-200 ease-in-out transform opacity-100 translate-x-0">
                     <div class="max-w-7xl mx-auto">
                         <!-- Profile Picture Section -->
                         <div class="mb-12 flex flex-col items-center">
@@ -140,7 +171,7 @@ session_start();
                             </div>
 
                             <div class="pt-6 flex justify-end">
-                                <button type="submit" class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-[#E73023] to-[#B01B1B] text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px]">
+                                <button type="submit" class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-red-600 text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px]">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                         <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h-2v5.586l-1.293-1.293z"/>
                                     </svg>
@@ -168,7 +199,7 @@ session_start();
                                     </div>
                                 </div>
                                 <div class="flex justify-end">
-                                    <button type="submit" class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-[#E73023] to-[#B01B1B] text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px]">
+                                    <button type="submit" class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-red-600 text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px]">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                                         </svg>
@@ -181,74 +212,78 @@ session_start();
                 </div>
 
                 <!-- Notifications Settings -->
-                <div id="notifications-settings" class="settings-content hidden">
-                    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Notification Preferences</h2>
-                    <form class="space-y-6">
-                        <div class="space-y-6">
-                            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                                <div>
-                                    <h3 class="text-lg font-medium text-gray-800">Email Notifications</h3>
-                                    <p class="text-sm text-gray-600">Receive updates about your bookings via email</p>
+                <div id="notifications-settings" class="transition-all duration-200 ease-in-out transform opacity-100 translate-x-0">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Notification Preferences</h2>
+                        <form class="space-y-6">
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-800">Email Notifications</h3>
+                                        <p class="text-sm text-gray-600">Receive updates about your bookings via email</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                    </label>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
-                                </label>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                                <div>
-                                    <h3 class="text-lg font-medium text-gray-800">SMS Notifications</h3>
-                                    <p class="text-sm text-gray-600">Get text messages for important updates</p>
+                                
+                                <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-800">SMS Notifications</h3>
+                                        <p class="text-sm text-gray-600">Get text messages for important updates</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                    </label>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
-                                </label>
                             </div>
-                        </div>
-                        <div>
-                            <button type="submit" class="form-button">
-                                Save Preferences
-                            </button>
-                        </div>
-                    </form>
+                            <div>
+                                <button type="submit" class="form-button">
+                                    Save Preferences
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Privacy Settings -->
-                <div id="privacy-settings" class="settings-content hidden">
-                    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Privacy Settings</h2>
-                    <form class="space-y-6">
-                        <div class="space-y-6">
-                            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                                <div>
-                                    <h3 class="text-lg font-medium text-gray-800">Profile Visibility</h3>
-                                    <p class="text-sm text-gray-600">Control who can see your profile information</p>
+                <div id="privacy-settings" class="transition-all duration-200 ease-in-out transform opacity-100 translate-x-0">
+                    <div class="max-w-7xl mx-auto">
+                        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Privacy Settings</h2>
+                        <form class="space-y-6">
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-800">Profile Visibility</h3>
+                                        <p class="text-sm text-gray-600">Control who can see your profile information</p>
+                                    </div>
+                                    <select class="form-input w-auto">
+                                        <option>Public</option>
+                                        <option>Private</option>
+                                        <option>Friends Only</option>
+                                    </select>
                                 </div>
-                                <select class="form-input w-auto">
-                                    <option>Public</option>
-                                    <option>Private</option>
-                                    <option>Friends Only</option>
-                                </select>
-                            </div>
 
-                            <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
-                                <div>
-                                    <h3 class="text-lg font-medium text-gray-800">Two-Factor Authentication</h3>
-                                    <p class="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                                <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-800">Two-Factor Authentication</h3>
+                                        <p class="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                    </label>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
-                                </label>
                             </div>
-                        </div>
-                        <div>
-                            <button type="submit" class="form-button">
-                                Save Privacy Settings
-                            </button>
-                        </div>
-                    </form>
+                            <div>
+                                <button type="submit" class="form-button">
+                                    Save Privacy Settings
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -256,46 +291,60 @@ session_start();
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('.settings-tab');
-            const contents = document.querySelectorAll('.settings-content');
+            // Get all tab buttons and content sections
+            const tabButtons = document.querySelectorAll('[data-tab]');
+            const contentSections = {
+                account: document.getElementById('account-settings'),
+                notifications: document.getElementById('notifications-settings'),
+                privacy: document.getElementById('privacy-settings')
+            };
 
-            function switchTab(clickedTab) {
-                // Remove active class from all tabs
-                tabs.forEach(t => t.classList.remove('active', 'text-blue-600'));
-                
-                // Add active class to clicked tab
-                clickedTab.classList.add('active', 'text-blue-600');
-
-                // Hide all content sections with transition
-                contents.forEach(content => {
-                    content.classList.add('hidden');
-                    content.style.opacity = '0';
-                    content.style.transform = 'translateX(20px)';
+            function switchTab(tabId) {
+                // Update button states
+                tabButtons.forEach(button => {
+                    button.setAttribute('data-active', button.dataset.tab === tabId);
                 });
 
-                // Show selected content with transition
-                const targetContent = document.getElementById(`${clickedTab.dataset.tab}-settings`);
-                targetContent.classList.remove('hidden');
-                
-                // Trigger reflow
-                void targetContent.offsetWidth;
-                
-                // Apply transitions
-                targetContent.style.opacity = '1';
-                targetContent.style.transform = 'translateX(0)';
+                // First set all sections to start transitioning out
+                Object.values(contentSections).forEach(section => {
+                    if (!section.classList.contains('hidden')) {
+                        section.style.opacity = '0';
+                        section.style.transform = 'translateX(-20px)';
+                    }
+                });
+
+                // Wait for fade out, then switch content
+                setTimeout(() => {
+                    // Hide all content sections
+                    Object.values(contentSections).forEach(section => {
+                        section.classList.add('hidden');
+                        section.setAttribute('data-hidden', 'true');
+                    });
+
+                    // Show selected content
+                    const selectedContent = contentSections[tabId];
+                    selectedContent.classList.remove('hidden');
+                    selectedContent.setAttribute('data-hidden', 'false');
+                    
+                    // Trigger reflow
+                    void selectedContent.offsetHeight;
+                    
+                    // Start fade in
+                    selectedContent.style.opacity = '1';
+                    selectedContent.style.transform = 'translateX(0)';
+                }, 200); // Match this with the CSS transition duration
             }
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => switchTab(tab));
+            // Add click handlers to all tab buttons
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchTab(button.dataset.tab);
+                });
             });
-        });
 
-        function openModal() {
-            const modal = document.getElementById('authModal');
-            modal.style.display = 'flex';
-            modal.style.opacity = '0';
-            setTimeout(() => modal.style.opacity = '1', 10);
-        }
+            // Initialize with account tab active
+            switchTab('account');
+        });
 
         // Profile picture preview
         document.getElementById('profilePicture').addEventListener('change', function(e) {
