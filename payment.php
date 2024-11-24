@@ -1,22 +1,51 @@
+
+<?php
+
+require_once './sanitize.php';
+require_once './classes/venue.class.php';
+require_once './classes/account.class.php';
+
+session_start();
+$accountObj = new Account();
+
+if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['user_type_id'] == 3) {
+        header('Location: admin/');
+    }
+
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HubVenue - Venue Reservation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/font/lucide.min.css" rel="stylesheet">
-    <link rel="icon" href="./images/black_ico.png">
-    <link rel="stylesheet" href="./output.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF0000',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body class="min-h-screen flex flex-col bg-white">
-    <?php
-    session_start();
 
+<body class="min-h-screen flex flex-col bg-white">
+
+    <!-- Header -->
+    <?php
+    // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
         include_once './components/navbar.logged.in.php';
     } else {
@@ -29,6 +58,7 @@
     include_once './components/Menu.html';
 
     ?>
+
     <main class="pt-20 flex-grow flex flex-col justify-between p-6 pb-24">
         <div class="max-w-3xl mx-auto w-full">
             <div class="mb-8">
@@ -69,14 +99,14 @@
         function openDiscountModal() {
             const modal = document.getElementById('discountModal');
             const modalContent = document.getElementById('discountModalContent');
-
+            
             // Show modal
             modal.classList.remove('hidden');
             // Force a reflow
             void modal.offsetWidth;
             // Add flex and animate in
             modal.classList.add('flex', 'opacity-100');
-
+            
             // Animate content
             setTimeout(() => {
                 modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
@@ -87,17 +117,17 @@
         function closeDiscountModal() {
             const modal = document.getElementById('discountModal');
             const modalContent = document.getElementById('discountModalContent');
-
+            
             // Animate out
             modal.classList.remove('opacity-100');
             modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
             modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-
+            
             // Hide modal after animation
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
-
+                
                 // Uncheck the discount checkbox if no data was entered
                 if (!formData.seniorPwdId) {
                     document.getElementById('seniorPwdDiscount').checked = false;
@@ -193,7 +223,7 @@
                     // Add event listener for senior/PWD discount checkbox
                     const seniorPwdCheckbox = document.getElementById('seniorPwdDiscount');
                     if (seniorPwdCheckbox) {
-                        seniorPwdCheckbox.addEventListener('change', function (e) {
+                        seniorPwdCheckbox.addEventListener('change', function(e) {
                             if (e.target.checked) {
                                 openDiscountModal();
                             } else {
@@ -259,7 +289,7 @@
                             <div class="grid grid-cols-2 gap-6">
                                 <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('gcash')">
                                     <div class="flex items-center justify-between mb-4">
-                                        <img src="gcash.png" alt="GCash" class="h-8">
+                                        <img src="./images/gcash.png" alt="GCash" class="h-8">
                                         <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4">
                                     </div>
                                     <p class="text-sm text-gray-600">Pay securely using your GCash account</p>
@@ -267,7 +297,7 @@
                                 
                                 <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('paymaya')">
                                     <div class="flex items-center justify-between mb-4">
-                                        <img src="paymaya.png" alt="PayMaya" class="h-8">
+                                        <img src="./images/paymaya.png" alt="PayMaya" class="h-8">
                                         <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
                                     </div>
                                     <p class="text-sm text-gray-600">Pay using your PayMaya account</p>
@@ -516,18 +546,27 @@
         updateStep();
 
         async function selectPaymentMethod(method) {
-            // Update radio button
-            document.querySelector(`input[value="${method}"]`).checked = true;
-
-            // Calculate total amount
-            const basePrice = 500 * parseInt(formData.durationValue);
-            const subtotal = basePrice + 100 + 250 + 50;
-            const discount = subtotal * (formData.appliedDiscount || 0);
-            const totalAmount = subtotal - discount;
-
             try {
-                // Initiate payment
-                const response = await fetch('../payment/process-payment.php', {
+                // Update radio button
+                document.querySelector(`input[value="${method}"]`).checked = true;
+                
+                // Set default values if they're not already set
+                formData.durationValue = formData.durationValue || '1';
+                formData.date = formData.date || new Date().toISOString().split('T')[0];
+                formData.time = formData.time || '10:00';
+                formData.eventType = formData.eventType || 'Other';
+                formData.guestCount = formData.guestCount || 1;
+                
+                // Calculate total amount
+                const basePrice = 500 * parseInt(formData.durationValue);
+                const subtotal = basePrice + 100 + 250 + 50;
+                const discount = subtotal * (formData.appliedDiscount || 0);
+                const totalAmount = subtotal - discount;
+                
+                // Show loading state
+                document.getElementById('nextBtn').disabled = true;
+                
+                const response = await fetch('process-payment.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -535,52 +574,72 @@
                     body: JSON.stringify({
                         paymentMethod: method,
                         amount: totalAmount,
-                        reservationDetails: formData
+                        reservationDetails: {
+                            date: formData.date,
+                            time: formData.time,
+                            durationValue: formData.durationValue,
+                            durationType: formData.durationType || 'days',
+                            eventType: formData.eventType,
+                            guestCount: formData.guestCount,
+                            specialRequests: formData.specialRequests || '',
+                            appliedDiscount: formData.appliedDiscount || 0,
+                            discountType: formData.discountType || '',
+                            seniorPwdId: formData.seniorPwdId || '',
+                            couponCode: formData.couponCode || ''
+                        }
                     })
                 });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    // Display QR code in modal
-                    document.getElementById('qrCodeImage').src = data.qrCode;
-                    document.getElementById('qrPaymentAmount').textContent = totalAmount;
-                    document.getElementById('selectedPaymentMethod').textContent =
-                        method === 'gcash' ? 'GCash' : 'PayMaya';
-                    document.getElementById('appName').textContent =
-                        method === 'gcash' ? 'GCash' : 'PayMaya';
-
-                    // Reset payment status
-                    document.getElementById('paymentStatus').textContent = 'Waiting for payment...';
-                    document.getElementById('paymentStatus').classList.remove('text-green-600', 'text-red-600');
-                    document.getElementById('paymentProgress').style.width = '0%';
-                    document.getElementById('loadingIndicator').classList.add('animate-pulse');
-
-                    // Show modal with animation
-                    openQrModal();
-
-                    // Store reference number
-                    formData.paymentReference = data.reference;
-
-                    // Start checking payment status
-                    checkPaymentStatus(data.reference);
-                } else {
-                    throw new Error(data.message);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Payment initiation failed');
+                }
+                
+                // Display QR code in modal
+                document.getElementById('qrCodeImage').src = data.qrCode;
+                document.getElementById('qrPaymentAmount').textContent = totalAmount.toFixed(2);
+                document.getElementById('selectedPaymentMethod').textContent = 
+                    method === 'gcash' ? 'GCash' : 'PayMaya';
+                document.getElementById('appName').textContent = 
+                    method === 'gcash' ? 'GCash' : 'PayMaya';
+                
+                // Reset payment status
+                document.getElementById('paymentStatus').textContent = 'Waiting for payment...';
+                document.getElementById('paymentStatus').classList.remove('text-green-600', 'text-red-600');
+                document.getElementById('paymentProgress').style.width = '0%';
+                document.getElementById('loadingIndicator').classList.add('animate-pulse');
+                
+                // Show modal with animation
+                openQrModal();
+                
+                // Store reference number
+                formData.paymentReference = data.reference;
+                
+                // Start checking payment status
+                checkPaymentStatus(data.reference);
+                
             } catch (error) {
+                console.error('Payment error:', error);
                 alert('Error initiating payment: ' + error.message);
+            } finally {
+                document.getElementById('nextBtn').disabled = false;
             }
         }
 
         function closeQrModal() {
             const modal = document.getElementById('qrModal');
             const modalContent = document.getElementById('qrModalContent');
-
+            
             // Animate out
             modal.classList.remove('opacity-100');
             modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
             modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-
+            
             // Hide modal after animation
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -593,19 +652,19 @@
             const paymentStatus = document.getElementById('paymentStatus');
             const loadingIndicator = document.getElementById('loadingIndicator');
             const nextBtn = document.getElementById('nextBtn');
-
+            
             let retryCount = 0;
             const maxRetries = 20;
-
+            
             async function checkStatus() {
                 try {
                     const response = await fetch(`../payment/process-payment.php?reference=${reference}`);
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-
+                    
                     const data = await response.json();
-
+                    
                     if (data.status === 'completed') {
                         progressBar.style.width = '100%';
                         paymentStatus.textContent = 'Payment completed! Thank you for choosing HubVenue<3';
@@ -615,9 +674,9 @@
                         // Modal will stay open until user manually closes it
                         return;
                     }
-
+                    
                     progressBar.style.width = `${(retryCount / maxRetries) * 100}%`;
-
+                    
                     retryCount++;
                     if (retryCount < maxRetries) {
                         setTimeout(checkStatus, 3000);
@@ -626,7 +685,7 @@
                         paymentStatus.classList.add('text-red-600');
                         loadingIndicator.classList.remove('animate-pulse');
                     }
-
+                    
                 } catch (error) {
                     console.error('Payment status check error:', error);
                     paymentStatus.textContent = 'Unable to verify payment. Please refresh or contact support.';
@@ -634,7 +693,7 @@
                     loadingIndicator.classList.remove('animate-pulse');
                 }
             }
-
+            
             checkStatus();
         }
 
@@ -649,7 +708,7 @@
             const method = document.querySelector('input[name="paymentMethod"]:checked').value;
             const amount = document.getElementById('qrPaymentAmount').textContent;
             const reference = formData.paymentReference;
-
+            
             let appUrl;
             if (method === 'gcash') {
                 // Deep link for GCash
@@ -658,10 +717,10 @@
                 // Deep link for PayMaya
                 appUrl = `paymaya://app?action=pay&amount=${amount}&reference=${reference}`;
             }
-
+            
             // Try to open the app
             window.location.href = appUrl;
-
+            
             // Fallback for mobile browsers
             setTimeout(() => {
                 if (method === 'gcash') {
@@ -676,9 +735,9 @@
             const method = document.querySelector('input[name="paymentMethod"]:checked').value;
             const amount = document.getElementById('qrPaymentAmount').textContent;
             const reference = formData.paymentReference;
-
+            
             const details = `Payment Details:\nAmount: ₱${amount}\nReference: ${reference}\nMethod: ${method.toUpperCase()}`;
-
+            
             navigator.clipboard.writeText(details).then(() => {
                 alert('Payment details copied to clipboard!');
             }).catch(err => {
@@ -702,7 +761,7 @@
             const id = document.getElementById('seniorPwdId').value;
             const photo = document.getElementById('seniorPwdIdPhoto').files[0];
             const applyBtn = document.getElementById('applyDiscountBtn');
-
+            
             applyBtn.disabled = !(name && id && photo);
         }
 
@@ -728,14 +787,14 @@
         function openQrModal() {
             const modal = document.getElementById('qrModal');
             const modalContent = document.getElementById('qrModalContent');
-
+            
             // Show modal
             modal.classList.remove('hidden');
             // Force a reflow
             void modal.offsetWidth;
             // Add flex and animate in
             modal.classList.add('flex', 'opacity-100');
-
+            
             // Animate content
             setTimeout(() => {
                 modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
@@ -746,12 +805,12 @@
         function closeQrModal() {
             const modal = document.getElementById('qrModal');
             const modalContent = document.getElementById('qrModalContent');
-
+            
             // Animate out
             modal.classList.remove('opacity-100');
             modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
             modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-
+            
             // Hide modal after animation
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -767,18 +826,18 @@
         }
     </script>
 
-    <div id="qrModal"
-        class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0"
-        onclick="handleModalClick(event)">
+    <div id="qrModal" 
+         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0" 
+         onclick="handleModalClick(event)">
         <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
-            id="qrModalContent">
+             id="qrModalContent">
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <h4 class="text-2xl font-bold text-gray-900">Complete Payment</h4>
                     <p class="text-sm text-gray-600 mt-2">Scan QR code to pay for your reservation</p>
                 </div>
-                <button onclick="closeQrModal()"
-                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
+                <button onclick="closeQrModal()" 
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
                     <i class="lucide-x h-5 w-5"></i>
                 </button>
             </div>
@@ -787,75 +846,70 @@
             <div class="text-center">
                 <div class="bg-gray-50 p-8 rounded-xl mb-6 border border-gray-100">
                     <img id="qrCodeImage" src="" alt="Payment QR Code" class="mx-auto mb-4 rounded-lg shadow-md">
-                    <p class="text-sm text-gray-600 mb-2">Total Amount: <span class="font-semibold text-black">₱<span
-                                id="qrPaymentAmount">0</span></span></p>
-                    <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod"
-                            class="font-medium"></span> app</p>
+                    <p class="text-sm text-gray-600 mb-2">Total Amount: <span class="font-semibold text-black">₱<span id="qrPaymentAmount">0</span></span></p>
+                    <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod" class="font-medium"></span> app</p>
                 </div>
                 <div class="flex justify-center gap-4 mb-6">
-                    <button id="openAppButton" onclick="openPaymentApp()"
-                        class="flex items-center px-4 py-2.5 bg-black text-white rounded-lg text-sm font-medium 
+                    <button id="openAppButton" onclick="openPaymentApp()" 
+                            class="flex items-center px-4 py-2.5 bg-black text-white rounded-lg text-sm font-medium 
                                    hover:bg-gray-800 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                         <i class="lucide-smartphone h-5 w-5 mr-2"></i>
                         Open <span id="appName"></span> App
                     </button>
-                    <button onclick="copyPaymentDetails()"
-                        class="flex items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium 
+                    <button onclick="copyPaymentDetails()" 
+                            class="flex items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium 
                                    hover:bg-gray-50 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                         <i class="lucide-copy h-5 w-5 mr-2"></i>
                         Copy Details
                     </button>
                 </div>
-                <<<<<<< HEAD:payment.php <div class="mt-4">
-                    <p class="text-sm text-gray-600 mb-2">Payment Status:
-                        =======
 
-                        <!-- Reference Number Input -->
-                    <div class="mt-8 pt-6 border-t border-gray-200">
-                        <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid?
-                            Enter your reference number</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="referenceNumber" name="referenceNumber"
-                                placeholder="Enter your payment reference number"
-                                class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
-                            <button onclick="checkManualReference()"
+                <!-- Reference Number Input -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid? Enter your reference number</label>
+                    <div class="flex gap-2">
+                        <input type="text" 
+                               id="referenceNumber" 
+                               name="referenceNumber" 
+                               placeholder="Enter your payment reference number"
+                               class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
+                        <button onclick="checkManualReference()" 
                                 class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">
-                                Verify
-                            </button>
-                        </div>
+                            Verify
+                        </button>
                     </div>
+                </div>
 
-                    <div class="mt-6">
-                        <p class="text-sm text-gray-600 mb-2">Payment Status:
-                            >>>>>>> fed2a35afc5e9c2cc48a0d870b52847123b6621e:payment/payment.php
-                            <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
-                        </p>
-                        <div class="animate-pulse" id="loadingIndicator">
-                            <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                                <div class="h-2 bg-blue-500 rounded-full transition-all duration-500 ease-out"
-                                    style="width: 0%" id="paymentProgress">
-                                </div>
+                <div class="mt-6">
+                    <p class="text-sm text-gray-600 mb-2">Payment Status: 
+                        <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
+                    </p>
+                    <div class="animate-pulse" id="loadingIndicator">
+                        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-2 bg-blue-500 rounded-full transition-all duration-500 ease-out" 
+                                 style="width: 0%" 
+                                 id="paymentProgress">
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="discountModal"
-        class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0"
-        onclick="handleDiscountModalClick(event)">
+    <div id="discountModal" 
+         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0" 
+         onclick="handleDiscountModalClick(event)">
         <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
-            id="discountModalContent">
+             id="discountModalContent">
             <!-- Header -->
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <h4 class="text-2xl font-bold text-gray-900">Senior Citizen / PWD Details</h4>
-                    <p class="text-sm text-gray-600 mt-2">Please provide the required information to apply the discount
-                    </p>
+                    <p class="text-sm text-gray-600 mt-2">Please provide the required information to apply the discount</p>
                 </div>
-                <button onclick="closeDiscountModal()"
-                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
+                <button onclick="closeDiscountModal()" 
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
                     <i class="lucide-x h-5 w-5"></i>
                 </button>
             </div>
@@ -864,39 +918,47 @@
             <div class="space-y-6">
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">ID Holder's Full Name</label>
-                    <input type="text" id="seniorPwdName" name="seniorPwdName"
-                        placeholder="Enter the name as shown on the ID"
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
+                    <input type="text" 
+                           id="seniorPwdName" 
+                           name="seniorPwdName" 
+                           placeholder="Enter the name as shown on the ID"
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
                     <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Please enter the ID holder's name</p>
                 </div>
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">ID Number</label>
-                    <input type="text" id="seniorPwdId" name="seniorPwdId"
-                        placeholder="Enter Senior Citizen/PWD ID Number"
-                        class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
+                    <input type="text" 
+                           id="seniorPwdId" 
+                           name="seniorPwdId" 
+                           placeholder="Enter Senior Citizen/PWD ID Number"
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
                     <p id="idError" class="text-red-500 text-xs mt-1 hidden">Please enter a valid ID number</p>
                 </div>
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">Upload ID Photo</label>
                     <div class="relative">
-                        <input type="file" id="seniorPwdIdPhoto" name="seniorPwdIdPhoto" accept="image/*" class="hidden"
-                            onchange="updateFileLabel(this)">
-                        <label for="seniorPwdIdPhoto"
-                            class="flex items-center justify-center w-full h-11 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors duration-200 group">
-                            <i
-                                class="lucide-upload h-5 w-5 text-gray-400 group-hover:text-primary transition-colors duration-200 mr-2"></i>
-                            <span id="fileLabel"
-                                class="text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-200">Click
-                                to upload ID photo</span>
+                        <input type="file" 
+                               id="seniorPwdIdPhoto" 
+                               name="seniorPwdIdPhoto" 
+                               accept="image/*"
+                               class="hidden"
+                               onchange="updateFileLabel(this)">
+                        <label for="seniorPwdIdPhoto" 
+                               class="flex items-center justify-center w-full h-11 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors duration-200 group">
+                            <i class="lucide-upload h-5 w-5 text-gray-400 group-hover:text-primary transition-colors duration-200 mr-2"></i>
+                            <span id="fileLabel" class="text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-200">Click to upload ID photo</span>
                         </label>
                     </div>
                     <p id="photoError" class="text-red-500 text-xs mt-1 hidden">Please upload a photo of the ID</p>
                     <p class="text-xs text-gray-500 mt-1">Please upload a clear photo of the valid ID (Max 5MB)</p>
                 </div>
 
-                <button onclick="applyDiscount()" id="applyDiscountBtn" disabled class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium 
+                <button onclick="applyDiscount()" 
+                        id="applyDiscountBtn"
+                        disabled
+                        class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium 
                                hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed
                                transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
                                disabled:hover:scale-100">

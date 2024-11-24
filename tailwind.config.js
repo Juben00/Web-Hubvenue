@@ -1,9 +1,19 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./**/*.php", "./**/*.html"
-],
+  content: [
+    "./src/**/*.{html,js,php}",
+    "./components/**/*.{html,js,php}",
+    "./*.php",
+  ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'primary': '#E73023',
+        'primary-dark': '#B01B1B',
+      }
+    },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 };
