@@ -351,7 +351,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                         </div>
                     </div>
 
-                    <div class="border rounded-xl p-6 shadow-lg sticky top-6">
+                    <form id="reservationForm" class="border rounded-xl p-6 shadow-lg sticky top-6">
                         <div class="flex justify-between items-center mb-4">
                             <div>
                                 <span class="text-2xl font-semibold">₱
@@ -365,6 +365,8 @@ $owner = $accountObj->getUser($venue['host_id']);
                         </div>
                         <div class="border rounded-lg mb-4">
                             <div class="flex">
+                                <input type="hidden" name="venueId"
+                                    value="<?php echo htmlspecialchars($venue['id']) ?>">
                                 <div class="w-1/2 p-2 border-r">
                                     <label class="block text-xs font-semibold">CHECK-IN</label>
                                     <input type="date" name="checkin" class="w-full bg-transparent">
@@ -388,6 +390,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                                         total-nights>0</span>
                                     nights</span>
                                 <span total-price-for-nights>₱ 000,000,00</span>
+
                             </div>
                             <div class="flex justify-between">
                                 <span class="underline">Entrance fee × <span total-entrance-guests>0</span> guest</span>
@@ -405,12 +408,13 @@ $owner = $accountObj->getUser($venue['host_id']);
                         <hr class="my-4">
                         <div class="flex justify-between font-semibold">
                             <span>Total </span>
-                            <span total-price>₱ 000,000,00</span>
+                            <span>₱ <input type="number" class="text-right bg-transparent" name="totalPrice"
+                                    value="0.00" readonly></span>
                         </div>
 
                         <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
                         <button class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -424,6 +428,7 @@ $owner = $accountObj->getUser($venue['host_id']);
             const checkinInput = document.querySelector('input[name="checkin"]');
             const checkoutInput = document.querySelector('input[name="checkout"]');
             const guestsInput = document.querySelector('input[name="numberOfGuest"]');
+            const totalPriceInput = document.querySelector('input[name="totalPrice"]');
             const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
             const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
             const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
@@ -472,9 +477,9 @@ $owner = $accountObj->getUser($venue['host_id']);
 
                     document.querySelector('span[total-nights]').textContent = days;
                     document.querySelector('span[total-price-for-nights]').textContent = `₱${totalPriceForNights.toFixed(2)}`;
-                    document.querySelector('span[total-price]').textContent = `₱${grandTotal.toFixed(2)}`;
                     document.querySelector('span[total-entrance-fee]').textContent = `₱${totalEntranceFee.toFixed(2)}`;
                     document.querySelector('span[total-entrance-guests]').textContent = guests;
+                    totalPriceInput.value = grandTotal.toFixed(2);
                 }
             }
 
