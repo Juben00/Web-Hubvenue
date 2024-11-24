@@ -5,19 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HubVenue - Venue Reservation</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@0.321.0/font/lucide.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#FF0000',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="icon" href="./images/black_ico.png">
+    <link rel="stylesheet" href="./output.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
 </head>
 
 <body class="min-h-screen flex flex-col bg-white">
@@ -813,40 +806,38 @@
                         Copy Details
                     </button>
                 </div>
-<<<<<<< HEAD:payment.php
-                <div class="mt-4">
+                <<<<<<< HEAD:payment.php <div class="mt-4">
                     <p class="text-sm text-gray-600 mb-2">Payment Status:
-=======
+                        =======
 
-                <!-- Reference Number Input -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid? Enter your reference number</label>
-                    <div class="flex gap-2">
-                        <input type="text" 
-                               id="referenceNumber" 
-                               name="referenceNumber" 
-                               placeholder="Enter your payment reference number"
-                               class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
-                        <button onclick="checkManualReference()" 
+                        <!-- Reference Number Input -->
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid?
+                            Enter your reference number</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="referenceNumber" name="referenceNumber"
+                                placeholder="Enter your payment reference number"
+                                class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
+                            <button onclick="checkManualReference()"
                                 class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">
-                            Verify
-                        </button>
+                                Verify
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="mt-6">
-                    <p class="text-sm text-gray-600 mb-2">Payment Status: 
->>>>>>> fed2a35afc5e9c2cc48a0d870b52847123b6621e:payment/payment.php
-                        <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
-                    </p>
-                    <div class="animate-pulse" id="loadingIndicator">
-                        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-2 bg-blue-500 rounded-full transition-all duration-500 ease-out"
-                                style="width: 0%" id="paymentProgress">
+                    <div class="mt-6">
+                        <p class="text-sm text-gray-600 mb-2">Payment Status:
+                            >>>>>>> fed2a35afc5e9c2cc48a0d870b52847123b6621e:payment/payment.php
+                            <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
+                        </p>
+                        <div class="animate-pulse" id="loadingIndicator">
+                            <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-2 bg-blue-500 rounded-full transition-all duration-500 ease-out"
+                                    style="width: 0%" id="paymentProgress">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
