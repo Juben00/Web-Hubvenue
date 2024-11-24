@@ -210,6 +210,9 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                         <div class="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
                             <!-- Venue cards will be dynamically inserted here -->
                             <?php
+                            if (empty($venues)) {
+                                echo '<p class="text-left text-gray-500">No venues available</p>';
+                            }
                             foreach ($venues as $venue) {
                                 $isBookmarked = in_array($venue['id'], $bookmarkIds);
                                 ?>
@@ -239,16 +242,21 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             <?php endif; ?>
                                         </div>
                                         <!-- Button (can be used for manual control) -->
-                                        <button id="bookmarkBtn" data-venueId="<?php echo htmlspecialchars($venue['id']) ?>"
-                                            data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']) ?>"
-                                            class="absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'text-red-500' : 'text-white'; ?>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path fill-rule="evenodd"
-                                                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                        </button>
+                                        <?php
+                                        if (isset($_SESSION['user'])) { ?>
+                                            <button id="bookmarkBtn"
+                                                data-venueId="<?php echo htmlspecialchars($venue['id']); ?>"
+                                                data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']); ?>"
+                                                class="absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'text-red-500' : 'text-white'; ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
+                                                    fill="currentColor">
+                                                    <path fill-rule="evenodd"
+                                                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                                                        clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                        <?php } ?>
+
 
 
                                         <!-- Venue details below the slideshow -->

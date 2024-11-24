@@ -262,30 +262,43 @@ $owner = $accountObj->getUser($venue['host_id']);
                         <div>
                             <h4 class="font-semibold text-lg mb-3">House Rules</h4>
                             <ul class="space-y-2">
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-clock text-gray-600"></i>
-                                    <span>Check-in: After 2:00 PM</span>
-                                </li>
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-clock text-gray-600"></i>
-                                    <span>Checkout: Before 12:00 PM</span>
-                                </li>
+                                <?php
+                                if (isset($venue['time_inout'])) {
+                                    $timeInOut = json_decode($venue['time_inout'], true); // Decode into array
+                                
+                                    // Convert to 12-hour format with AM/PM
+                                    $checkIn = DateTime::createFromFormat('H:i', $timeInOut['check_in'])->format('h:i A');
+                                    $checkOut = DateTime::createFromFormat('H:i', $timeInOut['check_out'])->format('h:i A');
+                                    ?>
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-clock text-gray-600"></i>
+                                        <span>Check-in: After <?php echo htmlspecialchars($checkIn); ?></span>
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <i class="fas fa-clock text-gray-600"></i>
+                                        <span>Checkout: Before <?php echo htmlspecialchars($checkOut); ?></span>
+                                    </li>
+                                    <?php
+                                }
+                                ?>
                                 <li class="flex items-center gap-2">
                                     <i class="fas fa-users text-gray-600"></i>
                                     <span>Maximum <?php echo htmlspecialchars($venue['capacity']) ?> guests</span>
                                 </li>
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-smoking-ban text-gray-600"></i>
-                                    <span>No smoking</span>
-                                </li>
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-paw text-gray-600"></i>
-                                    <span>No pets</span>
-                                </li>
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-music text-gray-600"></i>
-                                    <span>No parties or events</span>
-                                </li>
+                                <?php
+                                if (!empty($venue['rules'])) {
+                                    $rules = json_decode($venue['rules'], true); // Decode the JSON string into an array
+                                    if ($rules):
+                                        ?>
+                                        <?php foreach ($rules as $rule): ?>
+                                            <li class="list-disc list-inside flex items-center gap-2">
+                                                <?= htmlspecialchars($rule) ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                        <?php
+                                    endif;
+                                }
+                                ?>
                             </ul>
                         </div>
 

@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rules = isset($_POST['fixedRules']) && is_array($_POST['fixedRules']) ? $_POST['fixedRules'] : [];
     $sanitizedRules = array_map('clean_input', $rules); // Sanitize each checkbox value
     $addRules = isset($_POST['additionalRules']) ? clean_input($_POST['additionalRules']) : '';
-    $checkIn = clean_input($_POST['check-in']);
-    $checkOut = clean_input($_POST['check-out']);
+    $checkIn = clean_input($_POST['checkin-time']);
+    $checkOut = clean_input($_POST['checkout-time']);
     $check_inout = json_encode(['check_in' => $checkIn, 'check_out' => $checkOut]);
 
     // Validation for required fields
@@ -55,35 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($checkOut))
         $checkOutErr = "Check-out time is required";
 
-
-
-    // Handle multiple image uploads
-    $imageErr = [];
-    $uploadedImages = [];
-
-    if (empty($_FILES['venue_images']['name'][0])) {
-        $imageErr[] = 'At least one image is required.';
-    } else {
-        foreach ($_FILES['venue_images']['name'] as $key => $image) {
-            $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
-
-            // Validate each image
-            if (!in_array($imageFileType, $allowedType)) {
-                $imageErr[] = "File " . $_FILES['venue_images']['name'][$key] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
-            } else {
-                // Generate a unique target path for each image
-                $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
-
-                // Move the uploaded file to the target directory
-                if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], '..' . $targetImage)) {
-                    $uploadedImages[] = $targetImage;
-                } else {
-                    $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
-                }
-            }
-        }
-    }
-
     // Prepare amenities JSON
     $amenitiesJson = json_encode($amenities);
 
@@ -107,9 +78,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Proceed if no errors
     if (
-        empty($nameErr) && empty($descriptionErr) && empty($locationErr) && empty($priceErr) && empty($capacityErr) && empty($amenitiesErr)
+        empty($nameErr) && empty($descriptionErr) && empty($checkInErr) && empty($checkOutErr) && empty($locationErr) && empty($priceErr) && empty($capacityErr) && empty($amenitiesErr)
         && empty($imageErr)
     ) {
+        // Upload multiple images
+
+        $imageErr = [];
+        $uploadedImages = [];
+
+        if (empty($_FILES['venue_images']['name'][0])) {
+            $imageErr[] = 'At least one image is required.';
+        } else {
+            foreach ($_FILES['venue_images']['name'] as $key => $image) {
+                $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+
+                // Validate each image
+                if (!in_array($imageFileType, $allowedType)) {
+                    $imageErr[] = "File " . $_FILES['venue_images']['name'][$key] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
+                } else {
+                    // Generate a unique target path for each image
+                    $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
+
+                    // Move the uploaded file to the target directory
+                    if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], '..' . $targetImage)) {
+                        $uploadedImages[] = $targetImage;
+                    } else {
+                        $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
+                    }
+                }
+            }
+        }
         // Set venue object data
         $venueObj->name = $name;
         $venueObj->description = $description;
