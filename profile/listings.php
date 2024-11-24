@@ -13,7 +13,7 @@ $venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
         <div id="listingsView">
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold">Your listings</h1>
-                <?php if ($_SESSION['user']['user_type_id'] === 2) { ?>
+                <?php if ($_SESSION['user']['user_type_id'] == 1) { ?>
                     <div class="flex items-center space-x-4">
                         <button class="p-2 rounded-lg hover:bg-gray-100">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

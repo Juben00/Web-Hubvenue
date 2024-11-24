@@ -36,7 +36,7 @@
 
         marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
 
-        fetch(`../proxy.php?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+        fetch(`./proxy.php?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);

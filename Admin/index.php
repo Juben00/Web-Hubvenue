@@ -30,20 +30,6 @@ $venueObj = new Venue();
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="../output.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#f41c1c',
-                        secondary: '#F3F4F6',
-                        'light-gray': '#F9FAFB',
-                        'dark-gray': '#4B5563',
-                    }
-                }
-            }
-        };
-    </script>
 </head>
 
 <body class="text-gray-800 gradient-background">
