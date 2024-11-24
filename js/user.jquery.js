@@ -121,11 +121,34 @@ $(document).ready(function () {
 
     //reservation form
     $('#reservationForm').on('submit', function (e) {
-        e.preventDefault();
+        e.preventDefault(); // Prevent the default form submission
+        
         const formElement = $(this);
-        // reserveVenue(formElement);
-        console.log(formElement);
+        let isValid = true;
+
+        // Loop through all the form fields and check if they are empty
+        formElement.find('input').each(function () {
+            if ($(this).val() === '') {
+                isValid = false;
+                $(this).addClass('border-red-500'); // Add red border to indicate the field is empty
+            } else {
+                $(this).removeClass('border-red-500'); // Remove red border if the field is filled
+            }
+        });
+
+        // If all fields are valid, proceed with serialization and redirection
+        if (isValid) {
+            const formData = formElement.serialize(); // Serialize form data
+            const actionUrl = formElement.attr('action'); // Get the form action URL
+            const redirectUrl = actionUrl + '?' + formData; // Construct the URL with the serialized data
+
+            window.location.href = redirectUrl; // Redirect to the constructed URL
+        } else {
+            showModal("Please fill out all the required fields.", undefined, 'black_ico.png'); // Show alert if any field is empty
+        }
     });
+
+
 
 
     function viewOpenStreetMap(){
