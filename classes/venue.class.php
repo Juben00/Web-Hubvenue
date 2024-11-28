@@ -314,6 +314,16 @@ class Venue
         $result = $this->db->connect()->query($query);
         return $result->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // public function getIdDiscount($name = "")
+    // {
+    //     $conn = $this->db->connect();
+    //     $sql = "SELECT id FROM discounts WHERE discount_code = :discount_code;";
+    //     $stmt = $conn->prepare($sql);
+    //     $stmt->bindParam(':discount_code', $name);
+    //     $stmt->execute();
+    //     return $stmt->fetch(PDO::FETCH_ASSOC);
+    // }
 }
 
 $venueObj = new Venue();

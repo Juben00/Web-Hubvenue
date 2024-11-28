@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2024 at 02:21 AM
+-- Generation Time: Nov 28, 2024 at 06:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,19 +31,18 @@ CREATE TABLE `bookings` (
   `id` int(11) NOT NULL,
   `booking_start_date` date DEFAULT NULL,
   `booking_end_date` date DEFAULT NULL,
-  `booking_start_time` time DEFAULT NULL,
-  `booking_end_time` time DEFAULT NULL,
   `booking_duration` int(11) DEFAULT NULL,
   `booking_status_id` int(11) DEFAULT NULL,
   `booking_participants` int(11) DEFAULT NULL,
   `booking_grand_total` decimal(10,2) DEFAULT NULL,
   `booking_guest_id` int(11) DEFAULT NULL,
   `booking_venue_id` int(11) DEFAULT NULL,
-  `booking_discount_id` int(11) DEFAULT NULL,
+  `booking_discount` varchar(255) DEFAULT NULL,
   `booking_payment_method` int(11) DEFAULT NULL,
   `booking_payment_reference` varchar(255) DEFAULT NULL,
   `booking_payment_status_id` int(11) DEFAULT NULL,
   `booking_cancellation_reason` text DEFAULT NULL,
+  `booking_service_fee` int(11) NOT NULL,
   `booking_created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `booking_updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -101,8 +100,32 @@ CREATE TABLE `bookmarks` (
 --
 
 INSERT INTO `bookmarks` (`id`, `userId`, `venueId`, `created_at`, `updated_at`) VALUES
-(78, 2, 22, '2024-11-24 01:02:33', '2024-11-24 01:02:33'),
-(79, 2, 23, '2024-11-24 01:02:34', '2024-11-24 01:02:34');
+(85, 5, 52, '2024-11-25 01:14:06', '2024-11-25 01:14:06'),
+(101, 2, 52, '2024-11-28 15:50:20', '2024-11-28 15:50:20');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `discounts`
+--
+
+CREATE TABLE `discounts` (
+  `id` int(11) NOT NULL,
+  `venue_id` int(11) DEFAULT NULL,
+  `discount_code` varchar(255) DEFAULT NULL,
+  `discount_type` enum('flat','percentage') DEFAULT NULL,
+  `discount_value` decimal(10,2) DEFAULT NULL,
+  `expiration_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `discounts`
+--
+
+INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `expiration_date`) VALUES
+(1, NULL, 'SAVE10', 'percentage', 10.00, '2024-12-25 20:40:37'),
+(2, NULL, 'SAVE20', 'percentage', 20.00, '2024-12-25 20:40:37'),
+(3, NULL, 'SAVE30', 'percentage', 30.00, '2024-12-25 20:40:37');
 
 -- --------------------------------------------------------
 
@@ -316,6 +339,7 @@ CREATE TABLE `venues` (
   `entrance` int(11) NOT NULL,
   `cleaning` int(11) NOT NULL,
   `venue_tag` int(11) NOT NULL,
+  `time_inout` text NOT NULL,
   `host_id` int(11) NOT NULL,
   `status_id` int(11) NOT NULL,
   `availability_id` int(11) NOT NULL,
@@ -327,20 +351,8 @@ CREATE TABLE `venues` (
 -- Dumping data for table `venues`
 --
 
-INSERT INTO `venues` (`id`, `name`, `description`, `location`, `price`, `capacity`, `amenities`, `rules`, `entrance`, `cleaning`, `venue_tag`, `host_id`, `status_id`, `availability_id`, `created_at`, `updated_at`) VALUES
-(22, 'Santiago Resort Room 1', 'This Resort offers wide range of activities suitable for all ages.', 'Cabatangan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 500.00, 5, '[\"Pool\",\"Karaoke\",\"Duyan Spot\",\"Shower\",\"Comfort Rooms\",\"Cottages\"]', '', 100, 250, 1, 2, 2, 1, '2024-11-07 04:10:40', '2024-11-16 16:49:02'),
-(23, 'Garden Orchid Room 301', 'Garden Orchid Room 301 offers a serene and luxurious escape, perfectly blending comfort and elegance. Located on the garden side of the resort, this room provides a peaceful view of lush greenery and vibrant orchids in bloom. Designed with a modern aesthetic and warm tones, it features a plush king-size bed, soft lighting, and natural wood accents that enhance the tranquil atmosphere.', 'Garden Orchid Hotel and Resort Corporation, Governor Camins Avenue, Zone Ⅱ, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 4800.00, 3, '[\"Pool\",\"WiFi\",\"Air-conditioned Room\",\"Smart TV\"]', '', 0, 500, 1, 2, 2, 1, '2024-11-07 07:14:47', '2024-11-16 16:49:11'),
-(24, 'Rest House', 'Escape to tranquility at our charming rest house, designed for relaxation and comfort. Nestled in a quiet, scenic area, this spacious and well-furnished rest house offers a serene atmosphere perfect for families, couples, or solo travelers. Featuring a warm, welcoming ambiance, the interior boasts comfortable living spaces, a fully-equipped kitchen, and cozy bedrooms that ensure a restful stay.', 'Sinunoc, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5600.00, 15, '[\"Private Pool\",\"Billiard Hall\",\"2 Queen-size beds\",\"Air-conditioned\",\"Smart TV\"]', '', 0, 0, 1, 1, 2, 1, '2024-11-07 08:45:33', '2024-11-07 15:50:04'),
-(30, 'Astoria Regency', 'Astoria Regency is a stylish and versatile reception hall, perfect for hosting memorable events and gatherings. Known for its elegant design and spacious layout, it provides a sophisticated setting ideal for weddings, corporate functions, and social events.', 'Astoria Regency Convention Center, Pasonanca Road, Luyahan Urban Poor Subdivision, Pasonanca, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5000.00, 50, '[\"Pool\",\"Hall\",\"Sound System\",\"Free Parking Space\",\"Tables and Chairs\"]', '', 100, 0, 2, 1, 2, 1, '2024-11-08 17:49:18', '2024-11-08 17:49:48'),
-(31, 'Astoria Hotel', 'The venue offers exceptional amenities, flexible seating arrangements, and a warm ambiance, ensuring guests experience both comfort and luxury. With its commitment to quality service, Astoria Hotel makes any occasion truly unforgettable.', 'Astoria Hotel, Mayor Cesar C. Climaco Avenue, Zone IV, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 5899.00, 100, '[\"Pool\",\"Hall\",\"Sound System\",\"Free Parking Space\",\"Tables and Chairs\"]', '', 0, 250, 2, 2, 2, 1, '2024-11-08 17:58:59', '2024-11-16 16:49:21'),
-(32, 'adasdasdasdas', 'asdasd', 'Zamboanga City Golf Club and Beach Resort, 1st Road, Lopez Subdivision, Calarian, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 123.00, 213, '[\"asdasdas\"]', '', 3123, 1, 1, 1, 3, 1, '2024-11-11 13:33:10', '2024-11-15 19:08:41'),
-(33, 'Jo Residence', 'This venue is suitable for small gatherings such as schoolwork meetings', 'Al Zahra Mosque, Veterans Avenue, Tetuan, Santa Maria, Zamboanga City, Zamboanga Peninsula, 7000, Philippines', 1800.00, 20, '[\"Smart Tv\",\"Mini Pool\"]', '', 0, 500, 2, 3, 2, 1, '2024-11-15 19:05:23', '2024-11-15 19:12:15'),
-(39, 'For sale: Siopao, Suman, Siomai', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Bangayan B, Talon-talon, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 85422.00, 3, '[\"Wifi\",\"TV\",\"Free parking on premises\",\"Paid parking on premises\",\"BBQ grill\",\"Outdoor dining area\",\"Pool table\",\"Indoor fireplace\",\"Smoke alarm\",\"First aid kit\",\"Carbon monoxide alarm\"]', '[\"No smoking\",\"No parties or events\",\"Bawal pets kasi kinakain natin yan\",\"bawal smoking dapat usok lng ng nilulutong pusa\\/aso\"]', 1, 2, 2, 2, 2, 1, '2024-11-19 07:16:44', '2024-11-19 13:21:31'),
-(44, 'guayghfvg', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Camias Drive, Zone Ⅱ, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 3213.00, 123, '[\"Wifi\",\"TV\",\"Kitchen\",\"Air conditioning\"]', '[\"No smoking\",\"qweqw\",\"qweqwe\",\"qwe\"]', 0, 0, 1, 2, 3, 1, '2024-11-19 07:53:11', '2024-11-19 13:21:47'),
-(45, 'The balay is burning and going down down down syndrown', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Tugbungan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 4885.00, 123321, '[\"Wifi\",\"TV\"]', '[\"No smoking\",\"No parties or events\",\"No pets\",\"Bwala ang may alam\",\"dapat ikaw ay alam\"]', 0, 0, 3, 2, 3, 1, '2024-11-19 07:56:22', '2024-11-19 13:21:43'),
-(46, 'The siopao, siomai, siopdrenks', 'This is siopao', 'LTP Complex, Cabatangan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 7848.00, 69, '[\"Wifi\",\"TV\",\"Kitchen\",\"Free parking on premises\",\"Paid parking on premises\",\"Air conditioning\",\"Hot tub\",\"Patio\"]', '[\"No pets\",\"No pets because pets are food\"]', 7878, 7878, 1, 2, 2, 1, '2024-11-19 13:15:33', '2024-11-19 13:21:35'),
-(47, 'asdasd', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Layag-Layag, Zamboanga City, Zamboanga Peninsula, Pilipinas', 231.00, 213, '[\"Wifi\",\"TV\"]', '[\"No parties or events\"]', 0, 0, 3, 2, 3, 1, '2024-11-19 13:17:38', '2024-11-19 13:21:40'),
-(48, 'asdasdasdasdasdasd', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Kasanyangan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 123123.00, 2131, '[\"Wifi\",\"Free parking on premises\"]', '[\"No smoking\"]', 0, 0, 3, 2, 2, 1, '2024-11-19 13:20:54', '2024-11-19 13:21:38');
+INSERT INTO `venues` (`id`, `name`, `description`, `location`, `price`, `capacity`, `amenities`, `rules`, `entrance`, `cleaning`, `venue_tag`, `time_inout`, `host_id`, `status_id`, `availability_id`, `created_at`, `updated_at`) VALUES
+(52, 'Marcian Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Marcian Garden Hotel, Governor Camins Avenue, Canelar, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', 5250.00, 100, '[\"Wifi\",\"TV\",\"Pool\",\"Hot tub\",\"Smoke alarm\",\"First aid kit\"]', '[\"No smoking\",\"No outside drinks\"]', 0, 400, 1, '{\"check_in\":\"14:00\",\"check_out\":\"12:00\"}', 2, 2, 1, '2024-11-24 14:01:42', '2024-11-24 14:07:30');
 
 -- --------------------------------------------------------
 
@@ -379,56 +391,12 @@ CREATE TABLE `venue_images` (
 --
 
 INSERT INTO `venue_images` (`id`, `venue_id`, `image_url`, `created_at`) VALUES
-(23, 22, '/venue_image_uploads/672c3dc0cad12.jpg', '2024-11-07 04:10:40'),
-(24, 22, '/venue_image_uploads/672c3dc0cb590.jpg', '2024-11-07 04:10:40'),
-(25, 22, '/venue_image_uploads/672c3dc0cba57.jpg', '2024-11-07 04:10:40'),
-(26, 23, '/venue_image_uploads/672c68e737a10.jpg', '2024-11-07 07:14:47'),
-(27, 23, '/venue_image_uploads/672c68e7383fb.jpg', '2024-11-07 07:14:47'),
-(28, 23, '/venue_image_uploads/672c68e73894f.jpg', '2024-11-07 07:14:47'),
-(29, 23, '/venue_image_uploads/672c68e738e02.jpg', '2024-11-07 07:14:47'),
-(30, 23, '/venue_image_uploads/672c68e7393ee.jpg', '2024-11-07 07:14:47'),
-(31, 24, '/venue_image_uploads/672c7e2d5a0b3.jpg', '2024-11-07 08:45:33'),
-(32, 24, '/venue_image_uploads/672c7e2d5a946.jpg', '2024-11-07 08:45:33'),
-(43, 30, '/venue_image_uploads/672e4f1ebefb3.jpg', '2024-11-08 17:49:18'),
-(44, 30, '/venue_image_uploads/672e4f1ebf45c.jpg', '2024-11-08 17:49:18'),
-(45, 30, '/venue_image_uploads/672e4f1ebf88c.jpg', '2024-11-08 17:49:18'),
-(46, 30, '/venue_image_uploads/672e4f1ebfd91.jpg', '2024-11-08 17:49:18'),
-(47, 30, '/venue_image_uploads/672e4f1ec0123.jpg', '2024-11-08 17:49:18'),
-(48, 31, '/venue_image_uploads/672e516372dfd.jpg', '2024-11-08 17:58:59'),
-(49, 31, '/venue_image_uploads/672e5163738e3.jpg', '2024-11-08 17:58:59'),
-(50, 31, '/venue_image_uploads/672e516373e1e.jpg', '2024-11-08 17:58:59'),
-(51, 31, '/venue_image_uploads/672e5163742fc.jpg', '2024-11-08 17:58:59'),
-(52, 32, '/venue_image_uploads/6732079604ac9.jpg', '2024-11-11 13:33:10'),
-(53, 33, '/venue_image_uploads/67379b73ac637.jpg', '2024-11-15 19:05:23'),
-(54, 33, '/venue_image_uploads/67379b73ad598.jpg', '2024-11-15 19:05:23'),
-(55, 33, '/venue_image_uploads/67379b73ad777.jpg', '2024-11-15 19:05:23'),
-(56, 39, '/venue_image_uploads/673c3b5ca5b43.png', '2024-11-19 07:16:44'),
-(57, 39, '/venue_image_uploads/673c3b5ca9732.jpg', '2024-11-19 07:16:44'),
-(58, 39, '/venue_image_uploads/673c3b5ca9c7b.png', '2024-11-19 07:16:44'),
-(59, 39, '/venue_image_uploads/673c3b5caa0c4.png', '2024-11-19 07:16:44'),
-(60, 44, '/venue_image_uploads/673c43e74545e.jpg', '2024-11-19 07:53:11'),
-(61, 44, '/venue_image_uploads/673c43e7458b0.png', '2024-11-19 07:53:11'),
-(62, 44, '/venue_image_uploads/673c43e745b88.png', '2024-11-19 07:53:11'),
-(63, 44, '/venue_image_uploads/673c43e745df3.png', '2024-11-19 07:53:11'),
-(64, 44, '/venue_image_uploads/673c43e746032.png', '2024-11-19 07:53:11'),
-(65, 44, '/venue_image_uploads/673c43e746289.png', '2024-11-19 07:53:11'),
-(66, 44, '/venue_image_uploads/673c43e746582.png', '2024-11-19 07:53:11'),
-(67, 44, '/venue_image_uploads/673c43e746a08.png', '2024-11-19 07:53:11'),
-(68, 44, '/venue_image_uploads/673c43e74a32a.png', '2024-11-19 07:53:11'),
-(69, 45, '/venue_image_uploads/673c44a6bf016.png', '2024-11-19 07:56:22'),
-(70, 45, '/venue_image_uploads/673c44a6bf26d.png', '2024-11-19 07:56:22'),
-(71, 45, '/venue_image_uploads/673c44a6bf418.png', '2024-11-19 07:56:22'),
-(72, 45, '/venue_image_uploads/673c44a6bf873.png', '2024-11-19 07:56:22'),
-(73, 45, '/venue_image_uploads/673c44a6bfab1.png', '2024-11-19 07:56:22'),
-(74, 46, '/venue_image_uploads/673c8f75cca25.png', '2024-11-19 13:15:33'),
-(75, 46, '/venue_image_uploads/673c8f75cd102.png', '2024-11-19 13:15:33'),
-(76, 46, '/venue_image_uploads/673c8f75cd3ca.png', '2024-11-19 13:15:33'),
-(77, 47, '/venue_image_uploads/673c8ff22eec8.png', '2024-11-19 13:17:38'),
-(78, 47, '/venue_image_uploads/673c8ff22f10e.png', '2024-11-19 13:17:38'),
-(79, 47, '/venue_image_uploads/673c8ff22f364.png', '2024-11-19 13:17:38'),
-(80, 48, '/venue_image_uploads/673c90b6e93d9.jpg', '2024-11-19 13:20:54'),
-(81, 48, '/venue_image_uploads/673c90b6e99e4.jpg', '2024-11-19 13:20:54'),
-(82, 48, '/venue_image_uploads/673c90b6e9d80.jpg', '2024-11-19 13:20:54');
+(89, 52, '/venue_image_uploads/674331c60de90.jpg', '2024-11-24 14:01:42'),
+(90, 52, '/venue_image_uploads/674331c60e257.jpg', '2024-11-24 14:01:42'),
+(91, 52, '/venue_image_uploads/674331c60e4ff.jpg', '2024-11-24 14:01:42'),
+(92, 52, '/venue_image_uploads/674331c60e84f.jpg', '2024-11-24 14:01:42'),
+(93, 52, '/venue_image_uploads/674331c60eb72.jpg', '2024-11-24 14:01:42'),
+(94, 52, '/venue_image_uploads/674331c612c42.jpg', '2024-11-24 14:01:42');
 
 -- --------------------------------------------------------
 
@@ -482,10 +450,10 @@ ALTER TABLE `bookings`
   ADD PRIMARY KEY (`id`),
   ADD KEY `booking_guest_id` (`booking_guest_id`),
   ADD KEY `booking_venue_id` (`booking_venue_id`),
-  ADD KEY `booking_discount_id` (`booking_discount_id`),
   ADD KEY `booking_status_id` (`booking_status_id`),
   ADD KEY `booking_payment_method` (`booking_payment_method`),
-  ADD KEY `booking_payment_status_id` (`booking_payment_status_id`);
+  ADD KEY `booking_payment_status_id` (`booking_payment_status_id`),
+  ADD KEY `booking_discount` (`booking_discount`);
 
 --
 -- Indexes for table `bookings_status_sub`
@@ -506,6 +474,14 @@ ALTER TABLE `bookmarks`
   ADD PRIMARY KEY (`id`),
   ADD KEY `userId` (`userId`),
   ADD KEY `venueId` (`venueId`);
+
+--
+-- Indexes for table `discounts`
+--
+ALTER TABLE `discounts`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `discount_code` (`discount_code`),
+  ADD KEY `venue_id` (`venue_id`);
 
 --
 -- Indexes for table `host_application`
@@ -617,7 +593,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `bookmarks`
 --
 ALTER TABLE `bookmarks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+
+--
+-- AUTO_INCREMENT for table `discounts`
+--
+ALTER TABLE `discounts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `host_application`
@@ -671,7 +653,7 @@ ALTER TABLE `user_types_sub`
 -- AUTO_INCREMENT for table `venues`
 --
 ALTER TABLE `venues`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `venue_availability_sub`
@@ -683,7 +665,7 @@ ALTER TABLE `venue_availability_sub`
 -- AUTO_INCREMENT for table `venue_images`
 --
 ALTER TABLE `venue_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
 
 --
 -- AUTO_INCREMENT for table `venue_status_sub`
@@ -709,7 +691,8 @@ ALTER TABLE `bookings`
   ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`booking_venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_ibfk_4` FOREIGN KEY (`booking_status_id`) REFERENCES `bookings_status_sub` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `bookings_ibfk_5` FOREIGN KEY (`booking_payment_method`) REFERENCES `payment_method_sub` (`id`),
-  ADD CONSTRAINT `bookings_ibfk_6` FOREIGN KEY (`booking_payment_status_id`) REFERENCES `payment_status_sub` (`id`);
+  ADD CONSTRAINT `bookings_ibfk_6` FOREIGN KEY (`booking_payment_status_id`) REFERENCES `payment_status_sub` (`id`),
+  ADD CONSTRAINT `bookings_ibfk_7` FOREIGN KEY (`booking_discount`) REFERENCES `discounts` (`discount_code`);
 
 --
 -- Constraints for table `booking_discount`
@@ -723,6 +706,12 @@ ALTER TABLE `booking_discount`
 ALTER TABLE `bookmarks`
   ADD CONSTRAINT `bookmarks_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookmarks_ibfk_2` FOREIGN KEY (`venueId`) REFERENCES `venues` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `discounts`
+--
+ALTER TABLE `discounts`
+  ADD CONSTRAINT `discounts_ibfk_1` FOREIGN KEY (`venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `host_application`
