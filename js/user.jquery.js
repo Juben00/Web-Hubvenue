@@ -18,7 +18,7 @@ $(document).ready(function () {
 
     //bookmark btn
     $(document).on('click', '#bookmarkBtn', function (e) {
-        e.stopPropagation();
+        e.preventDefault();
         const btn = $(this);
         const venueId = btn.data('venueid');
         const userId = btn.data('userid');
@@ -34,25 +34,8 @@ $(document).ready(function () {
             btn.removeClass('animate');
         }, 800);
         
-        $.ajax({
-            url: './api/bookmark.api.php',
-            type: 'POST',
-            data: {
-                venue_id: venueId,
-                user_id: userId
-            },
-            success: function(response) {
-                const data = JSON.parse(response);
-                if (!data.success) {
-                    // Revert the classes if the operation failed
-                    btn.removeClass('bookmarked animate');
-                }
-            },
-            error: function() {
-                // Revert the classes on error
-                btn.removeClass('bookmarked animate');
-            }
-        });
+        // Call the bookmarkVenue function
+        bookmarkVenue(venueId, userId);
     });
 
 
@@ -129,18 +112,27 @@ $(document).ready(function () {
         
     })
 
-    $('#profileBtn').on('click', function (e) {
+    //profile button
+    $(document).on('click', '#profileBtn', function (e) {
+        e.preventDefault();
         const url = $(this).data("url");
         menuRedirection(url);
         openProfileNav('rent-history');
     });
-    
-    
+
     //host account button
-    $("#hostAccountBtn").on("click", function () {
+    $(document).on('click', '#hostAccountBtn', function (e) {
+        e.preventDefault();
         const url = $(this).data("url");
         menuRedirection(url);
-    })
+    });
+
+    //settings button
+    $(document).on('click', '#settingsBtn', function (e) {
+        e.preventDefault();
+        const url = $(this).data("url");
+        menuRedirection(url);
+    });
 
     //host application button
     $('#hostApplicationForm').on("submit", function (e) {
@@ -157,7 +149,7 @@ $(document).ready(function () {
         let isValid = true;
 
         // Loop through all the form fields and check if they are empty
-        formElement.find('input').each(function () {
+        formElement.find('input').each(function () {    
             if ($(this).val() === '') {
                 isValid = false;
                 $(this).addClass('border-red-500'); // Add red border to indicate the field is empty
