@@ -145,9 +145,9 @@ if (isset($_SESSION['user'])) {
             booking_duration: '<?php echo $bookingDuration ?>',
             booking_status_id: '1',
             booking_participants: '<?php echo $numberOfGuest ?>',
-            booking_grand_total: '<?php echo $totalPrice ?>',
+            booking_grand_total: FinalAmmount,
             booking_guest_id: <?php echo htmlspecialchars($_SESSION['user']['id']) ?>,
-            booking_venue_id: '<?php echo $venueId ?>',
+            booking_venue_id: '<?php echo htmlspecialchars($venueId) ?>',
             booking_discount_id: '',
             booking_payment_method: '',
             booking_payment_reference: '',
@@ -171,8 +171,9 @@ if (isset($_SESSION['user'])) {
         function calculateTotal() {
             const subtotal = parseFloat(formData.booking_grand_total);
             const discount = parseFloat(formData.couponDiscount || 0);
-            console.log("s, " + subtotal, "d", + discount);
+            // console.log("s, " + subtotal, "d", + discount);
             FinalAmmount = (subtotal - (subtotal * discount));
+            return (subtotal - (subtotal * discount));
         }
 
         function updateStep() {
@@ -210,7 +211,7 @@ if (isset($_SESSION['user'])) {
                                            placeholder="Enter coupon code"
                                            value="${formData.discountCode}"
                                            ${formData.discountCode ? 'disabled' : ''}
-                                           class="flex-1 rounded-md shadow-sm focus:ring-primary focus:border-primary h-10 ${formData.discountCode ? 'bg-gray-50' : ''}">
+                                           class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10 ${formData.discountCode ? 'bg-gray-50' : ''}">
                                     <button onclick="${formData.discountCode ? 'removeCoupon()' : 'applyCoupon()'}" 
                                             class="px-4 py-2 ${formData.discountCode ? 'bg-gray-500' : 'bg-black'} text-white rounded-md text-sm font-medium hover:opacity-90">
                                         ${formData.discountCode ? 'Remove' : 'Apply'}
@@ -322,11 +323,7 @@ if (isset($_SESSION['user'])) {
                 formData.eventType = formData.eventType || 'Other';
                 formData.guestCount = formData.guestCount || 1;
 
-                // Calculate total amount
-                const basePrice = 500 * parseInt(formData.durationValue);
-                const subtotal = basePrice + 100 + 250 + 50;
-                const discount = subtotal * (formData.appliedDiscount || 0);
-                const totalAmount = subtotal - discount;
+                const totalAmount = FinalAmmount;
 
                 // Show loading state
                 document.getElementById('nextBtn').disabled = true;
@@ -339,23 +336,7 @@ if (isset($_SESSION['user'])) {
                 document.getElementById('qrPaymentAmount').textContent = totalAmount.toFixed(2);
                 document.getElementById('selectedPaymentMethod').textContent =
                     method === 'gcash' ? 'GCash' : 'PayMaya';
-                document.getElementById('appName').textContent =
-                    method === 'gcash' ? 'GCash' : 'PayMaya';
-
-                // Reset payment status
-                document.getElementById('paymentStatus').textContent = 'Waiting for payment...';
-                document.getElementById('paymentStatus').classList.remove('text-green-600', 'text-red-600');
-                document.getElementById('paymentProgress').style.width = '0%';
-                document.getElementById('loadingIndicator').classList.add('animate-pulse');
-
-                // Show modal with animation
                 openQrModal();
-
-                // Store reference number
-                formData.paymentReference = 'REF' + Date.now();
-
-                // Start checking payment status
-                checkPaymentStatus(formData.paymentReference);
 
             } catch (error) {
                 console.error('Payment error:', error);
@@ -381,30 +362,6 @@ if (isset($_SESSION['user'])) {
             }, 300);
         }
 
-        // async function checkPaymentStatus(reference) {
-        //     const progressBar = document.getElementById('paymentProgress');
-        //     const paymentStatus = document.getElementById('paymentStatus');
-        //     const loadingIndicator = document.getElementById('loadingIndicator');
-        //     const nextBtn = document.getElementById('nextBtn');
-
-        //     // Simulate payment processing with a progress bar
-        //     let progress = 0;
-        //     const interval = setInterval(() => {
-        //         progress += 20;
-        //         progressBar.style.width = `${progress}%`;
-
-        //         if (progress >= 100) {
-        //             clearInterval(interval);
-        //             // Show success message
-        //             paymentStatus.textContent = 'Payment completed! Thank you for choosing HubVenue<3';
-        //             paymentStatus.classList.add('text-green-600');
-        //             loadingIndicator.classList.remove('animate-pulse');
-        //             nextBtn.disabled = false;
-
-        //             // Removed the automatic modal closing
-        //         }
-        //     }, 1000); // Update every second
-        // }
 
         function handleModalClick(event) {
             const modalContent = document.getElementById('qrModalContent');
@@ -413,66 +370,7 @@ if (isset($_SESSION['user'])) {
             }
         }
 
-        function openPaymentApp() {
-            const method = document.querySelector('input[name="paymentMethod"]:checked').value;
-            const amount = document.getElementById('qrPaymentAmount').textContent;
-            const reference = formData.paymentReference;
 
-            let appUrl;
-            if (method === 'gcash') {
-                // Deep link for GCash
-                appUrl = `gcash://app?action=pay&amount=${amount}&reference=${reference}`;
-            } else if (method === 'paymaya') {
-                // Deep link for PayMaya
-                appUrl = `paymaya://app?action=pay&amount=${amount}&reference=${reference}`;
-            }
-
-            // Try to open the app
-            window.location.href = appUrl;
-
-            // Fallback for mobile browsers
-            setTimeout(() => {
-                if (method === 'gcash') {
-                    window.location.href = 'https://play.google.com/store/apps/details?id=com.globe.gcash.android';
-                } else if (method === 'paymaya') {
-                    window.location.href = 'https://play.google.com/store/apps/details?id=com.paymaya';
-                }
-            }, 1000);
-        }
-
-        function copyPaymentDetails() {
-            const method = document.querySelector('input[name="paymentMethod"]:checked').value;
-            const amount = document.getElementById('qrPaymentAmount').textContent;
-            const reference = formData.paymentReference;
-
-            const details = `Payment Details:\nAmount: ₱${amount}\nReference: ${reference}\nMethod: ${method.toUpperCase()}`;
-
-            navigator.clipboard.writeText(details).then(() => {
-                alert('Payment details copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy details:', err);
-                alert('Failed to copy payment details');
-            });
-        }
-
-        function updateFileLabel(input) {
-            const label = document.getElementById('fileLabel');
-            if (input.files && input.files[0]) {
-                label.textContent = input.files[0].name;
-                validateForm();
-            } else {
-                label.textContent = 'Click to upload ID photo';
-            }
-        }
-
-        function validateForm() {
-            const name = document.getElementById('seniorPwdName').value;
-            const id = document.getElementById('seniorPwdId').value;
-            const photo = document.getElementById('seniorPwdIdPhoto').files[0];
-            const applyBtn = document.getElementById('applyDiscountBtn');
-
-            applyBtn.disabled = !(name && id && photo);
-        }
 
         // Add this new function for input animations
         function addInputFocusEffects() {
@@ -598,7 +496,7 @@ if (isset($_SESSION['user'])) {
                     <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod"
                             class="font-medium"></span> app</p>
                 </div>
-                <div class="flex justify-center gap-4 mb-6">
+                <!-- <div class="flex justify-center gap-4 mb-6">
                     <button id="openAppButton" onclick="openPaymentApp()"
                         class="flex items-center px-4 py-2.5 bg-black text-white rounded-lg text-sm font-medium 
                                    hover:bg-gray-800 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
@@ -611,35 +509,23 @@ if (isset($_SESSION['user'])) {
                         <i class="lucide-copy h-5 w-5 mr-2"></i>
                         Copy Details
                     </button>
-                </div>
+                </div> -->
 
                 <!-- Reference Number Input -->
                 <div class="mt-8 pt-6 border-t border-gray-200">
                     <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid?
                         Enter your reference number</label>
                     <div class="flex gap-2">
-                        <input type="text" id="referenceNumber" name="referenceNumber"
-                            placeholder="Enter your payment reference number"
-                            class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
-                        <button onclick="checkManualReference()"
+                        <input type="text" id="referenceNumber" name="referenceNumber" placeholder="Reference Number"
+                            class="flex-1 rounded-lg border-gray-300 shadow-sm px-1 focus:border-primary  focus:ring-primary h-11">
+                        <button type="submit"
                             class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">
-                            Verify
+                            Okay
                         </button>
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <p class="text-sm text-gray-600 mb-2">Payment Status:
-                        <span id="paymentStatus" class="font-medium">Waiting for payment...</span>
-                    </p>
-                    <div class="animate-pulse" id="loadingIndicator">
-                        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-2 bg-blue-500 rounded-full transition-all duration-500 ease-out"
-                                style="width: 0%" id="paymentProgress">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
