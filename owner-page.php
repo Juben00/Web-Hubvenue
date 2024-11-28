@@ -26,10 +26,10 @@
             <!-- Venue Owner Profile Card -->
             <div class="bg-white rounded-xl shadow-xl p-6 md:col-span-1">
                 <div class="flex flex-col items-center mt-16 space-y-4 mb-4">
-                    <img src="/placeholder.svg?height=80&width=80" alt="John Doe"
+                    <img src="/placeholder.svg?height=80&width=80" alt="Doom Cat"
                         class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
                     <div class="text-center">
-                        <h2 class="text-xl font-bold">John Doe</h2>
+                        <h2 class="text-xl font-bold">Doom Cat</h2>
                         <p class="text-gray-500">Venue Owner since 2020</p>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="flex items-center space-x-2 mb-2">
                     <i class="fas fa-map-marker-alt text-gray-400"></i>
-                    <span class="text-sm text-gray-500">San Francisco, CA</span>
+                    <span class="text-sm text-gray-500">Zamboanga City, Zamboanga del Sur</span>
                 </div>
                 <div class="flex items-center space-x-2 mb-4">
                     <i class="fas fa-clock text-gray-400"></i>
@@ -53,7 +53,7 @@
                 <button
                     class="w-full mt-12 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center justify-center">
                     <i class="fas fa-comment-alt mr-2"></i>
-                    Contact John
+                    Contact Doom Cat
                 </button>
 
                 <!-- Add the Share Profile dropdown -->
@@ -90,7 +90,7 @@
 
             <!-- Venue Listings -->
             <div class="md:col-span-3 ml-12 ">
-                <h2 class="text-2xl mt-12 font-bold mb-6">John's Venues</h2>
+                <h2 class="text-2xl mt-12 font-bold mb-6">Doom Cat's Venues</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Venue Cards -->
                     <div class="bg-transparent rounded-xl overflow-hidden transition duration-300">
@@ -105,7 +105,7 @@
                                     <span class="text-sm text-gray-500">Downtown SF</span>
                                 </div>
                                 <span
-                                    class="bg-blue-50 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">₱200/hour</span>
+                                    class="bg-blue-50 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">₱200/Day</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center space-x-2">
@@ -133,10 +133,10 @@
                 <!-- Review Cards -->
                 <div class="bg-transparent rounded-xl shadow-sm p-6">
                     <div class="flex items-center space-x-4 mb-4">
-                        <img src="/placeholder.svg?height=40&width=40" alt="Sarah Johnson"
+                        <img src="/placeholder.svg?height=40&width=40" alt=" Munchkin Doom Catson"
                             class="w-10 h-10 rounded-full object-cover">
                         <div>
-                            <h3 class="text-lg font-semibold">Sarah Johnson</h3>
+                            <h3 class="text-lg font-semibold">Munchkin Ninja</h3>
                             <p class="text-gray-500">Reviewed Urban Loft Space</p>
                         </div>
                     </div>
@@ -149,7 +149,7 @@
                         <span class="ml-2 text-sm text-gray-500">1 month ago</span>
                     </div>
                     <p class="text-gray-700">
-                        The Urban Loft Space was perfect for our company photoshoot. John was incredibly helpful and
+                        The Urban Loft Space was perfect for our company photoshoot. Doom Cat was incredibly helpful and
                         accommodating. The natural light in the space is amazing!
                     </p>
                 </div>

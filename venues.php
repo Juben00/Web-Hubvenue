@@ -339,7 +339,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                     <div class="border rounded-xl p-6 shadow-lg mb-6">
                         <h3 class="text-xl font-semibold mb-4">The Owner</h3>
                         <div class="flex gap-4">
-                            <div class="bg-slate-50 p-6 w-full">
+                            <a href="owner-page.php" class="bg-slate-50 p-6 w-full hover:bg-slate-100 transition duration-300 cursor-pointer">
                                 <!-- Card Header -->
                                 <div class="text-center mb-4">
                                     <div
@@ -357,7 +357,7 @@ $owner = $accountObj->getUser($venue['host_id']);
                                     </h2>
                                     <p class="text-xs text-gray-500">Owner</p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
 

@@ -100,42 +100,22 @@ if (isset($_GET['discountCode'])) {
     <main class="pt-20 flex-grow flex flex-col justify-between p-6 pb-24">
         <div class="max-w-3xl mx-auto w-full">
             <div class="mb-8">
-                <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span
-                        id="totalSteps">2</span></h2>
-                <h1 id="stepTitle" class="text-3xl font-bold mb-4">Venue Details</h1>
-                <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
+                <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span id="totalSteps">3</span></h2>
+                <h1 id="stepTitle" class="text-3xl font-bold mb-4">Review Details</h1>
+                <p id="stepDescription" class="text-gray-600 mb-8">Review and confirm your reservation details.</p>
             </div>
 
-            <form id="stepContent">
+            <form id="paymentForm">
+                <!-- Step 1: Review Details -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
-
-                        <!-- Coupon Input Section - Removed border -->
-                        <div class="bg-white p-4 rounded-lg mb-4">
-                            <div class="flex gap-2">
-                                <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
-                                    value="${formData.discountCode}" ${formData.discountCode ? 'disabled' : '' }
-                                    class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10 ${formData.discountCode ? 'bg-gray-50' : ''}">
-                                <button onclick="${formData.discountCode ? 'removeCoupon()' : 'applyCoupon()'}"
-                                    class="px-4 py-2 ${formData.discountCode ? 'bg-gray-500' : 'bg-black'} text-white rounded-md text-sm font-medium hover:opacity-90">
-                                    ${formData.discountCode ? 'Remove' : 'Apply'}
-                                </button>
-
-                            </div>
-                            <p id="couponMessage"
-                                class="text-sm mt-2 ${formData.discountCode ? '' : 'hidden'} ${formData.discountCode ? 'text-green-600' : ''}">
-                                ${formData.discountCode ? `Coupon applied successfully! ${formData.couponDiscount *
-                                100}% discount` : ''}
-                            </p>
-                        </div>
-
                         <div class="bg-gray-100 p-6 rounded-lg">
                             <h4 class="font-semibold text-lg mb-4"><?php echo $venueName ?></h4>
                             <div class="space-y-2">
-                                <p><strong>Date:</strong> ${formData.booking_start_date} to ${formData.booking_end_date}
-                                </p>
-                                <p><strong>Guests:</strong> ${formData.booking_participants}</p>
+                                <p><strong>Check-in:</strong> <?php echo $checkIn ?></p>
+                                <p><strong>Check-out:</strong> <?php echo $checkOut ?></p>
+                                <p><strong>Guests:</strong> <?php echo $numberOfGuest ?></p>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-300">
                                 <h5 class="font-semibold mb-2">Price Breakdown</h5>
@@ -156,26 +136,47 @@ if (isset($_GET['discountCode'])) {
                                         <span>Service Fee</span>
                                         <span>₱ <?php echo $serviceFee ?></span>
                                     </div>
-                                    <div class="flex justify-between">
-                                        <span>Discount</span>
-                                        <span> ${formData.couponDiscount ? formData.couponDiscount * 100 : 0}%</span>
-                                    </div>
-
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Total</span>
-                                    <span>₱ ${FinalAmmount}</span>
+                                    <span>₱ <?php echo $totalPrice ?></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 2: Venue Details -->
+                <!-- Step 2: Apply Discount -->
                 <div id="step2" class="step hidden">
                     <div class="space-y-6">
-                        <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+                        <h3 class="text-2xl font-semibold mb-4">Apply Discount</h3>
+                        <div class="bg-white p-6 rounded-lg border border-gray-200">
+                            <div class="mb-4">
+                                <label for="couponCode" class="block text-sm font-medium text-gray-700 mb-2">Have a coupon code?</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
+                                        class="flex-1 rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary">
+                                    <button type="button" onclick="applyCoupon()" 
+                                        class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">
+                                        Apply
+                                    </button>
+                                </div>
+                                <p id="couponMessage" class="text-sm mt-2 hidden"></p>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <div class="flex justify-between font-semibold">
+                                    <span>Final Total</span>
+                                    <span>₱ <span id="finalTotal"><?php echo $totalPrice ?></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Step 3: Payment Method -->
+                <div id="step3" class="step hidden">
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
                                 onclick="selectPaymentMethod('gcash')">
@@ -200,76 +201,102 @@ if (isset($_GET['discountCode'])) {
             </form>
         </div>
 
+        <!-- Bottom Navigation -->
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
             <div class="flex justify-between items-center max-w-3xl mx-auto">
-                <button id="backBtn" class="flex items-center text-sm font-medium text-gray-900" disabled>
-                    <i class="lucide-chevron-left h-5 w-5 mr-1"></i>
-                    Back
-                </button>
-                <div class="flex-grow mx-8">
+                <button id="backBtn" class="text-gray-900 font-medium" disabled>Back</button>
+                <div class="flex-1 mx-8">
                     <div class="bg-gray-200 h-1 rounded-full">
-                        <div id="progressBar" class="bg-black h-1 rounded-full transition-all duration-300 ease-in-out"
-                            style="width: 0%"></div>
+                        <div id="progressBar" class="bg-black h-1 rounded-full transition-all duration-300 ease-in-out" 
+                            style="width: 33.33%"></div>
                     </div>
                 </div>
-                <button id="nextBtn"
-                    class="flex items-center px-6 py-2 bg-black text-white rounded-md text-sm font-medium">
-                    Next
-                    <i class="lucide-chevron-right h-5 w-5 ml-1"></i>
-                </button>
+                <button id="nextBtn" class="bg-black text-white px-6 py-2 rounded-md">Next</button>
             </div>
         </div>
     </main>
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const steps = document.querySelectorAll('.step');
-            const prevBtn = document.getElementById('prevBtn');
+            const prevBtn = document.getElementById('backBtn');
             const nextBtn = document.getElementById('nextBtn');
-            const progressBarFill = document.getElementById('progressBar');
-            const reviewContent = document.getElementById('reviewContent');
+            const progressBar = document.getElementById('progressBar');
+            const stepTitle = document.getElementById('stepTitle');
+            const stepDescription = document.getElementById('stepDescription');
+            const currentStepEl = document.getElementById('currentStep');
             let currentStep = 0;
 
-            // Show specific step based on current index
+            const stepContent = [
+                {
+                    title: "Review Details",
+                    description: "Review and confirm your reservation details."
+                },
+                {
+                    title: "Apply Discount",
+                    description: "Enter a discount code if you have one."
+                },
+                {
+                    title: "Payment Method",
+                    description: "Choose your preferred payment method."
+                }
+            ];
+
             function showStep(stepIndex) {
                 steps.forEach((step, index) => {
                     step.classList.toggle('hidden', index !== stepIndex);
                 });
-                prevBtn.style.display = stepIndex === 0 ? 'none' : 'block';
-                nextBtn.textContent = stepIndex === steps.length - 1 ? 'Submit' : 'Next';
-                progressBarFill.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
+                
+                prevBtn.disabled = stepIndex === 0;
+                nextBtn.textContent = stepIndex === steps.length - 1 ? 'Proceed to Payment' : 'Next';
+                progressBar.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
+                
+                // Update step content
+                stepTitle.textContent = stepContent[stepIndex].title;
+                stepDescription.textContent = stepContent[stepIndex].description;
+                currentStepEl.textContent = stepIndex + 1;
             }
-        }
 
-            // Handle the Next button click
-            nextBtn.addEventListener('click', function () {
-            if (validateStep()) {
-                if (currentStep < steps.length - 1) {
-                    if (currentStep === steps.length - 2) {
-                        updateReviewContent();
-                    }
-                    currentStep++;
-                    showStep(currentStep);
-                } else {
-                    document.getElementById('sform').click();
+            function validateStep() {
+                // Add validation logic for each step
+                switch(currentStep) {
+                    case 0:
+                        return true; // Review step always valid
+                    case 1:
+                        return true; // Discount step always valid
+                    case 2:
+                        return document.querySelector('input[name="paymentMethod"]:checked') !== null;
+                    default:
+                        return true;
                 }
-            } else {
-                showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
             }
-        });
 
-        // Handle the Previous button click
-        prevBtn.addEventListener('click', function () {
-            if (currentStep > 0) {
-                currentStep--;
-                showStep(currentStep);
-            }
-        });
+            nextBtn.addEventListener('click', function() {
+                if (validateStep()) {
+                    if (currentStep < steps.length - 1) {
+                        currentStep++;
+                        showStep(currentStep);
+                    } else {
+                        // Handle final step (payment)
+                        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                        selectPaymentMethod(selectedPaymentMethod);
+                    }
+                } else {
+                    showModal('Please complete all required fields before proceeding.', undefined, "black_ico.png");
+                }
+            });
 
-        // Initialize the first step
-        showStep(currentStep);
-        );
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            // Initialize first step
+            showStep(currentStep);
+        });
     </script>
 
     <script>
@@ -331,17 +358,13 @@ if (isset($_GET['discountCode'])) {
             if (currentStep < totalSteps) {
                 currentStep++;
                 updateStep();
-            } else {
-                // Handle form submission
-                console.log('Form submitted:', formData);
-                alert('Reservation confirmed!');
             }
         });
 
         // Initialize the form
         updateStep();
 
-        async function selectPaymentMethod(method) {
+        function selectPaymentMethod(method) {
             try {
                 // Update radio button
                 document.querySelector(`input[value="${method}"]`).checked = true;
@@ -357,45 +380,50 @@ if (isset($_GET['discountCode'])) {
                 // Display QR code in modal
                 document.getElementById('qrCodeImage').src = qrCodeImage;
                 document.getElementById('qrPaymentAmount').textContent = totalAmount.toFixed(2);
-                document.getElementById('selectedPaymentMethod').textContent =
-                    method === 'gcash' ? 'GCash' : 'PayMaya';
+                document.getElementById('selectedPaymentMethod').textContent = method === 'gcash' ? 'GCash' : 'PayMaya';
                 openQrModal();
 
                 formData.booking_payment_method = method;
 
             } catch (error) {
                 console.error('Payment error:', error);
-                alert('Error initiating payment: ' + error.message);
+                showModal('Error initiating payment: ' + error.message, undefined, "black_ico.png");
             } finally {
                 document.getElementById('nextBtn').disabled = false;
             }
         }
 
         function closeQrModal() {
-            const modal = document.getElementById('qrModal');
-            const modalContent = document.getElementById('qrModalContent');
+            const referenceNumber = document.getElementById('referenceNumber').value.trim();
+            if (referenceNumber) {
+                const modal = document.getElementById('qrModal');
+                const modalContent = document.getElementById('qrModalContent');
 
-            // Animate out
-            modal.classList.remove('opacity-100');
-            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+                // Animate out
+                modal.classList.remove('opacity-100');
+                modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+                modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
 
-            // Hide modal after animation
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
-
-        function handleModalClick(event) {
-            const modalContent = document.getElementById('qrModalContent');
-            if (!modalContent.contains(event.target)) {
-                closeQrModal();
+                // Hide modal after animation
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            } else {
+                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
             }
         }
 
-
+        function handleModalClick(event) {
+            const modalContent = document.getElementById('qrModalContent');
+            const referenceNumber = document.getElementById('referenceNumber').value.trim();
+            
+            if (!modalContent.contains(event.target) && referenceNumber) {
+                closeQrModal();
+            } else if (!modalContent.contains(event.target)) {
+                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
+            }
+        }
 
         // Add this new function for input animations
         function addInputFocusEffects() {
@@ -502,11 +530,33 @@ if (isset($_GET['discountCode'])) {
             const referenceNumber = document.getElementById('referenceNumber').value.trim();
             if (referenceNumber) {
                 formData.booking_payment_reference = referenceNumber;
-                console.log('Form submitted:', formData);
-                alert('Reservation confirmed!');
-                closeQrModal(); // Close the modal after submission
+                closeQrModal();
+                
+                // Make API call to save booking
+                fetch('process-payment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message and redirect only after successful booking
+                        showModal('Reservation confirmed! Thank you for booking with us.', () => {
+                            window.location.href = 'profile/rent-history.php';
+                        }, "black_ico.png");
+                    } else {
+                        showModal('Error processing your booking. Please try again.', undefined, "black_ico.png");
+                    }
+                })
+                .catch(error => {
+                    showModal('An error occurred. Please try again.', undefined, "black_ico.png");
+                });
+                
             } else {
-                alert('Please enter a reference number.');
+                showModal('Please enter a reference number.', undefined, "black_ico.png");
             }
         });
     </script>
