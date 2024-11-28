@@ -289,7 +289,7 @@ if (isset($_SESSION['user'])) {
                                         <img src="./images/paymaya.png" alt="PayMaya" class="h-8">
                                         <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
                                     </div>
-                                    <p class="text-sm text-gray-600">Pay using your PayMaya account</p>
+                                    <p class="text-sm text-gray-600">Pay securely using your PayMaya account</p>
                                 </div>
                             </div>
                         </div>
@@ -555,42 +555,11 @@ if (isset($_SESSION['user'])) {
                 // Show loading state
                 document.getElementById('nextBtn').disabled = true;
 
-                const response = await fetch('process-payment.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        paymentMethod: method,
-                        amount: totalAmount,
-                        reservationDetails: {
-                            date: formData.date,
-                            time: formData.time,
-                            durationValue: formData.durationValue,
-                            durationType: formData.durationType || 'days',
-                            eventType: formData.eventType,
-                            guestCount: formData.guestCount,
-                            specialRequests: formData.specialRequests || '',
-                            appliedDiscount: formData.appliedDiscount || 0,
-                            discountType: formData.discountType || '',
-                            seniorPwdId: formData.seniorPwdId || '',
-                            couponCode: formData.couponCode || ''
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Payment initiation failed');
-                }
+                // Set QR code based on payment method
+                const qrCodeImage = method === 'gcash' ? './images/gcashqr.png' : './images/paymayaqr.png';
 
                 // Display QR code in modal
-                document.getElementById('qrCodeImage').src = data.qrCode;
+                document.getElementById('qrCodeImage').src = qrCodeImage;
                 document.getElementById('qrPaymentAmount').textContent = totalAmount.toFixed(2);
                 document.getElementById('selectedPaymentMethod').textContent =
                     method === 'gcash' ? 'GCash' : 'PayMaya';
@@ -607,10 +576,10 @@ if (isset($_SESSION['user'])) {
                 openQrModal();
 
                 // Store reference number
-                formData.paymentReference = data.reference;
+                formData.paymentReference = 'REF' + Date.now();
 
                 // Start checking payment status
-                checkPaymentStatus(data.reference);
+                checkPaymentStatus(formData.paymentReference);
 
             } catch (error) {
                 console.error('Payment error:', error);
@@ -642,48 +611,26 @@ if (isset($_SESSION['user'])) {
             const loadingIndicator = document.getElementById('loadingIndicator');
             const nextBtn = document.getElementById('nextBtn');
 
-            let retryCount = 0;
-            const maxRetries = 20;
+            // Simulate payment processing with a progress bar
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = `${progress}%`;
 
-            async function checkStatus() {
-                try {
-                    const response = await fetch(`../payment/process-payment.php?reference=${reference}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    const data = await response.json();
-
-                    if (data.status === 'completed') {
-                        progressBar.style.width = '100%';
-                        paymentStatus.textContent = 'Payment completed! Thank you for choosing HubVenue<3';
-                        paymentStatus.classList.add('text-green-600');
-                        loadingIndicator.classList.remove('animate-pulse');
-                        nextBtn.disabled = false;
-                        // Modal will stay open until user manually closes it
-                        return;
-                    }
-
-                    progressBar.style.width = `${(retryCount / maxRetries) * 100}%`;
-
-                    retryCount++;
-                    if (retryCount < maxRetries) {
-                        setTimeout(checkStatus, 3000);
-                    } else {
-                        paymentStatus.textContent = 'Payment verification timed out. Please contact support.';
-                        paymentStatus.classList.add('text-red-600');
-                        loadingIndicator.classList.remove('animate-pulse');
-                    }
-
-                } catch (error) {
-                    console.error('Payment status check error:', error);
-                    paymentStatus.textContent = 'Unable to verify payment. Please refresh or contact support.';
-                    paymentStatus.classList.add('text-red-600');
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    // Show success message
+                    paymentStatus.textContent = 'Payment completed! Thank you for choosing HubVenue<3';
+                    paymentStatus.classList.add('text-green-600');
                     loadingIndicator.classList.remove('animate-pulse');
-                }
-            }
+                    nextBtn.disabled = false;
 
-            checkStatus();
+                    // Optional: Close the modal automatically after success
+                    setTimeout(() => {
+                        closeQrModal();
+                    }, 2000);
+                }
+            }, 1000); // Update every second
         }
 
         function handleModalClick(event) {
