@@ -99,18 +99,27 @@ $(document).ready(function () {
         
     })
 
-    $('#profileBtn').on('click', function (e) {
+    //profile button
+    $(document).on('click', '#profileBtn', function (e) {
+        e.preventDefault();
         const url = $(this).data("url");
         menuRedirection(url);
         openProfileNav('rent-history');
     });
-    
-    
+
     //host account button
-    $("#hostAccountBtn").on("click", function () {
+    $(document).on('click', '#hostAccountBtn', function (e) {
+        e.preventDefault();
         const url = $(this).data("url");
         menuRedirection(url);
-    })
+    });
+
+    //settings button
+    $(document).on('click', '#settingsBtn', function (e) {
+        e.preventDefault();
+        const url = $(this).data("url");
+        menuRedirection(url);
+    });
 
     //host application button
     $('#hostApplicationForm').on("submit", function (e) {
@@ -127,7 +136,7 @@ $(document).ready(function () {
         let isValid = true;
 
         // Loop through all the form fields and check if they are empty
-        formElement.find('input').each(function () {
+        formElement.find('input').each(function () {    
             if ($(this).val() === '') {
                 isValid = false;
                 $(this).addClass('border-red-500'); // Add red border to indicate the field is empty
