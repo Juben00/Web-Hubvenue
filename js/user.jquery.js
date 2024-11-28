@@ -18,7 +18,7 @@ $(document).ready(function () {
 
     //bookmark btn
     $(document).on('click', '#bookmarkBtn', function (e) {
-        e.stopPropagation();
+        e.preventDefault();
         const btn = $(this);
         const venueId = btn.data('venueid');
         const userId = btn.data('userid');
@@ -34,25 +34,8 @@ $(document).ready(function () {
             btn.removeClass('animate');
         }, 800);
         
-        $.ajax({
-            url: './api/bookmark.api.php',
-            type: 'POST',
-            data: {
-                venue_id: venueId,
-                user_id: userId
-            },
-            success: function(response) {
-                const data = JSON.parse(response);
-                if (!data.success) {
-                    // Revert the classes if the operation failed
-                    btn.removeClass('bookmarked animate');
-                }
-            },
-            error: function() {
-                // Revert the classes on error
-                btn.removeClass('bookmarked animate');
-            }
-        });
+        // Call the bookmarkVenue function
+        bookmarkVenue(venueId, userId);
     });
 
 

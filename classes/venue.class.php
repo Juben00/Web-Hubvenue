@@ -307,6 +307,13 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    public function getAllDiscounts()
+    {
+        $query = "SELECT * FROM discounts";
+        $result = $this->db->connect()->query($query);
+        return $result->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 $venueObj = new Venue();

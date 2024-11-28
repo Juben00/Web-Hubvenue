@@ -12,6 +12,51 @@ if (isset($_SESSION['user'])) {
         header('Location: admin/');
     }
 
+    $venueObj = new Venue();
+
+    $venueId = $_GET['venueId'];
+    $checkIn = new DateTime($_GET['checkin']);
+    $checkOut = new DateTime($_GET['checkout']);
+    $interval = $checkIn->diff($checkOut);
+    $bookingDuration = $interval->days;
+    $numberOfGuest = $_GET['numberOfGuest'];
+    $totalPriceForNights = $_GET['totalPriceForNights'];
+    $totalEntranceFee = $_GET['totalEntranceFee'];
+    $cleaningFee = $_GET['cleaningFee'];
+    $serviceFee = $_GET['serviceFee'];
+    $totalPrice = $_GET['totalPrice'];
+
+    $venueDetails = $venueObj->getSingleVenue($venueId);
+    $venueName = htmlspecialchars($venueDetails["venue_name"]);
+    $checkIn = htmlspecialchars($checkIn->format('Y-m-d'));
+    $checkOut = htmlspecialchars($checkOut->format('Y-m-d'));
+    $numberOfGuest = htmlspecialchars($numberOfGuest);
+    $totalPriceForNights = htmlspecialchars($totalPriceForNights);
+    $totalEntranceFee = htmlspecialchars($totalEntranceFee);
+    $cleaningFee = htmlspecialchars($cleaningFee);
+    $serviceFee = htmlspecialchars($serviceFee);
+    $totalPrice = htmlspecialchars($totalPrice);
+
+    $discounts = $venueObj->getAllDiscounts();
+
+    function applyDiscount($discounts, $discountCode, $totalPrice)
+    {
+        foreach ($discounts as $discount) {
+            if ($discount['discount_code'] === $discountCode && new DateTime() <= new DateTime($discount['expiration_date'])) {
+                if ($discount['discount_type'] === 'flat') {
+                    return max(0, $totalPrice - $discount['discount_value']);
+                } elseif ($discount['discount_type'] === 'percentage') {
+                    return max(0, $totalPrice * (1 - $discount['discount_value'] / 100));
+                }
+            }
+        }
+        return $totalPrice;
+    }
+
+    if (isset($_GET['discountCode'])) {
+        $discountCode = htmlspecialchars($_GET['discountCode']);
+        $totalPrice = applyDiscount($discounts, $discountCode, $totalPrice);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -84,6 +129,8 @@ if (isset($_SESSION['user'])) {
     </main>
 
     <script>
+
+        let FinalAmmount = <?php echo $totalPrice ?>;
         const steps = [
             { title: "Review Details", description: "Review and confirm your reservation details." },
             { title: "Payment", description: "Complete your payment to secure the reservation." }
@@ -91,37 +138,41 @@ if (isset($_SESSION['user'])) {
 
         let currentStep = 1;
         const totalSteps = steps.length;
+
         let formData = {
-            date: '',
-            time: '',
-            durationValue: '',
-            durationType: 'days',
-            eventType: '',
-            guestCount: 1,
-            specialRequests: '',
-            cardName: '',
-            cardNumber: '',
-            expirationDate: '',
-            cvv: '',
-            couponCode: '',
-            couponDiscount: 0
+            booking_start_date: '<?php echo $checkIn ?>',
+            booking_end_date: '<?php echo $checkOut ?>',
+            booking_duration: '<?php echo $bookingDuration ?>',
+            booking_status_id: '1',
+            booking_participants: '<?php echo $numberOfGuest ?>',
+            booking_grand_total: '<?php echo $totalPrice ?>',
+            booking_guest_id: <?php echo htmlspecialchars($_SESSION['user']['id']) ?>,
+            booking_venue_id: '<?php echo $venueId ?>',
+            booking_discount_id: '',
+            booking_payment_method: '',
+            booking_payment_reference: '',
+            booking_payment_status_id: '1',
+            booking_cancellation_reason: '',
+            booking_service_fee: '<?php echo $serviceFee ?>',
+            discountCode: '<?php echo isset($discountCode) ? $discountCode : '' ?>',
         };
 
-        function calculateSubtotal() {
-            const basePrice = 500 * parseInt(formData.durationValue || 1);
-            const fees = 100 + 250 + 50; // Entrance + Cleaning + Service fees
-            return basePrice + fees;
-        }
+        // function calculateSubtotal() {
+        //     const basePrice = 500 * parseInt(formData.booking_duration || 1);
+        //     const fees = 100 + 250 + 50; // Entrance + Cleaning + Service fees
+        //     return basePrice + fees;
+        // }
 
-        function calculateDiscount() {
-            const subtotal = calculateSubtotal();
-            return subtotal * (formData.couponDiscount || 0);
-        }
+        // function calculateDiscount() {
+        //     const subtotal = calculateSubtotal();
+        //     return subtotal * (formData.couponDiscount || 0);
+        // }
 
         function calculateTotal() {
-            const subtotal = calculateSubtotal();
-            const discount = calculateDiscount();
-            return Math.max(0, subtotal - discount);
+            const subtotal = parseFloat(formData.booking_grand_total);
+            const discount = parseFloat(formData.couponDiscount || 0);
+            console.log("s, " + subtotal, "d", + discount);
+            FinalAmmount = (subtotal - (subtotal * discount));
         }
 
         function updateStep() {
@@ -157,57 +208,53 @@ if (isset($_SESSION['user'])) {
                                            id="couponCode" 
                                            name="couponCode" 
                                            placeholder="Enter coupon code"
-                                           value="${formData.couponCode}"
-                                           ${formData.couponCode ? 'disabled' : ''}
-                                           class="flex-1 rounded-md shadow-sm focus:ring-primary focus:border-primary h-10 ${formData.couponCode ? 'bg-gray-50' : ''}">
-                                    <button onclick="${formData.couponCode ? 'removeCoupon()' : 'applyCoupon()'}" 
-                                            class="px-4 py-2 ${formData.couponCode ? 'bg-gray-500' : 'bg-black'} text-white rounded-md text-sm font-medium hover:opacity-90">
-                                        ${formData.couponCode ? 'Remove' : 'Apply'}
+                                           value="${formData.discountCode}"
+                                           ${formData.discountCode ? 'disabled' : ''}
+                                           class="flex-1 rounded-md shadow-sm focus:ring-primary focus:border-primary h-10 ${formData.discountCode ? 'bg-gray-50' : ''}">
+                                    <button onclick="${formData.discountCode ? 'removeCoupon()' : 'applyCoupon()'}" 
+                                            class="px-4 py-2 ${formData.discountCode ? 'bg-gray-500' : 'bg-black'} text-white rounded-md text-sm font-medium hover:opacity-90">
+                                        ${formData.discountCode ? 'Remove' : 'Apply'}
                                     </button>
                                 </div>
-                                <p id="couponMessage" class="text-sm mt-2 ${formData.couponCode ? '' : 'hidden'} ${formData.couponCode ? 'text-green-600' : ''}">
-                                    ${formData.couponCode ? `Coupon applied successfully! ${formData.couponDiscount * 100}% discount` : ''}
+                                <p id="couponMessage" class="text-sm mt-2 ${formData.discountCode ? '' : 'hidden'} ${formData.discountCode ? 'text-green-600' : ''}">
+                                    ${formData.discountCode ? `Coupon applied successfully! ${formData.couponDiscount * 100}% discount` : ''}
                                 </p>
                             </div>
 
                             <div class="bg-gray-100 p-6 rounded-lg">
-                                <h4 class="font-semibold text-lg mb-4">Santiago Resort Room 1</h4>
+                                <h4 class="font-semibold text-lg mb-4"><?php echo $venueName ?></h4>
                                 <div class="space-y-2">
-                                    <p><strong>Date:</strong> ${formData.date}</p>
-                                    <p><strong>Time:</strong> ${formData.time}</p>
-                                    <p><strong>Duration:</strong> ${formData.durationValue} ${formData.durationType}</p>
-                                    <p><strong>Event Type:</strong> ${formData.eventType}</p>
-                                    <p><strong>Guests:</strong> ${formData.guestCount}</p>
+                                    <p><strong>Date:</strong> ${formData.booking_start_date} to ${formData.booking_end_date}</p>
+                                    <p><strong>Guests:</strong> ${formData.booking_participants}</p>
                                 </div>
                                 <div class="mt-6 pt-4 border-t border-gray-300">
                                     <h5 class="font-semibold mb-2">Price Breakdown</h5>
                                     <div class="space-y-1">
                                         <div class="flex justify-between">
-                                            <span>Base Price (₱500 x ${formData.durationValue || 1} ${formData.durationType})</span>
-                                            <span>₱${500 * parseInt(formData.durationValue || 1)}</span>
+                                            <span>Total Price for Nights</span>
+                                            <span>₱ <?php echo $totalPriceForNights ?></span>
                                         </div>
                                         <div class="flex justify-between">
                                             <span>Entrance Fee</span>
-                                            <span>₱100</span>
+                                            <span>₱ <?php echo $totalEntranceFee ?></span>
                                         </div>
                                         <div class="flex justify-between">
                                             <span>Cleaning Fee</span>
-                                            <span>₱250</span>
+                                            <span>₱ <?php echo $cleaningFee ?></span>
                                         </div>
                                         <div class="flex justify-between">
-                                            <span>HubVenue Service Fee</span>
-                                            <span>₱50</span>
+                                            <span>Service Fee</span>
+                                            <span>₱ <?php echo $serviceFee ?></span>
                                         </div>
-                                        ${formData.couponDiscount ? `
-                                        <div class="flex justify-between text-green-600 font-medium">
-                                            <span>Coupon Discount (${formData.couponDiscount * 100}%)</span>
-                                            <span>-₱${calculateDiscount().toFixed(2)}</span>
+                                        <div class="flex justify-between">
+                                            <span>Discount</span>
+                                            <span> ${formData.couponDiscount ? formData.couponDiscount * 100 : 0}%</span>
                                         </div>
-                                        ` : ''}
+
                                     </div>
                                     <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                         <span>Total</span>
-                                        <span>₱${calculateTotal().toFixed(2)}</span>
+                                        <span>₱ ${FinalAmmount}</span>
                                     </div>
                                 </div>
                             </div>
@@ -334,30 +381,30 @@ if (isset($_SESSION['user'])) {
             }, 300);
         }
 
-        async function checkPaymentStatus(reference) {
-            const progressBar = document.getElementById('paymentProgress');
-            const paymentStatus = document.getElementById('paymentStatus');
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            const nextBtn = document.getElementById('nextBtn');
+        // async function checkPaymentStatus(reference) {
+        //     const progressBar = document.getElementById('paymentProgress');
+        //     const paymentStatus = document.getElementById('paymentStatus');
+        //     const loadingIndicator = document.getElementById('loadingIndicator');
+        //     const nextBtn = document.getElementById('nextBtn');
 
-            // Simulate payment processing with a progress bar
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 20;
-                progressBar.style.width = `${progress}%`;
+        //     // Simulate payment processing with a progress bar
+        //     let progress = 0;
+        //     const interval = setInterval(() => {
+        //         progress += 20;
+        //         progressBar.style.width = `${progress}%`;
 
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    // Show success message
-                    paymentStatus.textContent = 'Payment completed! Thank you for choosing HubVenue<3';
-                    paymentStatus.classList.add('text-green-600');
-                    loadingIndicator.classList.remove('animate-pulse');
-                    nextBtn.disabled = false;
+        //         if (progress >= 100) {
+        //             clearInterval(interval);
+        //             // Show success message
+        //             paymentStatus.textContent = 'Payment completed! Thank you for choosing HubVenue<3';
+        //             paymentStatus.classList.add('text-green-600');
+        //             loadingIndicator.classList.remove('animate-pulse');
+        //             nextBtn.disabled = false;
 
-                    // Removed the automatic modal closing
-                }
-            }, 1000); // Update every second
-        }
+        //             // Removed the automatic modal closing
+        //         }
+        //     }, 1000); // Update every second
+        // }
 
         function handleModalClick(event) {
             const modalContent = document.getElementById('qrModalContent');
@@ -427,10 +474,6 @@ if (isset($_SESSION['user'])) {
             applyBtn.disabled = !(name && id && photo);
         }
 
-        // Add input event listeners for real-time validation
-        document.getElementById('seniorPwdName').addEventListener('input', validateForm);
-        document.getElementById('seniorPwdId').addEventListener('input', validateForm);
-
         // Add this new function for input animations
         function addInputFocusEffects() {
             const inputs = document.querySelectorAll('input[type="text"]');
@@ -489,33 +532,28 @@ if (isset($_SESSION['user'])) {
 
         async function applyCoupon() {
             const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
-
             if (!couponCode) {
                 showCouponMessage('Please enter a coupon code', 'error');
                 return;
             }
 
-            // Simulate coupon validation
-            const validCoupons = {
-                'SAVE10': 0.10,
-                'SAVE20': 0.20,
-                'SAVE30': 0.30
-            };
+            const response = await fetch(`./applyDiscount.php?discountCode=${couponCode}`);
+            const result = await response.json();
 
-            if (validCoupons.hasOwnProperty(couponCode)) {
-                formData.couponCode = couponCode;
-                formData.couponDiscount = validCoupons[couponCode];
+            if (result.valid) {
+                formData.discountCode = couponCode;
+                formData.couponDiscount = result.discountValue;
+                formData.booking_grand_total = calculateTotal();
                 renderStepContent();
             } else {
-                formData.couponCode = '';
-                formData.couponDiscount = 0;
                 showCouponMessage('Invalid coupon code', 'error');
             }
         }
 
         function removeCoupon() {
-            formData.couponCode = '';
+            formData.discountCode = '';
             formData.couponDiscount = 0;
+            formData.booking_grand_total = calculateTotal();
             renderStepContent();
         }
 
@@ -526,7 +564,6 @@ if (isset($_SESSION['user'])) {
                 messageEl.classList.remove('hidden', 'text-green-600', 'text-red-600');
                 messageEl.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
 
-                // Hide error messages after 3 seconds
                 if (type === 'error') {
                     setTimeout(() => {
                         messageEl.classList.add('hidden');
