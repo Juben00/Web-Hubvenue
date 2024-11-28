@@ -116,6 +116,29 @@ if (isset($_SESSION['user'])) {
         function closeDiscountModal() {
             const modal = document.getElementById('discountModal');
             const modalContent = document.getElementById('discountModalContent');
+            const seniorPwdCheckbox = document.getElementById('seniorPwdDiscount');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Check if form is incomplete
+            const name = document.getElementById('seniorPwdName')?.value?.trim();
+            const id = document.getElementById('seniorPwdId')?.value?.trim();
+            const photo = document.getElementById('seniorPwdIdPhoto')?.files[0];
+            
+            if (seniorPwdCheckbox.checked && (!name || !id || !photo)) {
+                // Show warning message
+                const statusEl = document.getElementById('discountStatus');
+                statusEl.textContent = 'Please complete the discount form to proceed';
+                statusEl.classList.remove('hidden', 'text-green-600');
+                statusEl.classList.add('text-red-600');
+                
+                // Disable next button
+                nextBtn.disabled = true;
+                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                // Enable next button
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
             
             // Animate out
             modal.classList.remove('opacity-100');
@@ -126,17 +149,36 @@ if (isset($_SESSION['user'])) {
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
-                
-                // Uncheck the discount checkbox if no data was entered
-                if (!formData.seniorPwdId) {
-                    document.getElementById('seniorPwdDiscount').checked = false;
-                }
             }, 300);
         }
 
         function handleDiscountModalClick(event) {
             const modalContent = document.querySelector('#discountModal > div');
+            const seniorPwdCheckbox = document.getElementById('seniorPwdDiscount');
+            const nextBtn = document.getElementById('nextBtn');
+            
             if (!modalContent.contains(event.target)) {
+                // Check if form is incomplete
+                const name = document.getElementById('seniorPwdName')?.value?.trim();
+                const id = document.getElementById('seniorPwdId')?.value?.trim();
+                const photo = document.getElementById('seniorPwdIdPhoto')?.files[0];
+                
+                if (seniorPwdCheckbox.checked && (!name || !id || !photo)) {
+                    // Show warning message
+                    const statusEl = document.getElementById('discountStatus');
+                    statusEl.textContent = 'Please complete the discount form to proceed';
+                    statusEl.classList.remove('hidden', 'text-green-600');
+                    statusEl.classList.add('text-red-600');
+                    
+                    // Disable next button
+                    nextBtn.disabled = true;
+                    nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    // Enable next button
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+                
                 closeDiscountModal();
             }
         }
@@ -200,6 +242,20 @@ if (isset($_SESSION['user'])) {
                                         <span>Senior Citizen / PWD Discount (20% off)</span>
                                     </label>
                                     <p id="discountStatus" class="text-sm text-green-600 mt-1 hidden"></p>
+                                    
+                                    <div id="discountDetailsBox" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-lg transition-all duration-300 transform">
+                                        <div class="flex items-start">
+                                            <i class="lucide-check-circle h-5 w-5 text-green-500 mt-0.5 mr-2"></i>
+                                            <div class="flex-1">
+                                                <p class="text-green-700 font-medium mb-2">Senior/PWD Discount Applied Successfully!</p>
+                                                <div class="space-y-1 text-sm text-green-600">
+                                                    <p><span class="font-medium">Name:</span> <span id="displayName"></span></p>
+                                                    <p><span class="font-medium">ID Number:</span> <span id="displayId"></span></p>
+                                                    <p><span class="font-medium" id="displayPhoto">ID Photo:</span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="flex gap-2">
@@ -223,12 +279,24 @@ if (isset($_SESSION['user'])) {
                     const seniorPwdCheckbox = document.getElementById('seniorPwdDiscount');
                     if (seniorPwdCheckbox) {
                         seniorPwdCheckbox.addEventListener('change', function(e) {
+                            const nextBtn = document.getElementById('nextBtn');
+                            
                             if (e.target.checked) {
+                                nextBtn.disabled = true;
+                                nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
                                 openDiscountModal();
                             } else {
+                                nextBtn.disabled = false;
+                                nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                                 clearDiscountData();
                             }
                         });
+                    }
+
+                    // Show existing discount details if any
+                    if (formData.discountType === 'senior_pwd') {
+                        seniorPwdCheckbox.checked = true;
+                        updateDiscountDisplay();
                     }
                     break;
                 case 2:
@@ -335,25 +403,51 @@ if (isset($_SESSION['user'])) {
                             const modal = document.getElementById('discountModal');
                             const modalContent = document.getElementById('discountModalContent');
                             
+                            // Check if form is incomplete
+                            const name = document.getElementById('seniorPwdName')?.value?.trim();
+                            const id = document.getElementById('seniorPwdId')?.value?.trim();
+                            const photo = document.getElementById('seniorPwdIdPhoto')?.files[0];
+                            
+                            if (seniorPwdCheckbox.checked && (!name || !id || !photo)) {
+                                // Show warning message
+                                const statusEl = document.getElementById('discountStatus');
+                                statusEl.textContent = 'Please complete the discount form before closing';
+                                statusEl.classList.remove('hidden', 'text-green-600');
+                                statusEl.classList.add('text-red-600');
+                                return; // Prevent modal from closing
+                            }
+                            
                             // Animate out
-                            modalContent.classList.remove('scale-100', 'opacity-100');
-                            modalContent.classList.add('scale-95', 'opacity-0');
+                            modal.classList.remove('opacity-100');
+                            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+                            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
                             
                             // Hide modal after animation
                             setTimeout(() => {
                                 modal.classList.add('hidden');
                                 modal.classList.remove('flex');
-                                
-                                // Uncheck the discount checkbox if no data was entered
-                                if (!formData.seniorPwdId) {
-                                    document.getElementById('seniorPwdDiscount').checked = false;
-                                }
-                            }, 200);
+                            }, 300);
                         }
 
                         function handleDiscountModalClick(event) {
                             const modalContent = document.querySelector('#discountModal > div');
+                            const seniorPwdCheckbox = document.getElementById('seniorPwdDiscount');
+                            
                             if (!modalContent.contains(event.target)) {
+                                // Check if form is incomplete
+                                const name = document.getElementById('seniorPwdName')?.value?.trim();
+                                const id = document.getElementById('seniorPwdId')?.value?.trim();
+                                const photo = document.getElementById('seniorPwdIdPhoto')?.files[0];
+                                
+                                if (seniorPwdCheckbox.checked && (!name || !id || !photo)) {
+                                    // Show warning message
+                                    const statusEl = document.getElementById('discountStatus');
+                                    statusEl.textContent = 'Please complete the discount form before closing';
+                                    statusEl.classList.remove('hidden', 'text-green-600');
+                                    statusEl.classList.add('text-red-600');
+                                    return; // Prevent modal from closing
+                                }
+                                
                                 closeDiscountModal();
                             }
                         }
@@ -379,59 +473,87 @@ if (isset($_SESSION['user'])) {
                             const name = document.getElementById('seniorPwdName').value.trim();
                             const id = document.getElementById('seniorPwdId').value.trim();
                             const photo = document.getElementById('seniorPwdIdPhoto').files[0];
+                            const statusEl = document.getElementById('discountStatus');
 
-                                formData.seniorPwdName = name;
-                                formData.seniorPwdId = id;
-                                formData.seniorPwdIdPhoto = photo;
-                                formData.appliedDiscount = 0.20;
-                                formData.discountType = 'senior_pwd';
-                                
-                                // Show success message
-                                const statusEl = document.getElementById('discountStatus');
+                            // Update form data
+                            formData.seniorPwdName = name;
+                            formData.seniorPwdId = id;
+                            formData.seniorPwdIdPhoto = photo;
+                            formData.appliedDiscount = 0.20;
+                            formData.discountType = 'senior_pwd';
+                            
+                            // Show success message
                             statusEl.textContent = 'Senior Citizen/PWD discount (20%) applied successfully!';
                             statusEl.classList.remove('hidden', 'text-red-600');
                             statusEl.classList.add('text-green-600');
-                                
-                                // Close modal
-                                closeDiscountModal();
-                                
-                                // Update price
+                            
+                            // Update discount display box
+                            const detailsBox = document.getElementById('discountDetailsBox');
+                            document.getElementById('displayName').textContent = name;
+                            document.getElementById('displayId').textContent = id;
+                            document.getElementById('displayPhoto').textContent = photo.name;
+                            
+                            // Show details box with animation
+                            detailsBox.classList.remove('hidden');
+                            void detailsBox.offsetWidth; // Force reflow
+                            detailsBox.classList.add('opacity-100', 'transform', 'translate-y-0');
+                            detailsBox.classList.remove('opacity-0', 'transform', '-translate-y-4');
+                            
+                            // Enable next button
+                            const nextBtn = document.getElementById('nextBtn');
+                            nextBtn.disabled = false;
+                            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            
+                            // Close modal with animation
+                            const modal = document.getElementById('discountModal');
+                            const modalContent = document.getElementById('discountModalContent');
+                            
+                            modal.classList.remove('opacity-100');
+                            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+                            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+                            
+                            setTimeout(() => {
+                                modal.classList.add('hidden');
+                                modal.classList.remove('flex');
+                            }, 300);
+                            
+                            // Update price breakdown if on review step
+                            if (currentStep === 2) {
                                 updatePriceBreakdown();
+                            }
                         }
 
+                        // Update validateForm function to be more robust
                         function validateForm() {
                             const name = document.getElementById('seniorPwdName').value.trim();
                             const id = document.getElementById('seniorPwdId').value.trim();
                             const photo = document.getElementById('seniorPwdIdPhoto').files[0];
-                            const applyBtn = document.getElementById('applyDiscountBtn');
+                            const statusEl = document.getElementById('discountStatus');
                             
-                            // Show/hide error messages with animation
-                            ['nameError', 'idError', 'photoError'].forEach(errorId => {
-                                const errorElement = document.getElementById(errorId);
-                                if (errorElement) {
-                                    if (errorElement.classList.contains('hidden')) {
-                                        errorElement.style.maxHeight = '0';
-                                        errorElement.classList.remove('hidden');
-                                        void errorElement.offsetWidth;
-                                        errorElement.style.maxHeight = errorElement.scrollHeight + 'px';
-                                    } else {
-                                        errorElement.style.maxHeight = '0';
-                                        setTimeout(() => {
-                                            errorElement.classList.add('hidden');
-                                        }, 200);
-                                    }
-                                }
-                            });
-                            
-                            applyBtn.disabled = !(name && id && photo);
-                            
-                            // Add pulse animation when button becomes enabled
-                            if (!applyBtn.disabled) {
-                                applyBtn.classList.add('animate-pulse');
-                                setTimeout(() => {
-                                    applyBtn.classList.remove('animate-pulse');
-                                }, 1000);
+                            if (!name || !id || !photo) {
+                                statusEl.textContent = 'Please complete all fields before applying the discount';
+                                statusEl.classList.remove('hidden', 'text-green-600');
+                                statusEl.classList.add('text-red-600');
+                                return false;
                             }
+                            
+                            // Validate photo size (max 5MB)
+                            if (photo.size > 5 * 1024 * 1024) {
+                                statusEl.textContent = 'Photo size must be less than 5MB';
+                                statusEl.classList.remove('hidden', 'text-green-600');
+                                statusEl.classList.add('text-red-600');
+                                return false;
+                            }
+                            
+                            // Validate photo type
+                            if (!photo.type.startsWith('image/')) {
+                                statusEl.textContent = 'Please upload a valid image file';
+                                statusEl.classList.remove('hidden', 'text-green-600');
+                                statusEl.classList.add('text-red-600');
+                                return false;
+                            }
+                            
+                            return true;
                         }
 
                         function updateFileLabel(input) {
@@ -635,10 +757,7 @@ if (isset($_SESSION['user'])) {
                     loadingIndicator.classList.remove('animate-pulse');
                     nextBtn.disabled = false;
                     
-                    // Optional: Close the modal automatically after success
-                    setTimeout(() => {
-                        closeQrModal();
-                    }, 2000);
+                    // Removed the automatic modal closing
                 }
             }, 1000); // Update every second
         }
@@ -770,6 +889,177 @@ if (isset($_SESSION['user'])) {
                 closeQrModal();
             }
         }
+
+        function updateDiscountDisplay() {
+            const detailsBox = document.getElementById('discountDetailsBox');
+            const checkbox = document.getElementById('seniorPwdDiscount');
+            
+            if (checkbox.checked && formData.seniorPwdName) {
+                // Update display fields
+                document.getElementById('displayName').textContent = formData.seniorPwdName;
+                document.getElementById('displayId').textContent = formData.seniorPwdId;
+                
+                // Create/update photo preview with larger size
+                let photoPreview = document.getElementById('displayPhotoPreview');
+                if (!photoPreview) {
+                    photoPreview = document.createElement('img');
+                    photoPreview.id = 'displayPhotoPreview';
+                    // Increased size classes and added margin for better spacing
+                    photoPreview.className = 'w-32 h-32 object-cover rounded-lg border border-green-200 mt-3 shadow-sm';
+                    document.getElementById('displayPhoto').parentElement.appendChild(photoPreview);
+                }
+                
+                // Show photo preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoPreview.src = e.target.result;
+                }
+                reader.readAsDataURL(formData.seniorPwdIdPhoto);
+                
+                // Update photo label
+                document.getElementById('displayPhoto').textContent = 'ID Photo:';
+                
+                // Add edit button if it doesn't exist
+                if (!document.getElementById('editDiscountBtn')) {
+                    const editBtn = document.createElement('button');
+                    editBtn.id = 'editDiscountBtn';
+                    editBtn.className = 'text-blue-600 hover:text-blue-800 text-sm font-medium mt-2 flex items-center';
+                    editBtn.innerHTML = '<i class="lucide-edit-2 h-4 w-4 mr-1"></i> Edit Details';
+                    editBtn.onclick = openDiscountModal;
+                    
+                    detailsBox.querySelector('.flex-1').appendChild(editBtn);
+                }
+                
+                // Show the details box with animation
+                detailsBox.classList.remove('hidden');
+                void detailsBox.offsetWidth; // Force reflow
+                detailsBox.classList.add('opacity-100', 'translate-y-0');
+                detailsBox.classList.remove('opacity-0', '-translate-y-4');
+                
+                // Show success message
+                const statusEl = document.getElementById('discountStatus');
+                statusEl.textContent = 'Senior Citizen/PWD discount (20%) applied successfully!';
+                statusEl.classList.remove('hidden', 'text-red-600');
+                statusEl.classList.add('text-green-600');
+            } else {
+                // Animate out
+                detailsBox.classList.add('opacity-0', 'translate-y-4');
+                detailsBox.classList.remove('opacity-100', 'translate-y-0');
+                
+                // Hide after animation
+                setTimeout(() => {
+                    detailsBox.classList.add('hidden');
+                    // Remove edit button and photo preview
+                    const editBtn = document.getElementById('editDiscountBtn');
+                    const photoPreview = document.getElementById('displayPhotoPreview');
+                    if (editBtn) editBtn.remove();
+                    if (photoPreview) photoPreview.remove();
+                }, 300);
+                
+                // Hide success message with animation
+                const statusEl = document.getElementById('discountStatus');
+                statusEl.classList.add('opacity-0');
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                    statusEl.classList.remove('opacity-0');
+                }, 300);
+            }
+        }
+
+        function applyDiscount() {
+            const name = document.getElementById('seniorPwdName').value.trim();
+            const id = document.getElementById('seniorPwdId').value.trim();
+            const photo = document.getElementById('seniorPwdIdPhoto').files[0];
+            
+            // Basic validation
+            if (!name || !id || !photo) {
+                const statusEl = document.getElementById('discountStatus');
+                statusEl.textContent = 'Please complete all fields';
+                statusEl.classList.remove('hidden', 'text-green-600');
+                statusEl.classList.add('text-red-600');
+                return;
+            }
+
+            // Update form data
+            formData.seniorPwdName = name;
+            formData.seniorPwdId = id;
+            formData.seniorPwdIdPhoto = photo;
+            formData.appliedDiscount = 0.20;
+            formData.discountType = 'senior_pwd';
+            
+            // Close modal
+            const modal = document.getElementById('discountModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex', 'opacity-100');
+            
+            // Call updateDiscountDisplay to show the details and edit button
+            updateDiscountDisplay();
+            
+            // Enable next button
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            // Update price breakdown if on review step
+            if (currentStep === 2) {
+                updatePriceBreakdown();
+            }
+        }
+
+        function clearDiscountData() {
+            // Clear form data
+            formData.seniorPwdName = '';
+            formData.seniorPwdId = '';
+            formData.seniorPwdIdPhoto = null;
+            formData.appliedDiscount = 0;
+            formData.discountType = '';
+            
+            // Clear form fields
+            const nameInput = document.getElementById('seniorPwdName');
+            const idInput = document.getElementById('seniorPwdId');
+            const photoInput = document.getElementById('seniorPwdIdPhoto');
+            const fileLabel = document.getElementById('fileLabel');
+            
+            if (nameInput) nameInput.value = '';
+            if (idInput) idInput.value = '';
+            if (photoInput) photoInput.value = '';
+            if (fileLabel) fileLabel.textContent = 'Click to upload ID photo';
+            
+            // Animate out discount details and status
+            const detailsBox = document.getElementById('discountDetailsBox');
+            const statusEl = document.getElementById('discountStatus');
+            
+            detailsBox.classList.add('opacity-0', 'translate-y-4');
+            detailsBox.classList.remove('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                detailsBox.classList.add('hidden');
+                // Remove edit button
+                const editBtn = document.getElementById('editDiscountBtn');
+                if (editBtn) {
+                    editBtn.remove();
+                }
+            }, 300);
+            
+            statusEl.classList.add('opacity-0');
+            setTimeout(() => {
+                statusEl.classList.add('hidden');
+                statusEl.classList.remove('opacity-0');
+            }, 300);
+            
+            // Update price breakdown if on review step
+            if (currentStep === 2) {
+                updatePriceBreakdown();
+            }
+        }
+
+        // Add event listener for the Apply Discount button in the modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const applyBtn = document.getElementById('applyDiscountBtn');
+            if (applyBtn) {
+                applyBtn.addEventListener('click', applyDiscount);
+            }
+        });
     </script>
 
     <div id="qrModal" 
@@ -846,8 +1136,8 @@ if (isset($_SESSION['user'])) {
     <div id="discountModal" 
          class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0" 
          onclick="handleDiscountModalClick(event)">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
-             id="discountModalContent">
+        <div id="discountModalContent" 
+             class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4">
             <!-- Header -->
             <div class="flex justify-between items-start mb-6">
                 <div>
@@ -868,7 +1158,7 @@ if (isset($_SESSION['user'])) {
                            id="seniorPwdName" 
                            name="seniorPwdName" 
                            placeholder="Enter the name as shown on the ID"
-                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
                     <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Please enter the ID holder's name</p>
                 </div>
 
@@ -878,7 +1168,7 @@ if (isset($_SESSION['user'])) {
                            id="seniorPwdId" 
                            name="seniorPwdId" 
                            placeholder="Enter Senior Citizen/PWD ID Number"
-                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11 transition-colors duration-200">
+                           class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary h-11">
                     <p id="idError" class="text-red-500 text-xs mt-1 hidden">Please enter a valid ID number</p>
                 </div>
 
@@ -892,9 +1182,10 @@ if (isset($_SESSION['user'])) {
                                class="hidden"
                                onchange="updateFileLabel(this)">
                         <label for="seniorPwdIdPhoto" 
-                               class="flex items-center justify-center w-full h-11 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors duration-200 group">
-                            <i class="lucide-upload h-5 w-5 text-gray-400 group-hover:text-primary transition-colors duration-200 mr-2"></i>
-                            <span id="fileLabel" class="text-sm text-gray-500 group-hover:text-gray-700 transition-colors duration-200">Click to upload ID photo</span>
+                               id="fileLabel"
+                               class="flex items-center justify-center w-full h-11 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary transition-colors duration-200">
+                            <i class="lucide-upload h-5 w-5 text-gray-400 mr-2"></i>
+                            <span>Click to upload ID photo</span>
                         </label>
                     </div>
                     <p id="photoError" class="text-red-500 text-xs mt-1 hidden">Please upload a photo of the ID</p>
@@ -903,11 +1194,9 @@ if (isset($_SESSION['user'])) {
 
                 <button onclick="applyDiscount()" 
                         id="applyDiscountBtn"
-                        disabled
                         class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium 
                                hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed
-                               transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
-                               disabled:hover:scale-100">
+                               transform transition-all duration-200">
                     Apply Discount
                 </button>
             </div>
