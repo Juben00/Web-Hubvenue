@@ -115,6 +115,37 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             overflow: hidden;
         }
     </style>
+    <style>
+        .bookmark-btn {
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .bookmark-btn:active {
+            transform: scale(1.5) rotate(360deg);
+        }
+        
+        .bookmark-btn.bookmarked {
+            color: #ef4444; /* red-500 */
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5));
+            transform: scale(1.2);
+        }
+
+        .bookmark-btn:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.3); }
+            100% { transform: scale(1.2); }
+        }
+
+        .bookmark-btn.animate {
+            animation: heartbeat 0.8s ease-in-out;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen text-gray-900 flex flex-col">
@@ -247,7 +278,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             <button id="bookmarkBtn"
                                                 data-venueId="<?php echo htmlspecialchars($venue['id']); ?>"
                                                 data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']); ?>"
-                                                class="absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'text-red-500' : 'text-white'; ?>">
+                                                class="bookmark-btn absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'bookmarked' : 'text-white'; ?>">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
                                                     fill="currentColor">
                                                     <path fill-rule="evenodd"
