@@ -214,7 +214,7 @@
     function cancelBooking() {
         if (confirm('Are you sure you want to proceed to cancel this booking?')) {
             // Redirect to the cancellation page
-            window.location.href = '../web-hubvenue/cancel_booking/cancelation.php';
+            window.location.href = '../web-hubvenue/cancelation.php';
         }
     }
 

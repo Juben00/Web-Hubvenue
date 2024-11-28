@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cancel Your Booking</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="./images/black_ico.png">
+    <link rel="stylesheet" href="./output.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -39,19 +43,29 @@
     </style>
 </head>
 <body class="bg-gray-50">
+    <?php
+    session_start();
+
+    if (isset($_SESSION['user'])) {
+        if ($_SESSION['user']['user_type_id'] == 3) {
+            header('Location: admin/');
+        }
+    }
+    ?>
+
     <div class="top-bar">
         <?php
         // Check if the 'user' key exists in the session
         if (isset($_SESSION['user'])) {
-            include_once '../components/navbar.logged.in.php';
+            include_once './components/navbar.logged.in.php';
         } else {
-            include_once '../components/navbar.html';
+            include_once './components/navbar.html';
         }
 
-        include_once '../components/SignupForm.html';
-        include_once '../components/feedback.modal.html';
-        include_once '../components/confirm.feedback.modal.html';
-        include_once '../components/Menu.html';
+        include_once './components/SignupForm.html';
+        include_once './components/feedback.modal.html';
+        include_once './components/confirm.feedback.modal.html';
+        include_once './components/Menu.html';
         ?>
     </div>
 

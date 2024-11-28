@@ -18,11 +18,41 @@ $(document).ready(function () {
 
     //bookmark btn
     $(document).on('click', '#bookmarkBtn', function (e) {
-        e.preventDefault();
-        const venueId = $(this).data("venueid");
-        const userId = $(this).data("userid");
+        e.stopPropagation();
+        const btn = $(this);
+        const venueId = btn.data('venueid');
+        const userId = btn.data('userid');
 
-        bookmarkVenue(venueId, userId, this);
+        // Add animation class
+        btn.addClass('animate');
+        
+        // Toggle bookmarked class immediately for instant feedback
+        btn.toggleClass('bookmarked');
+        
+        // Remove animation class after animation completes
+        setTimeout(() => {
+            btn.removeClass('animate');
+        }, 800);
+        
+        $.ajax({
+            url: './api/bookmark.api.php',
+            type: 'POST',
+            data: {
+                venue_id: venueId,
+                user_id: userId
+            },
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (!data.success) {
+                    // Revert the classes if the operation failed
+                    btn.removeClass('bookmarked animate');
+                }
+            },
+            error: function() {
+                // Revert the classes on error
+                btn.removeClass('bookmarked animate');
+            }
+        });
     });
 
 

@@ -55,6 +55,37 @@
                     <i class="fas fa-comment-alt mr-2"></i>
                     Contact John
                 </button>
+
+                <!-- Add the Share Profile dropdown -->
+                <div class="relative mt-4">
+                    <button id="shareDropdownButton"
+                        class="w-full bg-white text-black border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-share-alt mr-2"></i>
+                        Share Profile
+                    </button>
+                    <div id="shareDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                        <a href="#" onclick="shareOnFacebook()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                            <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                            Facebook
+                        </a>
+                        <a href="#" onclick="shareOnTwitter()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                            <i class="fab fa-twitter text-blue-400 mr-2"></i>
+                            Twitter
+                        </a>
+                        <a href="#" onclick="shareOnLinkedIn()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                            <i class="fab fa-linkedin text-blue-700 mr-2"></i>
+                            LinkedIn
+                        </a>
+                        <a href="#" onclick="shareOnWhatsApp()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                            <i class="fab fa-whatsapp text-green-500 mr-2"></i>
+                            WhatsApp
+                        </a>
+                        <button onclick="copyProfileLink()" class="w-full flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                            <i class="fas fa-link text-gray-600 mr-2"></i>
+                            Copy Link
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Venue Listings -->
@@ -136,6 +167,51 @@
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script>
         // Your existing JavaScript with improved event handling...
+
+        // Toggle dropdown
+        document.getElementById('shareDropdownButton').addEventListener('click', function() {
+            document.getElementById('shareDropdown').classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('shareDropdown');
+            const button = document.getElementById('shareDropdownButton');
+            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Share functions
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent("Check out this venue owner's profile on HubVenue!");
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function shareOnLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        }
+
+        function shareOnWhatsApp() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent("Check out this venue owner's profile on HubVenue!");
+            window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+        }
+
+        function copyProfileLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Profile link copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy link: ', err);
+            });
+        }
     </script>
 </body>
 
