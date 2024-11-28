@@ -106,9 +106,98 @@ if (isset($_GET['discountCode'])) {
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
-            <div id="stepContent">
-                <!-- Step content will be dynamically inserted here -->
-            </div>
+            <form id="stepContent">
+                <div id="step1" class="step">
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
+
+                        <!-- Coupon Input Section - Removed border -->
+                        <div class="bg-white p-4 rounded-lg mb-4">
+                            <div class="flex gap-2">
+                                <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
+                                    value="${formData.discountCode}" ${formData.discountCode ? 'disabled' : '' }
+                                    class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10 ${formData.discountCode ? 'bg-gray-50' : ''}">
+                                <button onclick="${formData.discountCode ? 'removeCoupon()' : 'applyCoupon()'}"
+                                    class="px-4 py-2 ${formData.discountCode ? 'bg-gray-500' : 'bg-black'} text-white rounded-md text-sm font-medium hover:opacity-90">
+                                    ${formData.discountCode ? 'Remove' : 'Apply'}
+                                </button>
+
+                            </div>
+                            <p id="couponMessage"
+                                class="text-sm mt-2 ${formData.discountCode ? '' : 'hidden'} ${formData.discountCode ? 'text-green-600' : ''}">
+                                ${formData.discountCode ? `Coupon applied successfully! ${formData.couponDiscount *
+                                100}% discount` : ''}
+                            </p>
+                        </div>
+
+                        <div class="bg-gray-100 p-6 rounded-lg">
+                            <h4 class="font-semibold text-lg mb-4"><?php echo $venueName ?></h4>
+                            <div class="space-y-2">
+                                <p><strong>Date:</strong> ${formData.booking_start_date} to ${formData.booking_end_date}
+                                </p>
+                                <p><strong>Guests:</strong> ${formData.booking_participants}</p>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-gray-300">
+                                <h5 class="font-semibold mb-2">Price Breakdown</h5>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between">
+                                        <span>Total Price for Nights</span>
+                                        <span>₱ <?php echo $totalPriceForNights ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Entrance Fee</span>
+                                        <span>₱ <?php echo $totalEntranceFee ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Cleaning Fee</span>
+                                        <span>₱ <?php echo $cleaningFee ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Service Fee</span>
+                                        <span>₱ <?php echo $serviceFee ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Discount</span>
+                                        <span> ${formData.couponDiscount ? formData.couponDiscount * 100 : 0}%</span>
+                                    </div>
+
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
+                                    <span>Total</span>
+                                    <span>₱ ${FinalAmmount}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Venue Details -->
+                <div id="step2" class="step hidden">
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
+                                onclick="selectPaymentMethod('gcash')">
+                                <div class="flex items-center justify-between mb-4">
+                                    <img src="./images/gcash.png" alt="GCash" class="h-8">
+                                    <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4">
+                                </div>
+                                <p class="text-sm text-gray-600">Pay securely using your GCash account</p>
+                            </div>
+
+                            <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
+                                onclick="selectPaymentMethod('paymaya')">
+                                <div class="flex items-center justify-between mb-4">
+                                    <img src="./images/paymaya.png" alt="PayMaya" class="h-8">
+                                    <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
+                                </div>
+                                <p class="text-sm text-gray-600">Pay securely using your PayMaya account</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
 
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
@@ -131,6 +220,57 @@ if (isset($_GET['discountCode'])) {
             </div>
         </div>
     </main>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const steps = document.querySelectorAll('.step');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBarFill = document.getElementById('progressBar');
+            const reviewContent = document.getElementById('reviewContent');
+            let currentStep = 0;
+
+            // Show specific step based on current index
+            function showStep(stepIndex) {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('hidden', index !== stepIndex);
+                });
+                prevBtn.style.display = stepIndex === 0 ? 'none' : 'block';
+                nextBtn.textContent = stepIndex === steps.length - 1 ? 'Submit' : 'Next';
+                progressBarFill.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
+            }
+        }
+
+            // Handle the Next button click
+            nextBtn.addEventListener('click', function () {
+            if (validateStep()) {
+                if (currentStep < steps.length - 1) {
+                    if (currentStep === steps.length - 2) {
+                        updateReviewContent();
+                    }
+                    currentStep++;
+                    showStep(currentStep);
+                } else {
+                    document.getElementById('sform').click();
+                }
+            } else {
+                showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
+            }
+        });
+
+        // Handle the Previous button click
+        prevBtn.addEventListener('click', function () {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Initialize the first step
+        showStep(currentStep);
+        );
+    </script>
 
     <script>
 
@@ -179,120 +319,6 @@ if (isset($_GET['discountCode'])) {
             return (subtotal - (subtotal * discount));
         }
 
-        function updateStep() {
-            document.getElementById('currentStep').textContent = currentStep;
-            document.getElementById('stepTitle').textContent = steps[currentStep - 1].title;
-            document.getElementById('stepDescription').textContent = steps[currentStep - 1].description;
-            document.getElementById('progressBar').style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
-
-            document.getElementById('backBtn').disabled = currentStep === 1;
-            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? 'Confirm Reservation' : 'Next';
-
-            if (currentStep !== totalSteps) {
-                document.getElementById('nextBtn').innerHTML += '<i class="lucide-chevron-right h-5 w-5 ml-1"></i>';
-            }
-
-            renderStepContent();
-        }
-
-        function renderStepContent() {
-            const stepContent = document.getElementById('stepContent');
-            stepContent.innerHTML = '';
-
-            switch (currentStep) {
-                case 1:
-                    stepContent.innerHTML = `
-                        <div class="space-y-6">
-                            <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
-                            
-                            <!-- Coupon Input Section - Removed border -->
-                            <div class="bg-white p-4 rounded-lg mb-4">
-                                <div class="flex gap-2">
-                                    <input type="text" 
-                                           id="couponCode" 
-                                           name="couponCode" 
-                                           placeholder="Enter coupon code"
-                                           value="${formData.discountCode}"
-                                           ${formData.discountCode ? 'disabled' : ''}
-                                           class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10 ${formData.discountCode ? 'bg-gray-50' : ''}">
-                                    <button onclick="${formData.discountCode ? 'removeCoupon()' : 'applyCoupon()'}" 
-                                            class="px-4 py-2 ${formData.discountCode ? 'bg-gray-500' : 'bg-black'} text-white rounded-md text-sm font-medium hover:opacity-90">
-                                        ${formData.discountCode ? 'Remove' : 'Apply'}
-                                    </button>
-                                    
-                                </div>
-                                <p id="couponMessage" class="text-sm mt-2 ${formData.discountCode ? '' : 'hidden'} ${formData.discountCode ? 'text-green-600' : ''}">
-                                    ${formData.discountCode ? `Coupon applied successfully! ${formData.couponDiscount * 100}% discount` : ''}
-                                </p>
-                            </div>
-
-                            <div class="bg-gray-100 p-6 rounded-lg">
-                                <h4 class="font-semibold text-lg mb-4"><?php echo $venueName ?></h4>
-                                <div class="space-y-2">
-                                    <p><strong>Date:</strong> ${formData.booking_start_date} to ${formData.booking_end_date}</p>
-                                    <p><strong>Guests:</strong> ${formData.booking_participants}</p>
-                                </div>
-                                <div class="mt-6 pt-4 border-t border-gray-300">
-                                    <h5 class="font-semibold mb-2">Price Breakdown</h5>
-                                    <div class="space-y-1">
-                                        <div class="flex justify-between">
-                                            <span>Total Price for Nights</span>
-                                            <span>₱ <?php echo $totalPriceForNights ?></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Entrance Fee</span>
-                                            <span>₱ <?php echo $totalEntranceFee ?></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Cleaning Fee</span>
-                                            <span>₱ <?php echo $cleaningFee ?></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Service Fee</span>
-                                            <span>₱ <?php echo $serviceFee ?></span>
-                                        </div>
-                                        <div class="flex justify-between">
-                                            <span>Discount</span>
-                                            <span> ${formData.couponDiscount ? formData.couponDiscount * 100 : 0}%</span>
-                                        </div>
-
-                                    </div>
-                                    <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
-                                        <span>Total</span>
-                                        <span>₱ ${FinalAmmount}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    break;
-                case 2:
-                    stepContent.innerHTML = `
-                        <div class="space-y-6">
-                            <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
-
-                            <div class="grid grid-cols-2 gap-6">
-                                <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('gcash')">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <img src="./images/gcash.png" alt="GCash" class="h-8">
-                                        <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4">
-                                    </div>
-                                    <p class="text-sm text-gray-600">Pay securely using your GCash account</p>
-                                </div>
-                                
-                                <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors" onclick="selectPaymentMethod('paymaya')">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <img src="./images/paymaya.png" alt="PayMaya" class="h-8">
-                                        <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
-                                    </div>
-                                    <p class="text-sm text-gray-600">Pay securely using your PayMaya account</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    break;
-            }
-        }
 
         document.getElementById('backBtn').addEventListener('click', () => {
             if (currentStep > 1) {
