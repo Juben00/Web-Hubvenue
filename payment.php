@@ -46,13 +46,20 @@ $cleaningFee = htmlspecialchars($cleaningFee);
 $serviceFee = htmlspecialchars($serviceFee);
 $totalPrice = htmlspecialchars($totalPrice);
 
+
+
 $discounts = $venueObj->getAllDiscounts();
 
 $discountApplied = false;
-if (isset($_GET['discountCode'])) {
-    $discountCode = htmlspecialchars($_GET['discountCode']);
+$discountCode = isset($_GET['discountCode']) ? htmlspecialchars($_GET['discountCode']) : 'none';
+if ($discountCode !== 'none') {
     $totalPrice = applyDiscount($discounts, $discountCode, $totalPrice);
     $discountApplied = true;
+}
+
+// Calculate grand total if no discount is applied
+if (!$discountApplied) {
+    $totalPrice = $totalPriceForNights;
 }
 
 function applyDiscount($discounts, $discountCode, $totalPrice)
@@ -174,7 +181,8 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                                     <span>Total</span>
                                     <span id="totalPrice">₱ <?php echo $totalPrice ?></span>
 
-                                    <input type="hidden" id="totalPriceF" name="grandTotal">
+                                    <input type="number" id="totalPriceF" value="<?php echo $totalPrice ?>"
+                                        name="grandTotal">
                                 </div>
                             </div>
                         </div>
@@ -347,7 +355,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                         document.getElementById('couponsub').value = couponCode;
                     } else {
                         showModal("Invalid Coupon Code", function () {
-                            document.getElementById('couponCode').value = '';
+                            document.getElementById('couponCode').value = 'none';
                         }, "black_ico.png");
                     }
                 });
