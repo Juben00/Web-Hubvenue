@@ -206,7 +206,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                             </h2>
                             <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
                                 From intimate gatherings to grand celebrations, discover spaces that match your vision.
-                                Browse through our carefully curated selection of venues to find the one that speaks to you.
+                                Browse through our carefully curated selection of venues to find the one that speaks to
+                                you.
                             </p>
                         </div>
                     </div>
@@ -215,7 +216,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                     <div class="bg-white p-50 pt-10 relative z-10">
                         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
                             <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full h-full" id="venueList">
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full h-full"
+                                id="venueList">
                                 <!-- Venue cards will be dynamically inserted here -->
                                 <?php
                                 if (empty($venues)) {
@@ -303,50 +305,57 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                             </div>
                         </section>
-                        <section class="max-w-7xl mx-auto mt-40 px-4 sm:px-6 lg:px-8 mt-12">
+                        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
                             <div class="flex flex-col">
                                 <div class="text-center mb-8">
                                     <h2 class="text-3xl font-bold mb-2">Our Services</h2>
-                                    <p class="text-gray-600 max-w-2xl mx-auto text-sm">Discover how HubVenue can help you find the perfect space or monetize your venue with our comprehensive services.</p>
+                                    <p class="text-gray-600 max-w-2xl mx-auto text-sm">Discover how HubVenue can help
+                                        you find the perfect space or monetize your venue with our comprehensive
+                                        services.</p>
                                 </div>
-                                
+
                                 <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
                                     <!-- Space Rentals Card -->
-                                    <div class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                    <div
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
-                                            <img src="./images/serviceimages/pexels-pixabay-267569.jpg" 
-                                                 alt="Rent Space"
-                                                 class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
+                                            <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
+                                                class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
                                         </div>
                                         <div class="space-y-2">
                                             <h3 class="text-xl font-semibold text-gray-800">Space Rentals</h3>
-                                            <p class="text-sm text-gray-600">Discover unique spaces for any event, from intimate gatherings to large-scale functions.</p>
+                                            <p class="text-sm text-gray-600">Discover unique spaces for any event, from
+                                                intimate gatherings to large-scale functions.</p>
                                         </div>
                                     </div>
 
                                     <!-- Post Your Space Card -->
-                                    <div class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                    <div
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
-                                            <img src="./images/serviceimages/pexels-rdne-7414284.jpg" 
-                                                 alt="Post Listings"
-                                                 class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
+                                            <img src="./images/serviceimages/pexels-rdne-7414284.jpg"
+                                                alt="Post Listings"
+                                                class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
                                         </div>
                                         <div class="space-y-2">
                                             <h3 class="text-xl font-semibold text-gray-800">Post Your Space</h3>
-                                            <p class="text-sm text-gray-600">Earn money by listing your home or commercial space for event rentals.</p>
+                                            <p class="text-sm text-gray-600">Earn money by listing your home or
+                                                commercial space for event rentals.</p>
                                         </div>
                                     </div>
 
                                     <!-- Book Event Space Card -->
-                                    <div class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                    <div
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
-                                            <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg" 
-                                                 alt="Book Event"
-                                                 class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
+                                            <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
+                                                alt="Book Event"
+                                                class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
                                         </div>
                                         <div class="space-y-2">
                                             <h3 class="text-xl font-semibold text-gray-800">Book an Event Space</h3>
-                                            <p class="text-sm text-gray-600">Easily browse and book spaces for weddings, meetings, parties, and more.</p>
+                                            <p class="text-sm text-gray-600">Easily browse and book spaces for weddings,
+                                                meetings, parties, and more.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -367,31 +376,37 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             time-consuming
                                             process of
                                             event
-                                            planning. The journey began when our founders, faced with the daunting task of
+                                            planning. The journey began when our founders, faced with the daunting task
+                                            of
                                             organizing
                                             multiple
                                             events, realized how fragmented the venue and catering service industry was.
                                             From
                                             endless phone
                                             calls to
-                                            lengthy negotiations, the process was anything but easy. Inspired by the vision
+                                            lengthy negotiations, the process was anything but easy. Inspired by the
+                                            vision
                                             of a
                                             one-stop
                                             platform,
-                                            Hubvenue was developed to centralize and simplify these interactions, allowing
+                                            Hubvenue was developed to centralize and simplify these interactions,
+                                            allowing
                                             users
                                             to focus on
                                             creating memorable experiences instead of logistics.
                                         </p>
-                                        <p>Throughout our journey, we faced challenges, such as integrating diverse services
+                                        <p>Throughout our journey, we faced challenges, such as integrating diverse
+                                            services
                                             and
                                             building
                                             trust
-                                            within the community. However, these obstacles only strengthened our commitment
+                                            within the community. However, these obstacles only strengthened our
+                                            commitment
                                             to
                                             innovation.
                                             Hubvenue
-                                            continues to grow, expanding our network of partners and refining our platform
+                                            continues to grow, expanding our network of partners and refining our
+                                            platform
                                             based
                                             on user
                                             feedback,
@@ -404,7 +419,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
                                             <h3 class="text-xl font-semibold  text-red-500 italic">Our Mission</h3>
                                             <p class="text-center">
-                                                To simplify finding and booking available venues, offering users an easy and
+                                                To simplify finding and booking available venues, offering users an easy
+                                                and
                                                 efficient platform
                                                 that connects them with ideal spaces for their events, ensuring seamless
                                                 experience from
@@ -416,7 +432,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
                                             <h3 class="text-xl font-semibold  text-red-500 italic">Our Vision</h3>
                                             <p class="text-center">
-                                                To be the go to platform for venue reservations, helping people connect with
+                                                To be the go to platform for venue reservations, helping people connect
+                                                with
                                                 the
                                                 perfect spaces
                                                 for any event.
@@ -450,10 +467,12 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                                     2. Can I list my own space on HubVenue?
                                                 </button>
                                                 <div class="faq-content hidden">
-                                                    <p class="text-sm ">Yes, you can list your space on HubVenue. Create an
+                                                    <p class="text-sm ">Yes, you can list your space on HubVenue. Create
+                                                        an
                                                         account,
                                                         provide details about your
-                                                        space, upload photos, and set your availability and pricing. Once
+                                                        space, upload photos, and set your availability and pricing.
+                                                        Once
                                                         your
                                                         listing is
                                                         approved, it will be visible to potential renters.</p>
@@ -468,7 +487,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                                         residential
                                                         homes,
                                                         commercial venues, event
-                                                        halls, and more. The platform is designed to accommodate all types
+                                                        halls, and more. The platform is designed to accommodate all
+                                                        types
                                                         of
                                                         spaces that
                                                         can be
@@ -480,15 +500,18 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                                     4. Are there any fees associated with booking or listing a space?
                                                 </button>
                                                 <div class="faq-content hidden">
-                                                    <p class="text-sm ">Yes, there may be fees associated with both booking
+                                                    <p class="text-sm ">Yes, there may be fees associated with both
+                                                        booking
                                                         and
                                                         listing
                                                         spaces. Booking fees are
-                                                        typically a percentage of the total rental cost, while listing fees
+                                                        typically a percentage of the total rental cost, while listing
+                                                        fees
                                                         may
                                                         vary based
                                                         on
-                                                        the type of space and duration of the listing. Detailed information
+                                                        the type of space and duration of the listing. Detailed
+                                                        information
                                                         about fees will
                                                         be
                                                         provided during the booking or listing process.</p>
@@ -499,10 +522,12 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                                     5. How can I contact customer support?
                                                 </button>
                                                 <div class="faq-content hidden">
-                                                    <p class="text-sm ">If you need assistance, you can contact our customer
+                                                    <p class="text-sm ">If you need assistance, you can contact our
+                                                        customer
                                                         support
                                                         team via the contact form on
-                                                        our website, or by email at info@hubvenue.com. Our team is available
+                                                        our website, or by email at info@hubvenue.com. Our team is
+                                                        available
                                                         to
                                                         help you
                                                         with

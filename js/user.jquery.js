@@ -58,6 +58,13 @@ $(document).ready(function () {
         signup(formElement);
     });
 
+    // payment form
+    $('#paymentForm').on("submit", function (e) {
+        e.preventDefault();
+        const formElement = $(this);
+        book(formElement);
+    });
+
     //logout button
     $('#logoutBtn').on('click', function (e) {
         e.preventDefault();
@@ -394,7 +401,27 @@ $(document).ready(function () {
                 console.error(`Error: ${error}`); // Log AJAX error
             },
         });
-}
+    }
+
+    function book(formElement){
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/AddBooking.api.php",
+            data: form,
+            processData: false,  
+            contentType: false, 
+            success: function (response) {
+                if (response.status === "success") {
+                    showModal('response.message', function () {
+                        formElement[0].reset();
+                    }, "black_ico.png");
+                } else {
+                    showModal(response.message, undefined, "black_ico.png");
+                }
+            },
+            });
+    }
 
     
 
