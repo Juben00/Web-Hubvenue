@@ -412,15 +412,17 @@ $(document).ready(function () {
             processData: false,  
             contentType: false, 
             success: function (response) {
+                response = JSON.parse(response);
                 if (response.status === "success") {
-                    showModal('response.message', function () {
+                    showModal(response.message, function () {
                         formElement[0].reset();
+                        window.location.href = "./index.php";
                     }, "black_ico.png");
                 } else {
                     showModal(response.message, undefined, "black_ico.png");
                 }
             },
-            });
+        });
     }
 
     
