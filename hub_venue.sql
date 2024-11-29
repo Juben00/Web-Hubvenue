@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2024 at 06:58 PM
+-- Generation Time: Nov 29, 2024 at 10:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,11 +34,12 @@ CREATE TABLE `bookings` (
   `booking_duration` int(11) DEFAULT NULL,
   `booking_status_id` int(11) DEFAULT NULL,
   `booking_participants` int(11) DEFAULT NULL,
+  `booking_original_price` decimal(10,2) DEFAULT NULL,
   `booking_grand_total` decimal(10,2) DEFAULT NULL,
   `booking_guest_id` int(11) DEFAULT NULL,
   `booking_venue_id` int(11) DEFAULT NULL,
   `booking_discount` varchar(255) DEFAULT NULL,
-  `booking_payment_method` int(11) DEFAULT NULL,
+  `booking_payment_method` varchar(50) DEFAULT NULL,
   `booking_payment_reference` varchar(255) DEFAULT NULL,
   `booking_payment_status_id` int(11) DEFAULT NULL,
   `booking_cancellation_reason` text DEFAULT NULL,
@@ -46,6 +47,19 @@ CREATE TABLE `bookings` (
   `booking_created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `booking_updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`id`, `booking_start_date`, `booking_end_date`, `booking_duration`, `booking_status_id`, `booking_participants`, `booking_original_price`, `booking_grand_total`, `booking_guest_id`, `booking_venue_id`, `booking_discount`, `booking_payment_method`, `booking_payment_reference`, `booking_payment_status_id`, `booking_cancellation_reason`, `booking_service_fee`, `booking_created_at`, `booking_updated_at`) VALUES
+(15, '2024-11-30', '2024-12-05', 5, 1, 100, 26250.00, 21950.00, 2, 52, 'SAVE20', 'G-cash', 'sa6dsa4f6safsa', 1, '', 788, '2024-11-29 08:31:15', '2024-11-29 08:31:15'),
+(16, '2024-11-30', '2024-12-05', 5, 1, 100, 26250.00, 21950.00, 2, 52, 'SAVE20', 'G-cash', 'asdsa654sa5fas', 1, '', 788, '2024-11-29 08:34:51', '2024-11-29 08:34:51'),
+(17, '2024-11-30', '2024-12-05', 5, 1, 100, 26250.00, 19206.25, 2, 52, 'SAVE30', 'G-cash', 'a154as6fasfasf', 1, '', 788, '2024-11-29 08:37:53', '2024-11-29 08:37:53'),
+(18, '2024-11-30', '2024-12-05', 5, 1, 100, 26250.00, 19206.25, 2, 52, 'SAVE30', 'G-cash', 'w1safas412', 1, '', 788, '2024-11-29 08:39:32', '2024-11-29 08:39:32'),
+(23, '2024-11-30', '2024-12-24', 24, 1, 100, 126000.00, 126000.00, 2, 52, 'none', 'PayMaya', 'sadas5fsa6f56', 1, '', 788, '2024-11-29 09:03:06', '2024-11-29 09:03:06'),
+(24, '2024-12-04', '2024-12-20', 16, 1, 100, 84000.00, 58800.00, 2, 52, 'SAVE30', 'G-cash', '484654', 1, '', 788, '2024-11-29 09:04:44', '2024-11-29 09:04:44'),
+(25, '2024-11-30', '2024-12-24', 24, 1, 100, 126000.00, 88200.00, 2, 52, 'SAVE30', 'G-cash', 'aasdasf5as6fasf', 1, '', 788, '2024-11-29 09:31:57', '2024-11-29 09:31:57');
 
 -- --------------------------------------------------------
 
@@ -71,19 +85,6 @@ INSERT INTO `bookings_status_sub` (`id`, `booking_status_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `booking_discount`
---
-
-CREATE TABLE `booking_discount` (
-  `id` int(11) NOT NULL,
-  `booking_discount_name` varchar(50) DEFAULT NULL,
-  `booking_discount_card` text DEFAULT NULL,
-  `booking_discount_value` decimal(10,2) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `bookmarks`
 --
 
@@ -100,8 +101,7 @@ CREATE TABLE `bookmarks` (
 --
 
 INSERT INTO `bookmarks` (`id`, `userId`, `venueId`, `created_at`, `updated_at`) VALUES
-(85, 5, 52, '2024-11-25 01:14:06', '2024-11-25 01:14:06'),
-(101, 2, 52, '2024-11-28 15:50:20', '2024-11-28 15:50:20');
+(85, 5, 52, '2024-11-25 01:14:06', '2024-11-25 01:14:06');
 
 -- --------------------------------------------------------
 
@@ -125,7 +125,8 @@ CREATE TABLE `discounts` (
 INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `expiration_date`) VALUES
 (1, NULL, 'SAVE10', 'percentage', 10.00, '2024-12-25 20:40:37'),
 (2, NULL, 'SAVE20', 'percentage', 20.00, '2024-12-25 20:40:37'),
-(3, NULL, 'SAVE30', 'percentage', 30.00, '2024-12-25 20:40:37');
+(3, NULL, 'SAVE30', 'percentage', 30.00, '2024-12-25 20:40:37'),
+(4, NULL, 'none', 'percentage', 0.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -451,20 +452,14 @@ ALTER TABLE `bookings`
   ADD KEY `booking_guest_id` (`booking_guest_id`),
   ADD KEY `booking_venue_id` (`booking_venue_id`),
   ADD KEY `booking_status_id` (`booking_status_id`),
-  ADD KEY `booking_payment_method` (`booking_payment_method`),
   ADD KEY `booking_payment_status_id` (`booking_payment_status_id`),
+  ADD KEY `booking_payment_method` (`booking_payment_method`),
   ADD KEY `booking_discount` (`booking_discount`);
 
 --
 -- Indexes for table `bookings_status_sub`
 --
 ALTER TABLE `bookings_status_sub`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `booking_discount`
---
-ALTER TABLE `booking_discount`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -507,7 +502,8 @@ ALTER TABLE `host_id_images`
 -- Indexes for table `payment_method_sub`
 --
 ALTER TABLE `payment_method_sub`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_payment_method_name` (`payment_method_name`);
 
 --
 -- Indexes for table `payment_status_sub`
@@ -587,19 +583,19 @@ ALTER TABLE `venue_tag_sub`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `bookmarks`
 --
 ALTER TABLE `bookmarks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
 
 --
 -- AUTO_INCREMENT for table `discounts`
 --
 ALTER TABLE `discounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `host_application`
@@ -690,15 +686,9 @@ ALTER TABLE `bookings`
   ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`booking_guest_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`booking_venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `bookings_ibfk_4` FOREIGN KEY (`booking_status_id`) REFERENCES `bookings_status_sub` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `bookings_ibfk_5` FOREIGN KEY (`booking_payment_method`) REFERENCES `payment_method_sub` (`id`),
   ADD CONSTRAINT `bookings_ibfk_6` FOREIGN KEY (`booking_payment_status_id`) REFERENCES `payment_status_sub` (`id`),
-  ADD CONSTRAINT `bookings_ibfk_7` FOREIGN KEY (`booking_discount`) REFERENCES `discounts` (`discount_code`);
-
---
--- Constraints for table `booking_discount`
---
-ALTER TABLE `booking_discount`
-  ADD CONSTRAINT `fk_id` FOREIGN KEY (`id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `bookings_ibfk_8` FOREIGN KEY (`booking_payment_method`) REFERENCES `payment_method_sub` (`payment_method_name`),
+  ADD CONSTRAINT `bookings_ibfk_9` FOREIGN KEY (`booking_discount`) REFERENCES `discounts` (`discount_code`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `bookmarks`

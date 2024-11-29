@@ -1,3 +1,12 @@
+<?php
+require_once '../classes/venue.class.php';
+require_once '../classes/account.class.php';
+$venueObj = new Venue();
+$accountObj = new Account();
+
+$Reservations = $venueObj->getBookings();
+
+?>
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6">Reservation Management</h1>
 
@@ -22,6 +31,12 @@
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="py-2 px-4 text-left">Date</th>
+                        <th class="py-2 px-4 text-left">Client</th>
+                        <th class="py-2 px-4 text-left">Age</th>
+                        <th class="py-2 px-4 text-left">Sex</th>
+                        <th class="py-2 px-4 text-left">Contact</th>
+                        <th class="py-2 px-4 text-left">Email</th>
+
                         <th class="py-2 px-4 text-left">Venue</th>
                         <th class="py-2 px-4 text-left">Space Name</th>
                         <th class="py-2 px-4 text-left">Customer</th>
