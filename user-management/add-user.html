@@ -1,0 +1,111 @@
+<div id="createUserModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 items-center justify-center hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                <h1 class="text-xl font-semibold mb-4">Create New User</h1>
+                <form id="CreateAccount" class="space-y-2 ">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" id="firstname" name="firstname"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                                placeholder="John" />
+                        </div>
+                        <div>
+                            <label for="lastname" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" id="lastname" name="lastname"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                                placeholder="Doe" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="mi" class="block text-sm font-medium text-gray-700">M.I.</label>
+                            <input type="text" id="middlename" name="middlename"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                                placeholder="M.I." />
+                        </div>
+                        <div>
+                            <label for="sex" class="block text-sm font-medium text-gray-700">Sex</label>
+                            <select id="sex" name="sex"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0">
+                                <option value="" disabled selected>Select sex</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthday</label>
+                            <input type="date" id="birthdate" name="birthdate"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0" />
+                        </div>
+                        <div>
+                            <label for="contact" class="block text-sm font-medium text-gray-700">Contact Number</label>
+                            <input type="tel" id="contact" name="contact"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                                placeholder="09*********" />
+                        </div>
+                    </div>
+                    <div>
+                        <label for="userRole"
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Role</label>
+                        <select id="userRole" name="userRole" required
+                            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0">
+                            <option value="" disabled selected>Select a role</option>
+                            <option value="1">Host</option>
+                            <option value="2">Guest</option>
+                            <option value="3">Admin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="address"
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Address</label>
+                        <span class="flex items-center space-x-2">
+                            <input id="signupaddress" name="signupaddress"
+                                placeholder="Click the button to set a location" required type="text"
+                                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                                readonly />
+                            <button id="maps-button" class=" border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
+                                <svg height="24px" width="24px" version="1.1" id="Layer_1"
+                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon>
+                                        <polygon style="fill:#d3d5de;"
+                                            points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
+                                        </polygon>
+                                        <polygon
+                                            points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
+                                        </polygon>
+                                        <path style="fill:#e73023;"
+                                            d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
+                                        </path>
+                                        <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
+                                    </g>
+                                </svg>
+                            </button>
+                        </span>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" name="email"
+                            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                            placeholder="john.doe@email.com" />
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="password" name="password"
+                            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                            placeholder="**********" />
+                    </div>
+                    <button type="submit"
+                        class="disabled:bg-gray-300 disabled:text-neutral-400 w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-sm font-medium text-white enabled:bg-gradient-to-r from-blue-500 to-purple-600 enabled:hover:from-blue-600 enabled:hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="openstreetmapplaceholder"></div>

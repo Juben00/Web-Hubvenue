@@ -1,3 +1,4 @@
 # Web-Hubvenue
-Web Development Activity
+
+Software Engineering Project
 Hello, Hui are never ever ever getting back together! Hui

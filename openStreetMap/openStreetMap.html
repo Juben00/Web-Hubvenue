@@ -1,0 +1,68 @@
+<style>
+  #map {
+    height: 500px;
+    width: 100%;
+  }
+</style>
+
+<div id="openStreetMapDiv" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 ">
+
+    <div class="bg-slate-50 rounded-lg shadow-lg p-8 max-w-3xl w-full">
+        
+        <h3 class="mb-4 font-semibold">Click on the map to pin the location</h3>
+        <div id="map"></div>
+        
+        <span class=" flex items-center gap-2 mt-4">
+            <input type="text" id="OpenStreetaddress" placeholder="Selected Address" readonly class="flex-1 border p-2 rounded-md" />
+            <button id="openStreetMapSubmit" class="border bg-red-500 p-2 px-4 text-white rounded-md font-semibold hover:bg-red-600">OK</button>
+        </span>
+    </div>
+    
+
+<script>
+
+   map = L.map('map').setView([6.9214, 122.0790], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // let marker;
+
+    map.on('click', function (e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+
+        fetch(`../proxy.php?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                const address = data.display_name || "No address found";
+                document.getElementById('OpenStreetaddress').value = address;
+                //admin side
+                if(document.getElementById('venue-location')){
+                    document.getElementById('venue-location').value = address;
+                }
+                //user side
+                if(document.getElementById('address')){
+                    document.getElementById('address').value = address;
+                }
+
+                if(document.getElementById('signupaddress')){
+                    document.getElementById('signupaddress').value = address;
+                }
+
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                document.getElementById('OpenStreetaddress').value = "Error retrieving address";
+            });
+    });
+</script>
+
+</div>
+
