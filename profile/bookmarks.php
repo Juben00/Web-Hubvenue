@@ -54,9 +54,9 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                 <?php endif; ?>
                             </div>
                             <!-- Button (can be used for manual control) -->
-                            <button id="bookmarkBtn" data-venueId="<?php echo htmlspecialchars($venue['id']) ?>"
-                                data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']) ?>"
-                                class="absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'text-red-500' : 'text-white'; ?>">
+                            <button id="bookmarkBtn" data-venueId="<?php echo htmlspecialchars($venue['id']); ?>"
+                                data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']); ?>"
+                                class="bookmark-btn absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'bookmarked' : 'text-white'; ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"

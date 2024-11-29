@@ -10,11 +10,15 @@ $accountObj = new Account();
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
+        exit;
     }
-} else if (!isset($_GET['venueId'])) {
-    header('Location: index.php');
+    if (!isset($_GET['venueId'])) {
+        header('Location: index.php');
+        exit;
+    }
 } else {
     header('Location: index.php');
+    exit;
 }
 
 $venueObj = new Venue();
@@ -44,6 +48,13 @@ $totalPrice = htmlspecialchars($totalPrice);
 
 $discounts = $venueObj->getAllDiscounts();
 
+$discountApplied = false;
+if (isset($_GET['discountCode'])) {
+    $discountCode = htmlspecialchars($_GET['discountCode']);
+    $totalPrice = applyDiscount($discounts, $discountCode, $totalPrice);
+    $discountApplied = true;
+}
+
 function applyDiscount($discounts, $discountCode, $totalPrice)
 {
     foreach ($discounts as $discount) {
@@ -56,11 +67,6 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
         }
     }
     return $totalPrice;
-}
-
-if (isset($_GET['discountCode'])) {
-    $discountCode = htmlspecialchars($_GET['discountCode']);
-    $totalPrice = applyDiscount($discounts, $discountCode, $totalPrice);
 }
 ?>
 <!DOCTYPE html>
@@ -78,12 +84,10 @@ if (isset($_GET['discountCode'])) {
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 
-
 <body class="min-h-screen flex flex-col bg-white">
 
     <!-- Header -->
     <?php
-    // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
         include_once './components/navbar.logged.in.php';
     } else {
@@ -94,27 +98,52 @@ if (isset($_GET['discountCode'])) {
     include_once './components/feedback.modal.html';
     include_once './components/confirm.feedback.modal.html';
     include_once './components/Menu.html';
-
     ?>
 
     <main class="pt-20 flex-grow flex flex-col justify-between p-6 pb-24">
         <div class="max-w-3xl mx-auto w-full">
             <div class="mb-8">
-                <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span id="totalSteps">3</span></h2>
-                <h1 id="stepTitle" class="text-3xl font-bold mb-4">Review Details</h1>
-                <p id="stepDescription" class="text-gray-600 mb-8">Review and confirm your reservation details.</p>
+                <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span
+                        id="totalSteps">2</span></h2>
+                <h1 id="stepTitle" class="text-3xl font-bold mb-4">Venue Details</h1>
+                <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
             <form id="paymentForm">
-                <!-- Step 1: Review Details -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
+                        <input type="date" name="startDate" value="<?php echo $checkIn ?>" class="hidden">
+                        <input type="date" name="endDate" value="<?php echo $checkOut ?>" class="hidden">
+                        <input type="number" name="participants" value="<?php echo $numberOfGuest ?>" class="hidden">
+                        <input type="number" name="originalPrice" value="<?php echo $totalPriceForNights ?>"
+                            class="hidden">
+                        <input type="number" name="guestId" value="<?php echo $_SESSION['user']['id'] ?>"
+                            class="hidden">
+                        <input type="number" name="venueId" value="<?php echo $venueId ?>" class="hidden">
+                        <input type="number" name="serviceFee" value="<?php echo $serviceFee ?>" class="hidden">
+                        <input type="text" class="hidden" name="couponCode" id="couponsub">
+
+                        <!-- Coupon Input Section -->
+                        <div class="bg-white p-4 rounded-lg mb-4">
+                            <div class="flex gap-2">
+                                <input type="text" id="couponCode" placeholder="Enter coupon code" value=""
+                                    class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10"
+                                    <?php echo $discountApplied ? 'disabled' : ''; ?>>
+                                <?php if (!$discountApplied): ?>
+                                    <button type="button" id="applyCouponBtn" onclick="applyCoupon()"
+                                        class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">Apply</button>
+                                <?php endif; ?>
+                            </div>
+                            <p id="couponMessage"
+                                class="text-sm mt-2 <?php echo $discountApplied ? '' : 'hidden'; ?> text-green-600">
+                                Coupon applied successfully!</p>
+                        </div>
+
                         <div class="bg-gray-100 p-6 rounded-lg">
                             <h4 class="font-semibold text-lg mb-4"><?php echo $venueName ?></h4>
                             <div class="space-y-2">
-                                <p><strong>Check-in:</strong> <?php echo $checkIn ?></p>
-                                <p><strong>Check-out:</strong> <?php echo $checkOut ?></p>
+                                <p><strong>Date:</strong> <?php echo $checkIn ?> to <?php echo $checkOut ?></p>
                                 <p><strong>Guests:</strong> <?php echo $numberOfGuest ?></p>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-300">
@@ -136,47 +165,27 @@ if (isset($_GET['discountCode'])) {
                                         <span>Service Fee</span>
                                         <span>₱ <?php echo $serviceFee ?></span>
                                     </div>
+                                    <div class="flex justify-between">
+                                        <span>Discount</span>
+                                        <span id="discountValue">0%</span>
+                                    </div>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Total</span>
-                                    <span>₱ <?php echo $totalPrice ?></span>
+                                    <span id="totalPrice">₱ <?php echo $totalPrice ?></span>
+
+                                    <input type="hidden" id="totalPriceF" name="grandTotal">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 2: Apply Discount -->
+                <!-- Step 2: Venue Details -->
                 <div id="step2" class="step hidden">
                     <div class="space-y-6">
-                        <h3 class="text-2xl font-semibold mb-4">Apply Discount</h3>
-                        <div class="bg-white p-6 rounded-lg border border-gray-200">
-                            <div class="mb-4">
-                                <label for="couponCode" class="block text-sm font-medium text-gray-700 mb-2">Have a coupon code?</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
-                                        class="flex-1 rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary">
-                                    <button type="button" onclick="applyCoupon()" 
-                                        class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">
-                                        Apply
-                                    </button>
-                                </div>
-                                <p id="couponMessage" class="text-sm mt-2 hidden"></p>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-gray-200">
-                                <div class="flex justify-between font-semibold">
-                                    <span>Final Total</span>
-                                    <span>₱ <span id="finalTotal"><?php echo $totalPrice ?></span></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: Payment Method -->
-                <div id="step3" class="step hidden">
-                    <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+
                         <div class="grid grid-cols-2 gap-6">
                             <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
                                 onclick="selectPaymentMethod('gcash')">
@@ -195,371 +204,34 @@ if (isset($_GET['discountCode'])) {
                                 </div>
                                 <p class="text-sm text-gray-600">Pay securely using your PayMaya account</p>
                             </div>
+                            <input type="hidden" id="finalRef" name="finalRef">
                         </div>
                     </div>
                 </div>
+                <input type="submit" id="paymentSubmit" value="" class="hidden">
             </form>
         </div>
 
-        <!-- Bottom Navigation -->
         <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
             <div class="flex justify-between items-center max-w-3xl mx-auto">
-                <button id="backBtn" class="text-gray-900 font-medium" disabled>Back</button>
-                <div class="flex-1 mx-8">
+                <button id="backBtn" class="flex items-center text-sm font-medium text-gray-900" disabled>
+                    <i class="lucide-chevron-left h-5 w-5 mr-1"></i>
+                    Back
+                </button>
+                <div class="flex-grow mx-8">
                     <div class="bg-gray-200 h-1 rounded-full">
-                        <div id="progressBar" class="bg-black h-1 rounded-full transition-all duration-300 ease-in-out" 
-                            style="width: 33.33%"></div>
+                        <div id="progressBar" class="bg-black h-1 rounded-full transition-all duration-300 ease-in-out"
+                            style="width: 0%"></div>
                     </div>
                 </div>
-                <button id="nextBtn" class="bg-black text-white px-6 py-2 rounded-md">Next</button>
+                <button id="nextBtn"
+                    class="flex items-center px-6 py-2 bg-black text-white rounded-md text-sm font-medium">
+                    Next
+                    <i class="lucide-chevron-right h-5 w-5 ml-1"></i>
+                </button>
             </div>
         </div>
     </main>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const steps = document.querySelectorAll('.step');
-            const prevBtn = document.getElementById('backBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const progressBar = document.getElementById('progressBar');
-            const stepTitle = document.getElementById('stepTitle');
-            const stepDescription = document.getElementById('stepDescription');
-            const currentStepEl = document.getElementById('currentStep');
-            let currentStep = 0;
-
-            const stepContent = [
-                {
-                    title: "Review Details",
-                    description: "Review and confirm your reservation details."
-                },
-                {
-                    title: "Apply Discount",
-                    description: "Enter a discount code if you have one."
-                },
-                {
-                    title: "Payment Method",
-                    description: "Choose your preferred payment method."
-                }
-            ];
-
-            function showStep(stepIndex) {
-                steps.forEach((step, index) => {
-                    step.classList.toggle('hidden', index !== stepIndex);
-                });
-                
-                prevBtn.disabled = stepIndex === 0;
-                nextBtn.textContent = stepIndex === steps.length - 1 ? 'Proceed to Payment' : 'Next';
-                progressBar.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
-                
-                // Update step content
-                stepTitle.textContent = stepContent[stepIndex].title;
-                stepDescription.textContent = stepContent[stepIndex].description;
-                currentStepEl.textContent = stepIndex + 1;
-            }
-
-            function validateStep() {
-                // Add validation logic for each step
-                switch(currentStep) {
-                    case 0:
-                        return true; // Review step always valid
-                    case 1:
-                        return true; // Discount step always valid
-                    case 2:
-                        return document.querySelector('input[name="paymentMethod"]:checked') !== null;
-                    default:
-                        return true;
-                }
-            }
-
-            nextBtn.addEventListener('click', function() {
-                if (validateStep()) {
-                    if (currentStep < steps.length - 1) {
-                        currentStep++;
-                        showStep(currentStep);
-                    } else {
-                        // Handle final step (payment)
-                        const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-                        selectPaymentMethod(selectedPaymentMethod);
-                    }
-                } else {
-                    showModal('Please complete all required fields before proceeding.', undefined, "black_ico.png");
-                }
-            });
-
-            prevBtn.addEventListener('click', function() {
-                if (currentStep > 0) {
-                    currentStep--;
-                    showStep(currentStep);
-                }
-            });
-
-            // Initialize first step
-            showStep(currentStep);
-        });
-    </script>
-
-    <script>
-
-        let FinalAmmount = <?php echo $totalPrice ?>;
-        const steps = [
-            { title: "Review Details", description: "Review and confirm your reservation details." },
-            { title: "Payment", description: "Complete your payment to secure the reservation." }
-        ];
-
-        let currentStep = 1;
-        const totalSteps = steps.length;
-
-        let formData = {
-            booking_start_date: '<?php echo $checkIn ?>',
-            booking_end_date: '<?php echo $checkOut ?>',
-            booking_duration: '<?php echo $bookingDuration ?>',
-            booking_status_id: '1',
-            booking_participants: '<?php echo $numberOfGuest ?>',
-            booking_grand_total: FinalAmmount || 0,
-            booking_guest_id: <?php echo htmlspecialchars($_SESSION['user']['id']) ?>,
-            booking_venue_id: '<?php echo htmlspecialchars($venueId) ?>',
-            booking_payment_method: '',
-            booking_payment_reference: '',
-            booking_payment_status_id: '1',
-            booking_cancellation_reason: '',
-            booking_service_fee: '<?php echo $serviceFee ?>',
-            discountCode: '<?php echo isset($discountCode) ? $discountCode : '' ?>',
-        };
-
-        // function calculateSubtotal() {
-        //     const basePrice = 500 * parseInt(formData.booking_duration || 1);
-        //     const fees = 100 + 250 + 50; // Entrance + Cleaning + Service fees
-        //     return basePrice + fees;
-        // }
-
-        // function calculateDiscount() {
-        //     const subtotal = calculateSubtotal();
-        //     return subtotal * (formData.couponDiscount || 0);
-        // }
-
-        function calculateTotal() {
-            const subtotal = parseFloat(formData.booking_grand_total) || 0;
-            const discount = parseFloat(formData.couponDiscount || 0);
-            // console.log("s, " + subtotal, "d", + discount);
-            FinalAmmount = (subtotal - (subtotal * discount));
-            return (subtotal - (subtotal * discount));
-        }
-
-
-        document.getElementById('backBtn').addEventListener('click', () => {
-            if (currentStep > 1) {
-                currentStep--;
-                updateStep();
-            }
-        });
-
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            if (currentStep < totalSteps) {
-                currentStep++;
-                updateStep();
-            }
-        });
-
-        // Initialize the form
-        updateStep();
-
-        function selectPaymentMethod(method) {
-            try {
-                // Update radio button
-                document.querySelector(`input[value="${method}"]`).checked = true;
-
-                const totalAmount = FinalAmmount;
-
-                // Show loading state
-                document.getElementById('nextBtn').disabled = true;
-
-                // Set QR code based on payment method
-                const qrCodeImage = method === 'gcash' ? './images/gcashqr.png' : './images/paymayaqr.png';
-
-                // Display QR code in modal
-                document.getElementById('qrCodeImage').src = qrCodeImage;
-                document.getElementById('qrPaymentAmount').textContent = totalAmount.toFixed(2);
-                document.getElementById('selectedPaymentMethod').textContent = method === 'gcash' ? 'GCash' : 'PayMaya';
-                openQrModal();
-
-                formData.booking_payment_method = method;
-
-            } catch (error) {
-                console.error('Payment error:', error);
-                showModal('Error initiating payment: ' + error.message, undefined, "black_ico.png");
-            } finally {
-                document.getElementById('nextBtn').disabled = false;
-            }
-        }
-
-        function closeQrModal() {
-            const referenceNumber = document.getElementById('referenceNumber').value.trim();
-            if (referenceNumber) {
-                const modal = document.getElementById('qrModal');
-                const modalContent = document.getElementById('qrModalContent');
-
-                // Animate out
-                modal.classList.remove('opacity-100');
-                modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-                modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-
-                // Hide modal after animation
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }, 300);
-            } else {
-                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
-            }
-        }
-
-        function handleModalClick(event) {
-            const modalContent = document.getElementById('qrModalContent');
-            const referenceNumber = document.getElementById('referenceNumber').value.trim();
-            
-            if (!modalContent.contains(event.target) && referenceNumber) {
-                closeQrModal();
-            } else if (!modalContent.contains(event.target)) {
-                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
-            }
-        }
-
-        // Add this new function for input animations
-        function addInputFocusEffects() {
-            const inputs = document.querySelectorAll('input[type="text"]');
-            inputs.forEach(input => {
-                input.addEventListener('focus', () => {
-                    input.parentElement.classList.add('ring-2', 'ring-primary', 'ring-opacity-50');
-                });
-                input.addEventListener('blur', () => {
-                    input.parentElement.classList.remove('ring-2', 'ring-primary', 'ring-opacity-50');
-                });
-            });
-        }
-
-        // Add these functions for the QR modal animations
-
-        function openQrModal() {
-            const modal = document.getElementById('qrModal');
-            const modalContent = document.getElementById('qrModalContent');
-
-            // Show modal
-            modal.classList.remove('hidden');
-            // Force a reflow
-            void modal.offsetWidth;
-            // Add flex and animate in
-            modal.classList.add('flex', 'opacity-100');
-
-            // Animate content
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
-                modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
-            }, 50);
-        }
-
-        function closeQrModal() {
-            const modal = document.getElementById('qrModal');
-            const modalContent = document.getElementById('qrModalContent');
-
-            // Animate out
-            modal.classList.remove('opacity-100');
-            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-
-            // Hide modal after animation
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
-        function handleModalClick(event) {
-            const modalContent = document.getElementById('qrModalContent');
-            if (!modalContent.contains(event.target)) {
-                closeQrModal();
-            }
-        }
-
-        async function applyCoupon() {
-
-            const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
-            if (!couponCode) {
-                showCouponMessage('Please enter a coupon code', 'error');
-                return;
-            }
-
-            const response = await fetch(`./applyDiscount.php?discountCode=${couponCode}`);
-            const result = await response.json();
-
-            if (result.valid) {
-                formData.discountCode = couponCode;
-                formData.couponDiscount = result.discountValue;
-                formData.booking_grand_total = calculateTotal();
-                renderStepContent();
-            } else {
-                showCouponMessage('Invalid coupon code', 'error');
-            }
-
-        }
-
-        function removeCoupon() {
-            formData.discountCode = '';
-            formData.couponDiscount = 0;
-            formData.booking_grand_total = calculateTotal();
-            renderStepContent();
-        }
-
-        function showCouponMessage(message, type) {
-            const messageEl = document.getElementById('couponMessage');
-            if (messageEl) {
-                messageEl.textContent = message;
-                messageEl.classList.remove('hidden', 'text-green-600', 'text-red-600');
-                messageEl.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
-
-                if (type === 'error') {
-                    setTimeout(() => {
-                        messageEl.classList.add('hidden');
-                    }, 3000);
-                }
-            }
-        }
-
-        const subd = document.getElementById('submitref');
-        subd.addEventListener('click', () => {
-            const referenceNumber = document.getElementById('referenceNumber').value.trim();
-            if (referenceNumber) {
-                formData.booking_payment_reference = referenceNumber;
-                closeQrModal();
-                
-                // Make API call to save booking
-                fetch('process-payment.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show success message and redirect only after successful booking
-                        showModal('Reservation confirmed! Thank you for booking with us.', () => {
-                            window.location.href = 'profile/rent-history.php';
-                        }, "black_ico.png");
-                    } else {
-                        showModal('Error processing your booking. Please try again.', undefined, "black_ico.png");
-                    }
-                })
-                .catch(error => {
-                    showModal('An error occurred. Please try again.', undefined, "black_ico.png");
-                });
-                
-            } else {
-                showModal('Please enter a reference number.', undefined, "black_ico.png");
-            }
-        });
-    </script>
 
     <div id="qrModal"
         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0"
@@ -592,18 +264,159 @@ if (isset($_GET['discountCode'])) {
                         Enter your reference number</label>
                     <div class="flex gap-2">
                         <input type="text" id="referenceNumber" name="referenceNumber" placeholder="Reference Number"
-                            class="flex-1 rounded-lg border-gray-300 shadow-sm px-1 focus:border-primary  focus:ring-primary h-11">
+                            class="flex-1 rounded-lg border-gray-300 shadow-sm px-1 focus:border-primary focus:ring-primary h-11">
                         <button id="submitref"
-                            class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">
-                            Okay
-                        </button>
+                            class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">Okay</button>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            document.getElementById('submitref').addEventListener('click', () => {
+                const referenceNumber = document.getElementById('referenceNumber').value;
+                document.getElementById('finalRef').value = referenceNumber;
+
+                closeQrModal();
+            })
+            const steps = document.querySelectorAll('.step');
+            const totalSteps = steps.length;
+            let currentStep = 0;
+
+            const backBtn = document.getElementById('backBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressBar = document.getElementById('progressBar');
+            const currentStepSpan = document.getElementById('currentStep');
+            const totalStepsSpan = document.getElementById('totalSteps');
+
+            totalStepsSpan.textContent = totalSteps;
+
+            function updateStep() {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('hidden', index !== currentStep);
+                });
+
+                currentStepSpan.textContent = currentStep + 1;
+                progressBar.style.width = `${(currentStep / (totalSteps - 1)) * 100}%`;
+
+                backBtn.disabled = currentStep === 0;
+                nextBtn.textContent = currentStep === totalSteps - 1 ? 'Finish' : 'Next';
+            }
+
+            backBtn.addEventListener('click', function () {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateStep();
+                }
+            });
+
+            nextBtn.addEventListener('click', function () {
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    updateStep();
+                } else {
+                    // const form = document.getElementById('paymentForm');
+                    // const formData = new FormData(form);
+                    // console.log(formData);
+                    document.getElementById('paymentSubmit').click();
+                }
+            });
+
+            updateStep();
+        });
+
+        function applyCoupon() {
+            const couponCode = document.getElementById('couponCode').value;
+            fetch(`applyDiscount.php?discountCode=${couponCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        const discountValue = data.discountValue;
+                        const totalPriceElement = document.getElementById('totalPrice');
+                        let totalPrice = parseFloat(totalPriceElement.textContent.replace('₱', '').replace(',', ''));
+                        totalPrice = totalPrice - (totalPrice * discountValue);
+                        totalPriceElement.textContent = `₱ ${totalPrice.toFixed(2)}`;
+                        document.getElementById('totalPriceF').value = totalPrice;
+                        document.getElementById('discountValue').textContent = `${discountValue * 100}%`;
+                        document.getElementById('couponMessage').classList.remove('hidden');
+                        document.getElementById('couponCode').disabled = true;
+                        document.getElementById('applyCouponBtn').style.display = 'none';
+                        document.getElementById('couponsub').value = couponCode;
+                    } else {
+                        showModal("Invalid Coupon Code", function () {
+                            document.getElementById('couponCode').value = '';
+                        }, "black_ico.png");
+                    }
+                });
+        }
+
+        function selectPaymentMethod(method) {
+            document.querySelector(`input[value="${method}"]`).checked = true;
+
+            const totalAmount = document.getElementById('totalPrice').textContent.replace('₱', '').replace(',', '');
+
+            document.getElementById('nextBtn').disabled = true;
+
+            const qrCodeImage = method === 'gcash' ? './images/gcashqr.png' : './images/paymayaqr.png';
+
+            document.getElementById('qrCodeImage').src = qrCodeImage;
+            document.getElementById('qrPaymentAmount').textContent = totalAmount;
+            document.getElementById('selectedPaymentMethod').textContent = method === 'gcash' ? 'GCash' : 'PayMaya';
+            openQrModal();
+
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function closeQrModal() {
+            const referenceNumber = document.getElementById('referenceNumber').value.trim();
+            if (referenceNumber) {
+                const modal = document.getElementById('qrModal');
+                const modalContent = document.getElementById('qrModalContent');
+
+                modal.classList.remove('opacity-100');
+                modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+                modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            } else {
+                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
+            }
+        }
+
+        function handleModalClick(event) {
+            const modalContent = document.getElementById('qrModalContent');
+            const referenceNumber = document.getElementById('referenceNumber').value.trim();
+
+            if (!modalContent.contains(event.target) && referenceNumber) {
+                closeQrModal();
+            } else if (!modalContent.contains(event.target)) {
+                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
+            }
+        }
+
+        function openQrModal() {
+            const modal = document.getElementById('qrModal');
+            const modalContent = document.getElementById('qrModalContent');
+
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.add('flex', 'opacity-100');
+
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0', 'translate-y-4');
+                modalContent.classList.add('scale-100', 'opacity-100', 'translate-y-0');
+            }, 50);
+        }
+    </script>
+
+    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
 </body>
 
 </html>

@@ -54,7 +54,51 @@ if (!isset($_SESSION['user'])) {
             padding: 1rem;
         }
     </style>
+    <style>
+        .bookmark-btn {
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
+        .bookmark-btn:active {
+            transform: scale(1.5) rotate(360deg);
+        }
+
+        .bookmark-btn.bookmarked {
+            color: #ef4444;
+            /* red-500 */
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5));
+            transform: scale(1.2);
+        }
+
+        .bookmark-btn:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.3);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+
+            75% {
+                transform: scale(1.3);
+            }
+
+            100% {
+                transform: scale(1.2);
+            }
+        }
+
+        .bookmark-btn.animate {
+            animation: heartbeat 0.8s ease-in-out;
+        }
     </style>
 </head>
 
