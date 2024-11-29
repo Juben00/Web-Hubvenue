@@ -181,7 +181,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                                     <span>Total</span>
                                     <span id="totalPrice">₱ <?php echo $totalPrice ?></span>
 
-                                    <input type="number" id="totalPriceF" value="<?php echo $totalPrice ?>"
+                                    <input type="hidden" id="totalPriceF" value="<?php echo $totalPrice ?>"
                                         name="grandTotal">
                                 </div>
                             </div>
