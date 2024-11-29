@@ -319,10 +319,49 @@ class Venue
     {
         try {
             $conn = $this->db->connect();
-            $sql = "SELECT bookings.*, users.*, venues.* 
-                FROM bookings
-                JOIN users ON bookings.booking_guest_id = users.id
-                JOIN venues ON bookings.booking_venue_id = venues.id";
+            $sql = "SELECT 
+                    b.id AS booking_id,
+                    b.booking_start_date,
+                    b.booking_end_date,
+                    b.booking_duration,
+                    b.booking_participants,
+                    b.booking_original_price,
+                    b.booking_grand_total,
+                    b.booking_discount,
+                    b.booking_payment_method,
+                    b.booking_payment_reference,
+                    b.booking_service_fee,
+                    b.booking_status_id,
+                    b.booking_cancellation_reason,
+                    b.booking_created_at,
+
+                    u.id AS guest_id,
+                    CONCAT(u.firstname, ' ', u.middlename, ' ', u.lastname) AS guest_name,
+                    u.contact_number AS guest_contact_number,
+                    u.email AS guest_email,
+                    u.address AS guest_address,
+
+                    v.id AS venue_id,
+                    v.name AS venue_name,
+                    v.location AS venue_location,
+                    v.capacity AS venue_capacity,
+                    v.price AS venue_price,
+                    v.rules AS venue_rules,
+
+                    d.discount_value AS discount_value
+
+
+                FROM 
+                    discounts d
+                JOIN
+                    bookings b ON d.discount_code = b.booking_discount
+                JOIN 
+                    users u ON b.booking_guest_id = u.id
+                JOIN 
+                    venues v ON b.booking_venue_id = v.id
+
+                ORDER BY b.booking_created_at DESC;
+                ";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
