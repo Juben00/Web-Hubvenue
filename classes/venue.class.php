@@ -315,6 +315,27 @@ class Venue
     }
 
 
+    function getBookings()
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT bookings.*, users.*, venues.* 
+                FROM bookings
+                JOIN users ON bookings.booking_guest_id = users.id
+                JOIN venues ON bookings.booking_venue_id = venues.id";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $bookings;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+
+
+
     public function getAllDiscounts()
     {
         $query = "SELECT * FROM discounts";
