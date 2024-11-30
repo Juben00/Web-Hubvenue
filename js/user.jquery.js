@@ -319,6 +319,13 @@ $(document).ready(function () {
                         window.location.href = './list-your-venue.php';
                     });
 
+                   $('#bookAgainBtn').on('click', function (e) {
+                        e.preventDefault();
+                        const venueId = $(this).data("bvid");
+                        window.location.href = './venues.php?id=' + venueId; // Uncomment if you want to navigate
+                    });
+
+
                 }
             }
         )

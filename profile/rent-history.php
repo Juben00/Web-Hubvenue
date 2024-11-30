@@ -4,7 +4,7 @@ session_start();
 $venueObj = new Venue();
 
 $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
-// $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
+$previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 ?>
 
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
@@ -36,7 +36,6 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
                 if (empty($currentBooking)) {
                     // Skip rendering if all fields are NULL
                     echo '<p class="p-6 text-center text-gray-600">You do not have any current bookings.</p>';
-                    exit();
                 } else {
                     foreach ($currentBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
@@ -135,58 +134,95 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
         <!-- Previous Rentals Tab -->
         <div id="previous-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow overflow-hidden">
-                <div class="p-6">
-                    <div class="space-y-6">
-                        <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
-                            <img src="./images/black_ico.png" alt="Previous Property"
-                                class="w-full md:w-40 h-40 object-cover rounded-lg">
-                            <div>
-                                <p class="text-lg font-medium">Garden View Suite 205</p>
-                                <p class="text-gray-600 mt-2">Jan 2023 - Dec 2023</p>
-                                <p class="text-gray-600">₱4,500/night</p>
-                                <div class="mt-4">
-                                    <div class="flex items-center mb-3">
-                                        <div class="flex items-center space-x-1">
-                                            <button onclick="rate(1)"
-                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                data-rating="1">★</button>
-                                            <button onclick="rate(2)"
-                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                data-rating="2">★</button>
-                                            <button onclick="rate(3)"
-                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                data-rating="3">★</button>
-                                            <button onclick="rate(4)"
-                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                data-rating="4">★</button>
-                                            <button onclick="rate(5)"
-                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                data-rating="5">★</button>
+                <?php
+                // var_dump($previousBooking);
+                
+                if (empty($previousBooking)) {
+                    // Skip rendering if all fields are NULL
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
+                } else {
+                    foreach ($previousBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
+
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-full md:w-40 h-40 object-cover rounded-lg">
+                                    <?php endif; ?>
+                                    <div>
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?></p>
+                                        <p class="text-gray-600">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
+                                        <div class="mt-4">
+                                            <div class="flex items-center mb-3">
+                                                <div class="flex items-center space-x-1">
+                                                    <button onclick="rate(1)"
+                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                        data-rating="1">★</button>
+                                                    <button onclick="rate(2)"
+                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                        data-rating="2">★</button>
+                                                    <button onclick="rate(3)"
+                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                        data-rating="3">★</button>
+                                                    <button onclick="rate(4)"
+                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                        data-rating="4">★</button>
+                                                    <button onclick="rate(5)"
+                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                        data-rating="5">★</button>
+                                                </div>
+                                                <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
+                                            </div>
+                                            <div class="mb-4">
+                                                <textarea id="review-text"
+                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                                                    rows="3" placeholder="Share your experience (optional)"></textarea>
+                                            </div>
+                                            <div class="flex space-x-4">
+                                                <button onclick="submitReview()"
+                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                    Submit Review
+                                                </button>
+                                                <button
+                                                    onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
+                                                    Details</button>
+                                                <button id="bookAgainBtn"
+                                                    data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
+                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                    Book Again
+                                                </button>
+
+                                            </div>
                                         </div>
-                                        <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
-                                    </div>
-                                    <div class="mb-4">
-                                        <textarea id="review-text"
-                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                                            rows="3" placeholder="Share your experience (optional)"></textarea>
-                                    </div>
-                                    <div class="flex space-x-4">
-                                        <button onclick="submitReview()"
-                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                                            Submit Review
-                                        </button>
-                                        <button onclick="showDetails('prev1')"
-                                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
-                                            Details</button>
-                                        <button onclick="bookAgain('prev1')"
-                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Book
-                                            Again</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <?php
+                    }
+                }
+                ?>
             </div>
         </div>
 
@@ -324,11 +360,6 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
 
     function changeMainImage(src) {
         document.getElementById('modal-main-image').src = src;
-    }
-
-    function bookAgain(type) {
-        alert('Booking process initiated for ' + document.getElementById('modal-title').textContent);
-        // Implement actual booking logic here
     }
 
     function cancelBooking() {
