@@ -22,7 +22,7 @@ if (empty($venue['name'])) {
 
 // Retrieve the owner's information
 $owner = $accountObj->getUser($venue['host_id']);
-$bookedDate = $venueObj->getAllBookings($_GET['id']);
+$bookedDate = $venueObj->getBookedDates($_GET['id']);
 
 // Prepare booked dates for JavaScript
 $bookedDates = [];
