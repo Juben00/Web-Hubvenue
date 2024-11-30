@@ -448,7 +448,7 @@ class Venue
         }
     }
 
-    public function getAllBookings($venue_id)
+    public function getBookedDates($venue_id)
     {
         try {
             $conn = $this->db->connect();
@@ -463,6 +463,93 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    public function getAllBookings($userId = null, $status = null)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "SELECT 
+                b.id AS booking_id,
+                b.booking_start_date,
+                b.booking_end_date,
+                b.booking_duration,
+                b.booking_participants,
+                b.booking_original_price,
+                b.booking_grand_total,
+                b.booking_discount,
+                b.booking_payment_method,
+                b.booking_payment_reference,
+                b.booking_service_fee,
+                b.booking_status_id,
+                b.booking_cancellation_reason,
+                b.booking_created_at,
+
+                u.id AS guest_id,
+                CONCAT(u.firstname, ' ', u.middlename, ' ', u.lastname) AS guest_name,
+                u.contact_number AS guest_contact_number,
+                u.email AS guest_email,
+                u.address AS guest_address,
+
+                v.id AS venue_id,
+                v.name AS venue_name,
+                v.location AS venue_location,
+                v.capacity AS venue_capacity,
+                v.price AS venue_price,
+                v.rules AS venue_rules,
+
+                d.discount_value AS discount_value,
+
+                vt.tag_name AS venue_tag_name,
+
+                GROUP_CONCAT(vi.image_url) AS image_urls
+            FROM 
+                bookings b
+            LEFT JOIN
+                discounts d ON d.discount_code = b.booking_discount
+            JOIN 
+                users u ON b.booking_guest_id = u.id
+            JOIN 
+                venues v ON b.booking_venue_id = v.id
+            JOIN
+                venue_tag_sub vt ON v.venue_tag = vt.id
+            JOIN 
+                venue_images vi ON v.id = vi.venue_id 
+                ";
+
+            // Filter conditions
+            $conditions = [];
+            $params = [];
+
+            if ($userId) {
+                $conditions[] = "b.booking_guest_id = :userId";
+                $params[':userId'] = $userId;
+            }
+            if ($status) {
+                $conditions[] = "b.booking_status_id LIKE :status";
+                $params[':status'] = "%$status%";
+            }
+
+            // Append conditions to query
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            $sql .= " ORDER BY b.booking_created_at DESC";
+
+            // Prepare and execute the statement
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+
+            // Fetch and return results
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $bookings;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 $venueObj = new Venue();

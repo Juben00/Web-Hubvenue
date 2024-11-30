@@ -1,3 +1,11 @@
+<?php
+require_once '../classes/venue.class.php';
+session_start();
+$venueObj = new Venue();
+
+$currentBooking = $venueObj->getAllBookings($_SESSION['user_id'], 2);
+?>
+
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
     <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Your Rent History</h1>
@@ -18,32 +26,103 @@
 
         <!-- Current Rental Tab -->
         <div id="current-tab" class="tab-content">
-            <div class="bg-white rounded-lg shadow overflow-hidden">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-semibold">Garden Orchid Room 301</h2>
-                        <span
-                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
-                    </div>
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <img src="./images/black_ico.png" alt="Garden Orchid Room"
-                            class="w-full md:w-40 h-40 object-cover rounded-lg">
-                        <div>
-                            <p class="text-lg font-medium">Garden Orchid Hotel and Resort Corporation</p>
-                            <p class="text-gray-600 mt-2">Governor Camins Avenue, Zone II, Baliwasan</p>
-                            <p class="text-gray-600">Zamboanga City, Zamboanga Peninsula, 7000</p>
-                            <p class="text-gray-600 mt-2">₱4,800/night</p>
-                            <div class="mt-4 space-x-4">
-                                <button onclick="showDetails('current')"
-                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
-                                    Details</button>
-                                <button onclick="cancelBooking()"
-                                    class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
-                                    Booking</button>
+            <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
+
+                <?php
+
+                // var_dump($currentBooking);
+                if (empty($currentBooking)) {
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any current bookings.</p>';
+                } else {
+                    foreach ($currentBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
+                                </h2>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        <?php
+                                        switch ($booking['booking_status_id']) {
+                                            case '1':
+                                                echo 'Pending';
+                                                break;
+                                            case '2':
+                                                echo 'Approved';
+                                                break;
+                                            case '3':
+                                                echo 'Cancelled';
+                                                break;
+                                            case '4':
+                                                echo 'Completed';
+                                                break;
+                                            default:
+                                                echo 'Unknown';
+                                                break;
+                                        }
+                                        ?>
+                                    </span>
+                                    <?php
+                                    if ($bookingStartDate > $currentDateTime): ?>
+                                        <span
+                                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                            Booking</span> <!-- Tag for future booking -->
+                                    <?php else: ?>
+                                        <span class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                            Booking</span> <!-- Tag for started booking -->
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="flex flex-col md:flex-row gap-6">
+                                <?php
+                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                ?>
+
+                                <?php if (!empty($imageUrls)): ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                        class="w-full md:w-40 h-40 object-cover rounded-lg">
+                                <?php endif; ?>
+
+                                <div>
+                                    <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
+                                    <p class="text-gray-600 mt-2"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                    <p class="text-gray-600 mt-2">
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'])) ?> for
+                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'])) ?> days
+                                    </p>
+                                    <p class="text-gray-600 mt-2">
+                                        <?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?>
+                                    </p>
+                                    <div class="mt-4 space-x-4">
+                                        <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                            Details</button>
+                                        <?php
+
+                                        if ($bookingStartDate > $currentDateTime):
+                                            ?>
+                                            <button onclick="cancelBooking()"
+                                                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                                Booking</button>
+                                            <?php
+                                        endif;
+                                        ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <?php
+                    }
+                }
+                ?>
             </div>
         </div>
 
@@ -62,22 +141,31 @@
                                 <div class="mt-4">
                                     <div class="flex items-center mb-3">
                                         <div class="flex items-center space-x-1">
-                                            <button onclick="rate(1)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="1">★</button>
-                                            <button onclick="rate(2)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="2">★</button>
-                                            <button onclick="rate(3)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="3">★</button>
-                                            <button onclick="rate(4)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="4">★</button>
-                                            <button onclick="rate(5)" class="text-2xl text-gray-300 hover:text-yellow-400 star" data-rating="5">★</button>
+                                            <button onclick="rate(1)"
+                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                data-rating="1">★</button>
+                                            <button onclick="rate(2)"
+                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                data-rating="2">★</button>
+                                            <button onclick="rate(3)"
+                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                data-rating="3">★</button>
+                                            <button onclick="rate(4)"
+                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                data-rating="4">★</button>
+                                            <button onclick="rate(5)"
+                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                data-rating="5">★</button>
                                         </div>
                                         <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
                                     </div>
                                     <div class="mb-4">
-                                        <textarea id="review-text" 
+                                        <textarea id="review-text"
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                                            rows="3"
-                                            placeholder="Share your experience (optional)"></textarea>
+                                            rows="3" placeholder="Share your experience (optional)"></textarea>
                                     </div>
                                     <div class="flex space-x-4">
-                                        <button onclick="submitReview()" 
+                                        <button onclick="submitReview()"
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
                                             Submit Review
                                         </button>
@@ -184,16 +272,42 @@
         event.currentTarget.classList.add('border-black', 'text-gray-900');
     }
 
-    function showDetails(type) {
+    function showDetails(booking) {
         const modal = document.getElementById('details-modal');
         const bookAgainContainer = document.getElementById('book-again-container');
         modal.classList.remove('hidden');
 
-        if (type === 'current') {
-            document.getElementById('modal-title').textContent = 'Garden Orchid Room 301';
+        document.getElementById('modal-title').textContent = booking.venue_name;
+        document.getElementById('modal-main-image').src = './' + booking.image_urls.split(',')[0];
+
+        const imageUrls = booking.image_urls.split(',');
+        const imageElements = imageUrls.map(url => `
+            <img src="./${url}" alt="Venue Image" class="w-full h-20 object-cover rounded-lg cursor-pointer" onclick="changeMainImage(this.src)">
+        `).join('');
+        document.querySelector('#modal-content .grid-cols-3').innerHTML = imageElements;
+
+        document.querySelector('#modal-content .grid-cols-1').innerHTML = `
+            <h4 class="font-semibold mt-4 mb-2">Venue Capacity</h4>
+            <p>${booking.venue_capacity} guests</p>
+            <h4 class="font-semibold mt-4 mb-2">What this place offers</h4>
+            <ul class="space-y-2">
+                ${booking.venue_amenities.split(',').map(amenity => `<li>${amenity}</li>`).join('')}
+            </ul>
+        `;
+
+        document.querySelector('#modal-content .grid-cols-2').innerHTML = `
+            <h4 class="font-semibold mb-2">Location</h4>
+            <p>${booking.venue_location}</p>
+            <h4 class="font-semibold mt-4 mb-2">Price Details</h4>
+            <p>₱${booking.booking_grand_total} for ${booking.booking_duration} days</p>
+            <h4 class="font-semibold mt-4 mb-2">Contact Information</h4>
+            <p>Email: ${booking.contact_email}</p>
+            <p>Phone: ${booking.contact_phone}</p>
+        `;
+
+        if (booking.booking_status_id === '2') {
             bookAgainContainer.classList.add('hidden');
         } else {
-            document.getElementById('modal-title').textContent = 'Garden View Suite 205';
             bookAgainContainer.classList.remove('hidden');
         }
     }
@@ -207,7 +321,7 @@
     }
 
     function bookAgain(type) {
-        alert('Booking process initiated for ' + (type === 'modal' ? document.getElementById('modal-title').textContent : 'Garden View Suite 205'));
+        alert('Booking process initiated for ' + document.getElementById('modal-title').textContent);
         // Implement actual booking logic here
     }
 
@@ -253,7 +367,7 @@
 
         // Simulate successful submission
         alert('Thank you for your review!');
-        
+
         // Clear the form
         currentRating = 0;
         document.getElementById('review-text').value = '';
@@ -274,7 +388,7 @@
         reviewElement.innerHTML = `
             <div class="flex items-center mb-2">
                 <div class="flex text-yellow-400">
-                    ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                    ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
                 </div>
                 <span class="ml-2 text-sm text-gray-600">
                     ${new Date(review.date).toLocaleDateString()}
