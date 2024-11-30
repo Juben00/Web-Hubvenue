@@ -744,6 +744,9 @@ ALTER TABLE `venues`
 --
 ALTER TABLE `venue_images`
   ADD CONSTRAINT `fk_venue_id` FOREIGN KEY (`venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Update all bookings to have booking_status_id = 1 (Pending)
+UPDATE bookings SET booking_status_id = 1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

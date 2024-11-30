@@ -391,6 +391,60 @@ class Venue
     //     $stmt->execute();
     //     return $stmt->fetch(PDO::FETCH_ASSOC);
     // }
+
+    public function approveReservation($booking_id) {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE bookings SET booking_status_id = 2 WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $booking_id);
+            
+            if ($stmt->execute()) {
+                return ['status' => 'success', 'message' => 'Reservation approved successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to approve reservation'];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function rejectReservation($booking_id) {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE bookings SET booking_status_id = 4 WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $booking_id);
+            
+            if ($stmt->execute()) {
+                return ['status' => 'success', 'message' => 'Reservation rejected successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to reject reservation'];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function cancelReservation($booking_id) {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE bookings SET booking_status_id = 3 WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $booking_id);
+            
+            if ($stmt->execute()) {
+                return ['status' => 'success', 'message' => 'Reservation cancelled successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to cancel reservation'];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 }
 
 $venueObj = new Venue();
