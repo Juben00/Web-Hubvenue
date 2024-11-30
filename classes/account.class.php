@@ -445,6 +445,25 @@ class Account
         }
     }
 
+    public function giveReview($userId = null, $venueId = null, $review = null, $rating = null)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "INSERT INTO reviews (user_id, venue_id, rating, review) VALUES (:user_id, :venue_id, :rating, :review)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->bindParam(':venue_id', $venueId);
+            $stmt->bindParam(':rating', $rating);
+            $stmt->bindParam(':review', $review);
+            $stmt->execute();
+
+            return ['status' => 'success', 'message' => 'Review added successfully'];
+        } catch (PDOException $e) {
+            error_log("Error adding review: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 // session_start();
