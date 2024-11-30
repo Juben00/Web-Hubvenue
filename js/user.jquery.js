@@ -325,6 +325,12 @@ $(document).ready(function () {
                         window.location.href = './venues.php?id=' + venueId; // Uncomment if you want to navigate
                     });
 
+                    $('#reviewForm').on('submit', function (e) {
+                        e.preventDefault();
+                        const formElement = $(this);
+                        addReview(formElement);
+                    });
+
 
                 }
             }
@@ -349,6 +355,27 @@ $(document).ready(function () {
             }
         });
     }
+
+    function addReview(formElement) {
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/AddReview.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.status === "success") {
+                    showModal(response.message, undefined, "black_ico.png");
+                    openProfileNav('rent-history');
+                } else {
+                    showModal(response.message, undefined, "black_ico.png");
+                }
+                },
+            });
+    }
+
 
     function addVenue(){
     let form = new FormData($("#add-venue-form")[0]);

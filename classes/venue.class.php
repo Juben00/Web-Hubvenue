@@ -371,9 +371,6 @@ class Venue
         }
     }
 
-
-
-
     public function getAllDiscounts()
     {
         $query = "SELECT * FROM discounts";

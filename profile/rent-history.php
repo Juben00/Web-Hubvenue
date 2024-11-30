@@ -172,46 +172,62 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
                                         </p>
-                                        <div class="mt-4">
-                                            <div class="flex items-center mb-3">
-                                                <div class="flex items-center space-x-1">
-                                                    <button onclick="rate(1)"
-                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                        data-rating="1">★</button>
-                                                    <button onclick="rate(2)"
-                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                        data-rating="2">★</button>
-                                                    <button onclick="rate(3)"
-                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                        data-rating="3">★</button>
-                                                    <button onclick="rate(4)"
-                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                        data-rating="4">★</button>
-                                                    <button onclick="rate(5)"
-                                                        class="text-2xl text-gray-300 hover:text-yellow-400 star"
-                                                        data-rating="5">★</button>
-                                                </div>
-                                                <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
-                                            </div>
-                                            <div class="mb-4">
-                                                <textarea id="review-text"
-                                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                                                    rows="3" placeholder="Share your experience (optional)"></textarea>
-                                            </div>
-                                            <div class="flex space-x-4">
-                                                <button onclick="submitReview()"
-                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                                                    Submit Review
-                                                </button>
-                                                <button
-                                                    onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
-                                                    class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
-                                                    Details</button>
-                                                <button id="bookAgainBtn"
-                                                    data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
-                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                                                    Book Again
-                                                </button>
+                                        <div class="mt-4 ">
+                                            <div class="flex flex-row">
+                                                <form id="reviewForm">
+                                                    <div class="flex items-center mb-3">
+                                                        <div class="flex items-center space-x-1">
+                                                            <input type="number" class="hidden" name="venueId"
+                                                                value="<?php echo htmlspecialchars($booking['venue_id']) ?>">
+                                                            <label onclick="rate(1)" for="one"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="1">
+                                                                <input type="radio" name="ratings" value="1" class="hidden"
+                                                                    id="one">★</label>
+                                                            <label onclick="rate(2)" for="two"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="2">
+                                                                <input type="radio" name="ratings" value="2" class="hidden"
+                                                                    id="two">★</label>
+                                                            <label onclick="rate(3)" for="three"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="3">
+                                                                <input type="radio" name="ratings" value="3" class="hidden"
+                                                                    id="three">★</label>
+                                                            <label onclick="rate(4)" for="four"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="4">
+                                                                <input type="radio" name="ratings" value="4" class="hidden"
+                                                                    id="four">★</label>
+                                                            <label onclick="rate(5)" for="five"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="5">
+                                                                <input type="radio" name="ratings" value="5" class="hidden"
+                                                                    id="five">★</label>
+                                                        </div>
+                                                        <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <textarea id="review-text" name="review-text"
+                                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                                                            rows="3" placeholder="Share your experience (optional)"></textarea>
+                                                    </div>
+                                                    <div class="flex space-x-4">
+                                                        <button type="submit"
+                                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                            Submit Review
+                                                        </button>
+                                                        <button
+                                                            onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
+                                                            Details</button>
+                                                        <button id="bookAgainBtn"
+                                                            data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
+                                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                            Book Again
+                                                        </button>
+                                                    </div>
+                                                </form>
 
                                             </div>
                                         </div>
@@ -280,8 +296,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <p>Phone: 09053258512</p>
 
                             <div id="book-again-container" class="mt-6 hidden">
-                                <button onclick="bookAgain('modal')"
-                                    class="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Book
+                                <button class="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Book
                                     Again</button>
                             </div>
                         </div>
@@ -383,57 +398,6 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                 star.classList.add('text-gray-300');
             }
         });
-    }
-
-    function submitReview() {
-        if (currentRating === 0) {
-            alert('Please select a rating before submitting your review.');
-            return;
-        }
-
-        const reviewText = document.getElementById('review-text').value;
-        const review = {
-            rating: currentRating,
-            comment: reviewText,
-            date: new Date().toISOString(),
-            // Add other relevant data like booking_id, venue_id, etc.
-        };
-
-        // Here you would typically make an AJAX call to your backend
-        console.log('Submitting review:', review);
-
-        // Simulate successful submission
-        alert('Thank you for your review!');
-
-        // Clear the form
-        currentRating = 0;
-        document.getElementById('review-text').value = '';
-        const stars = document.querySelectorAll('.star');
-        stars.forEach(star => {
-            star.classList.remove('text-yellow-400');
-            star.classList.add('text-gray-300');
-        });
-
-        // Add the review to the reviews section
-        addReviewToDisplay(review);
-    }
-
-    function addReviewToDisplay(review) {
-        const reviewsContainer = document.getElementById('reviews-container');
-        const reviewElement = document.createElement('div');
-        reviewElement.className = 'border-b pb-4';
-        reviewElement.innerHTML = `
-            <div class="flex items-center mb-2">
-                <div class="flex text-yellow-400">
-                    ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
-                </div>
-                <span class="ml-2 text-sm text-gray-600">
-                    ${new Date(review.date).toLocaleDateString()}
-                </span>
-            </div>
-            <p class="text-gray-700">${review.comment || 'No comment provided.'}</p>
-        `;
-        reviewsContainer.prepend(reviewElement);
     }
 
     window.onclick = function (event) {
