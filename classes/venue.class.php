@@ -162,7 +162,6 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
-
     function getSingleVenue($venue_id = '')
     {
         try {
@@ -392,13 +391,14 @@ class Venue
     //     return $stmt->fetch(PDO::FETCH_ASSOC);
     // }
 
-    public function approveReservation($booking_id) {
+    public function approveReservation($booking_id)
+    {
         try {
             $conn = $this->db->connect();
-            $sql = "UPDATE bookings SET booking_status_id = 2 WHERE id = :booking_id";
+            $sql = "UPDATE bookings SET booking_status_id = 2, booking_payment_status_id = 2 WHERE id = :booking_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':booking_id', $booking_id);
-            
+
             if ($stmt->execute()) {
                 return ['status' => 'success', 'message' => 'Reservation approved successfully'];
             } else {
@@ -410,13 +410,14 @@ class Venue
         }
     }
 
-    public function rejectReservation($booking_id) {
+    public function rejectReservation($booking_id)
+    {
         try {
             $conn = $this->db->connect();
             $sql = "UPDATE bookings SET booking_status_id = 4 WHERE id = :booking_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':booking_id', $booking_id);
-            
+
             if ($stmt->execute()) {
                 return ['status' => 'success', 'message' => 'Reservation rejected successfully'];
             } else {
@@ -428,13 +429,14 @@ class Venue
         }
     }
 
-    public function cancelReservation($booking_id) {
+    public function cancelReservation($booking_id)
+    {
         try {
             $conn = $this->db->connect();
             $sql = "UPDATE bookings SET booking_status_id = 3 WHERE id = :booking_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':booking_id', $booking_id);
-            
+
             if ($stmt->execute()) {
                 return ['status' => 'success', 'message' => 'Reservation cancelled successfully'];
             } else {
@@ -445,8 +447,24 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    public function getAllBookings($venue_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate FROM bookings WHERE booking_venue_id = :venue_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+            $stmt->execute();
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 }
 
 $venueObj = new Venue();
 
-// var_dump($venueObj->getAllVenues('', 3));
+// var_dump($venueObj->getAllBookings(53));
