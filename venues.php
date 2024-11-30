@@ -22,6 +22,24 @@ if (empty($venue['name'])) {
 
 // Retrieve the owner's information
 $owner = $accountObj->getUser($venue['host_id']);
+$bookedDate = $venueObj->getAllBookings($_GET['id']);
+
+// Prepare booked dates for JavaScript
+$bookedDates = [];
+foreach ($bookedDate as $booking) {
+    $start = new DateTime($booking['startdate']);
+    $end = new DateTime($booking['enddate']);
+    $interval = new DateInterval('P1D');
+    $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
+
+    foreach ($dateRange as $date) {
+        $bookedDates[] = $date->format('Y-m-d');
+    }
+}
+
+// var_dump($_GET['id']);
+var_dump($bookedDate);
+// var_dump($bookedDate[0]['startdate'])
 ?>
 
 
@@ -37,6 +55,8 @@ $owner = $accountObj->getUser($venue['host_id']);
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <link rel="stylesheet" href="node_modules/flatpickr/dist/flatpickr.min.css">
+    <script src="node_modules/flatpickr/dist/flatpickr.min.js"></script>
 </head>
 
 <body class="bg-slate-50">
@@ -339,7 +359,8 @@ $owner = $accountObj->getUser($venue['host_id']);
                     <div class="border rounded-xl p-6 shadow-lg mb-6">
                         <h3 class="text-xl font-semibold mb-4">The Owner</h3>
                         <div class="flex gap-4">
-                            <a href="owner-page.php" class="bg-slate-50 p-6 w-full hover:bg-slate-100 transition duration-300 cursor-pointer">
+                            <a href="owner-page.php"
+                                class="bg-slate-50 p-6 w-full hover:bg-slate-100 transition duration-300 cursor-pointer">
                                 <!-- Card Header -->
                                 <div class="text-center mb-4">
                                     <div
@@ -383,11 +404,13 @@ $owner = $accountObj->getUser($venue['host_id']);
                                     value="<?php echo htmlspecialchars($venue['id']); ?>">
                                 <div class="w-1/2 p-2 border-r">
                                     <label class="block text-xs font-semibold">CHECK-IN</label>
-                                    <input type="date" name="checkin" class="w-full bg-transparent">
+                                    <input type="date" name="checkin" placeholder="Set Date"
+                                        class="w-full bg-transparent">
                                 </div>
                                 <div class="w-1/2 p-2">
                                     <label class="block text-xs font-semibold">CHECKOUT</label>
-                                    <input type="date" name="checkout" class="w-full bg-transparent">
+                                    <input type="date" name="checkout" placeholder="Set Date"
+                                        class="w-full bg-transparent">
                                 </div>
                             </div>
                             <div class="p-2">
@@ -463,6 +486,43 @@ $owner = $accountObj->getUser($venue['host_id']);
             const serviceFeeRate = 0.15;
             const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
 
+            const bookedDates = <?php echo json_encode($bookedDates); ?>;
+
+            function disableBookedDates(date) {
+                const dateString = date.toISOString().split('T')[0];
+                return bookedDates.includes(dateString);
+            }
+
+            function disableDates(input) {
+                flatpickr(input, {
+                    minDate: "today",
+                    disable: bookedDates,
+                    onChange: function (selectedDates, dateStr, instance) {
+                        validateDateRange();
+                        calculateTotal();
+                    }
+                });
+            }
+
+            function validateDateRange() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+                const dateRange = new Date(checkinDate);
+
+                while (dateRange <= checkoutDate) {
+                    if (disableBookedDates(dateRange)) {
+                        showModal('Selected date range includes unavailable dates.', undefined, 'black_ico.png');
+                        checkinInput.value = '';
+                        checkoutInput.value = '';
+                        break;
+                    }
+                    dateRange.setDate(dateRange.getDate() + 1);
+                }
+            }
+
+            disableDates(checkinInput);
+            disableDates(checkoutInput);
+
             // Get today's date in YYYY-MM-DD format
             const today = new Date();
             const todayFormatted = today.toISOString().split('T')[0];
@@ -523,11 +583,13 @@ $owner = $accountObj->getUser($venue['host_id']);
                     checkoutInput.value = ""; // Clear invalid checkout date
                     checkoutInput.setAttribute('min', checkinInput.value); // Update min for checkout
                 }
+                validateDateRange();
                 calculateTotal();
             });
 
             checkoutInput.addEventListener('change', function () {
                 validateDate(checkoutInput);
+                validateDateRange();
                 calculateTotal();
             });
 
