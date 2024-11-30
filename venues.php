@@ -38,7 +38,7 @@ foreach ($bookedDate as $booking) {
 }
 
 // var_dump($_GET['id']);
-var_dump($bookedDate);
+// var_dump($bookedDate);
 // var_dump($bookedDate[0]['startdate'])
 ?>
 
@@ -493,9 +493,9 @@ var_dump($bookedDate);
                 return bookedDates.includes(dateString);
             }
 
-            function disableDates(input) {
+            function disableDates(input, minDate = "today") {
                 flatpickr(input, {
-                    minDate: "today",
+                    minDate: minDate,
                     disable: bookedDates,
                     onChange: function (selectedDates, dateStr, instance) {
                         validateDateRange();
@@ -583,6 +583,7 @@ var_dump($bookedDate);
                     checkoutInput.value = ""; // Clear invalid checkout date
                     checkoutInput.setAttribute('min', checkinInput.value); // Update min for checkout
                 }
+                disableDates(checkoutInput, checkinInput.value); // Disable dates before checkin date
                 validateDateRange();
                 calculateTotal();
             });
