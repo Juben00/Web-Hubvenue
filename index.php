@@ -231,12 +231,14 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             <!-- Slideshow Container for each venue -->
                                             <div class="relative w-full h-96 overflow-hidden">
                                                 <!-- Image Slideshow for each venue -->
-                                                <div class="slideshow-container venueCard">
-                                                    <?php if (!empty($booking['image_urls'])): ?>
-                                                        <?php foreach ($booking['image_urls'] as $index => $imageUrl): ?>
+                                                <div class="slideshow-container venueCard"
+                                                    data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
+                                                    data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
+                                                    <?php if (!empty($venue['image_urls'])): ?>
+                                                        <?php foreach ($venue['image_urls'] as $index => $imageUrl): ?>
                                                             <div class="slide <?= $index === 0 ? 'active' : '' ?>">
                                                                 <img src="./<?= htmlspecialchars($imageUrl) ?>"
-                                                                    alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                                                    alt="<?= htmlspecialchars($venue['name']) ?>"
                                                                     class="w-full h-full object-cover rounded-2xl transition-opacity duration-1000">
                                                             </div>
                                                         <?php endforeach; ?>

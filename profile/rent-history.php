@@ -3,7 +3,8 @@ require_once '../classes/venue.class.php';
 session_start();
 $venueObj = new Venue();
 
-$currentBooking = $venueObj->getAllBookings($_SESSION['user_id'], 2);
+$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
+// $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 ?>
 
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
@@ -30,9 +31,12 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user_id'], 2);
 
                 <?php
 
+                // var_dump($_SESSION['user']['id']);
                 // var_dump($currentBooking);
                 if (empty($currentBooking)) {
+                    // Skip rendering if all fields are NULL
                     echo '<p class="p-6 text-center text-gray-600">You do not have any current bookings.</p>';
+                    exit();
                 } else {
                     foreach ($currentBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
@@ -91,8 +95,10 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user_id'], 2);
                                     <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
                                     <p class="text-gray-600 mt-2"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
                                     <p class="text-gray-600 mt-2">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'])) ?> for
-                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'])) ?> days
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                        for
+                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                        days
                                     </p>
                                     <p class="text-gray-600 mt-2">
                                         <?php
