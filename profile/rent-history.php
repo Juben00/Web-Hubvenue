@@ -243,69 +243,106 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         </div>
 
         <!-- Details Modal -->
-        <div id="details-modal"
-            class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div class="relative top-20 mx-auto p-5 border w-full max-w-4xl shadow-lg rounded-md bg-white">
-                <div class="flex justify-between items-center pb-3">
-                    <h3 class="text-2xl font-bold" id="modal-title">Venue Details</h3>
-                    <button onclick="closeModal()" class="text-black close-modal">&times;</button>
+        <div id="details-modal" 
+            class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-xl font-bold" id="modal-title"></h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
+
+                <!-- Modal Content -->
                 <div id="modal-content" class="mt-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="mb-4">
-                                <img id="modal-main-image" src="./images/black_ico.png" alt="Venue Main Image"
-                                    class="w-full h-64 object-cover rounded-lg">
+                    <!-- Main image and details container -->
+                    <div class="flex flex-col items-center">
+                        <!-- Images Section -->
+                        <div class="w-full max-w-md mb-6">
+                            <!-- Main Image -->
+                            <div class="relative h-64 rounded-lg overflow-hidden mb-2">
+                                <img id="modal-main-image" src="" alt="Venue Main Image" 
+                                    class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
                             </div>
-                            <div class="grid grid-cols-3 gap-2">
-                                <img src="./images/black_ico.png" alt="Venue Image 1"
-                                    class="w-full h-20 object-cover rounded-lg cursor-pointer"
-                                    onclick="changeMainImage(this.src)">
-                                <img src="./images/black_ico.png" alt="Venue Image 2"
-                                    class="w-full h-20 object-cover rounded-lg cursor-pointer"
-                                    onclick="changeMainImage(this.src)">
-                                <img src="./images/black_ico.png" alt="Venue Image 3"
-                                    class="w-full h-20 object-cover rounded-lg cursor-pointer"
-                                    onclick="changeMainImage(this.src)">
+                            
+                            <!-- Horizontal Thumbnail Strip -->
+                            <div class="flex gap-2 overflow-x-auto" id="image-gallery">
+                                <!-- Thumbnail images will be inserted here -->
                             </div>
-                            <h4 class="font-semibold mt-4 mb-2">Venue Capacity</h4>
-                            <p>3 guests</p>
-
-                            <h4 class="font-semibold mt-4 mb-2">What this place offers</h4>
-                            <ul class="space-y-2">
-                                <li>Pool</li>
-                                <li>WiFi</li>
-                                <li>Air-conditioned Room</li>
-                                <li>Smart TV</li>
-                            </ul>
                         </div>
-                        <div>
-                            <h4 class="font-semibold mb-2">Location</h4>
-                            <p>Garden Orchid Hotel and Resort Corporation</p>
-                            <p>Governor Camins Avenue, Zone II</p>
-                            <p>Baliwasan, Zamboanga City</p>
-                            <p>Zamboanga Peninsula, 7000</p>
 
-                            <h4 class="font-semibold mt-4 mb-2">Price Details</h4>
-                            <p>₱4,800.00 per night</p>
-                            <p>Cleaning fee: ₱500</p>
-                            <p>Service fee applies</p>
+                        <!-- Details Section -->
+                        <div class="w-full space-y-4">
+                            <!-- Move Booking Status to left -->
+                            <div class="flex items-center gap-2">
+                                <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                                <span id="booking-type" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                            </div>
 
-                            <h4 class="font-semibold mt-4 mb-2">Contact Information</h4>
-                            <p>Email: joevinansoc870@gmail.com</p>
-                            <p>Phone: 09053258512</p>
+                            <!-- Rest of the content -->
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h4 class="font-semibold text-base mb-2">Price Details</h4>
+                                <div class="space-y-1">
+                                    <p id="price-per-night" class="text-xl font-bold"></p>
+                                    <p id="booking-duration" class="text-gray-600 text-sm"></p>
+                                    <p id="cleaning-fee" class="text-gray-600 text-sm"></p>
+                                </div>
+                            </div>
 
-                            <div id="book-again-container" class="mt-6 hidden">
-                                <button class="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Book
-                                    Again</button>
+                            <!-- Two Column Layout for Other Details -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <!-- Location Section -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Location</h4>
+                                        <div class="space-y-0.5 text-gray-600 text-sm" id="location-details">
+                                        </div>
+                                    </div>
+
+                                    <!-- Capacity -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Capacity</h4>
+                                        <p id="venue-capacity" class="text-gray-600 text-sm"></p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <!-- Amenities -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Amenities</h4>
+                                        <ul id="amenities-list" class="text-gray-600 text-sm space-y-0.5">
+                                        </ul>
+                                    </div>
+
+                                    <!-- Contact Information -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Contact Information</h4>
+                                        <div class="space-y-0.5 text-gray-600 text-sm" id="contact-details">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex justify-center gap-3 pt-2">
+                                <div id="book-again-container" class="hidden">
+                                    <button class="px-4 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm">
+                                        Book Again
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="reviews-section" class="mt-6 border-t pt-6">
-                    <h4 class="font-semibold mb-4">Reviews</h4>
-                    <div id="reviews-container" class="space-y-4">
-                        <!-- Reviews will be dynamically loaded here -->
+
+                    <!-- Reviews Section -->
+                    <div id="reviews-section" class="mt-6 pt-4 border-t">
+                        <h4 class="font-semibold text-base mb-3">Reviews</h4>
+                        <div id="reviews-container" class="space-y-3">
+                            <!-- Reviews will be dynamically loaded here -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -332,49 +369,119 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     function showDetails(booking) {
         const modal = document.getElementById('details-modal');
         const bookAgainContainer = document.getElementById('book-again-container');
+        
+        // Show modal with fade-in effect
         modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.add('opacity-100');
+            modal.querySelector('.relative').classList.add('scale-100');
+            modal.querySelector('.relative').classList.remove('scale-95');
+        });
 
+        // Set main title
         document.getElementById('modal-title').textContent = booking.venue_name;
-        document.getElementById('modal-main-image').src = './' + booking.image_urls.split(',')[0];
 
+        // Setup main image and gallery
+        const mainImage = document.getElementById('modal-main-image');
+        mainImage.src = './' + booking.image_urls.split(',')[0];
+        
+        // Setup image gallery with horizontal thumbnails
+        const imageGallery = document.getElementById('image-gallery');
         const imageUrls = booking.image_urls.split(',');
-        const imageElements = imageUrls.map(url => `
-            <img src="./${url}" alt="Venue Image" class="w-full h-20 object-cover rounded-lg cursor-pointer" onclick="changeMainImage(this.src)">
+        imageGallery.innerHTML = imageUrls.map(url => `
+            <div class="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden">
+                <img src="./${url}" 
+                    alt="Venue Image" 
+                    class="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity duration-200" 
+                    onclick="changeMainImage(this.src)">
+            </div>
         `).join('');
-        document.querySelector('#modal-content .grid-cols-3').innerHTML = imageElements;
 
-        document.querySelector('#modal-content .grid-cols-1').innerHTML = `
-            <h4 class="font-semibold mt-4 mb-2">Venue Capacity</h4>
-            <p>${booking.venue_capacity} guests</p>
-            <h4 class="font-semibold mt-4 mb-2">What this place offers</h4>
-            <ul class="space-y-2">
-                ${booking.venue_amenities.split(',').map(amenity => `<li>${amenity}</li>`).join('')}
-            </ul>
-        `;
+        // Set booking status and type
+        const bookingStatus = document.getElementById('booking-status');
+        const statusText = getBookingStatusText(booking.booking_status_id);
+        bookingStatus.textContent = statusText;
+        bookingStatus.className = `px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.booking_status_id)}`;
 
-        document.querySelector('#modal-content .grid-cols-2').innerHTML = `
-            <h4 class="font-semibold mb-2">Location</h4>
+        // Set price details
+        document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
+        document.getElementById('booking-duration').textContent = `${booking.booking_duration} days`;
+        document.getElementById('cleaning-fee').textContent = `Cleaning fee: ₱500`;
+        
+        // Set location details
+        const locationDetails = document.getElementById('location-details');
+        locationDetails.innerHTML = `
             <p>${booking.venue_location}</p>
-            <h4 class="font-semibold mt-4 mb-2">Price Details</h4>
-            <p>₱${booking.booking_grand_total} for ${booking.booking_duration} days</p>
-            <h4 class="font-semibold mt-4 mb-2">Contact Information</h4>
-            <p>Email: ${booking.contact_email}</p>
-            <p>Phone: ${booking.contact_phone}</p>
+            <p>Governor Camins Avenue, Zone II</p>
+            <p>Baliwasan, Zamboanga City</p>
+            <p>Zamboanga Peninsula, 7000</p>
         `;
 
-        if (booking.booking_status_id === '2') {
-            bookAgainContainer.classList.add('hidden');
-        } else {
-            bookAgainContainer.classList.remove('hidden');
-        }
+        // Set capacity and amenities (using the original amenities)
+        document.getElementById('venue-capacity').textContent = `${booking.venue_capacity || 3} guests`;
+        const amenitiesList = document.getElementById('amenities-list');
+        amenitiesList.innerHTML = `
+            <li>• Pool</li>
+            <li>• WiFi</li>
+            <li>• Air-conditioned Room</li>
+            <li>• Smart TV</li>
+        `;
+
+        // Set contact details (using the original contact info)
+        const contactDetails = document.getElementById('contact-details');
+        contactDetails.innerHTML = `
+            <p>Email: joevinansoc870@gmail.com</p>
+            <p>Phone: 09053258512</p>
+        `;
+
+        // Toggle book again button
+        bookAgainContainer.classList.toggle('hidden', booking.booking_status_id === '2');
     }
 
+    // Helper functions
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function getBookingStatusText(statusId) {
+        const statuses = {
+            '1': 'Pending',
+            '2': 'Approved',
+            '3': 'Cancelled',
+            '4': 'Completed'
+        };
+        return statuses[statusId] || 'Unknown';
+    }
+
+    function getStatusColor(statusId) {
+        const colors = {
+            '1': 'bg-yellow-100 text-yellow-800',
+            '2': 'bg-green-100 text-green-800',
+            '3': 'bg-red-100 text-red-800',
+            '4': 'bg-blue-100 text-blue-800'
+        };
+        return colors[statusId] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Update close modal function with smooth transition
     function closeModal() {
-        document.getElementById('details-modal').classList.add('hidden');
+        const modal = document.getElementById('details-modal');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('.relative').classList.remove('scale-100');
+        modal.querySelector('.relative').classList.add('scale-95');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
     }
 
     function changeMainImage(src) {
-        document.getElementById('modal-main-image').src = src;
+        const mainImage = document.getElementById('modal-main-image');
+        mainImage.style.opacity = '0';
+        setTimeout(() => {
+            mainImage.src = src;
+            mainImage.style.opacity = '1';
+        }, 200);
     }
 
     function cancelBooking() {
@@ -407,3 +514,31 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         }
     }
 </script>
+
+<style>
+    #modal-main-image {
+        transition: opacity 0.2s ease-in-out;
+    }
+    
+    #image-gallery {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    }
+
+    #image-gallery::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    #image-gallery::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #image-gallery::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+    }
+
+    #image-gallery img {
+        aspect-ratio: 1/1;
+    }
+</style>

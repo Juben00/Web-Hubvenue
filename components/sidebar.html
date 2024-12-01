@@ -2,7 +2,7 @@
   id="sidebar"
   class="sidebar fixed left-0 top-1/2 transform -translate-y-1/2 w-20 flex flex-col items-center py-8 space-y-8 z-20"
 >
-  <button class="flex flex-col items-center focus:outline-none">
+  <button class="flex flex-col items-center focus:outline-none sidebar-item">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-8 w-8"
@@ -20,7 +20,7 @@
 
     <span class="text-xs mt-1">Corporate Events</span>
   </button>
-  <button class="flex flex-col items-center text-gray-600 focus:outline-none">
+  <button class="flex flex-col items-center text-gray-600 focus:outline-none sidebar-item">
     <svg
       class="h-8 w-8"
       viewBox="0 0 24 24"
@@ -64,7 +64,7 @@
       Hall</span
     >
   </button>
-  <button class="flex flex-col items-center text-gray-600 focus:outline-none">
+  <button class="flex flex-col items-center text-gray-600 focus:outline-none sidebar-item">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-8 w-8"
@@ -81,7 +81,7 @@
     </svg>
     <span class="text-xs mt-1">Intimate Gatherings</span>
   </button>
-  <button class="flex flex-col items-center text-gray-600 focus:outline-none">
+  <button class="flex flex-col items-center text-gray-600 focus:outline-none sidebar-item">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-8 w-8"
@@ -108,15 +108,37 @@
     color: white;
     transition: color 0.3s ease;
   }
+
+  .sidebar-item {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease-out;
+  }
+
+  .sidebar-item:nth-child(1) { transition-delay: 0.1s; }
+  .sidebar-item:nth-child(2) { transition-delay: 0.2s; }
+  .sidebar-item:nth-child(3) { transition-delay: 0.3s; }
+  .sidebar-item:nth-child(4) { transition-delay: 0.4s; }
+
+  .sidebar-item.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
 </style>
 <script>
-  // Function to update button colors based on scroll position
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.add('show');
+      });
+    }, 100);
+  });
+
   function updateButtonColor(navElementId, buttonSelector) {
     const navElement = document.getElementById(navElementId);
     const firstSection = document.querySelector(".first-section");
     const buttons = navElement.querySelectorAll(buttonSelector);
 
-    // Check if firstSection exists
     if (firstSection) {
       const firstSectionBottom =
         firstSection.offsetTop + firstSection.offsetHeight;
@@ -124,7 +146,7 @@
 
       if (scrollPosition >= firstSectionBottom - navElement.offsetHeight / 2) {
         buttons.forEach((button) => {
-          button.style.color = "#4A5568"; // Change to a dark color that matches your design
+          button.style.color = "#4A5568";
         });
       } else {
         buttons.forEach((button) => {
@@ -136,23 +158,19 @@
     }
   }
 
-  // Function to update navigation color
   function updatemnColor() {
     updateButtonColor("main-nav", ".nav-buttons");
   }
 
-  // Function to update sidebar color
   function updateSidebarColor() {
     updateButtonColor("sidebar", "button");
   }
 
-  // Add scroll event listener
   window.addEventListener("scroll", () => {
     updatemnColor();
     updateSidebarColor();
   });
 
-  // Initial calls to set correct color on page load
   updatemnColor();
   updateSidebarColor();
 </script>

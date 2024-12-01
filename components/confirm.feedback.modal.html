@@ -1,36 +1,58 @@
+<style>
+  .modal-backdrop {
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+  }
+
+  .modal-backdrop.show {
+    opacity: 1;
+  }
+
+  .modal-content {
+    transition: all 0.3s ease-in-out;
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  .modal-content.show {
+    transform: scale(1);
+    opacity: 1;
+  }
+</style>
+
 <div
-  class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center z-50"
+  class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 modal-backdrop"
   id="confirmfeedbackModal"
 >
   <!-- Modal Container -->
-  <div class="bg-slate-50 rounded-lg shadow-lg p-8 w-96">
+  <div class="modal-content bg-white rounded-xl shadow-2xl p-8 w-[28rem] mx-4">
     <!-- Logo -->
-    <div class="flex justify-center">
+    <div class="flex justify-center mb-6">
       <img
         alt="Company logo"
-        class="w-auto h-32"
+        class="w-auto h-28 object-contain drop-shadow-md"
         height="100"
         id="confirmfeedbackModalLogo"
         width="100"
       />
     </div>
     <!-- Message -->
-    <div class="text-center mb-6">
-      <h2 class="text-2xl font-bold mb-2">Confirmation</h2>
-      <p class="text-gray-600" id="confirmfeedbackModalMessage">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold mb-3 text-gray-800">Confirmation</h2>
+      <p class="text-gray-600 leading-relaxed" id="confirmfeedbackModalMessage">
         <!-- Message goes here -->
       </p>
     </div>
     <!-- Action Buttons -->
     <div class="flex justify-center space-x-4">
       <button
-        class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+        class="px-6 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-medium transition-all hover:bg-gray-100 active:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
         id="confirmcancelButton"
       >
         Cancel
       </button>
       <button
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        class="px-6 py-2.5 rounded-lg bg-blue-500 text-white font-medium transition-all hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         id="confirmButton"
       >
         Confirm
@@ -41,9 +63,8 @@
 
 <script>
   const confirmmodal = document.getElementById("confirmfeedbackModal");
-  const confirmmodalMessage = document.getElementById(
-    "confirmfeedbackModalMessage"
-  );
+  const modalContent = confirmmodal.querySelector('.modal-content');
+  const confirmmodalMessage = document.getElementById("confirmfeedbackModalMessage");
   const confirmcancelButton = document.getElementById("confirmcancelButton");
   const confirmButton = document.getElementById("confirmButton");
 
@@ -57,21 +78,37 @@
     confirmmodal.classList.add("flex"); // Add display flex
     confirmfeedbackModalLogo.src = logoPath; // Set the logo
 
+    // Trigger animations
+    setTimeout(() => {
+      confirmmodal.classList.add("show");
+      modalContent.classList.add("show");
+    }, 10);
+
     // Reset the confirm button's onclick to avoid multiple bindings
     confirmButton.onclick = function () {
-      confirmmodal.classList.add("hidden"); // Hide the modal
+      hideModal();
       if (confirmCallback) confirmCallback(); // Execute the action if provided
     };
 
     // Cancel button hides the modal without action
-    confirmcancelButton.onclick = function () {
-      confirmmodal.classList.add("hidden"); // Hide the modal
-    };
+    confirmcancelButton.onclick = hideModal;
   }
 
-  // Example usage
-  // showModal("Are you sure you want to delete this item?", function() {
-  //   // Perform delete action here
-  //   console.log("Item deleted.");
-  // });
+  function hideModal() {
+    confirmmodal.classList.remove("show");
+    modalContent.classList.remove("show");
+    
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
+      confirmmodal.classList.add("hidden");
+      confirmmodal.classList.remove("flex");
+    }, 300);
+  }
+
+  // Close modal when clicking outside
+  confirmmodal.addEventListener('click', (e) => {
+    if (e.target === confirmmodal) {
+      hideModal();
+    }
+  });
 </script>

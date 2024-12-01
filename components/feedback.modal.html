@@ -1,31 +1,53 @@
+<style>
+  .modal-backdrop {
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+  }
+
+  .modal-backdrop.show {
+    opacity: 1;
+  }
+
+  .modal-content {
+    transition: all 0.3s ease-in-out;
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  .modal-content.show {
+    transform: scale(1);
+    opacity: 1;
+  }
+</style>
+
 <div
-  class="hidden fixed inset-0 bg-black bg-opacity-40 items-center justify-center z-50"
+  class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50 modal-backdrop"
   style="z-index: 500;"
   id="feedbackModal"
 >
   <!-- Modal Container -->
-  <div class="bg-slate-50 rounded-lg shadow-lg p-8 w-96">
+  <div class="modal-content bg-white rounded-xl shadow-2xl p-8 w-[28rem] mx-4">
     <!-- Logo -->
-    <div class="flex justify-center">
+    <div class="flex justify-center mb-6">
       <img
         alt="Company logo"
-        class="w-auto h-32"
+        class="w-auto h-28 object-contain drop-shadow-md"
         height="100"
         id="feedbackModalLogo"
         width="100"
       />
     </div>
     <!-- Message -->
-    <div class="text-center mb-6">
-      <h2 class="text-2xl font-bold mb-2">Feedback</h2>
-      <p class="text-gray-600" id="feedbackModalMessage">
+    <div class="text-center mb-8">
+      <h2 class="text-2xl font-bold mb-3 text-gray-800">Feedback</h2>
+      <p class="text-gray-600 leading-relaxed" id="feedbackModalMessage">
         <!-- Message goes here -->
       </p>
     </div>
     <!-- Okay Button -->
     <div class="flex justify-center">
       <button
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        class="px-6 py-2.5 rounded-lg bg-blue-500 text-white font-medium transition-all hover:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         id="feedbackModalButton"
       >
         Okay
@@ -35,25 +57,53 @@
 </div>
 
 <script>
-  const modal = document.getElementById("feedbackModal");
-  const modalMessage = document.getElementById("feedbackModalMessage");
-  const btn = document.getElementById("feedbackModalButton");
-  const modalLogo = document.getElementById("feedbackModalLogo");
+  const feedbackModal = document.getElementById("feedbackModal");
+  const feedbackModalMessage = document.getElementById("feedbackModalMessage");
+  const feedbackBtn = document.getElementById("feedbackModalButton");
+  const feedbackModalLogo = document.getElementById("feedbackModalLogo");
+  const feedbackModalContent = feedbackModal.querySelector('.modal-content');
 
   // Function to show the modal with a custom message
   function showModal(message, callback = () => {}, logo) {
     const basePath = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
     const logoPath = `${basePath}/images/${logo}`;
 
-    modalMessage.innerHTML = message; // Set the custom message
-    modal.classList.remove("hidden"); // Show the modal
-    modal.classList.add("flex"); // Show the modal
-    modalLogo.src = logoPath; // Set the logo
+    feedbackModalMessage.innerHTML = message; // Set the custom message
+    feedbackModal.classList.remove("hidden"); // Show the modal
+    feedbackModal.classList.add("flex"); // Show the modal
+    feedbackModalLogo.src = logoPath; // Set the logo
+
+    // Add show classes after a small delay to trigger animations
+    setTimeout(() => {
+      feedbackModal.classList.add("show");
+      feedbackModalContent.classList.add("show");
+    }, 10);
 
     // Dynamically assign the click handler for the "Okay" button
-    btn.onclick = function () {
-      callback(); // Execute the callback if provided
-      modal.classList.add("hidden"); // Hide the modal
+    feedbackBtn.onclick = function () {
+      // Remove show classes first
+      feedbackModal.classList.remove("show");
+      feedbackModalContent.classList.remove("show");
+      
+      // Wait for animation to complete before hiding
+      setTimeout(() => {
+        callback(); // Execute the callback if provided
+        feedbackModal.classList.add("hidden"); // Hide the modal
+        feedbackModal.classList.remove("flex");
+      }, 300);
     };
   }
+
+  // Close modal when clicking outside
+  feedbackModal.addEventListener('click', (e) => {
+    if (e.target === feedbackModal) {
+      feedbackModal.classList.remove("show");
+      feedbackModalContent.classList.remove("show");
+      
+      setTimeout(() => {
+        feedbackModal.classList.add("hidden");
+        feedbackModal.classList.remove("flex");
+      }, 300);
+    }
+  });
 </script>

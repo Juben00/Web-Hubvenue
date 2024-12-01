@@ -60,7 +60,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
         .cloud-bottom {
             position: absolute;
-            bottom: -2px;
+            bottom: -30px;
             /* Slightly overlap to avoid thin line */
             left: 0;
             width: 100%;
@@ -72,7 +72,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             position: relative;
             display: block;
             width: calc(100% + 1.3px);
-            height: 128px;
+            height: 150px;
             /* Increased height for more pronounced layers */
         }
 
@@ -91,7 +91,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         }
 
         .first-section {
-            height: 75vh;
+            height: 80vh;
             /* 3/4 of the viewport height */
         }
     </style>
@@ -161,6 +161,23 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             animation: heartbeat 0.8s ease-in-out;
         }
     </style>
+    <style>
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .scroll-animate.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Add different animation delays for grid items */
+        .grid-item-delay:nth-child(1) { transition-delay: 0s; }
+        .grid-item-delay:nth-child(2) { transition-delay: 0.2s; }
+        .grid-item-delay:nth-child(3) { transition-delay: 0.4s; }
+    </style>
 </head>
 
 <body class="min-h-screen text-gray-900 flex flex-col">
@@ -200,7 +217,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                 <!-- Content container with left margin for sidebar -->
                 <div class="ml-20">
                     <div class="container mx-auto px-4 md:px-8">
-                        <div class="mt-16 max-w-6xl mx-auto">
+                        <div class="mt-16 max-w-6xl mx-auto scroll-animate">
                             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
                                 Find Your Perfect Venue
                             </h2>
@@ -214,7 +231,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                     <!-- Second section with white background -->
                     <div class="bg-white p-50 pt-10 relative z-10">
-                        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+                        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 scroll-animate">
                             <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full h-full"
                                 id="venueList">
@@ -305,9 +322,9 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                             </div>
                         </section>
-                        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+                        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
                             <div class="flex flex-col">
-                                <div class="text-center mb-8">
+                                <div class="text-center mb-8 scroll-animate">
                                     <h2 class="text-3xl font-bold mb-2">Our Services</h2>
                                     <p class="text-gray-600 max-w-2xl mx-auto text-sm">Discover how HubVenue can help
                                         you find the perfect space or monetize your venue with our comprehensive
@@ -317,7 +334,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                 <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
                                     <!-- Space Rentals Card -->
                                     <div
-                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
                                             <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
                                                 class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
@@ -331,7 +348,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                                     <!-- Post Your Space Card -->
                                     <div
-                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
                                             <img src="./images/serviceimages/pexels-rdne-7414284.jpg"
                                                 alt="Post Listings"
@@ -346,7 +363,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                                     <!-- Book Event Space Card -->
                                     <div
-                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
                                             <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
                                                 alt="Book Event"
@@ -364,12 +381,12 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                         <!-- Services section -->
                         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 mb-8">
                             <div class="container mx-auto flex flex-col ">
-                                <h2 class="text-3xl font-bold mb-4 text-center">About Us</h2>
+                                <h2 class="text-3xl font-bold mb-4 text-center scroll-animate">About Us</h2>
 
                                 <div class="flex flex-col gap-4">
 
                                     <div
-                                        class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                        class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
                                         <h3 class="text-xl font-semibold  text-red-500 italic">Our Story</h3>
                                         <p>
                                             Hubvenue was born out of the need to streamline the often complex and
@@ -416,7 +433,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- mission -->
                                         <div
-                                            class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                            class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
                                             <h3 class="text-xl font-semibold  text-red-500 italic">Our Mission</h3>
                                             <p class="text-center">
                                                 To simplify finding and booking available venues, offering users an easy
@@ -429,7 +446,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                         </div>
                                         <!-- vission -->
                                         <div
-                                            class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2">
+                                            class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
                                             <h3 class="text-xl font-semibold  text-red-500 italic">Our Vision</h3>
                                             <p class="text-center">
                                                 To be the go to platform for venue reservations, helping people connect
@@ -723,6 +740,31 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                         faqContent.classList.add("hidden");
                     }
                 });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                        // Optionally, stop observing the element after it's animated
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all elements with scroll-animate class
+            document.querySelectorAll('.scroll-animate').forEach(element => {
+                observer.observe(element);
             });
         });
     </script>
