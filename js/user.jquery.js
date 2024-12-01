@@ -84,11 +84,15 @@ $(document).ready(function () {
     });
 
     //map trigger buttons open
-    $("#maps-button").on("click", function (e) {
+    // $("#maps-button").on("click", function (e) {
+    //     e.preventDefault();
+    //     viewOpenStreetMap();  // Open the map for user interaction
+    // });
+
+    $(document).on('click', '#maps-button', function (e) {
         e.preventDefault();
         viewOpenStreetMap();  // Open the map for user interaction
     });
-
     //add venue trigger button
     $('#add-venue-form').on("submit", function (e) {
         e.preventDefault();
@@ -177,8 +181,14 @@ $(document).ready(function () {
         }
     });
 
-
-
+    // Update user info form submission
+    $('#updateUserInfoForm').on('submit', function (e) {
+        e.preventDefault();
+        const formElement = $(this);
+        updateUserInfo(formElement);
+        // console.log(formElement);
+        
+    });
 
     function viewOpenStreetMap(){
     $.ajax({
@@ -249,6 +259,8 @@ $(document).ready(function () {
             },
             });
     }
+
+    
 
     function viewVenue(url) {
         window.location.href = url;
@@ -457,9 +469,27 @@ $(document).ready(function () {
                 }
             },
         });
-    }
+    } 
 
-    
+    function updateUserInfo(formElement) {
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/updateUserInfo.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                response = JSON.parse(response);
+                if (response.status === "success") {
+                    showModal(response.message, undefined, "black_ico.png");
+                } else {
+                    showModal(response.message, undefined, "black_ico.png");
+                }
+            },
+        });
+
+    }
 
     
     // setting default view for profile

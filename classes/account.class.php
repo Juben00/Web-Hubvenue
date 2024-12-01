@@ -464,6 +464,34 @@ class Account
         }
     }
 
+    public function updateUserInfo($userId, $firstname, $lastname, $middlename, $bio = null, $sex, $birthdate, $address, $email, $contact, $uploadedImages = null)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, middlename = :middlename, bio = :bio, sex_id = :sex, birthdate = :birthdate, address = :address, email = :email, contact_number = :contact, profile_pic = :profile_pic WHERE id = :userId";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':userId', $userId);
+            $stmt->bindParam(':firstname', $firstname);
+            $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':middlename', $middlename);
+            $stmt->bindParam(':bio', $bio);
+            $stmt->bindParam(':sex', $sex);
+            $stmt->bindParam(':birthdate', $birthdate);
+            $stmt->bindParam(':address', $address);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':contact', $contact);
+            $stmt->bindParam(':profile_pic', $uploadedImages);
+            $stmt->execute();
+
+            return ['status' => 'success', 'message' => 'User information updated successfully'];
+        } catch (PDOException $e) {
+            error_log("Error updating user info: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+
 }
 
 // session_start();
