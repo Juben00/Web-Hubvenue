@@ -7,7 +7,7 @@
     </a>
     <!-- Center Section -->
     <div id="bottom-search"
-      class="bg-slate-100 text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
+      class="bg-white text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
       <div class="flex-1 min-w-0 px-4">
           <label for="location" class="block text-sm font-medium text-gray-700">Where</label>
           <input type="text" id="location" placeholder="Search location" class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
