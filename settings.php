@@ -270,7 +270,7 @@ if (isset($_SESSION['user'])) {
                         <!-- Password Section -->
                         <div class="mt-16 pt-8 border-t border-gray-200">
                             <h3 class="text-lg font-medium mb-8 text-gray-800 border-b pb-2">Change Password</h3>
-                            <form class="space-y-8">
+                            <form class="space-y-8" id="updatePasswordForm">
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Current Password</label>

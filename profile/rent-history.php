@@ -243,15 +243,18 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         </div>
 
         <!-- Details Modal -->
-        <div id="details-modal" 
+        <div id="details-modal"
             class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-            <div class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+            <div
+                class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
                 <!-- Modal Header -->
                 <div class="flex justify-between items-center pb-4 border-b">
                     <h3 class="text-xl font-bold" id="modal-title"></h3>
-                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                    <button onclick="closeModal()"
+                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -264,10 +267,10 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                         <div class="w-full max-w-md mb-6">
                             <!-- Main Image -->
                             <div class="relative h-64 rounded-lg overflow-hidden mb-2">
-                                <img id="modal-main-image" src="" alt="Venue Main Image" 
+                                <img id="modal-main-image" src="" alt="Venue Main Image"
                                     class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
                             </div>
-                            
+
                             <!-- Horizontal Thumbnail Strip -->
                             <div class="flex gap-2 overflow-x-auto" id="image-gallery">
                                 <!-- Thumbnail images will be inserted here -->
@@ -329,7 +332,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <!-- Action Buttons -->
                             <div class="flex justify-center gap-3 pt-2">
                                 <div id="book-again-container" class="hidden">
-                                    <button class="px-4 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm">
+                                    <button
+                                        class="px-4 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm">
                                         Book Again
                                     </button>
                                 </div>
@@ -369,7 +373,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     function showDetails(booking) {
         const modal = document.getElementById('details-modal');
         const bookAgainContainer = document.getElementById('book-again-container');
-        
+
         // Show modal with fade-in effect
         modal.classList.remove('hidden');
         requestAnimationFrame(() => {
@@ -384,7 +388,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         // Setup main image and gallery
         const mainImage = document.getElementById('modal-main-image');
         mainImage.src = './' + booking.image_urls.split(',')[0];
-        
+
         // Setup image gallery with horizontal thumbnails
         const imageGallery = document.getElementById('image-gallery');
         const imageUrls = booking.image_urls.split(',');
@@ -407,7 +411,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
         document.getElementById('booking-duration').textContent = `${booking.booking_duration} days`;
         document.getElementById('cleaning-fee').textContent = `Cleaning fee: ₱500`;
-        
+
         // Set location details
         const locationDetails = document.getElementById('location-details');
         locationDetails.innerHTML = `
@@ -469,7 +473,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         modal.classList.remove('opacity-100');
         modal.querySelector('.relative').classList.remove('scale-100');
         modal.querySelector('.relative').classList.add('scale-95');
-        
+
         setTimeout(() => {
             modal.classList.add('hidden');
         }, 300);
@@ -519,7 +523,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     #modal-main-image {
         transition: opacity 0.2s ease-in-out;
     }
-    
+
     #image-gallery {
         scrollbar-width: thin;
         scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
