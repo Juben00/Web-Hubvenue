@@ -491,6 +491,38 @@ class Account
         }
     }
 
+    public function updateUserPassword($userId, $currentPass, $newPass, $confirmPass)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT password FROM users WHERE id = :userId";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':userId', $userId);
+            $stmt->execute();
+            $user = $stmt->fetch();
+            if (password_verify($currentPass, $user['password'])) {
+                if (password_verify($newPass, $user['password'])) {
+                    return ['status' => 'error', 'message' => 'New password must be different from the current password'];
+                }
+                if ($newPass == $confirmPass) {
+                    $newPass = password_hash($newPass, PASSWORD_DEFAULT);
+                    $updateSql = "UPDATE users SET password = :newPass WHERE id = :userId";
+                    $updateStmt = $conn->prepare($updateSql);
+                    $updateStmt->bindParam(':userId', $userId);
+                    $updateStmt->bindParam(':newPass', $newPass);
+                    $updateStmt->execute();
+                    return ['status' => 'success', 'message' => 'Password updated successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'New password and confirm password do not match'];
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Current password is incorrect'];
+            }
+        } catch (PDOException $e) {
+            error_log("Error updating user password: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 
 }
 

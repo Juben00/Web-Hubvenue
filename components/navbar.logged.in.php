@@ -9,26 +9,30 @@
     <div id="bottom-search"
       class="bg-white text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
       <div class="flex-1 min-w-0 px-4">
-          <label for="location" class="block text-sm font-medium text-gray-700">Where</label>
-          <input type="text" id="location" placeholder="Search location" class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+        <label for="location" class="block text-sm font-medium text-gray-700">Where</label>
+        <input type="text" id="location" placeholder="Search location"
+          class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
       </div>
 
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
       <div class="flex-1 min-w-0 px-4">
-          <label for="minPrice" class="block text-sm font-medium text-gray-700">Price Range</label>
-          <div class="flex items-center gap-2">
-              <input type="number" id="minPrice" placeholder="Min" class="w-20 border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
-              <span class="text-gray-500">-</span>
-              <input type="number" id="maxPrice" placeholder="Max" class="w-20 border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
-          </div>
+        <label for="minPrice" class="block text-sm font-medium text-gray-700">Price Range</label>
+        <div class="flex items-center gap-2">
+          <input type="number" id="minPrice" placeholder="Min"
+            class="w-20 border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+          <span class="text-gray-500">-</span>
+          <input type="number" id="maxPrice" placeholder="Max"
+            class="w-20 border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+        </div>
       </div>
 
       <div class="w-px h-10 bg-gray-300 mx-2"></div>
       <div class="flex-1 min-w-0 px-4 relative">
-          <label for="guests" class="block text-sm font-medium text-gray-700">Who</label>
-          <button id="guestsButton" class="w-full text-left border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
-              <span id="guestCount">Add guests</span>
-          </button>
+        <label for="guests" class="block text-sm font-medium text-gray-700">Who</label>
+        <button id="guestsButton"
+          class="w-full text-left border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+          <span id="guestCount">Add guests</span>
+        </button>
       </div>
 
       <button class="rounded-full bg-gray-500 hover:bg-gray-600 text-black p-2">
@@ -39,58 +43,67 @@
       </button>
 
       <!-- Guest Dropdown (moved outside the button for better positioning) -->
-      <div id="guestDropdown" class="hidden absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-lg border border-gray-200 p-4 z-50">
-          <!-- Adults -->
-          <div class="flex items-center justify-between py-3 border-b">
-              <div>
-                  <h3 class="font-medium">Adults</h3>
-                  <p class="text-gray-500 text-sm">Ages 13 or above</p>
-              </div>
-              <div class="flex items-center gap-3">
-                  <button class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
-                  <span class="guest-count w-4 text-center">0</span>
-                  <button class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
-              </div>
+      <div id="guestDropdown"
+        class="hidden absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-lg border border-gray-200 p-4 z-50">
+        <!-- Adults -->
+        <div class="flex items-center justify-between py-3 border-b">
+          <div>
+            <h3 class="font-medium">Adults</h3>
+            <p class="text-gray-500 text-sm">Ages 13 or above</p>
           </div>
-          
-          <!-- Children -->
-          <div class="flex items-center justify-between py-3 border-b">
-              <div>
-                  <h3 class="font-medium">Children</h3>
-                  <p class="text-gray-500 text-sm">Ages 2-12</p>
-              </div>
-              <div class="flex items-center gap-3">
-                  <button class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
-                  <span class="guest-count w-4 text-center">0</span>
-                  <button class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
-              </div>
+          <div class="flex items-center gap-3">
+            <button
+              class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
+            <span class="guest-count w-4 text-center">0</span>
+            <button
+              class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
           </div>
-          
-          <!-- Infants -->
-          <div class="flex items-center justify-between py-3 border-b">
-              <div>
-                  <h3 class="font-medium">Infants</h3>
-                  <p class="text-gray-500 text-sm">Under 2</p>
-              </div>
-              <div class="flex items-center gap-3">
-                  <button class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
-                  <span class="guest-count w-4 text-center">0</span>
-                  <button class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
-              </div>
+        </div>
+
+        <!-- Children -->
+        <div class="flex items-center justify-between py-3 border-b">
+          <div>
+            <h3 class="font-medium">Children</h3>
+            <p class="text-gray-500 text-sm">Ages 2-12</p>
           </div>
-          
-          <!-- Pets -->
-          <div class="flex items-center justify-between py-3">
-              <div>
-                  <h3 class="font-medium">Pets</h3>
-                  <p class="text-gray-500 text-sm hover:underline cursor-pointer">Bringing a service animal?</p>
-              </div>
-              <div class="flex items-center gap-3">
-                  <button class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
-                  <span class="guest-count w-4 text-center">0</span>
-                  <button class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
-              </div>
+          <div class="flex items-center gap-3">
+            <button
+              class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
+            <span class="guest-count w-4 text-center">0</span>
+            <button
+              class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
           </div>
+        </div>
+
+        <!-- Infants -->
+        <div class="flex items-center justify-between py-3 border-b">
+          <div>
+            <h3 class="font-medium">Infants</h3>
+            <p class="text-gray-500 text-sm">Under 2</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
+            <span class="guest-count w-4 text-center">0</span>
+            <button
+              class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
+          </div>
+        </div>
+
+        <!-- Pets -->
+        <div class="flex items-center justify-between py-3">
+          <div>
+            <h3 class="font-medium">Pets</h3>
+            <p class="text-gray-500 text-sm hover:underline cursor-pointer">Bringing a service animal?</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              class="guest-minus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">-</button>
+            <span class="guest-count w-4 text-center">0</span>
+            <button
+              class="guest-plus rounded-full w-8 h-8 border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400">+</button>
+          </div>
+        </div>
       </div>
     </div>
     <!-- Right Section -->
@@ -144,8 +157,6 @@
         bottomSearch.classList.add("hidden");
         bottomSearch.classList.remove("flex");
       }
-    } else {
-      console.warn("No element with class 'first-section' found.");
     }
   }
 
@@ -154,48 +165,48 @@
   // Initial call to set correct color on page load
   updateNavColor();
 
-  document.getElementById('guestsButton').addEventListener('click', function() {
-      const dropdown = document.getElementById('guestDropdown');
-      dropdown.classList.toggle('hidden');
+  document.getElementById('guestsButton').addEventListener('click', function () {
+    const dropdown = document.getElementById('guestDropdown');
+    dropdown.classList.toggle('hidden');
   });
 
   // Update guest count when + or - buttons are clicked
   document.querySelectorAll('.guest-plus, .guest-minus').forEach(button => {
-      button.addEventListener('click', function() {
-          const countElement = this.parentElement.querySelector('.guest-count');
-          let count = parseInt(countElement.textContent);
-          
-          if (this.classList.contains('guest-plus')) {
-              count++;
-          } else if (count > 0) {
-              count--;
-          }
-          
-          countElement.textContent = count;
-          updateTotalGuestCount();
-      });
+    button.addEventListener('click', function () {
+      const countElement = this.parentElement.querySelector('.guest-count');
+      let count = parseInt(countElement.textContent);
+
+      if (this.classList.contains('guest-plus')) {
+        count++;
+      } else if (count > 0) {
+        count--;
+      }
+
+      countElement.textContent = count;
+      updateTotalGuestCount();
+    });
   });
 
   function updateTotalGuestCount() {
-      const counts = Array.from(document.querySelectorAll('.guest-count'))
-          .map(el => parseInt(el.textContent));
-      const total = counts.reduce((sum, current) => sum + current, 0);
-      
-      const guestCountElement = document.getElementById('guestCount');
-      if (total === 0) {
-          guestCountElement.textContent = 'Add guests';
-      } else {
-          guestCountElement.textContent = `${total} guest${total !== 1 ? 's' : ''}`;
-      }
+    const counts = Array.from(document.querySelectorAll('.guest-count'))
+      .map(el => parseInt(el.textContent));
+    const total = counts.reduce((sum, current) => sum + current, 0);
+
+    const guestCountElement = document.getElementById('guestCount');
+    if (total === 0) {
+      guestCountElement.textContent = 'Add guests';
+    } else {
+      guestCountElement.textContent = `${total} guest${total !== 1 ? 's' : ''}`;
+    }
   }
 
   // Close dropdown when clicking outside
-  document.addEventListener('click', function(event) {
-      const dropdown = document.getElementById('guestDropdown');
-      const guestsButton = document.getElementById('guestsButton');
-      
-      if (!dropdown.contains(event.target) && !guestsButton.contains(event.target)) {
-          dropdown.classList.add('hidden');
-      }
+  document.addEventListener('click', function (event) {
+    const dropdown = document.getElementById('guestDropdown');
+    const guestsButton = document.getElementById('guestsButton');
+
+    if (!dropdown.contains(event.target) && !guestsButton.contains(event.target)) {
+      dropdown.classList.add('hidden');
+    }
   });
 </script>
