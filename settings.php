@@ -80,7 +80,7 @@ if (isset($_SESSION['user'])) {
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 2 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                     Privacy
                 </button>
@@ -103,30 +103,29 @@ if (isset($_SESSION['user'])) {
                     class="transition-all duration-200 ease-in-out transform opacity-100 translate-x-0">
                     <div class="max-w-7xl mx-auto">
                         <!-- Profile Picture Section -->
-                        <div class="mb-12 flex flex-col items-center">
-                            <div class="relative group">
-                                <div class="w-64 h-64 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                                    <?php
-                                    if ($user['profile_pic'] == null) {
-                                        echo '<div id="profilePlaceholder" class="h-full w-full object-cover text-7xl bg-black text-white flex items-center justify-center">';
-                                        echo htmlspecialchars($user["firstname"][0]);
-                                        echo '</div>';
-                                    } else {
-                                        echo '<img id="profileImage" name="profile_image" src="' . htmlspecialchars($user["profile_pic"]) . '" alt="Profile Picture" class="w-full h-full object-cover">';
-                                    }
-                                    ?>
-                                </div>
-                                <label for="profilePicture"
-                                    class="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
-                                    <span class="text-sm">Change Photo</span>
-                                </label>
-                                <input type="file" id="profilePicture" name="profilePicture" class="hidden"
-                                    accept="image/*">
-                            </div>
-                            <p class="text-sm text-gray-500 mt-2">Click to upload new profile picture</p>
-                        </div>
-
                         <form class="space-y-8" id="updateUserInfoForm">
+                            <div class="mb-12 flex flex-col items-center">
+                                <div class="relative group">
+                                    <div class="w-64 h-64 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                                        <?php
+                                        if ($user['profile_pic'] == null) {
+                                            echo '<div id="profilePlaceholder" class="h-full w-full object-cover text-7xl bg-black text-white flex items-center justify-center">';
+                                            echo htmlspecialchars($user["firstname"][0]);
+                                            echo '</div>';
+                                        } else {
+                                            echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($user["profile_pic"]) . '" alt="Profile Picture" class="w-full h-full object-cover">';
+                                        }
+                                        ?>
+                                    </div>
+                                    <label for="profilePicture"
+                                        class="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
+                                        <span class="text-sm">Change Photo</span>
+                                    </label>
+                                    <input type="file" id="profilePicture" name="profilePicture" class="hidden"
+                                        accept="image/*">
+                                </div>
+                                <p class="text-sm text-gray-500 mt-2">Click to upload new profile picture</p>
+                            </div>
                             <!-- Personal Information Section -->
                             <div class="space-y-6">
                                 <h3 class="flex items-center gap-2 text-lg font-medium text-gray-800 border-b pb-2">
@@ -180,7 +179,8 @@ if (isset($_SESSION['user'])) {
                                         <label class="block text-sm font-medium text-gray-700">Sex</label>
                                         <select name="sex"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
-                                            <option value="" disabled <?php echo empty($user['sex']) ? 'selected' : ''; ?>>Select sex</option>
+                                            <option value="" disabled <?php echo empty($user['sex']) ? 'selected' : ''; ?>>
+                                                Select sex</option>
                                             <option value="Male" <?php echo htmlspecialchars($user['sex_id']) === "1" ? "selected" : ""; ?>>Male</option>
                                             <option value="Female" <?php echo htmlspecialchars($user['sex_id']) === "2" ? "selected" : ""; ?>>Female</option>
                                         </select>
@@ -545,6 +545,14 @@ if (isset($_SESSION['user'])) {
                 reader.readAsDataURL(file);
             }
         });
+
+        // Add event listener for profilePlaceholder click
+        const profilePlaceholder = document.getElementById('profilePlaceholder');
+        if (profilePlaceholder) {
+            profilePlaceholder.addEventListener('click', function () {
+                document.getElementById('uploadedprofile').click();
+            });
+        }
 
         // Add this new function for handling coupons
         function addCoupon() {

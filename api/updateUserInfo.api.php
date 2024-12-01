@@ -50,34 +50,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $contactErr = "Contact is required";
 
     $imageErr = [];
-    $uploadedImages = [];
+    $uploadedImage = null;
 
-    if (empty($_FILES['profile_image']['name'][0])) {
-        $profile_imgErr = "Profile image is required";
+    if (empty($_FILES['profilePicture']['name'])) {
+        $imageErr[] = 'Profile image is required.';
     } else {
-        foreach ($_FILES['profile_image']['name'] as $key => $image) {
-            $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+        $imageFileType = strtolower(pathinfo($_FILES['profilePicture']['name'], PATHINFO_EXTENSION));
 
-            // Validate each image
-            if (!in_array($imageFileType, $allowedType)) {
-                $imageErr[] = "File " . $_FILES['profile_image']['name'][$key] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
+        // Validate the uploaded image
+        if (!in_array($imageFileType, $allowedType)) {
+            $imageErr[] = "File " . $_FILES['profilePicture']['name'] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
+        } else {
+            // Generate a unique target path for the image
+            $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
+
+            // Move the uploaded file to the target directory
+            if (move_uploaded_file($_FILES['profilePicture']['tmp_name'], '..' . $targetImage)) {
+                $uploadedImage = $targetImage;
             } else {
-                // Generate a unique target path for each image
-                $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
-
-                // Move the uploaded file to the target directory
-                if (move_uploaded_file($_FILES['profile_image']['tmp_name'][$key], '..' . $targetImage)) {
-                    $uploadedImages[] = $targetImage;
-                } else {
-                    $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
-                }
+                $imageErr[] = "Failed to upload image: " . $_FILES['profilePicture']['name'];
             }
         }
     }
 
-    if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($sexErr) && empty($birthdateErr) && empty($addressErr) && empty($emailErr) && empty($contactErr)) {
-        // Use the first uploaded image if available, otherwise set a default or null
-        $profileImage = !empty($uploadedImages) ? $uploadedImages[0] : null;
+    if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($sexErr) && empty($birthdateErr) && empty($addressErr) && empty($emailErr) && empty($contactErr) && empty($imageErr)) {
+        // Use the uploaded image if available
+        $profileImage = $uploadedImage;
 
         // Update user info
         $result = $accountObj->updateUserInfo($userId, $firstname, $lastname, $middlename, $bio, $sex, $birthdate, $address, $email, $contact, $profileImage);
@@ -99,7 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $birthdateErr,
                 $addressErr,
                 $emailErr,
-                $contactErr
+                $contactErr,
+                implode('<br>', $imageErr)
             ]))
         ]);
     }

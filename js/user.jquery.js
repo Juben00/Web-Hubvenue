@@ -181,17 +181,14 @@ $(document).ready(function () {
         }
     });
 
+    // Update user info form submission
     $('#updateUserInfoForm').on('submit', function (e) {
         e.preventDefault();
         const formElement = $(this);
         updateUserInfo(formElement);
-        // console.log(formElement.serialize());
+        // console.log(formElement);
         
-        // console.log("Update user info form submitted");
     });
-
-
-
 
     function viewOpenStreetMap(){
     $.ajax({
