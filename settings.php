@@ -11,7 +11,7 @@ if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
     }
-
+    $user = $_SESSION['user'];
 }
 ?>
 
@@ -106,8 +106,15 @@ if (isset($_SESSION['user'])) {
                         <div class="mb-12 flex flex-col items-center">
                             <div class="relative group">
                                 <div class="w-64 h-64 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                                    <img id="profileImage" src="" alt="Profile Picture"
-                                        class="w-full h-full object-cover">
+                                    <?php
+                                    if ($user['profile_pic'] == null) {
+                                        echo '<div id="profilePlaceholder" class="h-full w-full object-cover text-7xl bg-black text-white flex items-center justify-center">';
+                                        echo htmlspecialchars($user["firstname"][0]);
+                                        echo '</div>';
+                                    } else {
+                                        echo '<img id="profileImage" name="profile_image" src="' . htmlspecialchars($user["profile_pic"]) . '" alt="Profile Picture" class="w-full h-full object-cover">';
+                                    }
+                                    ?>
                                 </div>
                                 <label for="profilePicture"
                                     class="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
@@ -119,7 +126,7 @@ if (isset($_SESSION['user'])) {
                             <p class="text-sm text-gray-500 mt-2">Click to upload new profile picture</p>
                         </div>
 
-                        <form class="space-y-8">
+                        <form class="space-y-8" id="updateUserInfoForm">
                             <!-- Personal Information Section -->
                             <div class="space-y-6">
                                 <h3 class="flex items-center gap-2 text-lg font-medium text-gray-800 border-b pb-2">
@@ -137,7 +144,8 @@ if (isset($_SESSION['user'])) {
                                     <label class="block text-sm font-medium text-gray-700">Bio</label>
                                     <textarea name="bio" rows="4"
                                         class="w-full px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
-                                        placeholder="Tell us a little bit about yourself..."></textarea>
+                                        placeholder="Tell us a little bit about yourself..."
+                                        value="<?php echo htmlspecialchars($user['bio']); ?>"></textarea>
                                     <p class="text-sm text-gray-500">Write a short bio that describes you (maximum 500
                                         characters)</p>
                                 </div>
@@ -145,18 +153,22 @@ if (isset($_SESSION['user'])) {
                                 <!-- Form inputs with Tailwind classes -->
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                     <div class="space-y-2">
+
                                         <label class="block text-sm font-medium text-gray-700">First Name</label>
                                         <input type="text" name="firstname"
+                                            value="<?php echo htmlspecialchars($user['firstname']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Last Name</label>
                                         <input type="text" name="lastname"
+                                            value="<?php echo htmlspecialchars($user['lastname']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Middle Initial</label>
                                         <input type="text" name="middlename"
+                                            value="<?php echo htmlspecialchars($user['middlename']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                 </div>
@@ -164,17 +176,19 @@ if (isset($_SESSION['user'])) {
                                 <!-- Sex and Birthday -->
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     <div class="space-y-2">
+
                                         <label class="block text-sm font-medium text-gray-700">Sex</label>
                                         <select name="sex"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
-                                            <option value="" disabled selected>Select sex</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
+                                            <option value="" disabled <?php echo empty($user['sex']) ? 'selected' : ''; ?>>Select sex</option>
+                                            <option value="Male" <?php echo htmlspecialchars($user['sex_id']) === "1" ? "selected" : ""; ?>>Male</option>
+                                            <option value="Female" <?php echo htmlspecialchars($user['sex_id']) === "2" ? "selected" : ""; ?>>Female</option>
                                         </select>
                                     </div>
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Birthday</label>
                                         <input type="date" name="birthdate"
+                                            value="<?php echo htmlspecialchars($user['birthdate']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                 </div>
@@ -188,19 +202,36 @@ if (isset($_SESSION['user'])) {
                                 <div class="space-y-2">
                                     <label class="block text-sm font-medium text-gray-700">Address</label>
                                     <div class="flex gap-2">
-                                        <input type="text" name="address"
+                                        <input type="text" name="address" id="address" readonly
+                                            value="<?php echo htmlspecialchars($user['address']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
                                             placeholder="Enter your address">
-                                        <button type="button"
-                                            class="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
-                                            <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <button id="maps-button"
+                                            class=" border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
+                                            <svg height="24px" width="24px" version="1.1" id="Layer_1"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
+                                                xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 ">
+                                                    </polygon>
+                                                    <polygon style="fill:#d3d5de;"
+                                                        points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
+                                                    </polygon>
+                                                    <polygon
+                                                        points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
+                                                    </polygon>
+                                                    <path style="fill:#e73023;"
+                                                        d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
+                                                    </path>
+                                                    <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568">
+                                                    </circle>
+                                                </g>
                                             </svg>
-                                        </button>
+                                        </button> </button>
                                     </div>
                                 </div>
 
@@ -209,12 +240,14 @@ if (isset($_SESSION['user'])) {
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Email</label>
                                         <input type="email" name="email"
+                                            value="<?php echo htmlspecialchars($user['email']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
                                             placeholder="your.email@example.com">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Contact Number</label>
                                         <input type="tel" name="contact"
+                                            value="<?php echo htmlspecialchars($user['contact_number']); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
                                             placeholder="09XX XXX XXXX">
                                     </div>
@@ -241,18 +274,18 @@ if (isset($_SESSION['user'])) {
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Current Password</label>
-                                        <input type="password" name="current_password"
+                                        <input type="password" name="current_password" placeholder="***********"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">New Password</label>
-                                        <input type="password" name="new_password"
+                                        <input type="password" name="new_password" placeholder="New Password"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="block text-sm font-medium text-gray-700">Confirm New
                                             Password</label>
-                                        <input type="password" name="confirm_password"
+                                        <input type="password" name="confirm_password" placeholder="Confirm Password"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                     </div>
                                 </div>
@@ -428,8 +461,15 @@ if (isset($_SESSION['user'])) {
                 </div>
             </div>
         </div>
+        <div id="openstreetmapplaceholder"></div>
     </main>
 
+    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
+    <script>
+        let map;
+        let marker;
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Get all tab buttons and content sections
@@ -494,7 +534,13 @@ if (isset($_SESSION['user'])) {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('profileImage').src = e.target.result;
+                    const profileImage = document.getElementById('profileImage');
+                    const profilePlaceholder = document.getElementById('profilePlaceholder');
+                    if (profileImage) {
+                        profileImage.src = e.target.result;
+                    } else if (profilePlaceholder) {
+                        profilePlaceholder.outerHTML = '<img id="profileImage" src="' + e.target.result + '" alt="Profile Picture" class="w-full h-full object-cover">';
+                    }
                 }
                 reader.readAsDataURL(file);
             }
