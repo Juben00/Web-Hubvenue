@@ -73,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($sexErr) && empty($birthdateErr) && empty($addressErr) && empty($emailErr) && empty($contactErr) && empty($imageErr)) {
+    if (empty($firstnameErr) && empty($lastnameErr) && empty($middlenameErr) && empty($sexErr) && empty($birthdateErr) && empty($addressErr) && empty($emailErr) && empty($contactErr)) {
         // Use the uploaded image if available
         $profileImage = $uploadedImage;
 
         // Update user info
-        $result = $accountObj->updateUserInfo($userId, $firstname, $lastname, $middlename, $bio, $sex, $birthdate, $address, $email, $contact, $profileImage);
+        $result = $accountObj->updateUserInfo($userId, $firstname, $lastname, $middlename, $bio ?? null, $sex, $birthdate, $address, $email, $contact, $profileImage ?? null);
 
         if ($result['status'] === 'success') {
             echo json_encode(['status' => 'success', 'message' => $result['message']]);

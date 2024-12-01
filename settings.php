@@ -143,8 +143,7 @@ if (isset($_SESSION['user'])) {
                                     <label class="block text-sm font-medium text-gray-700">Bio</label>
                                     <textarea name="bio" rows="4"
                                         class="w-full px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
-                                        placeholder="Tell us a little bit about yourself..."
-                                        value="<?php echo htmlspecialchars($user['bio']); ?>"></textarea>
+                                        placeholder="Tell us a little bit about yourself..."><?php echo htmlspecialchars($user['bio']); ?></textarea>
                                     <p class="text-sm text-gray-500">Write a short bio that describes you (maximum 500
                                         characters)</p>
                                 </div>

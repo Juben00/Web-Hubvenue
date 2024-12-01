@@ -468,20 +468,51 @@ class Account
     {
         try {
             $conn = $this->db->connect();
-            $sql = "UPDATE users SET firstname = :firstname, lastname = :lastname, middlename = :middlename, bio = :bio, sex_id = :sex, birthdate = :birthdate, address = :address, email = :email, contact_number = :contact, profile_pic = :profile_pic WHERE id = :userId";
+
+            // Base SQL query
+            $sql = "UPDATE users SET 
+                    firstname = :firstname, 
+                    lastname = :lastname, 
+                    middlename = :middlename, 
+                    sex_id = :sex, 
+                    birthdate = :birthdate, 
+                    address = :address, 
+                    email = :email, 
+                    contact_number = :contact";
+
+            // Add `bio` to the query only if it's not null
+            if (!is_null($bio)) {
+                $sql .= ", bio = :bio";
+            }
+
+            // Add `profile_pic` to the query only if it's not null
+            if (!is_null($uploadedImages)) {
+                $sql .= ", profile_pic = :profile_pic";
+            }
+
+            $sql .= " WHERE id = :userId";
 
             $stmt = $conn->prepare($sql);
+
+            // Bind required parameters
             $stmt->bindParam(':userId', $userId);
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':middlename', $middlename);
-            $stmt->bindParam(':bio', $bio);
             $stmt->bindParam(':sex', $sex);
             $stmt->bindParam(':birthdate', $birthdate);
             $stmt->bindParam(':address', $address);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':contact', $contact);
-            $stmt->bindParam(':profile_pic', $uploadedImages);
+
+            // Bind optional parameters if they are not null
+            if (!is_null($bio)) {
+                $stmt->bindParam(':bio', $bio);
+            }
+            if (!is_null($uploadedImages)) {
+                $stmt->bindParam(':profile_pic', $uploadedImages);
+            }
+
             $stmt->execute();
 
             return ['status' => 'success', 'message' => 'User information updated successfully'];
@@ -490,6 +521,7 @@ class Account
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
 
     public function updateUserPassword($userId, $currentPass, $newPass, $confirmPass)
     {
