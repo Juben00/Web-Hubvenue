@@ -61,7 +61,7 @@ foreach ($bookedDate as $booking) {
         .flatpickr-calendar {
             z-index: 100 !important;
         }
-        
+
         .flatpickr-calendar.static {
             position: absolute;
             top: 100% !important;
@@ -159,13 +159,10 @@ foreach ($bookedDate as $booking) {
                 <!-- Main Image (First in Array) on the Left -->
                 <div class="col-span-2">
                     <?php if (!empty($venue['image_urls'])): ?>
-                        <img src="./<?= htmlspecialchars($venue['image_urls'][0]) ?>" 
-                            alt="Venue Image"
-                            class="venue-image w-full h-[30.5rem] object-cover rounded-lg"
-                            data-image-index="0">
+                        <img src="./<?= htmlspecialchars($venue['image_urls'][0]) ?>" alt="Venue Image"
+                            class="venue-image w-full h-[30.5rem] object-cover rounded-lg" data-image-index="0">
                     <?php else: ?>
-                        <img src="default-image.jpg" 
-                            alt="Default Venue Image"
+                        <img src="default-image.jpg" alt="Default Venue Image"
                             class="venue-image w-full h-full object-cover rounded-lg">
                     <?php endif; ?>
                 </div>
@@ -173,10 +170,8 @@ foreach ($bookedDate as $booking) {
                 <!-- Small Images on the Right -->
                 <div class="space-y-2">
                     <?php if (!empty($venue['image_urls']) && count($venue['image_urls']) > 1): ?>
-                        <img src="./<?= htmlspecialchars($venue['image_urls'][1]) ?>" 
-                            alt="Venue Image"
-                            class="venue-image w-full h-60 object-cover rounded-lg"
-                            data-image-index="1">
+                        <img src="./<?= htmlspecialchars($venue['image_urls'][1]) ?>" alt="Venue Image"
+                            class="venue-image w-full h-60 object-cover rounded-lg" data-image-index="1">
                     <?php else: ?>
                         <div class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
                             <p>No more image to show</p>
@@ -184,10 +179,8 @@ foreach ($bookedDate as $booking) {
                     <?php endif; ?>
 
                     <?php if (!empty($venue['image_urls']) && count($venue['image_urls']) > 2): ?>
-                        <img src="./<?= htmlspecialchars($venue['image_urls'][2]) ?>" 
-                            alt="Venue Image"
-                            class="venue-image w-full h-60 object-cover rounded-lg"
-                            data-image-index="2">
+                        <img src="./<?= htmlspecialchars($venue['image_urls'][2]) ?>" alt="Venue Image"
+                            class="venue-image w-full h-60 object-cover rounded-lg" data-image-index="2">
                     <?php else: ?>
                         <div class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
                             <p>No more image to show</p>
@@ -319,7 +312,7 @@ foreach ($bookedDate as $booking) {
                                 <div class="flex items-center gap-4 mb-4">
                                     <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
                                     <div>
-                                    <a href="user-page.php" class="font-semibold hover:underline">Sarah Johnson</a>
+                                        <a href="user-page.php" class="font-semibold hover:underline">Sarah Johnson</a>
                                         <p class="text-sm text-gray-500">2 weeks ago</p>
                                     </div>
                                 </div>
@@ -455,11 +448,13 @@ foreach ($bookedDate as $booking) {
 
 
                     <div class="sticky top-32">
-                        <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-white" method="GET" action="payment.php">
+                        <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-white" method="GET"
+                            action="payment.php">
                             <!-- Price Header -->
                             <div class="flex justify-between items-center mb-6">
                                 <div class="flex items-baseline">
-                                    <span class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
+                                    <span
+                                        class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
                                     <span class="text-gray-600 ml-2">/ night</span>
                                 </div>
                                 <div class="flex items-center text-sm">
@@ -472,24 +467,26 @@ foreach ($bookedDate as $booking) {
                             <!-- Date and Guest Selection -->
                             <div class="border rounded-xl mb-6 shadow-sm bg-gray-50 relative">
                                 <div class="flex border-b">
-                                    <input type="hidden" name="venueId" value="<?php echo htmlspecialchars($venue['id']); ?>">
+                                    <input type="hidden" name="venueId"
+                                        value="<?php echo htmlspecialchars($venue['id']); ?>">
                                     <div class="w-1/2 p-3 border-r">
                                         <label class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
-                                        <input type="date" name="checkin" placeholder="Set Date" 
+                                        <input type="date" name="checkin" placeholder="Set Date"
                                             class="w-full bg-transparent focus:outline-none text-gray-800">
                                     </div>
                                     <div class="w-1/2 p-3">
                                         <label class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
-                                        <input type="date" name="checkout" placeholder="Set Date" 
+                                        <input type="date" name="checkout" placeholder="Set Date"
                                             class="w-full bg-transparent focus:outline-none text-gray-800">
                                     </div>
                                 </div>
                                 <div class="p-3">
                                     <label class="block text-xs font-semibold text-gray-700 mb-1">
-                                        GUESTS (Maximum <span class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
+                                        GUESTS (Maximum <span
+                                            class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
                                     </label>
-                                    <input type="number" name="numberOfGuest" 
-                                        class="w-full bg-transparent focus:outline-none text-gray-800" 
+                                    <input type="number" name="numberOfGuest"
+                                        class="w-full bg-transparent focus:outline-none text-gray-800"
                                         placeholder="Enter number of guests">
                                 </div>
                             </div>
@@ -498,27 +495,33 @@ foreach ($bookedDate as $booking) {
                             <div class="space-y-4 mb-6">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600 hover:text-gray-900 cursor-help">
-                                        ₱<?php echo htmlspecialchars($venue['price']); ?> × <span total-nights>0</span> nights
+                                        ₱<?php echo htmlspecialchars($venue['price']); ?> × <span total-nights>0</span>
+                                        nights
                                     </span>
-                                    <span class="font-medium">₱ <input type="number" class="text-right bg-transparent w-24" 
-                                        name="totalPriceForNights" value="0" readonly></span>
+                                    <span class="font-medium">₱ <input type="number"
+                                            class="text-right bg-transparent w-24" name="totalPriceForNights" value="0"
+                                            readonly></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600 hover:text-gray-900 cursor-help">
                                         Entrance fee × <span total-entrance-guests>0</span> guest
                                     </span>
-                                    <span class="font-medium">₱ <input type="number" class="text-right bg-transparent w-24" 
-                                        name="totalEntranceFee" value="<?php echo htmlspecialchars($venue['entrance']); ?>" readonly></span>
+                                    <span class="font-medium">₱ <input type="number"
+                                            class="text-right bg-transparent w-24" name="totalEntranceFee"
+                                            value="<?php echo htmlspecialchars($venue['entrance']); ?>" readonly></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600 hover:text-gray-900 cursor-help">Cleaning fee</span>
-                                    <span class="font-medium">₱ <input type="number" class="text-right bg-transparent w-24" 
-                                        name="cleaningFee" value="<?php echo htmlspecialchars($venue['cleaning']); ?>" readonly></span>
+                                    <span class="font-medium">₱ <input type="number"
+                                            class="text-right bg-transparent w-24" name="cleaningFee"
+                                            value="<?php echo htmlspecialchars($venue['cleaning']); ?>" readonly></span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service fee</span>
-                                    <span class="font-medium">₱ <input type="number" class="text-right bg-transparent w-24" 
-                                        name="serviceFee" value="0" readonly></span>
+                                    <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service
+                                        fee</span>
+                                    <span class="font-medium">₱ <input type="number"
+                                            class="text-right bg-transparent w-24" name="serviceFee" value="0"
+                                            readonly></span>
                                 </div>
                             </div>
 
@@ -526,9 +529,9 @@ foreach ($bookedDate as $booking) {
                             <div class="border-t pt-4 mb-6">
                                 <div class="flex justify-between items-center">
                                     <span class="text-lg font-bold">Total</span>
-                                    <span class="font-bold text-lg">₱ <input type="number" 
-                                        class="text-right bg-transparent w-24 font-bold" 
-                                        name="totalPrice" value="0" readonly></span>
+                                    <span class="font-bold text-lg">₱ <input type="number"
+                                            class="text-right bg-transparent w-24 font-bold" name="totalPrice" value="0"
+                                            readonly></span>
                                 </div>
                             </div>
 
@@ -684,94 +687,95 @@ foreach ($bookedDate as $booking) {
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
-        if (!images.length) return;
+        document.addEventListener('DOMContentLoaded', function () {
+            const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
+            if (!images.length) return;
 
-        const mainImage = document.querySelector('.col-span-2 .venue-image');
-        const smallImages = document.querySelectorAll('.space-y-2 .venue-image');
-        let currentMainIndex = 0;
-        let currentSmallIndices = [1, 2];
+            const mainImage = document.querySelector('.col-span-2 .venue-image');
+            const smallImages = document.querySelectorAll('.space-y-2 .venue-image');
+            let currentMainIndex = 0;
+            let currentSmallIndices = [1, 2];
 
-        // Function to update main image with transition
-        function updateMainImage(newIndex) {
-            mainImage.classList.add('fade-out');
-            
-            setTimeout(() => {
-                mainImage.src = './' + images[newIndex];
-                mainImage.dataset.imageIndex = newIndex;
-                mainImage.classList.remove('fade-out');
-                mainImage.classList.add('fade-in');
-                
+            // Function to update main image with transition
+            function updateMainImage(newIndex) {
+                mainImage.classList.add('fade-out');
+
                 setTimeout(() => {
-                    mainImage.classList.remove('fade-in');
+                    mainImage.src = './' + images[newIndex];
+                    mainImage.dataset.imageIndex = newIndex;
+                    mainImage.classList.remove('fade-out');
+                    mainImage.classList.add('fade-in');
+
+                    setTimeout(() => {
+                        mainImage.classList.remove('fade-in');
+                    }, 500);
                 }, 500);
-            }, 500);
 
-            currentMainIndex = newIndex;
-        }
+                currentMainIndex = newIndex;
+            }
 
-        // Function to update small images without transition
-        function updateSmallImages() {
-            smallImages.forEach((img, i) => {
-                const nextIndex = (currentMainIndex + i + 1) % images.length;
-                img.src = './' + images[nextIndex];
-                img.dataset.imageIndex = nextIndex;
-                currentSmallIndices[i] = nextIndex;
+            // Function to update small images without transition
+            function updateSmallImages() {
+                smallImages.forEach((img, i) => {
+                    const nextIndex = (currentMainIndex + i + 1) % images.length;
+                    img.src = './' + images[nextIndex];
+                    img.dataset.imageIndex = nextIndex;
+                    currentSmallIndices[i] = nextIndex;
+                });
+            }
+
+            // Add click handlers to small images
+            smallImages.forEach(img => {
+                img.addEventListener('click', function () {
+                    const clickedIndex = parseInt(this.dataset.imageIndex);
+                    updateMainImage(clickedIndex);
+
+                    // After updating main image, update small images
+                    setTimeout(() => {
+                        updateSmallImages();
+                    }, 500);
+                });
             });
-        }
 
-        // Add click handlers to small images
-        smallImages.forEach(img => {
-            img.addEventListener('click', function() {
-                const clickedIndex = parseInt(this.dataset.imageIndex);
-                updateMainImage(clickedIndex);
-                
-                // After updating main image, update small images
-                setTimeout(() => {
-                    updateSmallImages();
-                }, 500);
-            });
-        });
-
-        // Automatic rotation for main image only
-        setInterval(() => {
-            const nextIndex = (currentMainIndex + 1) % images.length;
-            updateMainImage(nextIndex);
-            updateSmallImages();
-        }, 5000);
-
-        // Pause shuffling when user hovers over images
-        const imageContainer = document.querySelector('.grid');
-        let rotationInterval;
-
-        function startRotation() {
-            rotationInterval = setInterval(() => {
+            // Automatic rotation for main image only
+            setInterval(() => {
                 const nextIndex = (currentMainIndex + 1) % images.length;
                 updateMainImage(nextIndex);
                 updateSmallImages();
             }, 5000);
-        }
 
-        imageContainer.addEventListener('mouseenter', () => {
-            clearInterval(rotationInterval);
-        });
+            // Pause shuffling when user hovers over images
+            const imageContainer = document.querySelector('.grid');
+            let rotationInterval;
 
-        // Resume shuffling when user moves mouse away
-        imageContainer.addEventListener('mouseleave', () => {
+            function startRotation() {
+                rotationInterval = setInterval(() => {
+                    const nextIndex = (currentMainIndex + 1) % images.length;
+                    updateMainImage(nextIndex);
+                    updateSmallImages();
+                }, 5000);
+            }
+
+            imageContainer.addEventListener('mouseenter', () => {
+                clearInterval(rotationInterval);
+            });
+
+            // Resume shuffling when user moves mouse away
+            imageContainer.addEventListener('mouseleave', () => {
+                startRotation();
+            });
+
+            // Start initial rotation
             startRotation();
         });
-
-        // Start initial rotation
-        startRotation();
-    });
     </script>
 
     <!-- Photo Gallery Modal -->
     <div id="photoGalleryModal" class="fixed inset-0 z-50 hidden">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black bg-opacity-80 transition-opacity duration-300 opacity-0" id="modalBackdrop"></div>
-        
+        <div class="absolute inset-0 bg-black bg-opacity-80 transition-opacity duration-300 opacity-0"
+            id="modalBackdrop"></div>
+
         <!-- Modal Content -->
         <div class="relative h-full w-full flex flex-col">
             <!-- Header -->
@@ -790,16 +794,18 @@ foreach ($bookedDate as $booking) {
             <div class="flex-1 flex items-center justify-center p-4">
                 <div class="relative w-full max-w-7xl mx-auto">
                     <!-- Navigation Buttons -->
-                    <button id="prevImage" class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
+                    <button id="prevImage"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
                         <i class="fas fa-chevron-left text-2xl"></i>
                     </button>
-                    
-                    <button id="nextImage" class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
+
+                    <button id="nextImage"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
                         <i class="fas fa-chevron-right text-2xl"></i>
                     </button>
 
                     <!-- Main Image -->
-                    <div class="flex justify-center">
+                    <div class="flex justify-center border-red-500 ">
                         <img id="mainGalleryImage" src="" alt="Venue Image" class="max-h-[80vh] object-contain">
                     </div>
                 </div>
@@ -817,106 +823,106 @@ foreach ($bookedDate as $booking) {
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('photoGalleryModal');
-        const modalBackdrop = document.getElementById('modalBackdrop');
-        const mainGalleryImage = document.getElementById('mainGalleryImage');
-        const thumbnailContainer = document.getElementById('thumbnailContainer');
-        const currentImageIndex = document.getElementById('currentImageIndex');
-        const totalImages = document.getElementById('totalImages');
-        const prevButton = document.getElementById('prevImage');
-        const nextButton = document.getElementById('nextImage');
-        const closeButton = document.getElementById('closeGallery');
-        
-        const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
-        let currentIndex = 0;
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('photoGalleryModal');
+            const modalBackdrop = document.getElementById('modalBackdrop');
+            const mainGalleryImage = document.getElementById('mainGalleryImage');
+            const thumbnailContainer = document.getElementById('thumbnailContainer');
+            const currentImageIndex = document.getElementById('currentImageIndex');
+            const totalImages = document.getElementById('totalImages');
+            const prevButton = document.getElementById('prevImage');
+            const nextButton = document.getElementById('nextImage');
+            const closeButton = document.getElementById('closeGallery');
 
-        // Show All Photos button click handler
-        const showAllPhotosButton = document.querySelector('button[class*="border-2 border-gray-500"]');
-        if (showAllPhotosButton) {
-            showAllPhotosButton.addEventListener('click', function() {
-                openGallery(0);
-            });
-        }
+            const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
+            let currentIndex = 0;
 
-        function openGallery(index) {
-            currentIndex = index;
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalBackdrop.classList.remove('opacity-0');
-            }, 10);
-            updateGallery();
-            createThumbnails();
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeGallery() {
-            modalBackdrop.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                document.body.style.overflow = '';
-            }, 300);
-        }
-
-        function updateGallery() {
-            mainGalleryImage.src = './' + images[currentIndex];
-            currentImageIndex.textContent = currentIndex + 1;
-            totalImages.textContent = images.length;
-            
-            // Update thumbnails active state
-            document.querySelectorAll('.thumbnail').forEach((thumb, index) => {
-                if (index === currentIndex) {
-                    thumb.classList.add('ring-2', 'ring-white');
-                    thumb.classList.remove('opacity-70');
-                } else {
-                    thumb.classList.remove('ring-2', 'ring-white');
-                    thumb.classList.add('opacity-70');
-                }
-            });
-        }
-
-        function createThumbnails() {
-            thumbnailContainer.innerHTML = '';
-            images.forEach((image, index) => {
-                const thumb = document.createElement('img');
-                thumb.src = './' + image;
-                thumb.classList.add('thumbnail', 'h-20', 'w-32', 'object-cover', 'cursor-pointer', 
-                    'transition-opacity', 'duration-200', 'opacity-70', 'hover:opacity-100');
-                if (index === currentIndex) {
-                    thumb.classList.add('ring-2', 'ring-white');
-                    thumb.classList.remove('opacity-70');
-                }
-                thumb.addEventListener('click', () => {
-                    currentIndex = index;
-                    updateGallery();
+            // Show All Photos button click handler
+            const showAllPhotosButton = document.querySelector('button[class*="border-2 border-gray-500"]');
+            if (showAllPhotosButton) {
+                showAllPhotosButton.addEventListener('click', function () {
+                    openGallery(0);
                 });
-                thumbnailContainer.appendChild(thumb);
-            });
-        }
-
-        // Event Listeners
-        closeButton.addEventListener('click', closeGallery);
-        modalBackdrop.addEventListener('click', closeGallery);
-
-        prevButton.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            updateGallery();
-        });
-
-        nextButton.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % images.length;
-            updateGallery();
-        });
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (!modal.classList.contains('hidden')) {
-                if (e.key === 'Escape') closeGallery();
-                if (e.key === 'ArrowLeft') prevButton.click();
-                if (e.key === 'ArrowRight') nextButton.click();
             }
+
+            function openGallery(index) {
+                currentIndex = index;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalBackdrop.classList.remove('opacity-0');
+                }, 10);
+                updateGallery();
+                createThumbnails();
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeGallery() {
+                modalBackdrop.classList.add('opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+
+            function updateGallery() {
+                mainGalleryImage.src = './' + images[currentIndex];
+                currentImageIndex.textContent = currentIndex + 1;
+                totalImages.textContent = images.length;
+
+                // Update thumbnails active state
+                document.querySelectorAll('.thumbnail').forEach((thumb, index) => {
+                    if (index === currentIndex) {
+                        thumb.classList.add('ring-2', 'ring-white');
+                        thumb.classList.remove('opacity-70');
+                    } else {
+                        thumb.classList.remove('ring-2', 'ring-white');
+                        thumb.classList.add('opacity-70');
+                    }
+                });
+            }
+
+            function createThumbnails() {
+                thumbnailContainer.innerHTML = '';
+                images.forEach((image, index) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = './' + image;
+                    thumb.classList.add('thumbnail', 'h-20', 'w-32', 'object-cover', 'cursor-pointer',
+                        'transition-opacity', 'duration-200', 'opacity-70', 'hover:opacity-100');
+                    if (index === currentIndex) {
+                        thumb.classList.add('ring-2', 'ring-white');
+                        thumb.classList.remove('opacity-70');
+                    }
+                    thumb.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateGallery();
+                    });
+                    thumbnailContainer.appendChild(thumb);
+                });
+            }
+
+            // Event Listeners
+            closeButton.addEventListener('click', closeGallery);
+            modalBackdrop.addEventListener('click', closeGallery);
+
+            prevButton.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                updateGallery();
+            });
+
+            nextButton.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                updateGallery();
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (!modal.classList.contains('hidden')) {
+                    if (e.key === 'Escape') closeGallery();
+                    if (e.key === 'ArrowLeft') prevButton.click();
+                    if (e.key === 'ArrowRight') nextButton.click();
+                }
+            });
         });
-    });
     </script>
 
 </body>
