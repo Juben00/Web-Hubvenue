@@ -3,7 +3,7 @@ require_once '../classes/venue.class.php';
 session_start();
 $venueObj = new Venue();
 
-$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
+$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], );
 $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 ?>
 
@@ -244,7 +244,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
         <!-- Details Modal -->
         <div id="details-modal"
-            class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
             <div
                 class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
                 <!-- Modal Header -->
@@ -495,7 +495,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         }
     }
 
-    let currentRating = 0;
+    // let currentRating = 0;
 
     function rate(rating) {
         currentRating = rating;

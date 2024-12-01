@@ -4,7 +4,7 @@ require_once '../classes/venue.class.php';
 session_start();
 
 $venueObj = new Venue();
-$venuePost = $venueObj->getAllVenues($status, $_SESSION['user']['id']);
+$venuePost = $venueObj->getAllVenues('', $_SESSION['user']['id']);
 
 ?>
 <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">
