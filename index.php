@@ -174,9 +174,17 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         }
 
         /* Add different animation delays for grid items */
-        .grid-item-delay:nth-child(1) { transition-delay: 0s; }
-        .grid-item-delay:nth-child(2) { transition-delay: 0.2s; }
-        .grid-item-delay:nth-child(3) { transition-delay: 0.4s; }
+        .grid-item-delay:nth-child(1) {
+            transition-delay: 0s;
+        }
+
+        .grid-item-delay:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .grid-item-delay:nth-child(3) {
+            transition-delay: 0.4s;
+        }
     </style>
 </head>
 
@@ -622,7 +630,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
     </script>
 
-    <script>
+    <!-- <script>
         // Date picker functionality
         const checkInBtn = document.getElementById('checkInBtn');
         const checkOutBtn = document.getElementById('checkOutBtn');
@@ -638,7 +646,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             const date = luxon.DateTime.local().plus({ days: 6 }).toFormat('LLL dd, yyyy');
             checkOutText.textContent = date;
         });
-    </script>
+    </script> -->
 
     <!-- login and signup form functionality || styling css  -->
     <script>
@@ -745,7 +753,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const observerOptions = {
                 root: null,
                 rootMargin: '0px',

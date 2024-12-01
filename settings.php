@@ -350,7 +350,7 @@ if (isset($_SESSION['user'])) {
                                         <p class="text-sm text-gray-600">Control who can see your profile information
                                         </p>
                                     </div>
-                                    <select class="form-input w-auto">
+                                    <select class="form-input w-auto bg-transparent">
                                         <option>Public</option>
                                         <option>Private</option>
                                         <option>Friends Only</option>
