@@ -429,34 +429,6 @@ if (isset($_SESSION['user'])) {
                                 </button>
                             </div>
                         </div>
-
-                        <!-- Saved Coupons Section -->
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h3 class="text-lg font-medium text-gray-800 mb-4">Saved Coupons</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                    <div>
-                                        <p class="font-medium text-gray-800">SAVE10</p>
-                                        <p class="text-sm text-gray-600">10% off on all bookings</p>
-                                    </div>
-                                    <button class="text-red-600 hover:text-red-800">
-                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                <div class="flex gap-2">
-                                    <input type="text" id="newCouponCode" placeholder="Enter coupon code"
-                                        class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black">
-                                    <button onclick="addCoupon()"
-                                        class="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2">
-                                        Add Coupon
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -554,48 +526,11 @@ if (isset($_SESSION['user'])) {
             });
         }
 
-        // Add this new function for handling coupons
-        function addCoupon() {
-            const couponInput = document.getElementById('newCouponCode');
-            const couponCode = couponInput.value.trim();
-
-            if (!couponCode) {
-                alert('Please enter a coupon code');
-                return;
-            }
-
-            // Here you would typically validate the coupon with your backend
-            // For now, we'll just show a success message
-            alert('Coupon added successfully!');
-            couponInput.value = '';
-        }
-
-        // Update the discount display function to work in settings
-        function updateDiscountDisplay() {
-            const detailsBox = document.getElementById('discountDetailsBox');
-
-            if (formData.seniorPwdName) {
-                document.getElementById('displayName').textContent = formData.seniorPwdName;
-                document.getElementById('displayId').textContent = formData.seniorPwdId;
-
-                if (formData.seniorPwdIdPhoto) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.getElementById('displayPhotoPreview').src = e.target.result;
-                    }
-                    reader.readAsDataURL(formData.seniorPwdIdPhoto);
-                }
-
-                detailsBox.classList.remove('hidden');
-            } else {
-                detailsBox.classList.add('hidden');
-            }
-        }
 
         // Add these new functions for the discount modal
         function openDiscountModal() {
             const modal = document.getElementById('discountModal');
-            const modalContent = document.getElementById('discountModalContent');
+            const modalContent = document.getElementById('discountApplicationForm');
 
             // Show modal
             modal.classList.remove('hidden');
@@ -613,7 +548,7 @@ if (isset($_SESSION['user'])) {
 
         function closeDiscountModal() {
             const modal = document.getElementById('discountModal');
-            const modalContent = document.getElementById('discountModalContent');
+            const modalContent = document.getElementById('discountApplicationForm');
 
             // Animate out
             modal.classList.remove('opacity-100');
@@ -627,129 +562,12 @@ if (isset($_SESSION['user'])) {
             }, 300);
         }
 
-        function handleDiscountModalClick(event) {
-            const modalContent = document.querySelector('#discountModal > div');
-            if (!modalContent.contains(event.target)) {
-                closeDiscountModal();
-            }
-        }
-
-        function updateFileLabel(input) {
-            const label = document.getElementById('fileLabel');
-            const photoError = document.getElementById('photoError');
-
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-
-                // Check file size (5MB limit)
-                if (file.size > 5 * 1024 * 1024) {
-                    photoError.textContent = 'File size must be less than 5MB';
-                    photoError.classList.remove('hidden');
-                    input.value = '';
-                    label.textContent = 'Click to upload ID photo';
-                    return;
-                }
-
-                // Check file type
-                if (!file.type.startsWith('image/')) {
-                    photoError.textContent = 'Please upload an image file';
-                    photoError.classList.remove('hidden');
-                    input.value = '';
-                    label.textContent = 'Click to upload ID photo';
-                    return;
-                }
-
-                label.textContent = file.name;
-                photoError.classList.add('hidden');
-            } else {
-                label.textContent = 'Click to upload ID photo';
-            }
-            validateForm();
-        }
-
-        function validateForm() {
-            const name = document.getElementById('seniorPwdName').value.trim();
-            const id = document.getElementById('seniorPwdId').value.trim();
-            const photo = document.getElementById('seniorPwdIdPhoto').files[0];
-            const applyBtn = document.getElementById('applyDiscountBtn');
-
-            if (!name || !id || !photo) {
-                applyBtn.disabled = true;
-                applyBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                return false;
-            }
-
-            applyBtn.disabled = false;
-            applyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            return true;
-        }
-
-        function applyDiscount() {
-            if (!validateForm()) {
-                return;
-            }
-
-            const name = document.getElementById('seniorPwdName').value.trim();
-            const id = document.getElementById('seniorPwdId').value.trim();
-            const photo = document.getElementById('seniorPwdIdPhoto').files[0];
-
-            // Update the display box
-            document.getElementById('displayName').textContent = name;
-            document.getElementById('displayId').textContent = id;
-
-            // Show photo preview
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('displayPhotoPreview').src = e.target.result;
-            }
-            reader.readAsDataURL(photo);
-
-            // Show the details box
-            const detailsBox = document.getElementById('discountDetailsBox');
-            detailsBox.classList.remove('hidden');
-
-            // Close modal
-            closeDiscountModal();
-
-            // You would typically save this data to your backend here
-            // For now, we'll just store it in localStorage
-            const discountData = {
-                name: name,
-                id: id,
-                photoUrl: URL.createObjectURL(photo)
-            };
-            localStorage.setItem('seniorPwdDiscount', JSON.stringify(discountData));
-        }
-
-        // Add input event listeners for real-time validation
-        document.addEventListener('DOMContentLoaded', function () {
-            const nameInput = document.getElementById('seniorPwdName');
-            const idInput = document.getElementById('seniorPwdId');
-
-            if (nameInput && idInput) {
-                nameInput.addEventListener('input', validateForm);
-                idInput.addEventListener('input', validateForm);
-            }
-
-            // Check for existing discount data
-            const savedDiscount = localStorage.getItem('seniorPwdDiscount');
-            if (savedDiscount) {
-                const data = JSON.parse(savedDiscount);
-                document.getElementById('displayName').textContent = data.name;
-                document.getElementById('displayId').textContent = data.id;
-                document.getElementById('displayPhotoPreview').src = data.photoUrl;
-                document.getElementById('discountDetailsBox').classList.remove('hidden');
-            }
-        });
     </script>
-
-    <!-- Discount Modal -->
     <div id="discountModal"
-        class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0"
-        onclick="handleDiscountModalClick(event)">
-        <div id="discountModalContent"
+        class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0">
+        <form id="discountApplicationForm"
             class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4">
-            <!-- Header -->
+
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <h4 class="text-2xl font-bold text-gray-900">Senior Citizen / PWD Details</h4>
@@ -765,14 +583,27 @@ if (isset($_SESSION['user'])) {
                 </button>
             </div>
 
-            <!-- Form Content -->
             <div class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Discount Type</label>
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="discountType" value="PWD" class="form-radio h-4 w-4 text-black">
+                            <span class="ml-2 text-gray-700">PWD</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="discountType" value="Senior Citizen"
+                                class="form-radio h-4 w-4 text-black">
+                            <span class="ml-2 text-gray-700">Senior Citizen</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">ID Holder's Full Name</label>
                     <input type="text" id="seniorPwdName" name="seniorPwdName"
                         placeholder="Enter the name as shown on the ID"
                         class="w-full rounded-lg border-gray-300 shadow-sm focus:border-black focus:ring-black h-11">
-                    <p id="nameError" class="text-red-500 text-xs mt-1 hidden">Please enter the ID holder's name</p>
                 </div>
 
                 <div class="space-y-2">
@@ -780,14 +611,13 @@ if (isset($_SESSION['user'])) {
                     <input type="text" id="seniorPwdId" name="seniorPwdId"
                         placeholder="Enter Senior Citizen/PWD ID Number"
                         class="w-full rounded-lg border-gray-300 shadow-sm focus:border-black focus:ring-black h-11">
-                    <p id="idError" class="text-red-500 text-xs mt-1 hidden">Please enter a valid ID number</p>
                 </div>
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700">Upload ID Photo</label>
                     <div class="relative">
-                        <input type="file" id="seniorPwdIdPhoto" name="seniorPwdIdPhoto" accept="image/*" class="hidden"
-                            onchange="updateFileLabel(this)">
+                        <input type="file" id="seniorPwdIdPhoto" name="seniorPwdIdPhoto" accept="image/*"
+                            class="hidden">
                         <label for="seniorPwdIdPhoto" id="fileLabel"
                             class="flex items-center justify-center w-full h-11 px-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-black transition-colors duration-200">
                             <svg class="h-5 w-5 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24"
@@ -798,17 +628,18 @@ if (isset($_SESSION['user'])) {
                             Click to upload ID photo
                         </label>
                     </div>
-                    <p id="photoError" class="text-red-500 text-xs mt-1 hidden">Please upload a photo of the ID</p>
                     <p class="text-xs text-gray-500 mt-1">Please upload a clear photo of the valid ID (Max 5MB)</p>
                 </div>
 
-                <button onclick="applyDiscount()" id="applyDiscountBtn" class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium 
+
+
+                <button id="applyDiscountBtn" class="w-full h-11 bg-black text-white rounded-lg text-sm font-medium 
                                hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed
                                transform transition-all duration-200">
                     Apply Discount
                 </button>
             </div>
-        </div>
+        </form>
     </div>
 </body>
 

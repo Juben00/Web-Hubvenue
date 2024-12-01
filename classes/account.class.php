@@ -524,6 +524,41 @@ class Account
         }
     }
 
+    public function discountApplication($userId, $discount_type, $fullname, $discount_id, $card_image)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $checkSql = "SELECT * FROM mandatory_discount WHERE userId = :userId";
+            $checkStmt = $conn->prepare($checkSql);
+            $checkStmt->bindParam(':userId', $userId);
+            $checkStmt->execute();
+            $check = $checkStmt->fetch();
+
+            if ($check) {
+                return ['status' => 'error', 'message' => 'You have already applied for a discount.'];
+            } else {
+                $sql = "INSERT INTO mandatory_discount (userId, discount_type, fullname, discount_id, card_image) VALUES (:userId, :discount_type, :fullname, :discount_id, :card_image)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':userId', $userId);
+                $stmt->bindParam(':discount_type', $discount_type);
+                $stmt->bindParam(':fullname', $fullname);
+                $stmt->bindParam(':discount_id', $discount_id);
+                $stmt->bindParam(':card_image', $card_image);
+
+                if ($stmt->execute()) {
+                    return ['status' => 'success', 'message' => 'Discount application sent successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Failed to send discount application'];
+                }
+            }
+
+        } catch (PDOException $e) {
+            error_log("Error sending discount application: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 // session_start();
