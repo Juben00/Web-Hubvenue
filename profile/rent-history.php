@@ -79,7 +79,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="flex flex-col md:flex-row gap-6">
+                            <div class="flex gap-6">
                                 <?php
                                 $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
                                 ?>
@@ -87,19 +87,19 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                 <?php if (!empty($imageUrls)): ?>
                                     <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
                                         alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                        class="w-full md:w-40 h-40 object-cover rounded-lg">
+                                        class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
                                 <?php endif; ?>
 
-                                <div>
+                                <div class="flex-1">
                                     <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
-                                    <p class="text-gray-600 mt-2"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
-                                    <p class="text-gray-600 mt-2">
+                                    <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                    <p class="text-gray-600 mt-1">
                                         ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                         for
                                         <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                         days
                                     </p>
-                                    <p class="text-gray-600 mt-2">
+                                    <p class="text-gray-600 mt-1">
                                         <?php
                                         $startDate = new DateTime($booking['booking_start_date']);
                                         $endDate = new DateTime($booking['booking_end_date']);
