@@ -166,7 +166,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
             margin: 0 auto;
         }
 
-        .venue-comparison .bg-white {
+        .venue-comparison .bg-slate-50 {
             margin-bottom: 1.5rem;
             width: 100%;
             transition: all 0.3s ease;
@@ -264,7 +264,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
             }
         }
 
-        .venue-comparison .bg-white {
+        .venue-comparison .bg-slate-50 {
             transition: all 0.3s ease;
         }
 
@@ -329,7 +329,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
                     <div class="flex justify-between items-center mb-4">
                         <h1 class="text-3xl font-semibold"><?php echo htmlspecialchars($venue['name']) ?></h1>
                         <button id="compareButton"
-                            class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-500 rounded-lg hover:bg-gray-50 transition duration-300">
+                            class="flex items-center gap-2 px-4 py-2 bg-slate-50 border-2 border-gray-500 rounded-lg hover:bg-gray-50 transition duration-300">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Compare</span>
                         </button>
@@ -385,7 +385,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
 
                     <!-- Show All Photos Button -->
                     <button id="showAllPhotosBtn" onclick="openGallery(0)"
-                        class="absolute border-2 border-gray-500 bottom-4 right-4 bg-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
+                        class="absolute border-2 border-gray-500 bottom-4 right-4 bg-slate-50 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
                         Show all photos
                     </button>
                 </div>
@@ -649,7 +649,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
 
 
                         <div class="sticky top-32">
-                            <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-white" method="GET"
+                            <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-slate-50" method="GET"
                                 action="payment.php">
                                 <!-- Price Header -->
                                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
@@ -1044,7 +1044,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
             <!-- Header -->
             <div class="absolute top-0 left-0 right-0 p-4 z-10">
                 <div class="max-w-7xl mx-auto flex justify-between items-center">
-                    <button id="closeGallery" class="text-white hover:bg-white/10 p-2 rounded-full transition">
+                    <button id="closeGallery" class="text-white hover:bg-slate-50/10 p-2 rounded-full transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                     <span class="text-white text-sm">
@@ -1058,12 +1058,12 @@ $ratings = $venueObj->getRatings($_GET['id']);
                 <div class="relative w-full max-w-7xl mx-auto">
                     <!-- Navigation Buttons -->
                     <button id="prevImage"
-                        class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
+                        class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-slate-50/10 p-4 rounded-full transition">
                         <i class="fas fa-chevron-left text-2xl"></i>
                     </button>
 
                     <button id="nextImage"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-slate-50/10 p-4 rounded-full transition">
                         <i class="fas fa-chevron-right text-2xl"></i>
                     </button>
 
@@ -1249,7 +1249,7 @@ $ratings = $venueObj->getRatings($_GET['id']);
                     }
 
                     comparisonVenues.innerHTML = venues.map(venue => `
-                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
+                        <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
                             <div class="relative">
                                 <div class="relative w-full h-48 overflow-hidden">
                                     <img src="./${venue.image_urls[0]}" 

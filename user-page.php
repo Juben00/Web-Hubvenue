@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +14,8 @@
     <script src="node_modules/flatpickr/dist/flatpickr.min.js"></script>
 </head>
 
-<body class="bg-white">
-  
+<body class="bg-slate-50">
+
     <!-- Header -->
     <?php
     // Check if the 'user' key exists in the session
@@ -35,7 +35,7 @@
     <div class="container mx-auto px-4 py-8 pt-24">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- User Profile Card -->
-            <div class="bg-white rounded-xl shadow-xl p-6 md:col-span-1">
+            <div class="bg-slate-50 rounded-xl shadow-xl p-6 md:col-span-1">
                 <div class="flex flex-col items-center mt-16 space-y-4 mb-4">
                     <img src="/placeholder.svg?height=80&width=80" alt="User Avatar"
                         class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
@@ -56,7 +56,7 @@
                     <span class="text-sm text-gray-500">john.doe@email.com</span>
                 </div>
 
-             
+
             </div>
 
             <!-- Rental History Section -->
@@ -64,7 +64,7 @@
                 <h2 class="text-2xl font-bold mb-6">Places I've Rented</h2>
                 <div class="space-y-6">
                     <!-- Rental Card -->
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-slate-50 rounded-xl shadow-sm p-6">
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h3 class="text-lg font-semibold">Urban Loft Space</h3>
@@ -96,7 +96,8 @@
                 </div>
 
                 <div class="mt-6">
-                    <button class="bg-white text-black border border-black py-2 px-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                    <button
+                        class="bg-slate-50 text-black border border-black py-2 px-6 rounded-lg hover:bg-gray-50 transition duration-300">
                         View All Rentals
                     </button>
                 </div>
@@ -104,4 +105,5 @@
         </div>
     </div>
 </body>
-</html> 
+
+</html>

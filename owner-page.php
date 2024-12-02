@@ -10,7 +10,7 @@
     <link rel="icon" href="./images/black_ico.png">
 </head>
 
-<body class="bg-white">
+<body class="bg-slate-50">
     <?php
     session_start();
     // Include navbar based on login status
@@ -24,7 +24,7 @@
     <div class="container mx-auto px-4 py-8 pt-24">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- Venue Owner Profile Card -->
-            <div class="bg-white rounded-xl shadow-xl p-6 md:col-span-1">
+            <div class="bg-slate-50 rounded-xl shadow-xl p-6 md:col-span-1">
                 <div class="flex flex-col items-center mt-16 space-y-4 mb-4">
                     <img src="/placeholder.svg?height=80&width=80" alt="Doom Cat"
                         class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
@@ -59,28 +59,34 @@
                 <!-- Add the Share Profile dropdown -->
                 <div class="relative mt-4">
                     <button id="shareDropdownButton"
-                        class="w-full bg-white text-black border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 flex items-center justify-center">
+                        class="w-full bg-slate-50 text-black border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 flex items-center justify-center">
                         <i class="fas fa-share-alt mr-2"></i>
                         Share Profile
                     </button>
-                    <div id="shareDropdown" class="hidden absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                        <a href="#" onclick="shareOnFacebook()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                    <div id="shareDropdown"
+                        class="hidden absolute left-0 right-0 mt-2 bg-slate-50 border border-gray-200 rounded-lg shadow-lg z-50">
+                        <a href="#" onclick="shareOnFacebook()"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
                             <i class="fab fa-facebook text-blue-600 mr-2"></i>
                             Facebook
                         </a>
-                        <a href="#" onclick="shareOnTwitter()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                        <a href="#" onclick="shareOnTwitter()"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
                             <i class="fab fa-twitter text-blue-400 mr-2"></i>
                             Twitter
                         </a>
-                        <a href="#" onclick="shareOnLinkedIn()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                        <a href="#" onclick="shareOnLinkedIn()"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
                             <i class="fab fa-linkedin text-blue-700 mr-2"></i>
                             LinkedIn
                         </a>
-                        <a href="#" onclick="shareOnWhatsApp()" class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                        <a href="#" onclick="shareOnWhatsApp()"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
                             <i class="fab fa-whatsapp text-green-500 mr-2"></i>
                             WhatsApp
                         </a>
-                        <button onclick="copyProfileLink()" class="w-full flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                        <button onclick="copyProfileLink()"
+                            class="w-full flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
                             <i class="fas fa-link text-gray-600 mr-2"></i>
                             Copy Link
                         </button>
@@ -158,7 +164,7 @@
             </div>
             <div class="mt-6 text-center">
                 <button
-                    class="bg-white text-black border border-black py-2 px-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                    class="bg-slate-50 text-black border border-black py-2 px-6 rounded-lg hover:bg-gray-50 transition duration-300">
                     View All Reviews
                 </button>
             </div>
@@ -169,12 +175,12 @@
         // Your existing JavaScript with improved event handling...
 
         // Toggle dropdown
-        document.getElementById('shareDropdownButton').addEventListener('click', function() {
+        document.getElementById('shareDropdownButton').addEventListener('click', function () {
             document.getElementById('shareDropdown').classList.toggle('hidden');
         });
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const dropdown = document.getElementById('shareDropdown');
             const button = document.getElementById('shareDropdownButton');
             if (!button.contains(event.target) && !dropdown.contains(event.target)) {

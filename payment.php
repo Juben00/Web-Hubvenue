@@ -80,6 +80,15 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
     }
     return $totalPrice;
 }
+
+$ratings = array(
+    "total" => 4,
+    "rating_5" => "2",
+    "rating_4" => "1",
+    "rating_3" => "1",
+    "rating_2" => "0",
+    "rating_1" => "0"
+);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -96,7 +105,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 
-<body class="min-h-screen flex flex-col bg-white">
+<body class="min-h-screen flex flex-col bg-slate-50">
 
     <!-- Header -->
     <?php
@@ -121,6 +130,37 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
+            <!-- Ratings Section -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold mb-4">Ratings</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span>5 Stars</span>
+                        <span><?php echo $ratings["rating_5"]; ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>4 Stars</span>
+                        <span><?php echo $ratings["rating_4"]; ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>3 Stars</span>
+                        <span><?php echo $ratings["rating_3"]; ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>2 Stars</span>
+                        <span><?php echo $ratings["rating_2"]; ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>1 Star</span>
+                        <span><?php echo $ratings["rating_1"]; ?></span>
+                    </div>
+                    <div class="flex justify-between font-semibold">
+                        <span>Total Ratings</span>
+                        <span><?php echo $ratings["total"]; ?></span>
+                    </div>
+                </div>
+            </div>
+
             <form id="paymentForm">
                 <div id="step1" class="step">
                     <div class="space-y-6">
@@ -137,7 +177,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                         <input type="text" class="hidden" name="couponCode" id="couponsub">
 
                         <!-- Coupon Input Section -->
-                        <div class="bg-white p-4 rounded-lg mb-4">
+                        <div class="bg-slate-50 p-4 rounded-lg mb-4">
                             <div class="flex gap-2">
                                 <input type="text" id="couponCode" placeholder="Enter coupon code" value=""
                                     class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10"
@@ -238,7 +278,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
             </form>
         </div>
 
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+        <div class="fixed bottom-0 left-0 right-0 bg-slate-50 border-t border-gray-200 p-4">
             <div class="flex justify-between items-center max-w-3xl mx-auto">
                 <button id="backBtn" class="flex items-center text-sm font-medium text-gray-900" disabled>
                     <i class="lucide-chevron-left h-5 w-5 mr-1"></i>
@@ -262,7 +302,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
     <div id="qrModal"
         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0"
         onclick="handleModalClick(event)">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
+        <div class="bg-slate-50 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
             id="qrModalContent">
             <div class="flex justify-between items-start mb-6">
                 <div>
