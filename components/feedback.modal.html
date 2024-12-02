@@ -90,8 +90,8 @@
       feedbackModalContent.classList.remove("show");
       
       // Wait for animation to complete before hiding
+      callback(); // Execute the callback if provided
       setTimeout(() => {
-        callback(); // Execute the callback if provided
         feedbackModal.classList.add("hidden"); // Hide the modal
         feedbackModal.classList.remove("flex");
       }, 300);

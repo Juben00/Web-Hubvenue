@@ -47,7 +47,6 @@ $serviceFee = htmlspecialchars($serviceFee);
 $totalPrice = htmlspecialchars($totalPrice);
 
 
-
 $discounts = $venueObj->getAllDiscounts();
 
 $discountApplied = false;
@@ -57,10 +56,16 @@ if ($discountCode !== 'none') {
     $discountApplied = true;
 }
 
-// Calculate grand total if no discount is applied
-if (!$discountApplied) {
-    $totalPrice = $totalPriceForNights;
-}
+// // Calculate grand total if no discount is applied
+// if (!$discountApplied) {
+//     $totalPrice = $totalPriceForNights;
+// }
+
+$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+// Apply discount from discountStatus
+// if ($discountStatus) {
+//     $totalPrice = $totalPrice * (1 - $discountStatus['discount_value'] / 100);
+// }
 
 function applyDiscount($discounts, $discountCode, $totalPrice)
 {
@@ -166,14 +171,27 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Cleaning Fee</span>
-                                        <span>₱ <?php echo $cleaningFee ?></span>
+                                        <span>₱ <?php echo number_format($cleaningFee, 2) ?></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Service Fee</span>
                                         <span>₱ <?php echo $serviceFee ?></span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span>Discount</span>
+                                        <span class="">Discounts(PWD/Senior
+                                            Citizen)</span>
+                                        <span><?php
+                                        if ($discountStatus) {
+                                            echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                        } else {
+                                            echo "0%";
+                                        }
+                                        ?></span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-300 ">
+                                    <div class="flex justify-between">
+                                        <span>Coupon</span>
                                         <span id="discountValue">0%</span>
                                     </div>
                                 </div>
@@ -343,10 +361,10 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                 .then(data => {
                     if (data.valid) {
                         const discountValue = data.discountValue;
-                        const totalPriceElement = document.getElementById('totalPrice');
-                        let totalPrice = parseFloat(totalPriceElement.textContent.replace('₱', '').replace(',', ''));
+                        let totalPrice = <?php echo $totalPrice ?>;
                         totalPrice = totalPrice - (totalPrice * discountValue);
-                        totalPriceElement.textContent = `₱ ${totalPrice.toFixed(2)}`;
+
+                        document.getElementById('totalPrice').textContent = `₱ ${totalPrice.toFixed(2)}`;
                         document.getElementById('totalPriceF').value = totalPrice;
                         document.getElementById('discountValue').textContent = `${discountValue * 100}%`;
                         document.getElementById('couponMessage').classList.remove('hidden');

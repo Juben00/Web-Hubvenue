@@ -637,33 +637,39 @@ LEFT JOIN
         }
     }
 
-    public function getComparisonVenues($currentVenueId) {
-        $sql = "SELECT 
-                    v.*, 
-                    vt.name as venue_tag_name,
-                    COALESCE(AVG(r.rating), 0) as rating,
-                    COUNT(r.id) as total_reviews
-                FROM venues v
-                LEFT JOIN venue_tags vt ON v.tag_id = vt.id
-                LEFT JOIN reviews r ON v.id = r.venue_id
-                WHERE v.id != ? AND v.status = '2'
-                GROUP BY v.id
-                LIMIT 10";
-                
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $currentVenueId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        $venues = [];
-        while ($row = $result->fetch_assoc()) {
-            // Get image URLs for the venue
-            $row['image_urls'] = $this->getVenueImages($row['id']);
-            $venues[] = $row;
-        }
-        
-        return $venues;
-    }
+    // public function getComparisonVenues($currentVenueId)
+    // {
+    //     try {
+    //         $sql = "SELECT 
+    //                 v.*, 
+    //                 vt.name as venue_tag_name,
+    //                 COALESCE(AVG(r.rating), 0) as rating,
+    //                 COUNT(r.id) as total_reviews
+    //             FROM venues v
+    //             LEFT JOIN venue_tags vt ON v.tag_id = vt.id
+    //             LEFT JOIN reviews r ON v.id = r.venue_id
+    //             WHERE v.id != ? AND v.status = '2'
+    //             GROUP BY v.id
+    //             LIMIT 10";
+
+    //         $stmt = $this->conn->prepare($sql);
+    //         $stmt->bind_param("i", $currentVenueId);
+    //         $stmt->execute();
+    //         $result = $stmt->get_result();
+
+    //         $venues = [];
+    //         while ($row = $result->fetch_assoc()) {
+    //             // Get image URLs for the venue
+    //             $row['image_urls'] = $this->getVenueImages($row['id']);
+    //             $venues[] = $row;
+    //         }
+
+    //         return $venues;
+    //     } catch (PDOException $e) {
+    //         error_log("Database error: " . $e->getMessage());
+    //         return ['status' => 'error', 'message' => $e->getMessage()];
+    //     }
+    // }
 
 }
 

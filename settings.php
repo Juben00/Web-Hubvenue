@@ -13,6 +13,9 @@ if (isset($_SESSION['user'])) {
     }
     $user = $accountObj->retrieveUser($_SESSION['user']['id']);
 }
+
+$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+
 ?>
 
 <!DOCTYPE html>
@@ -386,48 +389,64 @@ if (isset($_SESSION['user'])) {
                     class="transition-all duration-200 ease-in-out transform opacity-100 translate-x-0">
                     <div class="max-w-7xl mx-auto">
                         <h2 class="text-2xl font-semibold mb-6 text-gray-800">Discount Settings</h2>
-
                         <!-- Senior/PWD Discount Section -->
-                        <div class="bg-white rounded-lg shadow p-6 mb-6">
-                            <h3 class="text-lg font-medium text-gray-800 mb-4">Senior Citizen / PWD Discount</h3>
-
+                        <?php
+                        if (empty($discountStatus)) {
+                            ?>
+                            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                                <h3 class="text-lg font-medium text-gray-800 mb-4">Senior Citizen / PWD Discount</h3>
+                                <div class="space-y-4">
+                                    <p class="text-gray-600">Enable 20% discount for Senior Citizens and Persons with
+                                        Disabilities (PWD)</p>
+                                    <button onclick="openDiscountModal()"
+                                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
+                                        <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Add Senior/PWD ID
+                                    </button>
+                                </div>
+                            </div>
+                            <?php
+                        } else {
+                            ?>
                             <div id="discountDetailsBox"
-                                class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg hidden">
+                                class="mb-6 p-4 <?php echo htmlspecialchars($discountStatus['status']) == 'Active' ? "bg-green-50 border-green-200" : "bg-neutral-50 border-neutral-200" ?> border  rounded-lg">
                                 <div class="flex items-start">
-                                    <svg class="h-5 w-5 text-green-500 mt-0.5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="h-5 w-5 <?php echo htmlspecialchars($discountStatus['status']) == 'Active' ? "text-green-500" : "text-neutral-800" ?>  mt-0.5 mr-2"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <div class="flex-1">
-                                        <p class="text-green-700 font-medium mb-2">Verified Senior/PWD Status</p>
-                                        <div class="space-y-1 text-sm text-green-600">
-                                            <p><span class="font-medium">Name:</span> <span id="displayName"></span></p>
-                                            <p><span class="font-medium">ID Number:</span> <span id="displayId"></span>
+                                        <p
+                                            class="<?php echo htmlspecialchars($discountStatus['status']) == 'Active' ? "text-green-700" : "text-neutral-800" ?> font-medium mb-2">
+                                            Verified Senior/PWD Status</p>
+                                        <div
+                                            class="space-y-1 text-sm <?php echo htmlspecialchars($discountStatus['status']) == 'Active' ? "text-green-600" : "text-neutral-800" ?>">
+                                            <p><span class="font-medium">Status:</span> <span
+                                                    id="displayName"><?php echo htmlspecialchars($discountStatus['status']) ?></span>
+                                            </p>
+                                            <p><span class="font-medium">Name:</span> <span
+                                                    id="displayName"><?php echo htmlspecialchars($discountStatus['fullname']) ?></span>
+                                            </p>
+                                            <p><span class="font-medium">ID Number:</span> <span
+                                                    id="displayId"><?php echo htmlspecialchars($discountStatus['discount_id']) ?></span>
                                             </p>
                                             <p><span class="font-medium">ID Photo:</span></p>
                                             <img id="displayPhotoPreview"
-                                                class="w-32 h-32 object-cover rounded-lg border border-green-200 mt-2"
-                                                src="" alt="ID Photo">
+                                                class="w-48 h-48 object-cover rounded-lg border border-green-200 mt-2"
+                                                src="./<?php echo htmlspecialchars($discountStatus['card_image']) ?>"
+                                                alt="ID Photo">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="space-y-4">
-                                <p class="text-gray-600">Enable 20% discount for Senior Citizens and Persons with
-                                    Disabilities (PWD)</p>
-                                <button onclick="openDiscountModal()"
-                                    class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
-                                    <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4v16m8-8H4" />
-                                    </svg>
-                                    Add Senior/PWD ID
-                                </button>
-                            </div>
-                        </div>
+                            <?php
+                        }
+                        ?>
                     </div>
                 </div>
             </div>

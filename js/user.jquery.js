@@ -536,6 +536,7 @@ $(document).ready(function () {
                 if (res.status === "success") {
                     showModal(res.message, function(){
                         formElement[0].reset();
+                        menuRedirection("./settings.php");
                     }, "black_ico.png");
                 } else {
                     showModal(res.message, undefined, "black_ico.png");
