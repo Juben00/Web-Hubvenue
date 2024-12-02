@@ -39,6 +39,7 @@ foreach ($bookedDate as $booking) {
 }
 
 $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+$ratings = $venueObj->getRatings($_GET['id']);
 // var_dump($_GET['id']);
 // var_dump($bookedDate);
 // var_dump($bookedDate[0]['startdate'])
@@ -334,8 +335,10 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                         </button>
                     </div>
                     <div class="flex items-center">
-                        <span class="text-sm font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
-                        ·
+                        <span class="text-sm font-semibold">
+                            <i
+                                class="fas fa-star text-yellow-400 mr-1"></i><?php echo number_format($venue['rating'], 1) ?></span>
+                        <span class="mx-2">·</span>
                         <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['total_reviews']) ?>
                             review/s</span>
                         <span class="mx-2">·</span>
@@ -464,22 +467,22 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                                 <div class="flex-grow">
                                     <div class="space-y-2">
                                         <?php
-                                        $totalReviews = isset($venue['total_reviews']) ? (int) $venue['total_reviews'] : 0;
-                                        $ratings = [
-                                            5 => isset($venue['rating_5']) ? (int) $venue['rating_5'] : 0,
-                                            4 => isset($venue['rating_4']) ? (int) $venue['rating_4'] : 0,
-                                            3 => isset($venue['rating_3']) ? (int) $venue['rating_3'] : 0,
-                                            2 => isset($venue['rating_2']) ? (int) $venue['rating_2'] : 0,
-                                            1 => isset($venue['rating_1']) ? (int) $venue['rating_1'] : 0,
+                                        $totalReviews = isset($ratings['total']) ? (int) $ratings['total'] : 0;
+                                        $rate = [
+                                            5 => isset($ratings['rating_5']) ? (int) $ratings['rating_5'] : 0,
+                                            4 => isset($ratings['rating_4']) ? (int) $ratings['rating_4'] : 0,
+                                            3 => isset($ratings['rating_3']) ? (int) $ratings['rating_3'] : 0,
+                                            2 => isset($ratings['rating_2']) ? (int) $ratings['rating_2'] : 0,
+                                            1 => isset($ratings['rating_1']) ? (int) $ratings['rating_1'] : 0,
                                         ];
 
                                         // Find the maximum review count to normalize widths
-                                        $maxReviewCount = max($ratings);
+                                        $maxReviewCount = max($rate);
 
                                         for ($i = 5; $i >= 1; $i--):
-                                            $count = isset($ratings[$i]) ? $ratings[$i] : 0; // Count of reviews for the current star rating
+                                            $count = isset($rate[$i]) ? $rate[$i] : 0; // Count of reviews for the current star rating
                                             // Normalize percentage based on $maxReviewCount
-                                            $normalizedPercentage = $maxReviewCount > 0 ? (($count / 5) / $venue['total_reviews']) * 100 : 0;
+                                            $normalizedPercentage = $maxReviewCount > 0 ? (($count) / $ratings['total']) * 100 : 0;
                                             ?>
                                             <div class="flex items-center gap-2">
                                                 <span class="text-sm w-16"><?php echo $i; ?> stars</span>
@@ -489,7 +492,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                                                     <div class="h-full bg-yellow-400 rounded"
                                                         style="width: <?php echo $normalizedPercentage; ?>%;"></div>
                                                 </div>
-                                                <span class="text-sm w-8"><?php echo $count / 5; ?></span>
+                                                <span class="text-sm w-8"><?php echo $count; ?></span>
                                             </div>
                                         <?php endfor; ?>
 
@@ -649,7 +652,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                             <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-white" method="GET"
                                 action="payment.php">
                                 <!-- Price Header -->
-                                <div class="flex justify-between items-center mb-6">
+                                <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
                                     <div class="flex items-baseline">
                                         <span
                                             class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
