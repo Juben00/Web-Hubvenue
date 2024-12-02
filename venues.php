@@ -40,6 +40,7 @@ foreach ($bookedDate as $booking) {
 
 $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
 $ratings = $venueObj->getRatings($_GET['id']);
+$reviews = $venueObj->getReview($_GET['id']);
 // var_dump($_GET['id']);
 // var_dump($bookedDate);
 // var_dump($bookedDate[0]['startdate'])
@@ -501,35 +502,49 @@ $ratings = $venueObj->getRatings($_GET['id']);
                             </div>
 
                             <!-- Individual Reviews -->
-                            <div class="mt-8 space-y-6">
-                                <div class="border-b pb-6">
-                                    <div class="flex items-center gap-4 mb-4">
-                                        <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
-                                        <div>
-                                            <a href="user-page.php" class="font-semibold hover:underline">Sarah
-                                                Johnson</a>
-                                            <p class="text-sm text-gray-500">2 weeks ago</p>
+                            <div class="mt-8 space-y-6" id="reviewContainer">
+                                <?php foreach ($reviews as $index => $review): ?>
+                                    <div class="border-b pb-6 review" data-index="<?php echo $index; ?>"
+                                        style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
+                                        <div class="flex items-center gap-4 mb-4">
+                                            <?php
+                                            if ($review['profile_pic'] == null) {
+                                                echo '<div class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">';
+                                                echo htmlspecialchars($review['user_name'][0]); // Display the first letter of the user's first name
+                                                echo '</div>';
+                                            } else {
+                                                echo '<img class="w-12 h-12 bg-gray-200 rounded-full" src="./' . htmlspecialchars($review['profile_pic']) . '" alt="Profile Picture">';
+                                            }
+                                            ?>
+
+                                            <div>
+                                                <a href="user-page.php"
+                                                    class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
+                                                <p class="text-sm text-gray-500">
+                                                    <?php echo htmlspecialchars($review['date']); ?>
+                                                </p>
+                                            </div>
                                         </div>
+                                        <div class="flex text-yellow-400 mb-2">
+                                            <?php for ($i = 0; $i < $review['rating']; $i++): ?>
+                                                <i class="fas fa-star"></i>
+                                            <?php endfor; ?>
+                                        </div>
+                                        <p class="text-gray-700"><?php echo htmlspecialchars($review['review']); ?></p>
                                     </div>
-                                    <div class="flex text-yellow-400 mb-2">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff
-                                        was
-                                        very accommodating and professional. The place was exactly as described and the
-                                        amenities were all in great condition.</p>
-                                </div>
+                                <?php endforeach; ?>
                             </div>
 
                             <!-- Pagination -->
                             <div class="flex items-center justify-center gap-2 mt-6">
-                                <button
-                                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Previous</button>
-                                <button class="px-4 py-2 text-sm bg-gray-900 text-white rounded">1</button>
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">2</button>
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">3</button>
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Next</button>
+                                <button id="prevReview"
+                                    class="px-4 py-2 text-sm border w-24 bg-neutral-200 transition-all duration-150 text-gray-600 hover:bg-gray-100 rounded">Previous</button>
+                                <button id="nextReview"
+                                    class="px-4 py-2 text-sm border w-24 bg-neutral-200 transition-all duration-150 text-gray-600 hover:bg-gray-100 rounded">Next</button>
                             </div>
+
+
+
                         </div>
 
                         <hr class="my-6">
@@ -807,6 +822,39 @@ $ratings = $venueObj->getRatings($_GET['id']);
                 closeCompareBtn.classList.add('hidden');
             }, 300);
         }
+    </script>
+
+    <!-- pagination -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const reviews = document.querySelectorAll('.review');
+            let currentIndex = 0;
+
+            function showReview(index) {
+                reviews.forEach((review, i) => {
+                    review.style.display = i === index ? 'block' : 'none';
+                });
+            }
+
+            document.getElementById('prevReview').addEventListener('click', function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    showReview(currentIndex);
+                }
+            });
+
+            document.getElementById('nextReview').addEventListener('click', function () {
+                if (currentIndex < reviews.length - 1) {
+                    currentIndex++;
+                    showReview(currentIndex);
+                } else {
+                    currentIndex = 0;
+                    showReview(currentIndex);
+                }
+            });
+
+            showReview(currentIndex);
+        });
     </script>
 
     <script>
@@ -1249,74 +1297,72 @@ $ratings = $venueObj->getRatings($_GET['id']);
                     }
 
                     comparisonVenues.innerHTML = venues.map(venue => `
-                        <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
-                            <div class="relative">
-                                <div class="relative w-full h-48 overflow-hidden">
-                                    <img src="./${venue.image_urls[0]}" 
-                                         alt="${venue.name}" 
-                                         class="w-full h-full object-cover">
-                                </div>
-                                <div class="p-4">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h3 class="text-lg font-semibold text-gray-900">${venue.name}</h3>
-                                        <div class="flex items-center">
-                                            <p class="font-bold text-sm">${parseFloat(venue.rating).toFixed(1)}</p>
-                                            <i class="fas fa-star text-yellow-500 ml-1"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-sm text-gray-500 line-clamp-2 mb-3">${venue.description}</p>
-                                    <div class="flex justify-between items-center">
-                                        <p class="text-gray-900">
-                                            <span class="font-semibold">₱${parseFloat(venue.price).toLocaleString()}</span>
-                                            <span class="text-sm"> / night</span>
-                                        </p>
-                                        <div class="flex gap-2">
-                                            <button onclick="toggleVenueDetails(${venue.id}, this)" 
-                                                    class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
-                                                View Details
-                                            </button>
-                                            <a href="venues.php?id=${venue.id}" 
-                                               class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors">
-                                                View Venue
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="venue-details-${venue.id}" class="hidden p-4 border-t">
-                                <div class="space-y-4">
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Place Description</h4>
-                                        <p class="text-sm text-gray-600">${venue.description}</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Venue Capacity</h4>
-                                        <p class="text-sm text-gray-600">${venue.capacity} guests</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Location</h4>
-                                        <p class="text-sm text-gray-600">${venue.location}</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Amenities</h4>
-                                        <ul class="text-sm text-gray-600 space-y-1">
-                                            ${JSON.parse(venue.amenities).map(amenity => `
-                                                <li>• ${amenity}</li>
-                                            `).join('')}
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">House Rules</h4>
-                                        <ul class="text-sm text-gray-600 space-y-1">
-                                            ${venue.rules ? JSON.parse(venue.rules).map(rule => `
-                                                <li>• ${rule}</li>
-                                            `).join('') : '<li>No specific rules listed</li>'}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
+    <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
+        <div class="relative">
+            <div class="relative w-full h-48 overflow-hidden">
+                <img src="./${venue.image_urls[0]}" alt="${venue.name}" class="w-full h-full object-cover">
+            </div>
+            <div class="p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-semibold text-gray-900">${venue.name}</h3>
+                    <div class="flex items-center">
+                        <p class="font-bold text-sm">${parseFloat(venue.rating).toFixed(1)}</p>
+                        <i class="fas fa-star text-yellow-500 ml-1"></i>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-500 line-clamp-2 mb-3">${venue.description}</p>
+                <div class="flex justify-between items-center">
+                    <p class="text-gray-900">
+                        <span class="font-semibold">₱${parseFloat(venue.price).toLocaleString()}</span>
+                        <span class="text-sm"> / night</span>
+                    </p>
+                    <div class="flex gap-2">
+                        <button onclick="toggleVenueDetails(${venue.id}, this)"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
+                            View Details
+                        </button>
+                        <a href="venues.php?id=${venue.id}"
+                            class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors">
+                            View Venue
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="venue-details-${venue.id}" class="hidden p-4 border-t">
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-semibold mb-2">Place Description</h4>
+                    <p class="text-sm text-gray-600">${venue.description}</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">Venue Capacity</h4>
+                    <p class="text-sm text-gray-600">${venue.capacity} guests</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">Location</h4>
+                    <p class="text-sm text-gray-600">${venue.location}</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">Amenities</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        ${JSON.parse(venue.amenities).map(amenity => `
+                        <li>• ${amenity}</li>
+                        `).join('')}
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-2">House Rules</h4>
+                    <ul class="text-sm text-gray-600 space-y-1">
+                        ${venue.rules ? JSON.parse(venue.rules).map(rule => `
+                        <li>• ${rule}</li>
+                        `).join('') : '<li>No specific rules listed</li>'}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    `).join('');
                 } catch (error) {
                     console.error('Error loading comparison venues:', error);
                     comparisonVenues.innerHTML = '<div class="text-center py-4 text-red-500">Error loading venues</div>';
