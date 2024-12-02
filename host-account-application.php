@@ -139,7 +139,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col bg-gray-50">
+<body class="min-h-screen flex flex-col bg-slate-50">
     <!-- Top Navigation -->
     <?php
     if (isset($_SESSION['user'])) {
@@ -159,7 +159,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
     <?php
     if ($appliedHost) {
         echo '<div class="fixed inset-0 flex items-center justify-center bg-black/5 backdrop-blur-sm">
-            <div class="bg-white p-8 rounded-xl shadow-xl max-w-md w-full mx-4 border-l-4 border-blue-500 transform transition-all">
+            <div class="bg-slate-50 p-8 rounded-xl shadow-xl max-w-md w-full mx-4 border-l-4 border-blue-500 transform transition-all">
                 <div class="flex items-center space-x-4">
                     <div class="p-2 bg-blue-50 rounded-full">
                         <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
         </div>';
     } else if ($isHost) {
         echo '<div class="fixed inset-0 flex items-center justify-center bg-black/5 backdrop-blur-sm">
-            <div class="bg-white p-8 rounded-xl shadow-xl max-w-md w-full mx-4 border-l-4 border-green-500 transform transition-all">
+            <div class="bg-slate-50 p-8 rounded-xl shadow-xl max-w-md w-full mx-4 border-l-4 border-green-500 transform transition-all">
                 <div class="flex items-center space-x-4">
                     <div class="p-2 bg-green-50 rounded-full">
                         <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,7 +321,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
                 <div id="openstreetmapplaceholder"></div>
             </main>
             <!-- Bottom Navigation -->
-            <footer class="bg-white border-t">
+            <footer class="bg-slate-50 border-t">
                 <div class="container mx-auto px-4 h-20 flex items-center justify-between">
                     <button id="prevBtn" class="text-gray-900 font-medium">Back</button>
                     <div class="flex-1 flex justify-center">

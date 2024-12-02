@@ -56,7 +56,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
             <h1 class="text-3xl font-bold mb-8 text-gray-800">Settings</h1>
 
             <!-- Settings Navigation -->
-            <div class="flex mb-8 border-b border-gray-200 bg-white rounded-lg p-2 gap-2 shadow-sm">
+            <div class="flex mb-8 border-b border-gray-200 bg-slate-50 rounded-lg p-2 gap-2 shadow-sm">
                 <button
                     class="flex items-center gap-2 px-6 py-3 text-gray-600 rounded-lg transition-all duration-200 hover:bg-gray-100 hover:text-black data-[active=true]:bg-gray-100 data-[active=true]:text-black data-[active=true]:font-semibold"
                     data-tab="account" data-active="true">
@@ -100,7 +100,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
             </div>
 
             <!-- Settings Content -->
-            <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="bg-slate-50 rounded-xl shadow-lg p-8">
                 <!-- Account Settings -->
                 <div id="account-settings"
                     class="transition-all duration-200 ease-in-out transform opacity-100 translate-x-0">
@@ -325,7 +325,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" class="sr-only peer">
                                         <div
-                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-50 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
                                         </div>
                                     </label>
                                 </div>
@@ -370,7 +370,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" class="sr-only peer">
                                         <div
-                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
+                                            class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-50 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
                                         </div>
                                     </label>
                                 </div>
@@ -393,13 +393,13 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                         <?php
                         if (empty($discountStatus)) {
                             ?>
-                            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                            <div class="bg-slate-50 rounded-lg shadow p-6 mb-6">
                                 <h3 class="text-lg font-medium text-gray-800 mb-4">Senior Citizen / PWD Discount</h3>
                                 <div class="space-y-4">
                                     <p class="text-gray-600">Enable 20% discount for Senior Citizens and Persons with
                                         Disabilities (PWD)</p>
                                     <button onclick="openDiscountModal()"
-                                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
+                                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-slate-50 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
                                         <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -584,7 +584,7 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
     <div id="discountModal"
         class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0">
         <form id="discountApplicationForm"
-            class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4">
+            class="bg-slate-50 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4">
 
             <div class="flex justify-between items-start mb-6">
                 <div>

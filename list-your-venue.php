@@ -148,7 +148,7 @@ session_start();
     </style>
 </head>
 
-<body class="bg-white">
+<body class="bg-slate-50">
     <?php
     // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
@@ -678,7 +678,7 @@ session_start();
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="entrance-fee-toggle" class="sr-only peer">
                                 <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-50 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
                                 </div>
                             </label>
                         </div>
@@ -706,7 +706,7 @@ session_start();
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" id="cleaning-fee-toggle" class="sr-only peer">
                                 <div
-                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-50 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
                                 </div>
                             </label>
                         </div>
@@ -786,7 +786,7 @@ session_start();
             <button type="submit" id="VenuePostButton"></button>
         </form>
 
-        <div class="fixed bottom-0 left-0 right-0 bg-white border-t">
+        <div class="fixed bottom-0 left-0 right-0 bg-slate-50 border-t">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
                 <button onclick="prevStep()" class="text-black font-semibold hover:underline">Back</button>
                 <div class="progress-bar w-1/3">

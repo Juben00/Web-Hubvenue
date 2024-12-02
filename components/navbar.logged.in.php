@@ -15,7 +15,7 @@ $profilePic = $account->getProfilePic($_SESSION['user']['id']);
     </a>
     <!-- Center Section -->
     <div id="bottom-search"
-      class="bg-white text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
+      class="bg-slate-50 text-xs hidden border border-gray-300 p-1 rounded-full shadow-lg items-center max-w-2xl md:max-w-5xl mx-auto">
       <div class="flex-1 min-w-0 px-4">
         <label for="location" class="block text-sm font-medium text-gray-700">Where</label>
         <input type="text" id="location" placeholder="Search location"
@@ -52,7 +52,7 @@ $profilePic = $account->getProfilePic($_SESSION['user']['id']);
 
       <!-- Guest Dropdown (moved outside the button for better positioning) -->
       <div id="guestDropdown"
-        class="hidden absolute top-full left-0 mt-2 w-72 bg-white rounded-2xl shadow-lg border border-gray-200 p-4 z-50">
+        class="hidden absolute top-full left-0 mt-2 w-72 bg-slate-50 rounded-2xl shadow-lg border border-gray-200 p-4 z-50">
         <!-- Adults -->
         <div class="flex items-center justify-between py-3 border-b">
           <div>
