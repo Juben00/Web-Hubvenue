@@ -249,7 +249,6 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                     echo '<p class="text-left text-gray-500">No venues available</p>';
                                 }
                                 foreach ($venues as $venue) {
-                                    $isBookmarked = in_array($venue['id'], $bookmarkIds);
                                     ?>
                                     <div class="bg-white rounded-2xl overflow-hidden  cursor-pointer">
                                         <div class="relative">

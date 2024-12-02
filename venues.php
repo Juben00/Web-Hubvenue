@@ -38,6 +38,7 @@ foreach ($bookedDate as $booking) {
     }
 }
 
+$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
 // var_dump($_GET['id']);
 // var_dump($bookedDate);
 // var_dump($bookedDate[0]['startdate'])
@@ -127,7 +128,7 @@ foreach ($bookedDate as $booking) {
             gap: 2rem;
             transition: all 0.3s ease;
         }
-        
+
         .venue-comparison {
             height: 100vh;
             overflow-y: auto;
@@ -182,13 +183,15 @@ foreach ($bookedDate as $booking) {
             max-width: 1200px;
             padding: 100px 2rem 0;
             margin: 0 auto;
-            margin-left: calc(5rem + 2rem); /* Account for sidebar */
+            margin-left: calc(5rem + 2rem);
+            /* Account for sidebar */
         }
 
         .main-content.shifted {
             margin-right: 50%;
             width: 50%;
-            padding: 100px 0 0; /* Remove horizontal padding */
+            padding: 100px 0 0;
+            /* Remove horizontal padding */
             margin-left: 5rem;
             max-width: none;
             height: 100vh;
@@ -197,7 +200,8 @@ foreach ($bookedDate as $booking) {
             top: 0;
             left: 0;
             display: flex;
-            justify-content: center; /* Center the content */
+            justify-content: center;
+            /* Center the content */
         }
 
         .main-content.shifted #venueDetails {
@@ -229,7 +233,8 @@ foreach ($bookedDate as $booking) {
         #venueDetails {
             width: 100%;
             margin: 0 auto;
-            padding-bottom: 2rem; /* Add padding at the bottom for scrolling space */
+            padding-bottom: 2rem;
+            /* Add padding at the bottom for scrolling space */
         }
 
         .grid.grid-cols-3 {
@@ -242,7 +247,7 @@ foreach ($bookedDate as $booking) {
             .main-content.shifted #venueDetails {
                 padding: 0 2rem;
             }
-            
+
             .venue-comparison {
                 padding: 120px 2rem 2rem;
             }
@@ -252,7 +257,7 @@ foreach ($bookedDate as $booking) {
             .main-content.shifted #venueDetails {
                 padding: 0 1rem;
             }
-            
+
             .venue-comparison {
                 padding: 120px 1rem 2rem;
             }
@@ -274,7 +279,8 @@ foreach ($bookedDate as $booking) {
         }
 
         .venue-comparison [id^="venue-details-"]:not(.hidden) {
-            max-height: 2000px; /* Large enough to fit content */
+            max-height: 2000px;
+            /* Large enough to fit content */
         }
 
         /* Update main content shifted styles to fix rating section */
@@ -288,7 +294,8 @@ foreach ($bookedDate as $booking) {
         /* Add styles for ratings section to prevent cutoff */
         .main-content.shifted .rating-bars {
             width: 100%;
-            max-width: 200px; /* Adjust as needed */
+            max-width: 200px;
+            /* Adjust as needed */
         }
 
         .main-content.shifted .reviews-section {
@@ -314,13 +321,14 @@ foreach ($bookedDate as $booking) {
 
     ?>
 
-    <main class="max-w-7xl pt-32 mx-auto pt-24 px-4 py-6 sm:px-6 lg:px-8 main-container">
+    <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
         <div class="main-content">
             <div id="venueDetails">
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-4">
                         <h1 class="text-3xl font-semibold"><?php echo htmlspecialchars($venue['name']) ?></h1>
-                        <button id="compareButton" class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-500 rounded-lg hover:bg-gray-50 transition duration-300">
+                        <button id="compareButton"
+                            class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-500 rounded-lg hover:bg-gray-50 transition duration-300">
                             <i class="fas fa-exchange-alt"></i>
                             <span>Compare</span>
                         </button>
@@ -328,7 +336,8 @@ foreach ($bookedDate as $booking) {
                     <div class="flex items-center">
                         <span class="text-sm font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
                         ·
-                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['total_reviews']) ?> review/s</span>
+                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['total_reviews']) ?>
+                            review/s</span>
                         <span class="mx-2">·</span>
                         <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['tag']) ?></span>
                         <span class="mx-2">·</span>
@@ -354,7 +363,8 @@ foreach ($bookedDate as $booking) {
                             <img src="./<?= htmlspecialchars($venue['image_urls'][1]) ?>" alt="Venue Image"
                                 class="venue-image w-full h-60 object-cover rounded-lg" data-image-index="1">
                         <?php else: ?>
-                            <div class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
+                            <div
+                                class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
                                 <p>No more image to show</p>
                             </div>
                         <?php endif; ?>
@@ -363,7 +373,8 @@ foreach ($bookedDate as $booking) {
                             <img src="./<?= htmlspecialchars($venue['image_urls'][2]) ?>" alt="Venue Image"
                                 class="venue-image w-full h-60 object-cover rounded-lg" data-image-index="2">
                         <?php else: ?>
-                            <div class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
+                            <div
+                                class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
                                 <p>No more image to show</p>
                             </div>
                         <?php endif; ?>
@@ -438,7 +449,8 @@ foreach ($bookedDate as $booking) {
                             <div class="flex items-start gap-8">
                                 <!-- Overall Rating -->
                                 <div class="text-center">
-                                    <div class="text-5xl font-bold mb-1"><?php echo number_format($venue['rating'], 1) ?>
+                                    <div class="text-5xl font-bold mb-1">
+                                        <?php echo number_format($venue['rating'], 1) ?>
                                     </div>
                                     <div class="flex items-center justify-center text-yellow-400 mb-1">
                                         <i class="fas fa-star"></i>
@@ -491,14 +503,16 @@ foreach ($bookedDate as $booking) {
                                     <div class="flex items-center gap-4 mb-4">
                                         <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
                                         <div>
-                                            <a href="user-page.php" class="font-semibold hover:underline">Sarah Johnson</a>
+                                            <a href="user-page.php" class="font-semibold hover:underline">Sarah
+                                                Johnson</a>
                                             <p class="text-sm text-gray-500">2 weeks ago</p>
                                         </div>
                                     </div>
                                     <div class="flex text-yellow-400 mb-2">
                                         <i class="fas fa-star"></i>
                                     </div>
-                                    <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff was
+                                    <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff
+                                        was
                                         very accommodating and professional. The place was exactly as described and the
                                         amenities were all in great condition.</p>
                                 </div>
@@ -506,7 +520,8 @@ foreach ($bookedDate as $booking) {
 
                             <!-- Pagination -->
                             <div class="flex items-center justify-center gap-2 mt-6">
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Previous</button>
+                                <button
+                                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Previous</button>
                                 <button class="px-4 py-2 text-sm bg-gray-900 text-white rounded">1</button>
                                 <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">2</button>
                                 <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">3</button>
@@ -568,7 +583,8 @@ foreach ($bookedDate as $booking) {
                                 <h4 class="font-semibold text-lg mb-3">Cancellation Policy</h4>
                                 <div class="space-y-3">
                                     <p class="text-gray-700">Free cancellation for 48 hours after booking.</p>
-                                    <p class="text-gray-700">Cancel before check-in and get a full refund, minus the service
+                                    <p class="text-gray-700">Cancel before check-in and get a full refund, minus the
+                                        service
                                         fee.</p>
                                     <div class="mt-4">
                                         <h5 class="font-medium mb-2">Refund Policy:</h5>
@@ -641,7 +657,8 @@ foreach ($bookedDate as $booking) {
                                     </div>
                                     <div class="flex items-center gap-2 text-sm">
                                         <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
+                                        <span
+                                            class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
                                         <span class="text-gray-500 text-xs"> <?php echo $venue['total_reviews'] ?>
                                             review/s</span>
                                     </div>
@@ -653,12 +670,14 @@ foreach ($bookedDate as $booking) {
                                         <input type="hidden" name="venueId"
                                             value="<?php echo htmlspecialchars($venue['id']); ?>">
                                         <div class="w-1/2 p-3 border-r">
-                                            <label class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
+                                            <label
+                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
                                             <input type="date" name="checkin" placeholder="Set Date"
                                                 class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
                                         <div class="w-1/2 p-3">
-                                            <label class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
+                                            <label
+                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
                                             <input type="date" name="checkout" placeholder="Set Date"
                                                 class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
@@ -678,12 +697,13 @@ foreach ($bookedDate as $booking) {
                                 <div class="space-y-4 mb-6">
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">
-                                            ₱<?php echo htmlspecialchars($venue['price']); ?> × <span total-nights>0</span>
+                                            ₱<?php echo htmlspecialchars($venue['price']); ?> × <span
+                                                total-nights>0</span>
                                             nights
                                         </span>
                                         <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="totalPriceForNights" value="0"
-                                                readonly></span>
+                                                class="text-right bg-transparent w-24" name="totalPriceForNights"
+                                                value="0" readonly></span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">
@@ -691,13 +711,15 @@ foreach ($bookedDate as $booking) {
                                         </span>
                                         <span class="font-medium">₱ <input type="number"
                                                 class="text-right bg-transparent w-24" name="totalEntranceFee"
-                                                value="<?php echo htmlspecialchars($venue['entrance']); ?>" readonly></span>
+                                                value="<?php echo htmlspecialchars($venue['entrance']); ?>"
+                                                readonly></span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">Cleaning fee</span>
                                         <span class="font-medium">₱ <input type="number"
                                                 class="text-right bg-transparent w-24" name="cleaningFee"
-                                                value="<?php echo htmlspecialchars($venue['cleaning']); ?>" readonly></span>
+                                                value="<?php echo htmlspecialchars($venue['cleaning']); ?>"
+                                                readonly></span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service
@@ -706,6 +728,22 @@ foreach ($bookedDate as $booking) {
                                                 class="text-right bg-transparent w-24" name="serviceFee" value="0"
                                                 readonly></span>
                                     </div>
+
+                                    <div class="flex justify-between items-center">
+                                        <span
+                                            class="text-gray-600 hover:text-gray-900 cursor-help text-xs">Discounts(PWD/Senior
+                                            Citizen)
+                                        </span>
+                                        <span class="font-medium text-right bg-transparent w-24" readonly>
+                                            <?php
+                                            if ($discountStatus) {
+                                                echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                            } else {
+                                                echo "0%";
+                                            }
+                                            ?>
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <!-- Total -->
@@ -713,8 +751,8 @@ foreach ($bookedDate as $booking) {
                                     <div class="flex justify-between items-center">
                                         <span class="text-lg font-bold">Total</span>
                                         <span class="font-bold text-lg">₱ <input type="number"
-                                                class="text-right bg-transparent w-24 font-bold" name="totalPrice" value="0"
-                                                readonly></span>
+                                                class="text-right bg-transparent w-24 font-bold" name="totalPrice"
+                                                value="0" readonly></span>
                                     </div>
                                 </div>
 
@@ -750,17 +788,17 @@ foreach ($bookedDate as $booking) {
     <script src="./js/user.jquery.js"></script>
     <script>
         // Define closeComparison in the global scope
-        window.closeComparison = function() {
+        window.closeComparison = function () {
             const mainContent = document.querySelector('.main-content');
             const mainContainer = document.querySelector('.main-container');
             const comparisonPanel = document.getElementById('comparisonPanel');
             const closeCompareBtn = document.getElementById('closeCompareBtn');
-            
+
             document.body.style.overflow = '';
             mainContent.classList.remove('shifted');
             mainContainer.classList.remove('shifted');
             comparisonPanel.classList.remove('active');
-            
+
             setTimeout(() => {
                 comparisonPanel.classList.add('hidden');
                 closeCompareBtn.classList.add('hidden');
@@ -869,11 +907,18 @@ foreach ($bookedDate as $booking) {
                     guestsInput.value = maxGuests;
                 }
 
+                const discountRate = <?php echo $discountStatus ? $discountStatus['discount_value'] / 100 : 0; ?>;
+
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
                     const totalEntranceFee = entranceFee * guests;
                     const serviceFee = pricePerNight * serviceFeeRate;
-                    const grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
+                    let grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
+
+                    // Apply discount if applicable
+                    if (discountRate > 0) {
+                        grandTotal = grandTotal * (1 - discountRate);
+                    }
 
                     console.log('Calculations:', { // Debug log
                         totalPriceForNights,
@@ -988,7 +1033,8 @@ foreach ($bookedDate as $booking) {
     <!-- Photo Gallery Modal -->
     <div id="photoGalleryModal" class="fixed inset-0 z-50 hidden">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black bg-opacity-80 transition-opacity duration-300 opacity-0" id="modalBackdrop"></div>
+        <div class="absolute inset-0 bg-black bg-opacity-80 transition-opacity duration-300 opacity-0"
+            id="modalBackdrop"></div>
 
         <!-- Modal Content -->
         <div class="relative h-full w-full flex flex-col">
@@ -1008,11 +1054,13 @@ foreach ($bookedDate as $booking) {
             <div class="flex-1 flex items-center justify-center p-4">
                 <div class="relative w-full max-w-7xl mx-auto">
                     <!-- Navigation Buttons -->
-                    <button id="prevImage" class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
+                    <button id="prevImage"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
                         <i class="fas fa-chevron-left text-2xl"></i>
                     </button>
 
-                    <button id="nextImage" class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
+                    <button id="nextImage"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/10 p-4 rounded-full transition">
                         <i class="fas fa-chevron-right text-2xl"></i>
                     </button>
 
@@ -1050,7 +1098,7 @@ foreach ($bookedDate as $booking) {
             let currentIndex = 0;
 
             // Make openGallery function available globally
-            window.openGallery = function(index) {
+            window.openGallery = function (index) {
                 currentIndex = index;
                 modal.classList.remove('hidden');
                 setTimeout(() => {
@@ -1139,27 +1187,27 @@ foreach ($bookedDate as $booking) {
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Comparison Panel Functionality
             const compareButton = document.getElementById('compareButton');
             const mainContent = document.querySelector('.main-content');
             const comparisonPanel = document.getElementById('comparisonPanel');
             const comparisonVenues = document.getElementById('comparisonVenues');
             const closeCompareBtn = document.getElementById('closeCompareBtn');
-            
+
             // Completely separate compare button handler
             if (compareButton) {
-                compareButton.onclick = function(e) {
+                compareButton.onclick = function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation(); // Stop other events from firing
-                    
+
                     // Remove any photo gallery related classes/states
                     const photoGalleryModal = document.getElementById('photoGalleryModal');
                     if (photoGalleryModal) {
                         photoGalleryModal.classList.add('hidden');
                     }
-                    
+
                     openComparisonPanel();
                     return false;
                 };
@@ -1191,12 +1239,12 @@ foreach ($bookedDate as $booking) {
                     comparisonVenues.innerHTML = '<div class="text-center py-4">Loading venues...</div>';
                     const response = await fetch('get_comparison_venues.php?current_venue_id=<?php echo $venue['id']; ?>');
                     const venues = await response.json();
-                    
+
                     if (venues.length === 0) {
                         comparisonVenues.innerHTML = '<div class="text-center py-4">No venues available for comparison</div>';
                         return;
                     }
-                    
+
                     comparisonVenues.innerHTML = venues.map(venue => `
                         <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
                             <div class="relative">
@@ -1273,7 +1321,7 @@ foreach ($bookedDate as $booking) {
             }
 
             // Function to toggle venue details
-            window.toggleVenueDetails = function(venueId, button) {
+            window.toggleVenueDetails = function (venueId, button) {
                 const detailsSection = document.getElementById(`venue-details-${venueId}`);
                 if (detailsSection.classList.contains('hidden')) {
                     detailsSection.classList.remove('hidden');
@@ -1299,23 +1347,23 @@ foreach ($bookedDate as $booking) {
 
     <!-- Photo Gallery Functionality -->
     <script>
-    // Photo Gallery Functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        const showAllPhotosBtn = document.getElementById('showAllPhotosBtn');
-        const photoGalleryModal = document.getElementById('photoGalleryModal');
-        
-        // Only attach photo gallery event to the show all photos button
-        if (showAllPhotosBtn) {
-            showAllPhotosBtn.onclick = function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                openGallery(0);
-                return false;
-            };
-        }
+        // Photo Gallery Functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const showAllPhotosBtn = document.getElementById('showAllPhotosBtn');
+            const photoGalleryModal = document.getElementById('photoGalleryModal');
 
-        // Rest of the photo gallery code...
-    });
+            // Only attach photo gallery event to the show all photos button
+            if (showAllPhotosBtn) {
+                showAllPhotosBtn.onclick = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openGallery(0);
+                    return false;
+                };
+            }
+
+            // Rest of the photo gallery code...
+        });
     </script>
 
 </body>

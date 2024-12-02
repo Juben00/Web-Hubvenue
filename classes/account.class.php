@@ -626,6 +626,25 @@ class Account
         }
     }
 
+    public function getDiscountApplication($userId)
+    {
+        try {
+            $conn = $this->db->connect();
+            // $ACTIVE_STATUS = "Active";
+
+            $sql = "SELECT * FROM mandatory_discount WHERE userId = :userId";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':userId', $userId);
+            // $stmt->bindParam(':status', $ACTIVE_STATUS);
+            $stmt->execute();
+            $discount = $stmt->fetch();
+            return $discount;
+        } catch (PDOException $e) {
+            error_log("Error fetching discount application: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
     function getProfilePic($userId)
     {
         try {
@@ -641,18 +660,18 @@ class Account
         }
     }
 
-    public function getUserById($userId) {
-        try {
-            $sql = "SELECT firstname, lastname FROM users WHERE id = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$userId]);
-            return $stmt->fetch();
-        } catch (Exception $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
-    
+    // public function getUserById($userId) {
+    //     try {
+    //         $sql = "SELECT firstname, lastname FROM users WHERE id = ?";
+    //         $stmt = $this->db->prepare($sql);
+    //         $stmt->execute([$userId]);
+    //         return $stmt->fetch();
+    //     } catch (Exception $e) {
+    //         error_log($e->getMessage());
+    //         return false;
+    //     }
+    // }
+
 }
 
 // session_start();
