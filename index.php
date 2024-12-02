@@ -301,6 +301,9 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                                         <?= htmlspecialchars($venue['name']) ?>
                                                     </h3>
                                                     <div class="flex items-center">
+                                                        <p class="font-bold text-xs">
+                                                            <?php echo number_format($venue['rating'], 1) ?? "0" ?>
+                                                        </p>
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                             class="h-4 w-4 text-yellow-500 mr-1" viewBox="0 0 20 20"
                                                             fill="currentColor">

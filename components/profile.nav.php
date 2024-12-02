@@ -1,3 +1,11 @@
+<?php
+require_once './classes/account.class.php';
+
+$account = new Account();
+
+$profilePic = $account->getProfilePic($_SESSION['user']['id']);
+?>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <nav id="main-nav" class="bg-transparent backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8">
   <div class="flex items-center justify-between md:px-4">
@@ -71,10 +79,10 @@
           <div class="relative">
             <div class="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center">
               <?php
-              if (isset($_SESSION['user'])) {
+              if (isset($_SESSION['user']) && empty($profilePic)) {
                 echo $_SESSION['user']['firstname'][0];
               } else {
-                echo "U";
+                echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
               }
               ?>
             </div>

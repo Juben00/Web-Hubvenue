@@ -252,7 +252,6 @@ class Account
         }
     }
 
-
     public function HostApplicationStats($userId, $status)
     {
         try {
@@ -623,6 +622,21 @@ class Account
 
         } catch (PDOException $e) {
             error_log("Error sending discount application: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function getProfilePic($userId)
+    {
+        try {
+            $sql = "SELECT profile_pic FROM users WHERE id = :userId";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':userId', $userId);
+            $stmt->execute();
+            $profilePic = $stmt->fetchColumn();
+            return $profilePic;
+        } catch (PDOException $e) {
+            error_log("Error fetching profile picture: " . $e->getMessage());
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }

@@ -146,7 +146,10 @@ foreach ($bookedDate as $booking) {
                 <h1 class="text-3xl font-semibold mb-2"><?php echo htmlspecialchars($venue['name']) ?></h1>
                 <div class="flex justify-between items-center">
                     <div>
-                        <span class="text-sm font-semibold">{{Rating}} · {{Reviews Count}} reviews</span>
+                        <span class="text-sm font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
+                        ·
+                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['total_reviews']) ?>
+                            review/s</span>
                         <span class="mx-2">·</span>
                         <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['tag']) ?></span>
                         <span class="mx-2">·</span>
@@ -257,51 +260,49 @@ foreach ($bookedDate as $booking) {
                         <div class="flex items-start gap-8">
                             <!-- Overall Rating -->
                             <div class="text-center">
-                                <div class="text-5xl font-bold mb-1">4.8</div>
+                                <div class="text-5xl font-bold mb-1"><?php echo number_format($venue['rating'], 1) ?>
+                                </div>
                                 <div class="flex items-center justify-center text-yellow-400 mb-1">
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <div class="text-sm text-gray-600">128 reviews</div>
+                                <div class="text-sm text-gray-600">
+                                    <?php echo htmlspecialchars($venue['total_reviews']) ?> reviews
+                                </div>
                             </div>
 
                             <!-- Rating Bars -->
                             <div class="flex-grow">
                                 <div class="space-y-2">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm w-16">5 stars</span>
-                                        <div class="flex-grow h-2 bg-gray-200 rounded">
-                                            <div class="h-full bg-yellow-400 rounded" style="width: 75%"></div>
+                                    <?php
+                                    $totalReviews = isset($venue['total_reviews']) ? (int) $venue['total_reviews'] : 0;
+                                    $ratings = [
+                                        5 => isset($venue['rating_5']) ? (int) $venue['rating_5'] : 0,
+                                        4 => isset($venue['rating_4']) ? (int) $venue['rating_4'] : 0,
+                                        3 => isset($venue['rating_3']) ? (int) $venue['rating_3'] : 0,
+                                        2 => isset($venue['rating_2']) ? (int) $venue['rating_2'] : 0,
+                                        1 => isset($venue['rating_1']) ? (int) $venue['rating_1'] : 0,
+                                    ];
+
+                                    // Find the maximum review count to normalize widths
+                                    $maxReviewCount = max($ratings);
+
+                                    for ($i = 5; $i >= 1; $i--):
+                                        $count = isset($ratings[$i]) ? $ratings[$i] : 0; // Count of reviews for the current star rating
+                                        // Normalize percentage based on $maxReviewCount
+                                        $normalizedPercentage = $maxReviewCount > 0 ? (($count / 5) / $venue['total_reviews']) * 100 : 0;
+                                        ?>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm w-16"><?php echo $i; ?> stars</span>
+                                            <!-- Set explicit max width -->
+                                            <div class="flex-grow h-2 bg-gray-200 rounded max-w-[200px]">
+                                                <!-- Dynamically set the width based on normalized percentage -->
+                                                <div class="h-full bg-yellow-400 rounded"
+                                                    style="width: <?php echo $normalizedPercentage; ?>%;"></div>
+                                            </div>
+                                            <span class="text-sm w-8"><?php echo $count / 5; ?></span>
                                         </div>
-                                        <span class="text-sm w-8">30</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm w-16">4 stars</span>
-                                        <div class="flex-grow h-2 bg-gray-200 rounded">
-                                            <div class="h-full bg-yellow-400 rounded" style="width: 60%"></div>
-                                        </div>
-                                        <span class="text-sm w-8">20</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm w-16">3 stars</span>
-                                        <div class="flex-grow h-2 bg-gray-200 rounded">
-                                            <div class="h-full bg-yellow-400 rounded" style="width: 45%"></div>
-                                        </div>
-                                        <span class="text-sm w-8">92</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm w-16">2 stars</span>
-                                        <div class="flex-grow h-2 bg-gray-200 rounded">
-                                            <div class="h-full bg-yellow-400 rounded" style="width: 15%"></div>
-                                        </div>
-                                        <span class="text-sm w-8">3</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm w-16">1 star</span>
-                                        <div class="flex-grow h-2 bg-gray-200 rounded">
-                                            <div class="h-full bg-yellow-400 rounded" style="width: 30%"></div>
-                                        </div>
-                                        <span class="text-sm w-8">72</span>
-                                    </div>
+                                    <?php endfor; ?>
+
                                 </div>
                             </div>
                         </div>
@@ -428,10 +429,12 @@ foreach ($bookedDate as $booking) {
                                     <div
                                         class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
                                         <?php
-                                        if (isset($owner)) {
+
+                                        $profilePic = $account->getProfilePic($owner[0]['id']);
+                                        if (isset($owner) && empty($profilePic)) {
                                             echo $owner[0]['firstname'][0];
                                         } else {
-                                            echo "U";
+                                            echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
                                         }
                                         ?>
                                     </div>
@@ -439,6 +442,7 @@ foreach ($bookedDate as $booking) {
                                         <?php echo htmlspecialchars($owner[0]['firstname'] . " " . $owner[0]['lastname']); ?>
                                     </h2>
                                     <p class="text-xs text-gray-500">Owner</p>
+
                                 </div>
                             </a>
                         </div>
@@ -457,10 +461,11 @@ foreach ($bookedDate as $booking) {
                                         class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
                                     <span class="text-gray-600 ml-2">/ night</span>
                                 </div>
-                                <div class="flex items-center text-sm">
+                                <div class="flex items-center gap-2 text-sm">
                                     <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                    <span class="font-semibold">{{Rating}}</span>
-                                    <span class="text-gray-500">· {{Reviews Count}} reviews</span>
+                                    <span class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
+                                    <span class="text-gray-500 text-xs"> <?php echo $venue['total_reviews'] ?>
+                                        review/s</span>
                                 </div>
                             </div>
 
