@@ -660,6 +660,75 @@ class Account
         }
     }
 
+    // public function getUserById($userId)
+    // {
+    //     try {
+    //         $sql = "SELECT firstname, lastname FROM users WHERE id = ?";
+    //         $stmt = $this->db->prepare($sql);
+    //         $stmt->execute([$userId]);
+    //         return $stmt->fetch();
+    //     } catch (Exception $e) {
+    //         error_log($e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    // public function getDiscountApplications($search = "", $filter = "")
+    // {
+    //     $sql = "SELECT 
+    //                 md.id,
+    //                 md.userId,
+    //                 md.discount_type,
+    //                 md.fullname as id_holder_name,
+    //                 md.discount_id as id_number,
+    //                 md.card_image as id_photo,
+    //                 md.status,
+    //                 u.email
+    //             FROM mandatory_discount md
+    //             JOIN users u ON md.userId = u.id
+    //             WHERE 1=1";
+
+    //     if (!empty($search)) {
+    //         $sql .= " AND (md.fullname LIKE ? OR md.discount_id LIKE ?)";
+    //         $params[] = "%$search%";
+    //         $params[] = "%$search%";
+    //     }
+
+    //     if (!empty($filter)) {
+    //         $sql .= " AND md.status = ?";
+    //         $params[] = $filter;
+    //     }
+
+    //     $sql .= " ORDER BY md.created_at DESC";
+
+    //     try {
+    //         if (!empty($params)) {
+    //             $stmt = $this->db->connect()->prepare($sql);
+    //             $stmt->execute($params);
+    //         } else {
+    //             $stmt = $this->db->connect()->query($sql);
+    //         }
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     } catch (PDOException $e) {
+    //         error_log($e->getMessage());
+    //         return [];
+    //     }
+    // }
+
+    // public function updateDiscountApplicationStatus($applicationId, $status)
+    // {
+    //     try {
+    //         $sql = "UPDATE mandatory_discount SET status = ? WHERE id = ?";
+    //         $stmt = $this->db->connect()->prepare($sql);
+    //         $newStatus = ($status === 'Approved') ? 'Active' : 'Inactive';
+    //         $result = $stmt->execute([$newStatus, $applicationId]);
+    //         return $result;
+    //     } catch (PDOException $e) {
+    //         error_log($e->getMessage());
+    //         return false;
+    //     }
+    // }
+
     // public function getUserById($userId) {
     //     try {
     //         $sql = "SELECT firstname, lastname FROM users WHERE id = ?";
