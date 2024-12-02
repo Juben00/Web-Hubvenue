@@ -11,7 +11,7 @@ if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
     }
-    $user = $_SESSION['user'];
+    $user = $accountObj->retrieveUser($_SESSION['user']['id']);
 }
 ?>
 
@@ -180,8 +180,8 @@ if (isset($_SESSION['user'])) {
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors">
                                             <option value="" disabled <?php echo empty($user['sex']) ? 'selected' : ''; ?>>
                                                 Select sex</option>
-                                            <option value="Male" <?php echo htmlspecialchars($user['sex_id']) === "1" ? "selected" : ""; ?>>Male</option>
-                                            <option value="Female" <?php echo htmlspecialchars($user['sex_id']) === "2" ? "selected" : ""; ?>>Female</option>
+                                            <option value="Male" <?php echo htmlspecialchars($user['sex']) === "Male" ? "selected" : ""; ?>>Male</option>
+                                            <option value="Female" <?php echo htmlspecialchars($user['sex']) === "Female" ? "selected" : ""; ?>>Female</option>
                                         </select>
                                     </div>
                                     <div class="space-y-2">
