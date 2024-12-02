@@ -245,11 +245,6 @@ class Venue
                 vas.name AS availability, 
                 AVG(r.rating) AS rating, 
                 COUNT(DISTINCT r.id) AS total_reviews,
-                SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END) AS rating_5,
-                SUM(CASE WHEN r.rating = 4 THEN 1 ELSE 0 END) AS rating_4,
-                SUM(CASE WHEN r.rating = 3 THEN 1 ELSE 0 END) AS rating_3,
-                SUM(CASE WHEN r.rating = 2 THEN 1 ELSE 0 END) AS rating_2,
-                SUM(CASE WHEN r.rating = 1 THEN 1 ELSE 0 END) AS rating_1,
                 GROUP_CONCAT(DISTINCT vi.image_url) AS image_urls
             FROM 
                 venues v
@@ -283,6 +278,29 @@ class Venue
 
         } catch (PDOException $e) {
             // Log error and return failure message
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function getRatings($venue_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT 
+                COUNT(rating) AS total,
+                SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) AS rating_5,
+                SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) AS rating_4,
+                SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) AS rating_3,
+                SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) AS rating_2,
+                SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) AS rating_1
+            FROM reviews WHERE venue_id = :venue_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+            $stmt->execute();
+            $ratings = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $ratings;
+        } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
