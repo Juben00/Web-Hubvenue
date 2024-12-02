@@ -77,7 +77,7 @@
                             <div class="text-right">
                                 <p class="text-sm text-gray-500">Event Type</p>
                                 <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full">
-                                    Photoshoot
+                                    Outdoor
                                 </span>
                             </div>
                         </div>
