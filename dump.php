@@ -131,7 +131,7 @@ foreach ($bookedDate as $booking) {
         .venue-comparison {
             height: 100vh;
             overflow-y: auto;
-            padding: 120px 3rem 2rem;
+            padding: 120px 4rem 2rem;
             border-left: 1px solid #e5e7eb;
             background: #f9fafb;
             position: fixed;
@@ -160,12 +160,14 @@ foreach ($bookedDate as $booking) {
 
         .venue-comparison .comparison-content {
             width: 100%;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         .venue-comparison .bg-white {
             margin-bottom: 1.5rem;
             width: 100%;
+            transition: all 0.3s ease;
         }
 
         .venue-comparison h2 {
@@ -177,23 +179,42 @@ foreach ($bookedDate as $booking) {
         .main-content {
             transition: all 0.3s ease;
             width: 100%;
-            padding-top: 100px;
+            max-width: 1200px;
+            padding: 100px 2rem 0;
             margin: 0 auto;
+            margin-left: calc(5rem + 2rem); /* Account for sidebar */
         }
 
         .main-content.shifted {
             margin-right: 50%;
             width: 50%;
-            padding: 100px 3rem 0;
+            padding: 100px 0 0; /* Remove horizontal padding */
+            margin-left: 5rem;
+            max-width: none;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center; /* Center the content */
+        }
+
+        .main-content.shifted #venueDetails {
+            width: 100%;
+            max-width: 800px; /* Control content width */
+            padding: 0 4rem; /* Add padding to the content instead */
+            margin: 0 auto;
         }
 
         .main-container {
             transition: all 0.3s ease;
-            width: calc(100% - 5rem);
-            max-width: 1200px;
+            width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 2rem 0;
-            margin-left: 5rem;
+            padding: 20px 0 0;
+            display: flex;
+            justify-content: center;
         }
 
         .main-container.shifted {
@@ -201,11 +222,14 @@ foreach ($bookedDate as $booking) {
             width: 100%;
             padding: 0;
             margin: 0;
+            height: 100vh;
+            overflow: hidden;
         }
 
         #venueDetails {
             width: 100%;
             margin: 0 auto;
+            padding-bottom: 2rem; /* Add padding at the bottom for scrolling space */
         }
 
         .grid.grid-cols-3 {
@@ -214,23 +238,37 @@ foreach ($bookedDate as $booking) {
             margin-top: 1rem;
         }
 
-        @media (max-width: 1200px) {
-            .main-container {
-                max-width: calc(100% - 5rem);
-                margin-left: 5rem;
+        @media (max-width: 1400px) {
+            .main-content.shifted #venueDetails {
+                padding: 0 2rem;
+            }
+            
+            .venue-comparison {
+                padding: 120px 2rem 2rem;
             }
         }
 
         @media (max-width: 768px) {
-            .main-container,
-            .main-content.shifted,
-            .venue-comparison {
+            .main-content.shifted #venueDetails {
                 padding: 0 1rem;
             }
             
-            .main-content {
-                padding-top: 80px;
+            .venue-comparison {
+                padding: 120px 1rem 2rem;
             }
+        }
+
+        .venue-comparison .bg-white {
+            transition: all 0.3s ease;
+        }
+
+        .venue-comparison .hidden {
+            display: none;
+        }
+
+        /* Animation for expanding/collapsing details */
+        .venue-comparison [id^="venue-details-"] {
+            transition: all 0.3s ease;
         }
     </style>
 </head>
@@ -307,7 +345,7 @@ foreach ($bookedDate as $booking) {
                     </div>
 
                     <!-- Show All Photos Button -->
-                    <button id="showAllPhotosBtn"
+                    <button id="showAllPhotosBtn" onclick="openGallery(0)"
                         class="absolute border-2 border-gray-500 bottom-4 right-4 bg-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
                         Show all photos
                     </button>
@@ -966,15 +1004,8 @@ foreach ($bookedDate as $booking) {
             const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
             let currentIndex = 0;
 
-            // Show All Photos button click handler
-            const showAllPhotosButton = document.querySelector('button[class*="border-2 border-gray-500"]');
-            if (showAllPhotosButton) {
-                showAllPhotosButton.addEventListener('click', function () {
-                    openGallery(0);
-                });
-            }
-
-            function openGallery(index) {
+            // Make openGallery function available globally
+            window.openGallery = function(index) {
                 currentIndex = index;
                 modal.classList.remove('hidden');
                 setTimeout(() => {
@@ -983,6 +1014,14 @@ foreach ($bookedDate as $booking) {
                 updateGallery();
                 createThumbnails();
                 document.body.style.overflow = 'hidden';
+            }
+
+            // Show All Photos button click handler
+            const showAllPhotosButton = document.querySelector('button[class*="border-2 border-gray-500"]');
+            if (showAllPhotosButton) {
+                showAllPhotosButton.addEventListener('click', function () {
+                    openGallery(0);
+                });
             }
 
             function closeGallery() {
@@ -1114,7 +1153,7 @@ foreach ($bookedDate as $booking) {
                     }
                     
                     comparisonVenues.innerHTML = venues.map(venue => `
-                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
                             <div class="relative">
                                 <div class="relative w-full h-48 overflow-hidden">
                                     <img src="./${venue.image_urls[0]}" 
@@ -1135,10 +1174,48 @@ foreach ($bookedDate as $booking) {
                                             <span class="font-semibold">₱${parseFloat(venue.price).toLocaleString()}</span>
                                             <span class="text-sm"> / night</span>
                                         </p>
-                                        <a href="venues.php?id=${venue.id}" 
-                                           class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
-                                            View Details
-                                        </a>
+                                        <div class="flex gap-2">
+                                            <button onclick="toggleVenueDetails(${venue.id}, this)" 
+                                                    class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
+                                                View Details
+                                            </button>
+                                            <a href="venues.php?id=${venue.id}" 
+                                               class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors">
+                                                View Venue
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="venue-details-${venue.id}" class="hidden p-4 border-t">
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Place Description</h4>
+                                        <p class="text-sm text-gray-600">${venue.description}</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Venue Capacity</h4>
+                                        <p class="text-sm text-gray-600">${venue.capacity} guests</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Location</h4>
+                                        <p class="text-sm text-gray-600">${venue.location}</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Amenities</h4>
+                                        <ul class="text-sm text-gray-600 space-y-1">
+                                            ${JSON.parse(venue.amenities).map(amenity => `
+                                                <li>• ${amenity}</li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">House Rules</h4>
+                                        <ul class="text-sm text-gray-600 space-y-1">
+                                            ${venue.rules ? JSON.parse(venue.rules).map(rule => `
+                                                <li>• ${rule}</li>
+                                            `).join('') : '<li>No specific rules listed</li>'}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -1150,8 +1227,20 @@ foreach ($bookedDate as $booking) {
                 }
             }
 
-            // Make closeComparison available globally
-            window.closeComparison = closeComparison;
+            // Function to toggle venue details
+            window.toggleVenueDetails = function(venueId, button) {
+                const detailsSection = document.getElementById(`venue-details-${venueId}`);
+                if (detailsSection.classList.contains('hidden')) {
+                    detailsSection.classList.remove('hidden');
+                    button.textContent = 'Hide Details';
+                } else {
+                    detailsSection.classList.add('hidden');
+                    button.textContent = 'View Details';
+                }
+            }
+
+            // Make loadComparisonVenues available globally
+            window.loadComparisonVenues = loadComparisonVenues;
         });
     </script>
 

@@ -167,6 +167,7 @@ foreach ($bookedDate as $booking) {
         .venue-comparison .bg-white {
             margin-bottom: 1.5rem;
             width: 100%;
+            transition: all 0.3s ease;
         }
 
         .venue-comparison h2 {
@@ -187,9 +188,23 @@ foreach ($bookedDate as $booking) {
         .main-content.shifted {
             margin-right: 50%;
             width: 50%;
-            padding: 100px 4rem 0;
-            margin-left: 5rem; /* Keep sidebar space when shifted */
+            padding: 100px 0 0; /* Remove horizontal padding */
+            margin-left: 5rem;
             max-width: none;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center; /* Center the content */
+        }
+
+        .main-content.shifted #venueDetails {
+            width: 100%;
+            max-width: 800px;
+            padding: 0 4rem;
+            margin: 0 auto;
         }
 
         .main-container {
@@ -207,11 +222,14 @@ foreach ($bookedDate as $booking) {
             width: 100%;
             padding: 0;
             margin: 0;
+            height: 100vh;
+            overflow: hidden;
         }
 
         #venueDetails {
             width: 100%;
             margin: 0 auto;
+            padding-bottom: 2rem; /* Add padding at the bottom for scrolling space */
         }
 
         .grid.grid-cols-3 {
@@ -221,14 +239,8 @@ foreach ($bookedDate as $booking) {
         }
 
         @media (max-width: 1400px) {
-            .main-content {
-                margin-left: calc(5rem + 1rem);
-                padding: 100px 1rem 0;
-            }
-            
-            .main-content.shifted {
-                margin-left: 5rem;
-                padding: 100px 2rem 0;
+            .main-content.shifted #venueDetails {
+                padding: 0 2rem;
             }
             
             .venue-comparison {
@@ -237,12 +249,51 @@ foreach ($bookedDate as $booking) {
         }
 
         @media (max-width: 768px) {
-            .main-content,
-            .main-content.shifted,
-            .venue-comparison {
-                margin-left: 5rem;
-                padding: 100px 1rem 0;
+            .main-content.shifted #venueDetails {
+                padding: 0 1rem;
             }
+            
+            .venue-comparison {
+                padding: 120px 1rem 2rem;
+            }
+        }
+
+        .venue-comparison .bg-white {
+            transition: all 0.3s ease;
+        }
+
+        .venue-comparison .hidden {
+            display: none;
+        }
+
+        /* Animation for expanding/collapsing details */
+        .venue-comparison [id^="venue-details-"] {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .venue-comparison [id^="venue-details-"]:not(.hidden) {
+            max-height: 2000px; /* Large enough to fit content */
+        }
+
+        /* Update main content shifted styles to fix rating section */
+        .main-content.shifted #venueDetails {
+            width: 100%;
+            max-width: 800px;
+            padding: 0 4rem;
+            margin: 0 auto;
+        }
+
+        /* Add styles for ratings section to prevent cutoff */
+        .main-content.shifted .rating-bars {
+            width: 100%;
+            max-width: 200px; /* Adjust as needed */
+        }
+
+        .main-content.shifted .reviews-section {
+            width: 100%;
+            overflow-x: hidden;
         }
     </style>
 </head>
@@ -684,7 +735,7 @@ foreach ($bookedDate as $booking) {
     </main>
 
     <div class="venue-comparison hidden" id="comparisonPanel">
-        <button class="comparison-close hidden" id="closeCompareBtn" onclick="closeComparison()">
+        <button class="comparison-close hidden" id="closeCompareBtn" type="button" onclick="window.closeComparison()">
             <i class="fas fa-times text-xl"></i>
         </button>
         <div class="comparison-content">
@@ -697,6 +748,26 @@ foreach ($bookedDate as $booking) {
 
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
+    <script>
+        // Define closeComparison in the global scope
+        window.closeComparison = function() {
+            const mainContent = document.querySelector('.main-content');
+            const mainContainer = document.querySelector('.main-container');
+            const comparisonPanel = document.getElementById('comparisonPanel');
+            const closeCompareBtn = document.getElementById('closeCompareBtn');
+            
+            document.body.style.overflow = '';
+            mainContent.classList.remove('shifted');
+            mainContainer.classList.remove('shifted');
+            comparisonPanel.classList.remove('active');
+            
+            setTimeout(() => {
+                comparisonPanel.classList.add('hidden');
+                closeCompareBtn.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Debug logging to verify elements are found
@@ -1127,7 +1198,7 @@ foreach ($bookedDate as $booking) {
                     }
                     
                     comparisonVenues.innerHTML = venues.map(venue => `
-                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
                             <div class="relative">
                                 <div class="relative w-full h-48 overflow-hidden">
                                     <img src="./${venue.image_urls[0]}" 
@@ -1148,10 +1219,48 @@ foreach ($bookedDate as $booking) {
                                             <span class="font-semibold">₱${parseFloat(venue.price).toLocaleString()}</span>
                                             <span class="text-sm"> / night</span>
                                         </p>
-                                        <a href="venues.php?id=${venue.id}" 
-                                           class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
-                                            View Details
-                                        </a>
+                                        <div class="flex gap-2">
+                                            <button onclick="toggleVenueDetails(${venue.id}, this)" 
+                                                    class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
+                                                View Details
+                                            </button>
+                                            <a href="venues.php?id=${venue.id}" 
+                                               class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors">
+                                                View Venue
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="venue-details-${venue.id}" class="hidden p-4 border-t">
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Place Description</h4>
+                                        <p class="text-sm text-gray-600">${venue.description}</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Venue Capacity</h4>
+                                        <p class="text-sm text-gray-600">${venue.capacity} guests</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Location</h4>
+                                        <p class="text-sm text-gray-600">${venue.location}</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">Amenities</h4>
+                                        <ul class="text-sm text-gray-600 space-y-1">
+                                            ${JSON.parse(venue.amenities).map(amenity => `
+                                                <li>• ${amenity}</li>
+                                            `).join('')}
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-2">House Rules</h4>
+                                        <ul class="text-sm text-gray-600 space-y-1">
+                                            ${venue.rules ? JSON.parse(venue.rules).map(rule => `
+                                                <li>• ${rule}</li>
+                                            `).join('') : '<li>No specific rules listed</li>'}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -1163,8 +1272,28 @@ foreach ($bookedDate as $booking) {
                 }
             }
 
-            // Make closeComparison available globally
-            window.closeComparison = closeComparison;
+            // Function to toggle venue details
+            window.toggleVenueDetails = function(venueId, button) {
+                const detailsSection = document.getElementById(`venue-details-${venueId}`);
+                if (detailsSection.classList.contains('hidden')) {
+                    detailsSection.classList.remove('hidden');
+                    button.textContent = 'Hide Details';
+                    // Allow time for the hidden class to be removed before setting max-height
+                    requestAnimationFrame(() => {
+                        detailsSection.style.maxHeight = detailsSection.scrollHeight + 'px';
+                    });
+                } else {
+                    detailsSection.style.maxHeight = '0';
+                    button.textContent = 'View Details';
+                    // Wait for transition to complete before hiding
+                    setTimeout(() => {
+                        detailsSection.classList.add('hidden');
+                    }, 300);
+                }
+            }
+
+            // Make loadComparisonVenues available globally
+            window.loadComparisonVenues = loadComparisonVenues;
         });
     </script>
 
