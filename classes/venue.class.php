@@ -306,6 +306,33 @@ class Venue
         }
     }
 
+    function getReview($venue_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT 
+                r.id,
+                r.review,
+                r.rating,
+                r.created_at AS date,
+                u.id AS user_id,
+                CONCAT(u.firstname, ' ', u.lastname) AS user_name,
+                u.profile_pic AS profile_pic
+            FROM reviews r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.venue_id = :venue_id
+            ORDER BY date DESC;";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venue_id);
+            $stmt->execute();
+            $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $reviews;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 
     function approveVenue($venue_id)
     {
