@@ -165,6 +165,68 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+    //     function getSingleVenue($venue_id = '')
+//     {
+//         try {
+//             // Establish database connection
+//             $conn = $this->db->connect();
+
+    //             // Start building the SQL query
+//             $sql = "SELECT 
+//     v.id AS venue_id, 
+//     v.name AS venue_name, 
+//     v.description AS venue_description, 
+//     v.location AS venue_location, 
+//     v.*, 
+//     vt.tag_name AS tag, 
+//     vss.name AS status, 
+//     vas.name AS availability, 
+//     AVG(r.rating) AS rating, 
+//     COUNT(DISTINCT r.id) AS total_reviews,
+//     SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END) AS rating_5,
+//     SUM(CASE WHEN r.rating = 4 THEN 1 ELSE 0 END) AS rating_4,
+//     SUM(CASE WHEN r.rating = 3 THEN 1 ELSE 0 END) AS rating_3,
+//     SUM(CASE WHEN r.rating = 2 THEN 1 ELSE 0 END) AS rating_2,
+//     SUM(CASE WHEN r.rating = 1 THEN 1 ELSE 0 END) AS rating_1,
+
+    //     GROUP_CONCAT(vi.image_url) AS image_urls
+// FROM 
+//     venues v
+// JOIN 
+//     venue_tag_sub vt ON v.venue_tag = vt.id
+// JOIN 
+//     venue_status_sub vss ON v.status_id = vss.id
+// JOIN 
+//     venue_availability_sub vas ON v.availability_id = vas.id
+// JOIN 
+//     venue_images vi ON v.id = vi.venue_id
+// LEFT JOIN 
+//     reviews r ON v.id = r.venue_id
+// WHERE 
+//     v.id = :venue_id
+// GROUP BY 
+//     v.id, vt.tag_name, vss.name, vas.name;
+
+    //             ";
+//             $stmt = $conn->prepare($sql);
+//             $stmt->bindParam(':venue_id', $venue_id);
+//             $stmt->execute();
+//             $venues = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    //             // Process the images (split the comma-separated string into an array)
+//             if (!empty($venues['image_urls'])) {
+//                 $venues['image_urls'] = explode(',', $venues['image_urls']); // Convert image URLs to an array
+//             }
+
+    //             return $venues;
+
+    //         } catch (PDOException $e) {
+//             // Log error and return failure message
+//             error_log("Database error: " . $e->getMessage());
+//             return ['status' => 'error', 'message' => $e->getMessage()];
+//         }
+//     }
+
     function getSingleVenue($venue_id = '')
     {
         try {
@@ -173,40 +235,40 @@ class Venue
 
             // Start building the SQL query
             $sql = "SELECT 
-    v.id AS venue_id, 
-    v.name AS venue_name, 
-    v.description AS venue_description, 
-    v.location AS venue_location, 
-    v.*, 
-    vt.tag_name AS tag, 
-    vss.name AS status, 
-    vas.name AS availability, 
-    GROUP_CONCAT(vi.image_url) AS image_urls, 
-    AVG(r.rating) AS rating, 
-    COUNT(DISTINCT r.id) AS total_reviews,
-    SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END) AS rating_5,
-    SUM(CASE WHEN r.rating = 4 THEN 1 ELSE 0 END) AS rating_4,
-    SUM(CASE WHEN r.rating = 3 THEN 1 ELSE 0 END) AS rating_3,
-    SUM(CASE WHEN r.rating = 2 THEN 1 ELSE 0 END) AS rating_2,
-    SUM(CASE WHEN r.rating = 1 THEN 1 ELSE 0 END) AS rating_1
-FROM 
-    venues v
-JOIN 
-    venue_tag_sub vt ON v.venue_tag = vt.id
-JOIN 
-    venue_status_sub vss ON v.status_id = vss.id
-JOIN 
-    venue_availability_sub vas ON v.availability_id = vas.id
-JOIN 
-    venue_images vi ON v.id = vi.venue_id
-LEFT JOIN 
-    reviews r ON v.id = r.venue_id
-WHERE 
-    v.id = :venue_id
-GROUP BY 
-    v.id, vt.tag_name, vss.name, vas.name;
+                v.id AS venue_id, 
+                v.name AS venue_name, 
+                v.description AS venue_description, 
+                v.location AS venue_location, 
+                v.*, 
+                vt.tag_name AS tag, 
+                vss.name AS status, 
+                vas.name AS availability, 
+                AVG(r.rating) AS rating, 
+                COUNT(DISTINCT r.id) AS total_reviews,
+                SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END) AS rating_5,
+                SUM(CASE WHEN r.rating = 4 THEN 1 ELSE 0 END) AS rating_4,
+                SUM(CASE WHEN r.rating = 3 THEN 1 ELSE 0 END) AS rating_3,
+                SUM(CASE WHEN r.rating = 2 THEN 1 ELSE 0 END) AS rating_2,
+                SUM(CASE WHEN r.rating = 1 THEN 1 ELSE 0 END) AS rating_1,
+                GROUP_CONCAT(DISTINCT vi.image_url) AS image_urls
+            FROM 
+                venues v
+            JOIN 
+                venue_tag_sub vt ON v.venue_tag = vt.id
+            JOIN 
+                venue_status_sub vss ON v.status_id = vss.id
+            JOIN 
+                venue_availability_sub vas ON v.availability_id = vas.id
+            JOIN 
+                venue_images vi ON v.id = vi.venue_id
+            LEFT JOIN 
+                reviews r ON v.id = r.venue_id
+            WHERE 
+                v.id = :venue_id
+            GROUP BY 
+                v.id, vt.tag_name, vss.name, vas.name;
+        ";
 
-            ";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);
             $stmt->execute();
@@ -225,6 +287,7 @@ GROUP BY
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
 
     function approveVenue($venue_id)
     {
