@@ -682,6 +682,26 @@ LEFT JOIN
         }
     }
 
+    function cancelBooking($bookingId, $reason)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE bookings SET booking_status_id = 3, booking_cancellation_reason = :reason WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $bookingId);
+            $stmt->bindParam(':reason', $reason);
+
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return false;
+        }
+    }
+
     // public function getComparisonVenues($currentVenueId)
     // {
     //     try {

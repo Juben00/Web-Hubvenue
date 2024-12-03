@@ -130,37 +130,6 @@ $ratings = array(
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
-            <!-- Ratings Section -->
-            <div class="mb-8">
-                <h3 class="text-2xl font-semibold mb-4">Ratings</h3>
-                <div class="space-y-2">
-                    <div class="flex justify-between">
-                        <span>5 Stars</span>
-                        <span><?php echo $ratings["rating_5"]; ?></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>4 Stars</span>
-                        <span><?php echo $ratings["rating_4"]; ?></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>3 Stars</span>
-                        <span><?php echo $ratings["rating_3"]; ?></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>2 Stars</span>
-                        <span><?php echo $ratings["rating_2"]; ?></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>1 Star</span>
-                        <span><?php echo $ratings["rating_1"]; ?></span>
-                    </div>
-                    <div class="flex justify-between font-semibold">
-                        <span>Total Ratings</span>
-                        <span><?php echo $ratings["total"]; ?></span>
-                    </div>
-                </div>
-            </div>
-
             <form id="paymentForm">
                 <div id="step1" class="step">
                     <div class="space-y-6">
