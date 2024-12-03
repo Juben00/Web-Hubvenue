@@ -758,10 +758,14 @@ $reviews = $venueObj->getReview($_GET['id']);
                                         </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
                                             <?php
-                                            if ($discountStatus['status'] == 'Active') {
-                                                echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                            if ($discountStatus) {
+                                                if ($discountStatus['status'] == 'Active') {
+                                                    echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                                } else {
+                                                    echo "0%";
+                                                }
                                             } else {
-                                                echo "0%";
+                                                echo "0%"; // No discount found
                                             }
                                             ?>
                                         </span>
