@@ -48,27 +48,19 @@ $venuePost = $venueObj->getAllVenues('', $_SESSION['user']['id']);
                     <a class="venue-card cursor-pointer" data-id="<?php echo htmlspecialchars($venue['venue_id']); ?>">
                         <div class="bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition duration-300">
                             <div class="relative">
-                                <?php if ($venue['status'] === "Pending") { ?>
-                                    <div
-                                        class="absolute top-2 right-2 border border-yellow-600 bg-yellow-500 text-white px-2 py-1 rounded-full text-sm">
-                                        Complete Listing
-                                    </div>
-                                <?php } else if ($venue['status'] === "Declined") { ?>
-                                        <div
-                                            class="absolute top-2 right-2 border border-red-600 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
-                                            Post Declined
-                                        </div>
-                                <?php } else if ($venue['status'] === "Declined") { ?>
-                                            <div
-                                                class="absolute top-2 right-2 border border-red-600 bg-red-500 text-white px-2 py-1 rounded-full text-sm">
-                                                Pending
-                                            </div>
-                                <?php } else if ($venue['status'] === "Approved") { ?>
-                                                <div
-                                                    class="absolute top-2 right-2 border border-green-600 bg-green-500 text-white px-2 py-1 rounded-full text-sm">
-                                                    Venue Approved
-                                                </div>
-                                <?php } ?>
+                                <?php
+                                switch ($venue['status']) {
+                                    case 'Approved':
+                                        echo '<div class="absolute top-2 text-white px-2 py-1 rounded-full text-xs p-1" style="right: 0.5rem; background-color: #3f3f46; ">Approved</div>';
+                                        break;
+                                    case 'Pending':
+                                        echo '<div class="absolute top-2 text-white px-2 py-1 rounded-full text-xs p-1" style="right: 0.5rem; background-color: #3f3f46; ">Pending</div>';
+                                        break;
+                                    case 'Declined':
+                                        echo '<div class="absolute top-2 text-white px-2 py-1 rounded-full text-xs p-1" style="right: 0.5rem; background-color: #3f3f46; ">Declined</div>';
+                                        break;
+                                }
+                                ?>
                                 <img src="./<?php echo !empty($venue['image_urls'][0]) ? $venue['image_urls'][0] : '../images/black_ico.png'; ?>"
                                     alt="<?php echo htmlspecialchars($venue['name'] ?? 'Venue'); ?>"
                                     class="w-full h-48 object-cover">
