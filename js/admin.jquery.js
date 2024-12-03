@@ -236,15 +236,26 @@ $(document).ready(function () {
         $('#approveDiscountApplication').on('submit', function (e) {
             e.preventDefault();
             const formElement = $(this);
-            approveDiscount(formElement);
+            confirmshowModal(
+                "Are you sure you want to approve this discount application?",
+                function() {
+                    approveDiscount(formElement);
+                },
+                "black_ico.png"
+            );
         });
 
         // Handle reject discount application
         $('#rejectDiscountApplication').on('submit', function (e) {
              e.preventDefault();
             const formElement = $(this);
-            rejectDiscount(formElement);            
-            
+            confirmshowModal(
+                "Are you sure you want to decline this discount application?",
+                function() {
+                    rejectDiscount(formElement);  
+                },
+                "black_ico.png"
+            );
         });
       },
       })

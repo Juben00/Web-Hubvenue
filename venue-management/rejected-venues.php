@@ -9,8 +9,8 @@ $venues = $venueObj->getAllVenues($status = '3');
         <h3 class="text-2xl font-semibold leading-none tracking-tight">Rejected Venues</h3>
     </div>
     <div class="p-6 pt-0">
-        <div class="w-full overflow-auto">
-            <table class="w-full caption-bottom text-sm">
+        <div class="w-full overflow-x-auto">
+            <table class="min-w-full caption-bottom text-sm">
                 <thead class="[&_tr]:border-b">
                     <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                         <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Venue ID</th>
