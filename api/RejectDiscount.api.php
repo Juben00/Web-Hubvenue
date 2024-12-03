@@ -10,10 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($applicationId) {
         // Add method to update status to 'Rejected'
         $result = $account->updateDiscountApplicationStatus($applicationId, 'Rejected');
-        echo json_encode(['success' => $result]);
+        echo json_encode(['success' => 'success', 'message' => $result['message']]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Application ID is required']);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-} 
+}
