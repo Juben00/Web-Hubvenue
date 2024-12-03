@@ -60,6 +60,11 @@ $(document).ready(function () {
   viewPromotionsMarketing();
   });
 
+  $("#discount-application-link").on("click", function (e) {
+  e.preventDefault();
+  viewDiscountApplication();
+  });
+
   $("#support-helpdesk-link").on("click", function (e) {
   e.preventDefault();
   viewSupportHelpdesk();
@@ -142,7 +147,6 @@ $(document).ready(function () {
           },
       });
   }
-
 // Function to activate the clicked tab
   function activateTab(selectedTab) {
       $(".tab-button")
@@ -216,6 +220,32 @@ $(document).ready(function () {
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
+      },
+      })
+  }
+
+  function viewDiscountApplication(){
+    $.ajax({
+      type: "GET",
+      url: "../discount-application/discount-management.php",
+      dataType: "html",
+      success: function (response) {
+        $("#adminView").html(response);
+       
+        // Handle approve discount application
+        $('#approveDiscountApplication').on('submit', function (e) {
+            e.preventDefault();
+            const formElement = $(this);
+            approveDiscount(formElement);
+        });
+
+        // Handle reject discount application
+        $('#rejectDiscountApplication').on('submit', function (e) {
+             e.preventDefault();
+            const formElement = $(this);
+            rejectDiscount(formElement);            
+            
+        });
       },
       })
   }
@@ -603,5 +633,45 @@ $(document).ready(function () {
                 }
             },
             });
+    }
+
+    function approveDiscount(formElement){
+        let form = new FormData(formElement[0]);
+        $.ajax({
+          type: 'POST',
+            url: '../api/ApproveDiscount.api.php',
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+            if (response.success) {
+                showModal(response.message, function(){
+                viewDiscountApplication();
+                }, "black_ico.png");
+            } else {
+                showModal(response.message, undefined, "black_ico.png");
+            }
+        },
+        });
+    }
+
+    function rejectDiscount(formElement){
+      let form = new FormData(formElement[0]);
+      $.ajax({
+        type: 'POST',
+        url: '../api/RejectDiscount.api.php',
+        data: form,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          if (response.success) {
+            showModal(response.message, function(){
+            viewDiscountApplication();
+            }, "black_ico.png");
+            } else { 
+              showModal(response.message, undefined, "black_ico.png");
+              }
+        },
+        });
     }
 });

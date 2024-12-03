@@ -16,8 +16,10 @@ $discountApplications = $account->getDiscountApplications("", ""); // You'll nee
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="py-2 px-4 text-left">User ID</th>
-                            <th class="py-2 px-4 text-left">Discount Type</th>
+                            <th class="py-2 px-4 text-left">Account's Name</th>
                             <th class="py-2 px-4 text-left">ID Holder's Name</th>
+                            <th class="py-2 px-4 text-left">Email</th>
+                            <th class="py-2 px-4 text-left">Discount Type</th>
                             <th class="py-2 px-4 text-left">ID Number</th>
                             <th class="py-2 px-4 text-left">ID Photo</th>
                             <th class="py-2 px-4 text-left">Status</th>
@@ -28,14 +30,15 @@ $discountApplications = $account->getDiscountApplications("", ""); // You'll nee
                         <?php foreach ($discountApplications as $application): ?>
                             <tr>
                                 <td class="py-2 px-4 border-b"><?= $application['userId'] ?></td>
-                                <td class="py-2 px-4 border-b"><?= $application['discount_type'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $application['fullname'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $application['id_holder_name'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $application['email'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $application['discount_type'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $application['id_number'] ?></td>
                                 <td class="py-2 px-4 border-b">
                                     <?php if (!empty($application['id_photo'])): ?>
                                         <a href="../<?= htmlspecialchars($application['id_photo']) ?>" target="_blank">
-                                            <img src="../<?= htmlspecialchars($application['id_photo']) ?>" 
-                                                alt="ID Photo"
+                                            <img src="../<?= htmlspecialchars($application['id_photo']) ?>" alt="ID Photo"
                                                 class="w-16 h-16 object-cover mr-2 mb-2 border-2">
                                         </a>
                                     <?php endif; ?>
@@ -44,13 +47,13 @@ $discountApplications = $account->getDiscountApplications("", ""); // You'll nee
                                 <td class="py-2 px-4 border-b">
                                     <?php
                                     if ($application['status'] === 'Active') {
-                                        echo '<form class="rejectDiscountApplication" method="POST">
+                                        echo '<form id="rejectDiscountApplication">
                                                 <input type="hidden" name="application_id" value="' . htmlspecialchars($application['id']) . '">
                                                 <button type="submit"
                                                     class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600 h-9 px-3 mr-2">Reject</button>
                                             </form>';
                                     } else {
-                                        echo '<form class="approveDiscountApplication" method="POST">
+                                        echo '<form id="approveDiscountApplication">
                                                 <input type="hidden" name="application_id" value="' . htmlspecialchars($application['id']) . '">
                                                 <button type="submit"
                                                     class="inline-flex w-20 m-1 items-center justify-center rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 h-9 px-3 mr-2">Approve</button>
@@ -68,50 +71,3 @@ $discountApplications = $account->getDiscountApplications("", ""); // You'll nee
 </div>
 
 <script src="../vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
-<script>
-$(document).ready(function() {
-    // Handle approve discount application
-    $('.approveDiscountApplication').on('submit', function(e) {
-        e.preventDefault();
-        const applicationId = $(this).find('input[name="application_id"]').val();
-        
-        $.ajax({
-            url: '../api/ApproveDiscount.api.php',
-            type: 'POST',
-            data: { application_id: applicationId },
-            success: function(response) {
-                if(response.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to approve discount application');
-                }
-            },
-            error: function() {
-                alert('Error processing request');
-            }
-        });
-    });
-
-    // Handle reject discount application
-    $('.rejectDiscountApplication').on('submit', function(e) {
-        e.preventDefault();
-        const applicationId = $(this).find('input[name="application_id"]').val();
-        
-        $.ajax({
-            url: '../api/RejectDiscount.api.php',
-            type: 'POST',
-            data: { application_id: applicationId },
-            success: function(response) {
-                if(response.success) {
-                    location.reload();
-                } else {
-                    alert('Failed to reject discount application');
-                }
-            },
-            error: function() {
-                alert('Error processing request');
-            }
-        });
-    });
-});
-</script>

@@ -185,7 +185,6 @@ $reviews = $venueObj->getReview($_GET['id']);
             max-width: 1200px;
             padding: 100px 2rem 0;
             margin: 0 auto;
-            margin-left: calc(5rem + 2rem);
             /* Account for sidebar */
         }
 
@@ -488,7 +487,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             <div class="flex items-center gap-2">
                                                 <span class="text-sm w-16"><?php echo $i; ?> stars</span>
                                                 <!-- Set explicit max width -->
-                                                <div class="flex-grow h-2 bg-gray-200 rounded max-w-[200px]">
+                                                <div class="flex-grow h-2 bg-gray-200 rounded max-w-[500px]">
                                                     <!-- Dynamically set the width based on normalized percentage -->
                                                     <div class="h-full bg-yellow-400 rounded"
                                                         style="width: <?php echo $normalizedPercentage; ?>%;"></div>
@@ -521,8 +520,13 @@ $reviews = $venueObj->getReview($_GET['id']);
                                                 <a href="user-page.php"
                                                     class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
                                                 <p class="text-sm text-gray-500">
-                                                    <?php echo htmlspecialchars($review['date']); ?>
+                                                    <?php
+                                                    $originalDate = $review['date'];
+                                                    $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate)); // Format the date
+                                                    echo htmlspecialchars($formattedDate);
+                                                    ?>
                                                 </p>
+
                                             </div>
                                         </div>
                                         <div class="flex text-yellow-400 mb-2">
