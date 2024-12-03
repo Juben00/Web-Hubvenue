@@ -355,7 +355,12 @@ $(document).ready(function () {
                         addReview(formElement);
                     });
 
-
+                    $('#cancellation-form').on('submit', function (e) {
+                        e.preventDefault();
+                        const formElement = $(this);
+                        cancelBooking(formElement);
+                    });
+                    
                 }
             }
         )
@@ -542,13 +547,37 @@ $(document).ready(function () {
                     showModal(res.message, undefined, "black_ico.png");
                 }
             },
+
+
+     
+            
     });
-}
-
-
-
 
     
+}
+
+    function cancelBooking(formElement){
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/CancelBooking.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                let res = JSON.parse(response); // Parse the response if it's not automatically parsed
+                if (res.status === "success") {
+                    showModal(res.message, function(){
+                        formElement[0].reset();
+                        window.location.reload();
+                    }, "black_ico.png");
+                } else {
+                    showModal(res.message, undefined, "black_ico.png");
+                }
+            }
+        });
+
+    }
     // setting default view for profile
     openProfileNav('rent-history');
 

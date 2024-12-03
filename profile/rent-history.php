@@ -3,8 +3,12 @@ require_once '../classes/venue.class.php';
 session_start();
 $venueObj = new Venue();
 
-$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], );
+$pendingBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 1);
+$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
+$cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
 $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
+
+
 ?>
 
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
@@ -14,25 +18,132 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         <!-- Tabs -->
         <div class="border-b border-gray-200 mb-6">
             <nav class="-mb-px flex space-x-8">
-                <button onclick="showTab('current')"
+                <button onclick="showTab('pending')"
                     class="tab-btn border-black text-gray-900 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Pending Rentals
+                </button>
+                <button onclick="showTab('current')"
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                     Current Rental
                 </button>
                 <button onclick="showTab('previous')"
                     class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                     Previous Rentals
                 </button>
+                <button onclick="showTab('cancelled')"
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Cancelled Rentals
+                </button>
             </nav>
         </div>
 
-        <!-- Current Rental Tab -->
-        <div id="current-tab" class="tab-content">
+        <!-- Pending Rental Tab -->
+        <div id="pending-tab" class="tab-content">
             <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
 
                 <?php
+                if (empty($pendingBooking)) {
+                    // Skip rendering if all fields are NULL
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any pending bookings.</p>';
+                } else {
+                    foreach ($pendingBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
+                                </h2>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        <?php
+                                        switch ($booking['booking_status_id']) {
+                                            case '1':
+                                                echo 'Pending';
+                                                break;
+                                            case '2':
+                                                echo 'Approved';
+                                                break;
+                                            case '3':
+                                                echo 'Cancelled';
+                                                break;
+                                            case '4':
+                                                echo 'Completed';
+                                                break;
+                                            default:
+                                                echo 'Unknown';
+                                                break;
+                                        }
+                                        ?>
+                                    </span>
+                                    <?php
+                                    if ($bookingStartDate > $currentDateTime): ?>
+                                        <span
+                                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                            Booking</span> <!-- Tag for future booking -->
+                                    <?php else: ?>
+                                        <span class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                            Booking</span> <!-- Tag for started booking -->
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="flex gap-6">
+                                <?php
+                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                ?>
 
-                // var_dump($_SESSION['user']['id']);
-                // var_dump($currentBooking);
+                                <?php if (!empty($imageUrls)): ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                        class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                                <?php endif; ?>
+
+                                <div class="flex-1">
+                                    <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
+                                    <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                    <p class="text-gray-600 mt-1">
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                        for
+                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                        days
+                                    </p>
+                                    <p class="text-gray-600 mt-1">
+                                        <?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?>
+                                    </p>
+                                    <div class="mt-4 space-x-4">
+                                        <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                            Details</button>
+                                        <?php
+
+                                        if ($bookingStartDate > $currentDateTime):
+                                            ?>
+                                            <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
+                                                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                                Booking</button>
+                                            <?php
+                                        endif;
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+        <!-- Current Rental Tab -->
+        <div id="current-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
+
+                <?php
                 if (empty($currentBooking)) {
                     // Skip rendering if all fields are NULL
                     echo '<p class="p-6 text-center text-gray-600">You do not have any current bookings.</p>';
@@ -114,7 +225,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
                                         if ($bookingStartDate > $currentDateTime):
                                             ?>
-                                            <button onclick="cancelBooking()"
+                                            <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
                                                 class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
                                                 Booking</button>
                                             <?php
@@ -130,7 +241,6 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                 ?>
             </div>
         </div>
-
         <!-- Previous Rentals Tab -->
         <div id="previous-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -156,7 +266,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                     <?php if (!empty($imageUrls)): ?>
                                         <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
                                             alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                            class="w-full md:w-40 h-40 object-cover rounded-lg">
+                                            class="w-28 h-28 object-cover rounded-lg">
                                     <?php endif; ?>
                                     <div>
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
@@ -230,6 +340,69 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                                 </form>
 
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+        <!-- Cancelled Rentals Tab -->
+        <div id="cancelled-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <?php
+                if (empty($cancelledBooking)) {
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any cancelled bookings.</p>';
+                } else {
+                    foreach ($cancelledBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
+
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-28 h-28 object-cover rounded-lg">
+                                    <?php endif; ?>
+                                    <div>
+                                        <p class="text-lg font-medium">
+                                            <?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?></p>
+                                        <p class="text-gray-600">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
+
+
+                                        <h4 class="text-gray-600">Reason:
+                                            <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
+                                        </h4>
+
+
+                                        <div class="mt-4">
+                                            <button id="bookAgainBtn"
+                                                data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
+                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                Book Again
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -351,6 +524,73 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                 </div>
             </div>
         </div>
+
+        <!-- Cancellation Modal -->
+        <div id="cancellation-modal"
+            class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div
+                class="relative top-20 mx-auto p-6 border w-full max-w-lg shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-xl font-bold">Cancel Booking</h3>
+                    <button onclick="closeCancellationModal()"
+                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mt-3 mb-3">Cancellation Policy</h4>
+                    <div class="space-y-3">
+                        <p class="text-gray-700 text-xs">Free cancellation for 48 hours after booking.</p>
+                        <p class="text-gray-700 text-xs">Cancel before check-in and get a full refund, minus the
+                            service
+                            fee.</p>
+                        <div class="mt-4">
+                            <h5 class="font-medium mb-2">Refund Policy:</h5>
+                            <ul class="space-y-2 text-gray-700 text-xs">
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-green-600"></i>
+                                    <span>100% refund: Cancel 7 days before check-in</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-green-600"></i>
+                                    <span>50% refund: Cancel 3-7 days before check-in</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-times text-red-600"></i>
+                                    <span>No refund: Cancel less than 3 days before check-in</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="mt-4">
+                    <form id="cancellation-form">
+                        <input type="hidden" id="cancellation-booking-id" name="booking-id">
+                        <div class="mb-4">
+                            <label for="cancellation-reason" class="block font-medium text-gray-700">Reason for
+                                Cancellation</label>
+                            <textarea id="cancellation-reason" name="cancellation-reason"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                                rows="4" placeholder="Enter your reason for cancellation"></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" onclick="closeCancellationModal()"
+                                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                            <button type="submit"
+                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 </main>
 
@@ -369,6 +609,11 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         event.currentTarget.classList.remove('border-transparent', 'text-gray-500');
         event.currentTarget.classList.add('border-black', 'text-gray-900');
     }
+
+    // Set default tab to 'pending'
+    document.addEventListener('DOMContentLoaded', function () {
+        showTab('pending');
+    });
 
     function showDetails(booking) {
         const modal = document.getElementById('details-modal');
@@ -488,14 +733,31 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         }, 200);
     }
 
-    function cancelBooking() {
-        if (confirm('Are you sure you want to proceed to cancel this booking?')) {
-            // Redirect to the cancellation page
-            window.location.href = '../web-hubvenue/cancelation.php';
-        }
+    function cancelBooking(bookingId) {
+        document.getElementById('cancellation-booking-id').value = bookingId;
+        showCancellationModal();
     }
 
-    // let currentRating = 0;
+    function showCancellationModal() {
+        const modal = document.getElementById('cancellation-modal');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.add('opacity-100');
+            modal.querySelector('.relative').classList.add('scale-100');
+            modal.querySelector('.relative').classList.remove('scale-95');
+        });
+    }
+
+    function closeCancellationModal() {
+        const modal = document.getElementById('cancellation-modal');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('.relative').classList.remove('scale-100');
+        modal.querySelector('.relative').classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
 
     function rate(rating) {
         currentRating = rating;
