@@ -8,6 +8,27 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
 $cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
 $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
+// At the top of the file, get all booked dates for all venues
+$allBookedDates = [];
+foreach ($pendingBooking as $booking) {
+    $venueBookings = $venueObj->getBookedDates($booking['venue_id']);
+    $allBookedDates[$booking['venue_id']] = [];
+    
+    foreach ($venueBookings as $bookedBooking) {
+        // Skip the current booking's dates when rescheduling
+        if ($booking['booking_id'] != $bookedBooking['booking_id']) {
+            $start = new DateTime($bookedBooking['startdate']);
+            $end = new DateTime($bookedBooking['enddate']);
+            
+            // Add each date in the range to the array
+            $current = clone $start;
+            while ($current <= $end) {
+                $allBookedDates[$booking['venue_id']][] = $current->format('Y-m-d');
+                $current->modify('+1 day');
+            }
+        }
+    }
+}
 
 ?>
 
@@ -741,7 +762,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             <li>• Pool</li>
             <li>• WiFi</li>
             <li>• Air-conditioned Room</li>
-            <li>• Smart TV</li>
+            <li>��� Smart TV</li>
         `;
 
         // Set contact details (using the original contact info)
@@ -1238,5 +1259,181 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
     #image-gallery img {
         aspect-ratio: 1/1;
+    }
+
+    .flatpickr-calendar {
+        z-index: 100 !important;
+    }
+
+    .flatpickr-calendar.static {
+        position: absolute;
+        top: 100% !important;
+    }
+
+    /* Modal transition styles */
+    #reschedule-modal {
+        transition: opacity 0.3s ease-out;
+    }
+
+    #reschedule-modal .relative {
+        transition: transform 0.3s ease-out;
+    }
+
+    /* Date picker styles */
+    .flatpickr-calendar {
+        background: #fff !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        width: 308px !important;
+        font-family: inherit !important;
+        margin-top: 4px !important;
+    }
+
+    .flatpickr-months {
+        padding: 0.5rem 0 !important;
+    }
+
+    .flatpickr-month {
+        height: 36px !important;
+    }
+
+    .flatpickr-current-month {
+        padding-top: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .flatpickr-monthDropdown-months {
+        font-weight: 600 !important;
+    }
+
+    .flatpickr-weekdays {
+        background: transparent !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    .flatpickr-weekday {
+        font-size: 0.875rem !important;
+        color: #6B7280 !important;
+        font-weight: 500 !important;
+    }
+
+    .flatpickr-day {
+        border-radius: 6px !important;
+        margin: 2px !important;
+        height: 36px !important;
+        line-height: 36px !important;
+        color: #374151 !important;
+        font-weight: 500 !important;
+    }
+
+    .flatpickr-day.selected {
+        background: #000 !important;
+        border-color: #000 !important;
+        color: #fff !important;
+    }
+
+    .flatpickr-day.disabled {
+        background-color: #FEE2E2 !important;
+        border-color: transparent !important;
+        color: #EF4444 !important;
+        text-decoration: line-through !important;
+        cursor: not-allowed !important;
+    }
+
+    .flatpickr-day:hover:not(.disabled):not(.selected) {
+        background: #F3F4F6 !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month, 
+    .flatpickr-months .flatpickr-next-month {
+        top: 8px !important;
+        padding: 0 0.8rem !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month svg, 
+    .flatpickr-months .flatpickr-next-month svg {
+        fill: #374151 !important;
+        width: 7px !important;
+        height: 11px !important;
+    }
+
+    /* Input styles */
+    input[type="date"], input[type="number"] {
+        appearance: none;
+        background: transparent;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+    }
+
+    /* Additional date picker styles */
+    .flatpickr-input[readonly] {
+        cursor: pointer;
+        background-color: transparent;
+    }
+
+    .flatpickr-calendar.open {
+        display: inline-block;
+        z-index: 100;
+    }
+
+    .flatpickr-calendar.arrowTop:before,
+    .flatpickr-calendar.arrowTop:after {
+        display: none;
+    }
+
+    .flatpickr-calendar .flatpickr-months {
+        padding-top: 0.5rem;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background-color: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0 1rem 0 0.5rem;
+        cursor: pointer;
+    }
+
+    /* Date picker container styles */
+    .flatpickr-calendar-container {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+    }
+
+    .flatpickr-calendar {
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .flatpickr-calendar.open {
+        z-index: 1000;
+    }
+
+    .flatpickr-day.selected {
+        background: #000 !important;
+        border-color: #000 !important;
+    }
+
+    .flatpickr-day.disabled {
+        background-color: #FEE2E2 !important;
+        color: #EF4444 !important;
+        text-decoration: line-through !important;
+    }
+
+    .flatpickr-day:hover:not(.disabled):not(.selected) {
+        background: #F3F4F6 !important;
     }
 </style>
