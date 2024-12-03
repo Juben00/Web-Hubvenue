@@ -758,7 +758,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                                         </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
                                             <?php
-                                            if ($discountStatus) {
+                                            if ($discountStatus['status'] == 'Active') {
                                                 echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
                                             } else {
                                                 echo "0%";
@@ -962,7 +962,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                     guestsInput.value = maxGuests;
                 }
 
-                const discountRate = <?php echo $discountStatus ? $discountStatus['discount_value'] / 100 : 0; ?>;
+                const discountRate = <?php echo $discountStatus['status'] == 'Active' ? $discountStatus['discount_value'] / 100 : 0; ?>;
 
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
