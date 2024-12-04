@@ -631,14 +631,13 @@ $(document).ready(function () {
             processData: false,  
             contentType: false, 
             success: function (response) {
-                response = JSON.parse(response);
                 if (response.status === "success") {
                     showModal(response.message,
                       function () {
                         $('#createUserModal').addClass("hidden");
                         $('#createUserModal').removeClass("flex");
+                        formElement[0].reset();
                       },"black_ico.png");
-                    formElement[0].reset();
                 } else {
                     showModal(response.message, undefined, "black_ico.png");
                 }

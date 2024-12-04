@@ -708,11 +708,14 @@ LEFT JOIN
     {
         try {
             $conn = $this->db->connect();
-            $sql = "SELECT v.*, b.* 
+            $sql = "SELECT v.*, b.*, b.id AS booking_id, vi.image_url AS image_urls
                 FROM venues AS v 
                 JOIN bookings AS b 
                 ON v.id = b.booking_venue_id 
-                WHERE v.host_id = :host_id AND b.booking_status_id = :booking_status";
+                LEFT JOIN venue_images AS vi
+                ON v.id = vi.venue_id
+                WHERE v.host_id = :host_id AND b.booking_status_id = :booking_status
+                GROUP BY b.id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':host_id', $host_id, PDO::PARAM_INT);
             $stmt->bindParam(':booking_status', $booking_status, PDO::PARAM_INT);
