@@ -193,7 +193,6 @@ foreach ($pendingBooking as $booking) {
             </div>
         </div>
 
-
         <!-- Current Rental Tab -->
         <div id="current-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
