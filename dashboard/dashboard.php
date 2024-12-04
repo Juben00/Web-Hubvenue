@@ -1,5 +1,9 @@
+<?php
+session_start(); ?>
 <div class="container mx-auto px-6 py-8">
-    <h3 class="text-gray-700 text-3xl font-medium">Welcome, Rezier!</h3>
+    <h3 class="text-gray-700 text-3xl font-medium">Welcome,
+        <?php echo htmlspecialchars($_SESSION['user']['firstname']) ?>
+    </h3>
     <h6 class="text-gray-500 text-1xl font-small">Let's make this day productive.</h6>
 
     <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 main-content">
