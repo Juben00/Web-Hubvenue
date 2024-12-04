@@ -205,13 +205,6 @@ $reviews = $venueObj->getReview($_GET['id']);
             /* Center the content */
         }
 
-        .main-content.shifted #venueDetails {
-            width: 100%;
-            max-width: 800px;
-            padding: 0 4rem;
-            margin: 0 auto;
-        }
-
         .main-container {
             transition: all 0.3s ease;
             width: 100%;
@@ -910,6 +903,9 @@ $reviews = $venueObj->getReview($_GET['id']);
                     onChange: function (selectedDates, dateStr, instance) {
                         validateDateRange();
                         calculateTotal();
+                        if (input.name === 'checkin') {
+                            checkoutInput.flatpickr.set('minDate', dateStr); // Set minDate for checkout based on checkin
+                        }
                     }
                 });
             }
@@ -969,7 +965,17 @@ $reviews = $venueObj->getReview($_GET['id']);
                     guestsInput.value = maxGuests;
                 }
 
-                const discountRate = <?php echo $discountStatus['status'] == 'Active' ? $discountStatus['discount_value'] / 100 : 0; ?>;
+                const discountRate = <?php
+                if ($discountStatus) {
+                    if ($discountStatus['status'] == 'Active') {
+                        echo $discountStatus['discount_value'];
+                    } else {
+                        echo 0;
+                    }
+                } else {
+                    echo 0;
+                }
+                ?>;
 
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
@@ -1278,6 +1284,13 @@ $reviews = $venueObj->getReview($_GET['id']);
             function openComparisonPanel() {
                 document.body.style.overflow = 'hidden';
                 mainContent.classList.add('shifted');
+                return false;
+            };
+        }
+
+            function openComparisonPanel() {
+                document.body.style.overflow = 'hidden';
+                mainContent.classList.add('shifted');
                 document.querySelector('.main-container').classList.add('shifted');
                 comparisonPanel.classList.remove('hidden');
                 comparisonPanel.classList.add('active');
@@ -1421,8 +1434,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                     return false;
                 };
             }
-
-            // Rest of the photo gallery code...
         });
     </script>
 
