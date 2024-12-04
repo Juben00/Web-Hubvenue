@@ -288,6 +288,7 @@ class Venue
         try {
             $conn = $this->db->connect();
             $sql = "SELECT 
+                AVG(rating) AS average,
                 COUNT(rating) AS total,
                 SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) AS rating_5,
                 SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) AS rating_4,
