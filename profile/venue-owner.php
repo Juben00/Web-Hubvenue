@@ -36,28 +36,28 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             <!-- Reservation Tabs -->
             <div class="mt-4 border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8">
-                    <a href="#" data-tab="pending-bookings"
+                    <button onclick="showCont('pending')"
                         class="tab-links border-black text-gray-900 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Pending (<?php echo $pendingCount; ?>)
-                    </a>
-                    <a href="#" data-tab="confirmed-bookings"
+                    </button>
+                    <button onclick="showCont('confirmed')"
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Confirmed (<?php echo $confirmedCount; ?>)
-                    </a>
-                    <a href="#" data-tab="cancelled-bookings"
+                    </button>
+                    <button onclick="showCont('cancelled')"
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Cancelled (<?php echo $cancelledCount; ?>)
-                    </a>
-                    <a href="#" data-tab="completed-bookings"
+                    </button>
+                    <button onclick="showCont('completed')"
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Completed (<?php echo $completedCount; ?>)
-                    </a>
+                    </button>
                 </nav>
             </div>
 
 
             <!-- Tab Content -->
-            <div id="pending-content" class="mt-8">
+            <div id="pending-content" class="mt-8 tab-content">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($pendingBookings)) {
@@ -178,7 +178,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 </div>
             </div>
 
-            <div id="confirmed-content" class="mt-8 hidden">
+            <div id="confirmed-content" class="mt-8 hidden tab-content">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($confirmedBookings)) {
@@ -299,7 +299,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 </div>
             </div>
 
-            <div id="cancelled-content" class="mt-8 hidden">
+            <div id="cancelled-content" class="mt-8 hidden tab-content">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($cancelledBookings)) {
@@ -336,15 +336,6 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                             }
                                             ?>
                                         </span>
-                                        <?php if ($bookingStartDate > $currentDateTime): ?>
-                                            <span
-                                                class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
-                                                Booking</span>
-                                        <?php else: ?>
-                                            <span
-                                                class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
-                                                Booking</span>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <div class="flex gap-6">
@@ -420,7 +411,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 </div>
             </div>
 
-            <div id="completed-content" class="mt-8 hidden">
+            <div id="completed-content" class="mt-8 hidden tab-content">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($completedBookings)) {
@@ -749,40 +740,24 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         const mainImage = document.getElementById('modal-main-image');
         mainImage.src = src;
     }
-</script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabs = document.querySelectorAll('.tab-links');
-        const tabContents = {
-            'pending-bookings': document.getElementById('pending-content'),
-            'confirmed-bookings': document.getElementById('confirmed-content'),
-            'cancelled-bookings': document.getElementById('cancelled-content'),
-            'completed-bookings': document.getElementById('completed-content')
-        };
+    function showCont(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        document.getElementById(tabName + '-content').classList.remove('hidden');
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function (event) {
-                event.preventDefault();
-
-                const tabName = this.getAttribute('data-tab');
-
-                // Show/Hide tab content based on clicked tab
-                Object.keys(tabContents).forEach(key => {
-                    if (key === tabName) {
-                        tabContents[key].classList.remove('hidden'); // Show content
-                    } else {
-                        tabContents[key].classList.add('hidden'); // Hide other content
-                    }
-                });
-
-                // Update active tab styling
-                tabs.forEach(t => t.classList.remove('border-black', 'text-gray-900'));
-                this.classList.add('border-black', 'text-gray-900');
-            });
+        document.querySelectorAll('.tab-links').forEach(btn => {
+            btn.classList.remove('border-black', 'text-gray-900');
+            btn.classList.add('border-transparent', 'text-gray-500');
         });
 
-        // Trigger click on the first tab to load initial content
-        if (tabs.length > 0) tabs[0].click(); // Automatically clicks the first tab to load content
+        event.currentTarget.classList.remove('border-transparent', 'text-gray-500');
+        event.currentTarget.classList.add('border-black', 'text-gray-900');
+    }
+
+    // Set default tab to 'pending'
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelector('.tab-links').click();
     });
 </script>

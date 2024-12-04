@@ -708,8 +708,9 @@ LEFT JOIN
     {
         try {
             $conn = $this->db->connect();
-            $sql = "SELECT v.*, b.*, b.id AS booking_id, vi.image_url AS image_urls
-                FROM venues AS v 
+            $sql = "SELECT v.*, b.*, b.id AS booking_id, 
+                GROUP_CONCAT(vi.image_url) AS image_urls
+                FROM venues AS v
                 JOIN bookings AS b 
                 ON v.id = b.booking_venue_id 
                 LEFT JOIN venue_images AS vi
