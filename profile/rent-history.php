@@ -13,13 +13,13 @@ $allBookedDates = [];
 foreach ($pendingBooking as $booking) {
     $venueBookings = $venueObj->getBookedDates($booking['venue_id']);
     $allBookedDates[$booking['venue_id']] = [];
-    
+
     foreach ($venueBookings as $bookedBooking) {
         // Skip the current booking's dates when rescheduling
         if ($booking['booking_id'] != $bookedBooking['booking_id']) {
             $start = new DateTime($bookedBooking['startdate']);
             $end = new DateTime($bookedBooking['enddate']);
-            
+
             // Add each date in the range to the array
             $current = clone $start;
             while ($current <= $end) {
@@ -152,9 +152,8 @@ foreach ($pendingBooking as $booking) {
                                                 'booking_payment_reference' => $booking['booking_payment_reference'],
                                                 'booking_service_fee' => $booking['booking_service_fee'],
                                                 'venue_location' => $booking['venue_location']
-                                            ])); ?>)" 
-                                            type="button" 
-                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                            ])); ?>)" type="button"
+                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-print mr-2"></i>Print Receipt
                                             </button>
                                             <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
@@ -168,9 +167,8 @@ foreach ($pendingBooking as $booking) {
                                                 'booking_payment_reference' => $booking['booking_payment_reference'],
                                                 'booking_service_fee' => $booking['booking_service_fee'],
                                                 'venue_location' => $booking['venue_location']
-                                            ])); ?>)" 
-                                            type="button" 
-                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                            ])); ?>)" type="button"
+                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-download mr-2"></i>Download Receipt
                                             </button>
                                         <?php endif; ?>
@@ -194,6 +192,8 @@ foreach ($pendingBooking as $booking) {
                 ?>
             </div>
         </div>
+
+
         <!-- Current Rental Tab -->
         <div id="current-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
@@ -288,9 +288,8 @@ foreach ($pendingBooking as $booking) {
                                                 'booking_payment_reference' => $booking['booking_payment_reference'],
                                                 'booking_service_fee' => $booking['booking_service_fee'],
                                                 'venue_location' => $booking['venue_location']
-                                            ])); ?>)" 
-                                            type="button" 
-                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                            ])); ?>)" type="button"
+                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-print mr-2"></i>Print Receipt
                                             </button>
                                             <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
@@ -304,9 +303,8 @@ foreach ($pendingBooking as $booking) {
                                                 'booking_payment_reference' => $booking['booking_payment_reference'],
                                                 'booking_service_fee' => $booking['booking_service_fee'],
                                                 'venue_location' => $booking['venue_location']
-                                            ])); ?>)" 
-                                            type="button" 
-                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                            ])); ?>)" type="button"
+                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-download mr-2"></i>Download Receipt
                                             </button>
                                         <?php endif; ?>
@@ -762,7 +760,7 @@ foreach ($pendingBooking as $booking) {
             <li>• Pool</li>
             <li>• WiFi</li>
             <li>• Air-conditioned Room</li>
-            <li>��� Smart TV</li>
+            <li>Smart TV</li>
         `;
 
         // Set contact details (using the original contact info)
@@ -871,13 +869,13 @@ foreach ($pendingBooking as $booking) {
 
     function printReceipt(bookingData) {
         const receiptWindow = window.open('', '_blank');
-        
+
         // Add error handling for the window opening
         if (!receiptWindow) {
             alert('Please allow popups to print the receipt');
             return;
         }
-        
+
         const receiptHTML = `
             <!DOCTYPE html>
             <html>
@@ -1033,15 +1031,15 @@ foreach ($pendingBooking as $booking) {
             </body>
             </html>
         `;
-        
+
         receiptWindow.document.write(receiptHTML);
         receiptWindow.document.close();
 
         // Add error handling for printing
-        receiptWindow.onload = function() {
+        receiptWindow.onload = function () {
             try {
                 receiptWindow.print();
-                receiptWindow.onafterprint = function() {
+                receiptWindow.onafterprint = function () {
                     receiptWindow.close();
                 };
             } catch (error) {
@@ -1052,7 +1050,7 @@ foreach ($pendingBooking as $booking) {
         };
 
         // Add error handler for load failures
-        receiptWindow.onerror = function() {
+        receiptWindow.onerror = function () {
             alert('There was an error generating the receipt. Please try again.');
             receiptWindow.close();
         };
@@ -1218,17 +1216,17 @@ foreach ($pendingBooking as $booking) {
 
         // Create a Blob from the HTML content
         const blob = new Blob([receiptHTML], { type: 'text/html' });
-        
+
         // Create a temporary link element
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = `receipt-${bookingData.booking_id}.html`;
-        
+
         // Append link to body, click it, and remove it
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-        
+
         // Clean up the URL object
         URL.revokeObjectURL(downloadLink.href);
     }
@@ -1346,13 +1344,13 @@ foreach ($pendingBooking as $booking) {
         background: #F3F4F6 !important;
     }
 
-    .flatpickr-months .flatpickr-prev-month, 
+    .flatpickr-months .flatpickr-prev-month,
     .flatpickr-months .flatpickr-next-month {
         top: 8px !important;
         padding: 0 0.8rem !important;
     }
 
-    .flatpickr-months .flatpickr-prev-month svg, 
+    .flatpickr-months .flatpickr-prev-month svg,
     .flatpickr-months .flatpickr-next-month svg {
         fill: #374151 !important;
         width: 7px !important;
@@ -1360,7 +1358,8 @@ foreach ($pendingBooking as $booking) {
     }
 
     /* Input styles */
-    input[type="date"], input[type="number"] {
+    input[type="date"],
+    input[type="number"] {
         appearance: none;
         background: transparent;
     }
