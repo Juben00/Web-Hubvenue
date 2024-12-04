@@ -703,6 +703,28 @@ LEFT JOIN
         }
     }
 
+
+    function getBookingsByHost($host_id, $booking_status)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT v.*, b.* 
+                FROM venues AS v 
+                JOIN bookings AS b 
+                ON v.id = b.booking_venue_id 
+                WHERE v.host_id = :host_id AND b.booking_status_id = :booking_status";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':host_id', $host_id, PDO::PARAM_INT);
+            $stmt->bindParam(':booking_status', $booking_status, PDO::PARAM_INT);
+            $stmt->execute();
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $bookings;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
     // public function getComparisonVenues($currentVenueId)
     // {
     //     try {
