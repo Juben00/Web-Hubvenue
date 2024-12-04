@@ -8,6 +8,27 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
 $cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
 $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
+// At the top of the file, get all booked dates for all venues
+$allBookedDates = [];
+foreach ($pendingBooking as $booking) {
+    $venueBookings = $venueObj->getBookedDates($booking['venue_id']);
+    $allBookedDates[$booking['venue_id']] = [];
+    
+    foreach ($venueBookings as $bookedBooking) {
+        // Skip the current booking's dates when rescheduling
+        if ($booking['booking_id'] != $bookedBooking['booking_id']) {
+            $start = new DateTime($bookedBooking['startdate']);
+            $end = new DateTime($bookedBooking['enddate']);
+            
+            // Add each date in the range to the array
+            $current = clone $start;
+            while ($current <= $end) {
+                $allBookedDates[$booking['venue_id']][] = $current->format('Y-m-d');
+                $current->modify('+1 day');
+            }
+        }
+    }
+}
 
 ?>
 
@@ -119,6 +140,40 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                         <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
                                             Details</button>
+                                        <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'],
+                                                'venue_name' => $booking['venue_name'],
+                                                'booking_start_date' => $booking['booking_start_date'],
+                                                'booking_end_date' => $booking['booking_end_date'],
+                                                'booking_duration' => $booking['booking_duration'],
+                                                'booking_grand_total' => $booking['booking_grand_total'],
+                                                'booking_payment_method' => $booking['booking_payment_method'],
+                                                'booking_payment_reference' => $booking['booking_payment_reference'],
+                                                'booking_service_fee' => $booking['booking_service_fee'],
+                                                'venue_location' => $booking['venue_location']
+                                            ])); ?>)" 
+                                            type="button" 
+                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                <i class="fas fa-print mr-2"></i>Print Receipt
+                                            </button>
+                                            <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'],
+                                                'venue_name' => $booking['venue_name'],
+                                                'booking_start_date' => $booking['booking_start_date'],
+                                                'booking_end_date' => $booking['booking_end_date'],
+                                                'booking_duration' => $booking['booking_duration'],
+                                                'booking_grand_total' => $booking['booking_grand_total'],
+                                                'booking_payment_method' => $booking['booking_payment_method'],
+                                                'booking_payment_reference' => $booking['booking_payment_reference'],
+                                                'booking_service_fee' => $booking['booking_service_fee'],
+                                                'venue_location' => $booking['venue_location']
+                                            ])); ?>)" 
+                                            type="button" 
+                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                <i class="fas fa-download mr-2"></i>Download Receipt
+                                            </button>
+                                        <?php endif; ?>
                                         <?php
 
                                         if ($bookingStartDate > $currentDateTime):
@@ -221,6 +276,40 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                         <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
                                             Details</button>
+                                        <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'],
+                                                'venue_name' => $booking['venue_name'],
+                                                'booking_start_date' => $booking['booking_start_date'],
+                                                'booking_end_date' => $booking['booking_end_date'],
+                                                'booking_duration' => $booking['booking_duration'],
+                                                'booking_grand_total' => $booking['booking_grand_total'],
+                                                'booking_payment_method' => $booking['booking_payment_method'],
+                                                'booking_payment_reference' => $booking['booking_payment_reference'],
+                                                'booking_service_fee' => $booking['booking_service_fee'],
+                                                'venue_location' => $booking['venue_location']
+                                            ])); ?>)" 
+                                            type="button" 
+                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                <i class="fas fa-print mr-2"></i>Print Receipt
+                                            </button>
+                                            <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'],
+                                                'venue_name' => $booking['venue_name'],
+                                                'booking_start_date' => $booking['booking_start_date'],
+                                                'booking_end_date' => $booking['booking_end_date'],
+                                                'booking_duration' => $booking['booking_duration'],
+                                                'booking_grand_total' => $booking['booking_grand_total'],
+                                                'booking_payment_method' => $booking['booking_payment_method'],
+                                                'booking_payment_reference' => $booking['booking_payment_reference'],
+                                                'booking_service_fee' => $booking['booking_service_fee'],
+                                                'venue_location' => $booking['venue_location']
+                                            ])); ?>)" 
+                                            type="button" 
+                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                <i class="fas fa-download mr-2"></i>Download Receipt
+                                            </button>
+                                        <?php endif; ?>
                                         <?php
 
                                         if ($bookingStartDate > $currentDateTime):
@@ -673,7 +762,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             <li>• Pool</li>
             <li>• WiFi</li>
             <li>• Air-conditioned Room</li>
-            <li>• Smart TV</li>
+            <li>��� Smart TV</li>
         `;
 
         // Set contact details (using the original contact info)
@@ -779,6 +868,370 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             closeModal();
         }
     }
+
+    function printReceipt(bookingData) {
+        const receiptWindow = window.open('', '_blank');
+        
+        // Add error handling for the window opening
+        if (!receiptWindow) {
+            alert('Please allow popups to print the receipt');
+            return;
+        }
+        
+        const receiptHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Booking Receipt</title>
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 1.5cm;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        color: #333;
+                        line-height: 1.6;
+                    }
+                    .logo {
+                        width: 150px;
+                        height: auto;
+                        margin-bottom: 10px;
+                        object-fit: contain;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 40px;
+                        padding-bottom: 20px;
+                        border-bottom: 2px solid #e5e5e5;
+                    }
+                    .header h1 {
+                        color: #1a1a1a;
+                        margin: 10px 0;
+                        font-size: 28px;
+                    }
+                    .header p {
+                        color: #666;
+                        font-size: 14px;
+                    }
+                    .receipt-details {
+                        margin-bottom: 30px;
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 20px;
+                    }
+                    .receipt-details .section {
+                        margin-bottom: 20px;
+                    }
+                    .receipt-details .section-title {
+                        font-weight: bold;
+                        color: #1a1a1a;
+                        margin-bottom: 10px;
+                        font-size: 16px;
+                    }
+                    .receipt-details .info {
+                        background: #f8f8f8;
+                        padding: 15px;
+                        border-radius: 8px;
+                    }
+                    .receipt-details .info div {
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    }
+                    .receipt-details .label {
+                        color: #666;
+                        font-weight: 500;
+                    }
+                    .total {
+                        margin-top: 30px;
+                        padding: 20px;
+                        background: #f8f8f8;
+                        border-radius: 8px;
+                    }
+                    .total-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                        font-size: 14px;
+                    }
+                    .grand-total {
+                        margin-top: 15px;
+                        padding-top: 15px;
+                        border-top: 2px solid #e5e5e5;
+                        font-weight: bold;
+                        font-size: 16px;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: center;
+                        color: #666;
+                        font-size: 12px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e5e5e5;
+                    }
+                    @media print {
+                        .no-print {
+                            display: none;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo" 
+                         onerror="this.style.display='none'">
+                    <h1>Booking Receipt</h1>
+                    <p>Thank you for choosing HubVenue!</p>
+                </div>
+                
+                <div class="receipt-details">
+                    <div class="section">
+                        <div class="section-title">Booking Information</div>
+                        <div class="info">
+                            <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
+                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
+                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                            <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Venue Details</div>
+                        <div class="info">
+                            <div><span class="label">Venue Name:</span> ${bookingData.venue_name}</div>
+                            <div><span class="label">Location:</span> ${bookingData.venue_location}</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Payment Details</div>
+                        <div class="info">
+                            <div><span class="label">Payment Method:</span> ${bookingData.booking_payment_method}</div>
+                            <div><span class="label">Reference Number:</span> ${bookingData.booking_payment_reference}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total">
+                    <div class="total-row">
+                        <span>Service Fee</span>
+                        <span>₱${parseFloat(bookingData.booking_service_fee).toFixed(2)}</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Total Amount</span>
+                        <span>₱${parseFloat(bookingData.booking_grand_total).toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <p>This is an electronically generated receipt. For questions or concerns, please contact our support team.</p>
+                    <p>© ${new Date().getFullYear()} HubVenue. All rights reserved.</p>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        receiptWindow.document.write(receiptHTML);
+        receiptWindow.document.close();
+
+        // Add error handling for printing
+        receiptWindow.onload = function() {
+            try {
+                receiptWindow.print();
+                receiptWindow.onafterprint = function() {
+                    receiptWindow.close();
+                };
+            } catch (error) {
+                console.error('Printing failed:', error);
+                alert('There was an error printing the receipt. Please try again.');
+                receiptWindow.close();
+            }
+        };
+
+        // Add error handler for load failures
+        receiptWindow.onerror = function() {
+            alert('There was an error generating the receipt. Please try again.');
+            receiptWindow.close();
+        };
+    }
+
+    function downloadReceipt(bookingData) {
+        // Create the receipt HTML (reuse the same template as printReceipt)
+        const receiptHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Booking Receipt</title>
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 1.5cm;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        color: #333;
+                        line-height: 1.6;
+                    }
+                    .logo {
+                        width: 150px;
+                        height: auto;
+                        margin-bottom: 10px;
+                        object-fit: contain;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 40px;
+                        padding-bottom: 20px;
+                        border-bottom: 2px solid #e5e5e5;
+                    }
+                    .header h1 {
+                        color: #1a1a1a;
+                        margin: 10px 0;
+                        font-size: 28px;
+                    }
+                    .header p {
+                        color: #666;
+                        font-size: 14px;
+                    }
+                    .receipt-details {
+                        margin-bottom: 30px;
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 20px;
+                    }
+                    .receipt-details .section {
+                        margin-bottom: 20px;
+                    }
+                    .receipt-details .section-title {
+                        font-weight: bold;
+                        color: #1a1a1a;
+                        margin-bottom: 10px;
+                        font-size: 16px;
+                    }
+                    .receipt-details .info {
+                        background: #f8f8f8;
+                        padding: 15px;
+                        border-radius: 8px;
+                    }
+                    .receipt-details .info div {
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    }
+                    .receipt-details .label {
+                        color: #666;
+                        font-weight: 500;
+                    }
+                    .total {
+                        margin-top: 30px;
+                        padding: 20px;
+                        background: #f8f8f8;
+                        border-radius: 8px;
+                    }
+                    .total-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                        font-size: 14px;
+                    }
+                    .grand-total {
+                        margin-top: 15px;
+                        padding-top: 15px;
+                        border-top: 2px solid #e5e5e5;
+                        font-weight: bold;
+                        font-size: 16px;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: center;
+                        color: #666;
+                        font-size: 12px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e5e5e5;
+                    }
+                    @media print {
+                        .no-print {
+                            display: none;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo" 
+                         onerror="this.style.display='none'">
+                    <h1>Booking Receipt</h1>
+                    <p>Thank you for choosing HubVenue!</p>
+                </div>
+                
+                <div class="receipt-details">
+                    <div class="section">
+                        <div class="section-title">Booking Information</div>
+                        <div class="info">
+                            <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
+                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
+                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                            <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Venue Details</div>
+                        <div class="info">
+                            <div><span class="label">Venue Name:</span> ${bookingData.venue_name}</div>
+                            <div><span class="label">Location:</span> ${bookingData.venue_location}</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Payment Details</div>
+                        <div class="info">
+                            <div><span class="label">Payment Method:</span> ${bookingData.booking_payment_method}</div>
+                            <div><span class="label">Reference Number:</span> ${bookingData.booking_payment_reference}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total">
+                    <div class="total-row">
+                        <span>Service Fee</span>
+                        <span>₱${parseFloat(bookingData.booking_service_fee).toFixed(2)}</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Total Amount</span>
+                        <span>₱${parseFloat(bookingData.booking_grand_total).toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <p>This is an electronically generated receipt. For questions or concerns, please contact our support team.</p>
+                    <p>© ${new Date().getFullYear()} HubVenue. All rights reserved.</p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        // Create a Blob from the HTML content
+        const blob = new Blob([receiptHTML], { type: 'text/html' });
+        
+        // Create a temporary link element
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = `receipt-${bookingData.booking_id}.html`;
+        
+        // Append link to body, click it, and remove it
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up the URL object
+        URL.revokeObjectURL(downloadLink.href);
+    }
 </script>
 
 <style>
@@ -806,5 +1259,181 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
     #image-gallery img {
         aspect-ratio: 1/1;
+    }
+
+    .flatpickr-calendar {
+        z-index: 100 !important;
+    }
+
+    .flatpickr-calendar.static {
+        position: absolute;
+        top: 100% !important;
+    }
+
+    /* Modal transition styles */
+    #reschedule-modal {
+        transition: opacity 0.3s ease-out;
+    }
+
+    #reschedule-modal .relative {
+        transition: transform 0.3s ease-out;
+    }
+
+    /* Date picker styles */
+    .flatpickr-calendar {
+        background: #fff !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        width: 308px !important;
+        font-family: inherit !important;
+        margin-top: 4px !important;
+    }
+
+    .flatpickr-months {
+        padding: 0.5rem 0 !important;
+    }
+
+    .flatpickr-month {
+        height: 36px !important;
+    }
+
+    .flatpickr-current-month {
+        padding-top: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .flatpickr-monthDropdown-months {
+        font-weight: 600 !important;
+    }
+
+    .flatpickr-weekdays {
+        background: transparent !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    .flatpickr-weekday {
+        font-size: 0.875rem !important;
+        color: #6B7280 !important;
+        font-weight: 500 !important;
+    }
+
+    .flatpickr-day {
+        border-radius: 6px !important;
+        margin: 2px !important;
+        height: 36px !important;
+        line-height: 36px !important;
+        color: #374151 !important;
+        font-weight: 500 !important;
+    }
+
+    .flatpickr-day.selected {
+        background: #000 !important;
+        border-color: #000 !important;
+        color: #fff !important;
+    }
+
+    .flatpickr-day.disabled {
+        background-color: #FEE2E2 !important;
+        border-color: transparent !important;
+        color: #EF4444 !important;
+        text-decoration: line-through !important;
+        cursor: not-allowed !important;
+    }
+
+    .flatpickr-day:hover:not(.disabled):not(.selected) {
+        background: #F3F4F6 !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month, 
+    .flatpickr-months .flatpickr-next-month {
+        top: 8px !important;
+        padding: 0 0.8rem !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month svg, 
+    .flatpickr-months .flatpickr-next-month svg {
+        fill: #374151 !important;
+        width: 7px !important;
+        height: 11px !important;
+    }
+
+    /* Input styles */
+    input[type="date"], input[type="number"] {
+        appearance: none;
+        background: transparent;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        appearance: none;
+        margin: 0;
+    }
+
+    /* Additional date picker styles */
+    .flatpickr-input[readonly] {
+        cursor: pointer;
+        background-color: transparent;
+    }
+
+    .flatpickr-calendar.open {
+        display: inline-block;
+        z-index: 100;
+    }
+
+    .flatpickr-calendar.arrowTop:before,
+    .flatpickr-calendar.arrowTop:after {
+        display: none;
+    }
+
+    .flatpickr-calendar .flatpickr-months {
+        padding-top: 0.5rem;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months {
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background-color: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0 1rem 0 0.5rem;
+        cursor: pointer;
+    }
+
+    /* Date picker container styles */
+    .flatpickr-calendar-container {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+    }
+
+    .flatpickr-calendar {
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .flatpickr-calendar.open {
+        z-index: 1000;
+    }
+
+    .flatpickr-day.selected {
+        background: #000 !important;
+        border-color: #000 !important;
+    }
+
+    .flatpickr-day.disabled {
+        background-color: #FEE2E2 !important;
+        color: #EF4444 !important;
+        text-decoration: line-through !important;
+    }
+
+    .flatpickr-day:hover:not(.disabled):not(.selected) {
+        background: #F3F4F6 !important;
     }
 </style>
