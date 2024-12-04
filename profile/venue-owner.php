@@ -308,18 +308,16 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const tabs = document.querySelectorAll('.tab-link');
-        const tabContent = document.getElementById('tab-content');
         const bookingItems = document.querySelectorAll('.booking-item');
 
         tabs.forEach(tab => {
             tab.addEventListener('click', function (event) {
                 event.preventDefault();
-                const tabName = this.getAttribute('data-tab');
-                const statusId = tabName.split('-')[0];
+                const statusId = this.getAttribute('data-status-id');
 
                 // Show/Hide bookings based on status
                 bookingItems.forEach(item => {
-                    if (item.getAttribute('data-status') === statusId) {
+                    if (item.getAttribute('data-status-id') === statusId) {
                         item.style.display = 'block';
                     } else {
                         item.style.display = 'none';
@@ -382,22 +380,18 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         const locationDetails = document.getElementById('location-details');
         locationDetails.innerHTML = `
             <p>${booking.location}</p>
-            <p>Governor Camins Avenue, Zone II</p>
-            <p>Baliwasan, Zamboanga City</p>
-            <p>Zamboanga Peninsula, 7000</p>
         `;
 
-        // Set capacity and amenities (using the original amenities)
-        document.getElementById('venue-capacity').textContent = `${booking.venue_capacity || 3} guests`;
+        // Set capacity and amenities
+        document.getElementById('venue-capacity').textContent = `${booking.capacity || 3} guests`;
         const amenitiesList = document.getElementById('amenities-list');
-        amenitiesList.innerHTML = `
-            <li>• Pool</li>
-            <li>• WiFi</li>
-            <li>• Air-conditioned Room</li>
-            <li>��� Smart TV</li>
-        `;
+        amenitiesList.innerHTML = booking.amenities.map(amenity => `<li>${amenity}</li>`).join('');
 
-        // Set contact details (using the original contact info)
+        // Set rules (use original rules)
+        const rulesList = document.getElementById('rules-list');
+        rulesList.innerHTML = booking.rules.map(rule => `<li>${rule}</li>`).join('');
+
+        // Set contact details (using original contact info)
         const contactDetails = document.getElementById('contact-details');
         contactDetails.innerHTML = `
             <p>Email: joevinansoc870@gmail.com</p>
@@ -406,5 +400,34 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
         // Toggle book again button
         bookAgainContainer.classList.toggle('hidden', booking.booking_status_id === '2');
+    }
+
+    function getBookingStatusText(statusId) {
+        const statusTexts = {
+            '1': 'Pending',
+            '2': 'Confirmed',
+            '3': 'Cancelled',
+            '4': 'Completed'
+        };
+        return statusTexts[statusId] || 'Unknown';
+    }
+
+    function getStatusColor(statusId) {
+        const statusColors = {
+            '1': 'bg-yellow-100 text-yellow-800',
+            '2': 'bg-green-100 text-green-800',
+            '3': 'bg-red-100 text-red-800',
+            '4': 'bg-blue-100 text-blue-800'
+        };
+        return statusColors[statusId] || 'bg-gray-100 text-gray-800';
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function changeMainImage(src) {
+        const mainImage = document.getElementById('modal-main-image');
+        mainImage.src = src;
     }
 </script>

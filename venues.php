@@ -1286,7 +1286,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                 mainContent.classList.add('shifted');
                 return false;
             };
-        }
+
 
             function openComparisonPanel() {
                 document.body.style.overflow = 'hidden';
