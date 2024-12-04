@@ -501,7 +501,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                             </div>
 
                             <!-- Individual Reviews -->
-                            <div class="mt-8 space-y-6" id="reviewContainer">
+                            <div class="mt-8 space-y-6">
                                 <?php foreach ($reviews as $index => $review): ?>
                                     <div class="border-b pb-6 review" data-index="<?php echo $index; ?>"
                                         style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
@@ -847,6 +847,9 @@ $reviews = $venueObj->getReview($_GET['id']);
             document.getElementById('prevReview').addEventListener('click', function () {
                 if (currentIndex > 0) {
                     currentIndex--;
+                    showReview(currentIndex);
+                } else {
+                    currentIndex = reviews.length - 1;
                     showReview(currentIndex);
                 }
             });

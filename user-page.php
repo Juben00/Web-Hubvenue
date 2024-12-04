@@ -40,7 +40,7 @@
                     <img src="/placeholder.svg?height=80&width=80" alt="User Avatar"
                         class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
                     <div class="text-center">
-                        <h2 class="text-xl font-bold">John Doe</h2>
+                        <h2 class="text-xl font-bold">Rezier Doom Cat</h2>
                         <p class="text-gray-500">Member since 2023</p>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                                 <p class="text-gray-500">Rented on Jan 15, 2024</p>
                                 <div class="flex items-center space-x-2 mt-2">
                                     <i class="fas fa-map-marker-alt text-gray-400"></i>
-                                    <span class="text-sm text-gray-500">Downtown SF</span>
+                                    <span class="text-sm text-gray-500">Zamboanga City, Zamboanga del Sur</span>
                                 </div>
                             </div>
                             <div class="text-right">

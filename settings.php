@@ -356,7 +356,6 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                                     <select class="form-input w-auto bg-transparent">
                                         <option>Public</option>
                                         <option>Private</option>
-                                        <option>Friends Only</option>
                                     </select>
                                 </div>
 

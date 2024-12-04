@@ -8,7 +8,12 @@ $venuePost = null;
 $getParams = $_GET['id'];
 $venueView = $venueObj->getSingleVenue($getParams);
 
+$ratings = $venueObj->getRatings($_GET['id']);
+$reviews = $venueObj->getReview($_GET['id']);
 ?>
+<head>
+    <link rel="stylesheet" href="./output.css">
+</head>
 <!-- Venue Details View (Initially Hidden) -->
 <div id="venueDetailsView" class="container mx-auto pt-20">
     <div class="mb-4">
@@ -211,7 +216,9 @@ $venueView = $venueObj->getSingleVenue($getParams);
                     <div class="flex items-center gap-8">
                         <!-- Overall Rating -->
                         <div class="text-center">
-                            <div class="text-5xl font-bold mb-2" id="averageRating">4.8</div>
+                            <div class="text-5xl font-bold mb-1" >
+                                <?php echo number_format($ratings['average'], 1) ?>
+                            </div>
                             <div class="flex items-center justify-center text-yellow-400 mb-1">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                     <path
@@ -219,67 +226,90 @@ $venueView = $venueObj->getSingleVenue($getParams);
                                 </svg>
                                 <!-- Repeat stars for 5 total -->
                             </div>
-                            <p class="text-sm text-gray-500"><span id="totalReviews">128</span> reviews</p>
+                            <div class="text-sm text-gray-600">
+                                <?php echo htmlspecialchars($ratings['total']) ?? 0?> reviews
+                            </div>
                         </div>
 
                         <!-- Rating Breakdown -->
                         <div class="flex-grow">
                             <div class="space-y-2">
-                                <?php for ($i = 5; $i >= 1; $i--): ?>
+                                <?php
+                                $totalReviews = isset($ratings['total']) ? (int) $ratings['total'] : 0;
+                                $rate = [
+                                    5 => isset($ratings['rating_5']) ? (int) $ratings['rating_5'] : 0,
+                                    4 => isset($ratings['rating_4']) ? (int) $ratings['rating_4'] : 0,
+                                    3 => isset($ratings['rating_3']) ? (int) $ratings['rating_3'] : 0,
+                                    2 => isset($ratings['rating_2']) ? (int) $ratings['rating_2'] : 0,
+                                    1 => isset($ratings['rating_1']) ? (int) $ratings['rating_1'] : 0,
+                                ];
+
+                                // Find the maximum review count to normalize widths
+                                $maxReviewCount = max($rate);
+
+                                for ($i = 5; $i >= 1; $i--):
+                                    $count = isset($rate[$i]) ? $rate[$i] : 0; // Count of reviews for the current star rating
+                                    // Normalize percentage based on $maxReviewCount
+                                    $normalizedPercentage = $maxReviewCount > 0 ? (($count) / $ratings['total']) * 100 : 0;
+                                    ?>
                                     <div class="flex items-center gap-2">
-                                        <span class="w-12 text-sm text-gray-600"><?php echo $i; ?> stars</span>
-                                        <div class="flex-grow bg-gray-200 rounded-full h-2">
-                                            <div class="bg-yellow-400 rounded-full h-2"
-                                                style="width: <?php echo rand(10, 100); ?>%"></div>
+                                        <span class="text-sm w-16"><?php echo $i; ?> stars</span>
+                                        <!-- Set explicit max width -->
+                                        <div class="flex-grow h-2 bg-gray-200 rounded max-w-[500px]">
+                                            <!-- Dynamically set the width based on normalized percentage -->
+                                            <div class="h-full bg-yellow-400 rounded"
+                                                style="width: <?php echo $normalizedPercentage; ?>%;"></div>
                                         </div>
-                                        <span
-                                            class="w-12 text-sm text-gray-600 text-right"><?php echo rand(0, 100); ?></span>
+                                        <span class="text-sm w-8"><?php echo $count; ?></span>
                                     </div>
                                 <?php endfor; ?>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Reviews List -->
-                <div class="space-y-6" id="reviewsList">
-                    <!-- Sample Review -->
-                    <div class="border-b pb-6">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0"></div>
-                            <div class="flex-grow">
-                                <div class="flex justify-between items-start mb-2">
-                                    <div>
-                                        <h4 class="font-medium">Sarah Johnson</h4>
-                                        <div class="flex text-yellow-400">
-                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                            <!-- Repeat for 5 stars -->
-                                        </div>
+                <!-- Individual Reviews -->
+                <div class="mt-8 space-y-6">
+                    <?php foreach ($reviews as $index => $review): ?>
+                        <div class="border-b pb-6 review" data-index="<?php echo $index; ?>" style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
+                            <div class="flex items-center gap-4 mb-4">
+                                <?php if ($review['profile_pic'] == null): ?>
+                                    <div class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">
+                                        <?php echo htmlspecialchars($review['user_name'][0]); ?>
                                     </div>
-                                    <span class="text-sm text-gray-500">2 weeks ago</span>
+                                <?php else: ?>
+                                    <img class="w-12 h-12 bg-gray-200 rounded-full" src="./<?php echo htmlspecialchars($review['profile_pic']); ?>" alt="Profile Picture">
+                                <?php endif; ?>
+                                <div>
+                                    <a href="user-page.php" class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
+                                    <p class="text-sm text-gray-500">
+                                        <?php
+                                        $originalDate = $review['date'];
+                                        $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate));
+                                        echo htmlspecialchars($formattedDate);
+                                        ?>
+                                    </p>
                                 </div>
-                                <p class="text-gray-600">Amazing venue! Perfect for our wedding reception. The
-                                    staff was very accommodating and professional. The place was exactly as
-                                    described and the amenities were all in great condition.</p>
                             </div>
+                            <div class="flex text-yellow-400 mb-2">
+                                <?php for ($i = 0; $i < $review['rating']; $i++): ?>
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                <?php endfor; ?>
+                            </div>
+                            <p class="text-gray-700"><?php echo htmlspecialchars($review['review']); ?></p>
                         </div>
-                    </div>
-
-                    <!-- More reviews can be dynamically added here -->
+                    <?php endforeach; ?>
                 </div>
 
                 <!-- Pagination -->
-                <div class="mt-6 flex justify-center">
-                    <nav class="flex items-center gap-2">
-                        <button class="px-3 py-1 rounded-lg hover:bg-gray-100">Previous</button>
-                        <button class="px-3 py-1 rounded-lg bg-gray-900 text-white">1</button>
-                        <button class="px-3 py-1 rounded-lg hover:bg-gray-100">2</button>
-                        <button class="px-3 py-1 rounded-lg hover:bg-gray-100">3</button>
-                        <button class="px-3 py-1 rounded-lg hover:bg-gray-100">Next</button>
-                    </nav>
+                <div class="flex items-center justify-center gap-2 mt-6">
+                    <button id="prevReview"
+                        class="px-4 py-2 text-sm border w-24 bg-neutral-200 transition-all duration-150 text-gray-600 hover:bg-gray-100 rounded">Previous</button>
+                    <button id="nextReview"
+                        class="px-4 py-2 text-sm border w-24 bg-neutral-200 transition-all duration-150 text-gray-600 hover:bg-gray-100 rounded">Next</button>
                 </div>
             </div>
 
@@ -288,16 +318,16 @@ $venueView = $venueObj->getSingleVenue($getParams);
                 <h3 class="text-2xl font-bold mb-6">Calendar & Pricing</h3>
 
                 <!-- Calendar Header -->
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-4 calendar-header">
                     <div class="flex items-center space-x-4">
-                        <button class="p-2 hover:bg-gray-100 rounded-lg">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg calendar-prev">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <h4 class="text-lg font-semibold">October 2024</h4>
-                        <button class="p-2 hover:bg-gray-100 rounded-lg">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg calendar-next">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5l7 7-7 7" />
@@ -331,7 +361,7 @@ $venueView = $venueObj->getSingleVenue($getParams);
                     </div>
 
                     <!-- Calendar Days -->
-                    <div class="grid grid-cols-7">
+                    <div class="grid grid-cols-7 calendar-days">
                         <?php
                         // Previous month days (greyed out)
                         for ($i = 0; $i < 0; $i++) {
@@ -803,34 +833,49 @@ $venueView = $venueObj->getSingleVenue($getParams);
 
     // Add this to your existing script section
     function initializeCalendar() {
-        // Get current date
         const date = new Date();
-        const currentMonth = date.getMonth();
-        const currentYear = date.getFullYear();
+        let currentMonth = date.getMonth();
+        let currentYear = date.getFullYear();
 
-        // Update calendar header
         updateCalendarHeader(currentMonth, currentYear);
-
-        // Generate calendar days
         generateCalendarDays(currentMonth, currentYear);
+
+        document.querySelector('.calendar-prev').addEventListener('click', function () {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendarHeader(currentMonth, currentYear);
+            generateCalendarDays(currentMonth, currentYear);
+        });
+
+        document.querySelector('.calendar-next').addEventListener('click', function () {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendarHeader(currentMonth, currentYear);
+            generateCalendarDays(currentMonth, currentYear);
+        });
     }
 
     function updateCalendarHeader(month, year) {
         const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
+            "July", "August", "September", "October", "November", "December"];
         document.querySelector('.calendar-header h4').textContent = `${monthNames[month]} ${year}`;
     }
 
     function generateCalendarDays(month, year) {
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-        let calendarHTML = '';
+        const calendarDays = document.querySelector('.calendar-days');
+        calendarDays.innerHTML = '';
 
         // Previous month days
         for (let i = 0; i < firstDay; i++) {
-            calendarHTML += `<div class="p-2 border-b border-r text-gray-400"></div>`;
+            calendarDays.innerHTML += `<div class="p-2 border-b border-r text-gray-400"></div>`;
         }
 
         // Current month days
@@ -839,32 +884,56 @@ $venueView = $venueObj->getSingleVenue($getParams);
                 month === new Date().getMonth() &&
                 year === new Date().getFullYear();
 
-            calendarHTML += `
-            <div class="relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer" 
-                 onclick="editDayPrice(${year}, ${month}, ${day})">
-                <div class="text-sm ${isToday ? 'font-bold' : ''}">${day}</div>
-                <div class="text-xs text-gray-600">₱2,341</div>
-            </div>
-        `;
+            calendarDays.innerHTML += `
+                <div class="relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer" 
+                     onclick="editDayPrice(${year}, ${month}, ${day})">
+                    <div class="text-sm ${isToday ? 'font-bold' : ''}">${day}</div>
+                    <div class="text-xs text-gray-600">₱2,341</div>
+                </div>
+            `;
         }
-
-        document.querySelector('.calendar-days').innerHTML = calendarHTML;
     }
 
     function editDayPrice(year, month, day) {
-        // Show a modal or form to edit the price for this specific day
         const date = new Date(year, month, day);
         const formattedDate = date.toLocaleDateString();
-
-        // You can implement your own modal here
         const newPrice = prompt(`Enter new price for ${formattedDate}:`);
         if (newPrice && !isNaN(newPrice)) {
-            // Update the price in your database
-            // Then refresh the calendar display
             console.log(`Updated price for ${formattedDate} to ₱${newPrice}`);
         }
     }
 
-    // Initialize calendar when page loads
     document.addEventListener('DOMContentLoaded', initializeCalendar);
+        document.addEventListener('DOMContentLoaded', function () {
+            const reviews = document.querySelectorAll('.review');
+            let currentIndex = 0;
+
+            function showReview(index) {
+                reviews.forEach((review, i) => {
+                    review.style.display = i === index ? 'block' : 'none';
+                });
+            }
+
+            document.getElementById('prevReview').addEventListener('click', function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    showReview(currentIndex);
+                } else {
+                    currentIndex = reviews.length - 1;
+                    showReview(currentIndex);
+                }
+            });
+
+            document.getElementById('nextReview').addEventListener('click', function () {
+                if (currentIndex < reviews.length - 1) {
+                    currentIndex++;
+                    showReview(currentIndex);
+                } else {
+                    currentIndex = 0;
+                    showReview(currentIndex);
+                }
+            });
+
+            showReview(currentIndex);
+        });
 </script>

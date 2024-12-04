@@ -1,1294 +1,1012 @@
 <?php
+require_once '../classes/venue.class.php';
 session_start();
-require_once __DIR__ . '/classes/venue.class.php';
-require_once __DIR__ . '/classes/account.class.php';
-
 $venueObj = new Venue();
-$accountObj = new Account();
 
-// Check if 'id' parameter is present and valid
-if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: index.php");
-    exit();
-}
+$pendingBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 1);
+$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
+$cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
+$previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
-// Retrieve venue information based on 'id' parameter
-$venue = $venueObj->getSingleVenue($_GET['id']);
 
-// If no venue is found, redirect to index.php
-if (empty($venue['name'])) {
-    header("Location: index.php");
-    exit();
-}
-
-// Retrieve the owner's information
-$owner = $accountObj->getUser($venue['host_id']);
-$bookedDate = $venueObj->getBookedDates($_GET['id']);
-
-// Prepare booked dates for JavaScript
-$bookedDates = [];
-foreach ($bookedDate as $booking) {
-    $start = new DateTime($booking['startdate']);
-    $end = new DateTime($booking['enddate']);
-    $interval = new DateInterval('P1D');
-    $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
-
-    foreach ($dateRange as $date) {
-        $bookedDates[] = $date->format('Y-m-d');
-    }
-}
-
-// var_dump($_GET['id']);
-// var_dump($bookedDate);
-// var_dump($bookedDate[0]['startdate'])
 ?>
 
+<main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
+    <div class="px-4 sm:px-0">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Your Rent History</h1>
 
-<!DOCTYPE html>
-<html lang="en">
+        <!-- Tabs -->
+        <div class="border-b border-gray-200 mb-6">
+            <nav class="-mb-px flex space-x-8">
+                <button onclick="showTab('pending')"
+                    class="tab-btn border-black text-gray-900 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Pending Rentals
+                </button>
+                <button onclick="showTab('current')"
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Current Rental
+                </button>
+                <button onclick="showTab('previous')"
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Previous Rentals
+                </button>
+                <button onclick="showTab('cancelled')"
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Cancelled Rentals
+                </button>
+            </nav>
+        </div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Venue Details - HubVenue</title>
-    <link rel="icon" href="./images/black_ico.png">
-    <link rel="stylesheet" href="./output.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
-    <link rel="stylesheet" href="node_modules/flatpickr/dist/flatpickr.min.css">
-    <script src="node_modules/flatpickr/dist/flatpickr.min.js"></script>
-    <style>
-        .flatpickr-calendar {
-            z-index: 100 !important;
-        }
+        <!-- Pending Rental Tab -->
+        <div id="pending-tab" class="tab-content">
+            <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
 
-        .flatpickr-calendar.static {
-            position: absolute;
-            top: 100% !important;
-        }
-
-        /* Add these new styles for image transitions */
-        .venue-image {
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .venue-image.fade-out {
-            opacity: 0;
-        }
-
-        .venue-image.fade-in {
-            opacity: 1;
-        }
-
-        #thumbnailContainer::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        #thumbnailContainer::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-
-        #thumbnailContainer::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-        }
-
-        #thumbnailContainer::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .modal-fade-enter {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-
-        .modal-fade-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 300ms, transform 300ms;
-        }
-
-        .modal-fade-exit {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .modal-fade-exit-active {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 300ms, transform 300ms;
-        }
-
-        .split-view {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .venue-comparison {
-            height: 100vh;
-            overflow-y: auto;
-            padding: 120px 4rem 2rem;
-            border-left: 1px solid #e5e7eb;
-            background: #f9fafb;
-            position: fixed;
-            right: -50%;
-            top: 0;
-            width: 50%;
-            transition: all 0.3s ease;
-            z-index: 40;
-        }
-
-        .venue-comparison.active {
-            right: 0;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .comparison-close {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 50;
-            background: white;
-            border-radius: 50%;
-            padding: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .venue-comparison .comparison-content {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .venue-comparison .bg-slate-50 {
-            margin-bottom: 1.5rem;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .venue-comparison h2 {
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .main-content {
-            transition: all 0.3s ease;
-            width: 100%;
-            max-width: 1200px;
-            padding: 100px 2rem 0;
-            margin: 0 auto;
-            margin-left: calc(5rem + 2rem);
-            /* Account for sidebar */
-        }
-
-        .main-content.shifted {
-            margin-right: 50%;
-            width: 50%;
-            padding: 100px 0 0;
-            /* Remove horizontal padding */
-            margin-left: 5rem;
-            max-width: none;
-            height: 100vh;
-            overflow-y: auto;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            /* Center the content */
-        }
-
-        .main-content.shifted #venueDetails {
-            width: 100%;
-            max-width: 800px;
-            /* Control content width */
-            padding: 0 4rem;
-            /* Add padding to the content instead */
-            margin: 0 auto;
-        }
-
-        .main-container {
-            transition: all 0.3s ease;
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px 0 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        .main-container.shifted {
-            max-width: none;
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #venueDetails {
-            width: 100%;
-            margin: 0 auto;
-            padding-bottom: 2rem;
-            /* Add padding at the bottom for scrolling space */
-        }
-
-        .grid.grid-cols-3 {
-            width: 100%;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        @media (max-width: 1400px) {
-            .main-content.shifted #venueDetails {
-                padding: 0 2rem;
-            }
-
-            .venue-comparison {
-                padding: 120px 2rem 2rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-content.shifted #venueDetails {
-                padding: 0 1rem;
-            }
-
-            .venue-comparison {
-                padding: 120px 1rem 2rem;
-            }
-        }
-
-        .venue-comparison .bg-slate-50 {
-            transition: all 0.3s ease;
-        }
-
-        .venue-comparison .hidden {
-            display: none;
-        }
-
-        /* Animation for expanding/collapsing details */
-        .venue-comparison [id^="venue-details-"] {
-            transition: all 0.3s ease;
-        }
-    </style>
-</head>
-
-<body class="bg-slate-50">
-    <!-- Header -->
-    <?php
-    if (isset($_SESSION['user'])) {
-        include_once './components/navbar.logged.in.php';
-    } else {
-        include_once './components/navbar.html';
-    }
-
-    include_once './components/SignupForm.html';
-    include_once './components/feedback.modal.html';
-    include_once './components/confirm.feedback.modal.html';
-    include_once './components/Menu.html';
-
-    ?>
-
-    <main class="max-w-7xl pt-32 mx-auto pt-24 px-4 py-6 sm:px-6 lg:px-8 main-container">
-        <div class="main-content">
-            <div id="venueDetails">
-                <div class="mb-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h1 class="text-3xl font-semibold"><?php echo htmlspecialchars($venue['name']) ?></h1>
-                        <button id="compareButton"
-                            class="flex items-center gap-2 px-4 py-2 bg-slate-50 border-2 border-gray-500 rounded-lg hover:bg-gray-50 transition duration-300">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span>Compare</span>
-                        </button>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-sm font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
-                        ·
-                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['total_reviews']) ?>
-                            review/s</span>
-                        <span class="mx-2">·</span>
-                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['tag']) ?></span>
-                        <span class="mx-2">·</span>
-                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['location']) ?></span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2 mb-8 relative">
-                    <!-- Main Image (First in Array) on the Left -->
-                    <div class="col-span-2">
-                        <?php if (!empty($venue['image_urls'])): ?>
-                            <img src="./<?= htmlspecialchars($venue['image_urls'][0]) ?>" alt="Venue Image"
-                                class="venue-image w-full h-[30.5rem] object-cover rounded-lg" data-image-index="0">
-                        <?php else: ?>
-                            <img src="default-image.jpg" alt="Default Venue Image"
-                                class="venue-image w-full h-full object-cover rounded-lg">
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Small Images on the Right -->
-                    <div class="space-y-2">
-                        <?php if (!empty($venue['image_urls']) && count($venue['image_urls']) > 1): ?>
-                            <img src="./<?= htmlspecialchars($venue['image_urls'][1]) ?>" alt="Venue Image"
-                                class="venue-image w-full h-60 object-cover rounded-lg" data-image-index="1">
-                        <?php else: ?>
-                            <div
-                                class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
-                                <p>No more image to show</p>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (!empty($venue['image_urls']) && count($venue['image_urls']) > 2): ?>
-                            <img src="./<?= htmlspecialchars($venue['image_urls'][2]) ?>" alt="Venue Image"
-                                class="venue-image w-full h-60 object-cover rounded-lg" data-image-index="2">
-                        <?php else: ?>
-                            <div
-                                class="bg-slate-50 w-full h-60 rounded-lg shadow-lg border flex items-center justify-center">
-                                <p>No more image to show</p>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Show All Photos Button -->
-                    <button id="showAllPhotosBtn" onclick="openGallery(0)"
-                        class="absolute border-2 border-gray-500 bottom-4 right-4 bg-slate-50 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
-                        Show all photos
-                    </button>
-                </div>
-
-                <div class="flex gap-12 flex-col md:flex-row">
-                    <div class="md:w-2/3">
-                        <div class="flex justify-between items-center mb-6 gap-4">
-                            <div>
-                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($venue['tag']) ?> at
-                                    <?php echo htmlspecialchars($venue['location']) ?>
+                <?php
+                if (empty($pendingBooking)) {
+                    // Skip rendering if all fields are NULL
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any pending bookings.</p>';
+                } else {
+                    foreach ($pendingBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
                                 </h2>
-                            </div>
-                        </div>
-
-
-                        <hr class="my-6">
-
-                        <h3 class="text-xl font-semibold mb-4">Place Description</h3>
-                        <p class="mb-4"><?php echo htmlspecialchars($venue['description']) ?></p>
-
-                        <hr class="my-6">
-
-                        <h3 class="text-xl font-semibold mb-4">Venue Capacity</h3>
-                        <p class="">
-                            <?php echo htmlspecialchars($venue['capacity']) ?>
-                            guests
-                        </p>
-
-                        <hr class="my-6">
-
-                        <h3 class="text-xl font-semibold mb-4">What this place offers</h3>
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <?php if (!empty($venue['amenities'])): ?>
-                                <?php
-                                $amenities = json_decode($venue['amenities'], true);
-                                if ($amenities):
-                                    ?>
-                                    <ul class="list-disc pl-5 space-y-1">
-                                        <?php foreach ($amenities as $amenity): ?>
-                                            <li class="text-sm text-gray-800 leading-tight">
-                                                <?= htmlspecialchars($amenity) ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php else: ?>
-                                    <p class="text-sm text-gray-500">No amenities available</p>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <p class="text-sm text-gray-500">No amenities available</p>
-                            <?php endif; ?>
-                        </div>
-
-                        <hr class="my-6">
-
-                        <h3 class="text-xl font-semibold mb-4">Location</h3>
-                        <div class="bg-gray-100 rounded-lg h-96 w-full mb-4" id="map">
-                            <?php include_once './openStreetMap/autoMapping.osm.php' ?>
-                        </div>
-
-                        <hr class="my-6">
-
-                        <h3 class="text-xl font-semibold mb-4">Ratings & Reviews</h3>
-                        <div class="mb-8">
-                            <div class="flex items-start gap-8">
-                                <!-- Overall Rating -->
-                                <div class="text-center">
-                                    <div class="text-5xl font-bold mb-1">
-                                        <?php echo number_format($venue['rating'], 1) ?>
-                                    </div>
-                                    <div class="flex items-center justify-center text-yellow-400 mb-1">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <div class="text-sm text-gray-600">
-                                        <?php echo htmlspecialchars($venue['total_reviews']) ?> reviews
-                                    </div>
-                                </div>
-
-                                <!-- Rating Bars -->
-                                <div class="flex-grow">
-                                    <div class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                                         <?php
-                                        $totalReviews = isset($venue['total_reviews']) ? (int) $venue['total_reviews'] : 0;
-                                        $ratings = [
-                                            5 => isset($venue['rating_5']) ? (int) $venue['rating_5'] : 0,
-                                            4 => isset($venue['rating_4']) ? (int) $venue['rating_4'] : 0,
-                                            3 => isset($venue['rating_3']) ? (int) $venue['rating_3'] : 0,
-                                            2 => isset($venue['rating_2']) ? (int) $venue['rating_2'] : 0,
-                                            1 => isset($venue['rating_1']) ? (int) $venue['rating_1'] : 0,
-                                        ];
-
-                                        // Find the maximum review count to normalize widths
-                                        $maxReviewCount = max($ratings);
-
-                                        for ($i = 5; $i >= 1; $i--):
-                                            $count = isset($ratings[$i]) ? $ratings[$i] : 0; // Count of reviews for the current star rating
-                                            // Normalize percentage based on $maxReviewCount
-                                            $normalizedPercentage = $maxReviewCount > 0 ? (($count / 5) / $venue['total_reviews']) * 100 : 0;
-                                            ?>
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-sm w-16"><?php echo $i; ?> stars</span>
-                                                <!-- Set explicit max width -->
-                                                <div class="flex-grow h-2 bg-gray-200 rounded max-w-[200px]">
-                                                    <!-- Dynamically set the width based on normalized percentage -->
-                                                    <div class="h-full bg-yellow-400 rounded"
-                                                        style="width: <?php echo $normalizedPercentage; ?>%;"></div>
-                                                </div>
-                                                <span class="text-sm w-8"><?php echo $count / 5; ?></span>
-                                            </div>
-                                        <?php endfor; ?>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Individual Reviews -->
-                            <div class="mt-8 space-y-6">
-                                <div class="border-b pb-6">
-                                    <div class="flex items-center gap-4 mb-4">
-                                        <div class="w-12 h-12 bg-gray-200 rounded-full"></div>
-                                        <div>
-                                            <a href="user-page.php" class="font-semibold hover:underline">Sarah
-                                                Johnson</a>
-                                            <p class="text-sm text-gray-500">2 weeks ago</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex text-yellow-400 mb-2">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <p class="text-gray-700">Amazing venue! Perfect for our wedding reception. The staff
-                                        was
-                                        very accommodating and professional. The place was exactly as described and the
-                                        amenities were all in great condition.</p>
-                                </div>
-                            </div>
-
-                            <!-- Pagination -->
-                            <div class="flex items-center justify-center gap-2 mt-6">
-                                <button
-                                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Previous</button>
-                                <button class="px-4 py-2 text-sm bg-gray-900 text-white rounded">1</button>
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">2</button>
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">3</button>
-                                <button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">Next</button>
-                            </div>
-                        </div>
-
-                        <hr class="my-6">
-
-                        <!-- New Section: Things You Should Know -->
-                        <h3 class="text-xl font-semibold mb-4">Things You Should Know</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <!-- House Rules -->
-                            <div>
-                                <h4 class="font-semibold text-lg mb-3">House Rules</h4>
-                                <ul class="space-y-2">
-                                    <?php
-                                    if (isset($venue['time_inout'])) {
-                                        $timeInOut = json_decode($venue['time_inout'], true); // Decode into array
-                                    
-                                        // Convert to 12-hour format with AM/PM
-                                        $checkIn = DateTime::createFromFormat('H:i', $timeInOut['check_in'])->format('h:i A');
-                                        $checkOut = DateTime::createFromFormat('H:i', $timeInOut['check_out'])->format('h:i A');
+                                        switch ($booking['booking_status_id']) {
+                                            case '1':
+                                                echo 'Pending';
+                                                break;
+                                            case '2':
+                                                echo 'Approved';
+                                                break;
+                                            case '3':
+                                                echo 'Cancelled';
+                                                break;
+                                            case '4':
+                                                echo 'Completed';
+                                                break;
+                                            default:
+                                                echo 'Unknown';
+                                                break;
+                                        }
                                         ?>
-                                        <li class="flex items-center gap-2">
-                                            <i class="fas fa-clock text-gray-600"></i>
-                                            <span>Check-in: After <?php echo htmlspecialchars($checkIn); ?></span>
-                                        </li>
-                                        <li class="flex items-center gap-2">
-                                            <i class="fas fa-clock text-gray-600"></i>
-                                            <span>Checkout: Before <?php echo htmlspecialchars($checkOut); ?></span>
-                                        </li>
-                                        <?php
-                                    }
-                                    ?>
-                                    <li class="flex items-center gap-2">
-                                        <i class="fas fa-users text-gray-600"></i>
-                                        <span>Maximum <?php echo htmlspecialchars($venue['capacity']) ?> guests</span>
-                                    </li>
+                                    </span>
                                     <?php
-                                    if (!empty($venue['rules'])) {
-                                        $rules = json_decode($venue['rules'], true); // Decode the JSON string into an array
-                                        if ($rules):
+                                    if ($bookingStartDate > $currentDateTime): ?>
+                                        <span
+                                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                            Booking</span> <!-- Tag for future booking -->
+                                    <?php else: ?>
+                                        <span class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                            Booking</span> <!-- Tag for started booking -->
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="flex gap-6">
+                                <?php
+                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                ?>
+
+                                <?php if (!empty($imageUrls)): ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                        class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                                <?php endif; ?>
+
+                                <div class="flex-1">
+                                    <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
+                                    <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                    <p class="text-gray-600 mt-1">
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                        for
+                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                        days
+                                    </p>
+                                    <p class="text-gray-600 mt-1">
+                                        <?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?>
+                                    </p>
+                                    <div class="mt-4 space-x-4">
+                                        <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                            Details</button>
+                                        <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'],
+                                                'venue_name' => $booking['venue_name'],
+                                                'booking_start_date' => $booking['booking_start_date'],
+                                                'booking_end_date' => $booking['booking_end_date'],
+                                                'booking_duration' => $booking['booking_duration'],
+                                                'booking_grand_total' => $booking['booking_grand_total'],
+                                                'booking_payment_method' => $booking['booking_payment_method'],
+                                                'booking_payment_reference' => $booking['booking_payment_reference'],
+                                                'booking_service_fee' => $booking['booking_service_fee'],
+                                                'venue_location' => $booking['venue_location']
+                                            ])); ?>)" 
+                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                <i class="fas fa-print mr-2"></i>Print Receipt
+                                            </button>
+                                        <?php endif; ?>
+                                        <?php
+
+                                        if ($bookingStartDate > $currentDateTime):
                                             ?>
-                                            <?php foreach ($rules as $rule): ?>
-                                                <li class="list-disc list-inside flex items-center gap-2">
-                                                    <?= htmlspecialchars($rule) ?>
-                                                </li>
-                                            <?php endforeach; ?>
+                                            <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
+                                                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                                Booking</button>
                                             <?php
                                         endif;
-                                    }
-                                    ?>
-                                </ul>
-                            </div>
-
-                            <!-- Cancellation Policy -->
-                            <div>
-                                <h4 class="font-semibold text-lg mb-3">Cancellation Policy</h4>
-                                <div class="space-y-3">
-                                    <p class="text-gray-700">Free cancellation for 48 hours after booking.</p>
-                                    <p class="text-gray-700">Cancel before check-in and get a full refund, minus the
-                                        service
-                                        fee.</p>
-                                    <div class="mt-4">
-                                        <h5 class="font-medium mb-2">Refund Policy:</h5>
-                                        <ul class="space-y-2 text-gray-700">
-                                            <li class="flex items-center gap-2">
-                                                <i class="fas fa-check text-green-600"></i>
-                                                <span>100% refund: Cancel 7 days before check-in</span>
-                                            </li>
-                                            <li class="flex items-center gap-2">
-                                                <i class="fas fa-check text-green-600"></i>
-                                                <span>50% refund: Cancel 3-7 days before check-in</span>
-                                            </li>
-                                            <li class="flex items-center gap-2">
-                                                <i class="fas fa-times text-red-600"></i>
-                                                <span>No refund: Cancel less than 3 days before check-in</span>
-                                            </li>
-                                        </ul>
+                                        ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <hr class="my-6">
-
-
-                    </div>
-
-                    <div class="md:w-1/3">
-                        <div class="border rounded-xl p-6 shadow-lg mb-6">
-                            <h3 class="text-xl font-semibold mb-4">The Owner</h3>
-                            <div class="flex gap-4">
-                                <a href="owner-page.php"
-                                    class="bg-slate-50 p-6 w-full hover:bg-slate-100 transition duration-300 cursor-pointer">
-                                    <!-- Card Header -->
-                                    <div class="text-center mb-4">
-                                        <div
-                                            class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
-                                            <?php
-
-                                            $profilePic = $account->getProfilePic($owner[0]['id']);
-                                            if (isset($owner) && empty($profilePic)) {
-                                                echo $owner[0]['firstname'][0];
-                                            } else {
-                                                echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
-                                            }
-                                            ?>
-                                        </div>
-                                        <h2 class="text-xl font-semibold text-gray-800">
-                                            <?php echo htmlspecialchars($owner[0]['firstname'] . " " . $owner[0]['lastname']); ?>
-                                        </h2>
-                                        <p class="text-xs text-gray-500">Owner</p>
-
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="sticky top-32">
-                            <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-slate-50" method="GET"
-                                action="payment.php">
-                                <!-- Price Header -->
-                                <div class="flex justify-between items-center mb-6">
-                                    <div class="flex items-baseline">
-                                        <span
-                                            class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
-                                        <span class="text-gray-600 ml-2">/ night</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 text-sm">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span
-                                            class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
-                                        <span class="text-gray-500 text-xs"> <?php echo $venue['total_reviews'] ?>
-                                            review/s</span>
-                                    </div>
-                                </div>
-
-                                <!-- Date and Guest Selection -->
-                                <div class="border rounded-xl mb-6 shadow-sm bg-gray-50 relative">
-                                    <div class="flex border-b">
-                                        <input type="hidden" name="venueId"
-                                            value="<?php echo htmlspecialchars($venue['id']); ?>">
-                                        <div class="w-1/2 p-3 border-r">
-                                            <label
-                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
-                                            <input type="date" name="checkin" placeholder="Set Date"
-                                                class="w-full bg-transparent focus:outline-none text-gray-800">
-                                        </div>
-                                        <div class="w-1/2 p-3">
-                                            <label
-                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
-                                            <input type="date" name="checkout" placeholder="Set Date"
-                                                class="w-full bg-transparent focus:outline-none text-gray-800">
-                                        </div>
-                                    </div>
-                                    <div class="p-3">
-                                        <label class="block text-xs font-semibold text-gray-700 mb-1">
-                                            GUESTS (Maximum <span
-                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
-                                        </label>
-                                        <input type="number" name="numberOfGuest"
-                                            class="w-full bg-transparent focus:outline-none text-gray-800"
-                                            placeholder="Enter number of guests">
-                                    </div>
-                                </div>
-
-                                <!-- Price Breakdown -->
-                                <div class="space-y-4 mb-6">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">
-                                            ₱<?php echo htmlspecialchars($venue['price']); ?> × <span
-                                                total-nights>0</span>
-                                            nights
-                                        </span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="totalPriceForNights"
-                                                value="0" readonly></span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">
-                                            Entrance fee × <span total-entrance-guests>0</span> guest
-                                        </span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="totalEntranceFee"
-                                                value="<?php echo htmlspecialchars($venue['entrance']); ?>"
-                                                readonly></span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">Cleaning fee</span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="cleaningFee"
-                                                value="<?php echo htmlspecialchars($venue['cleaning']); ?>"
-                                                readonly></span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service
-                                            fee</span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="serviceFee" value="0"
-                                                readonly></span>
-                                    </div>
-                                </div>
-
-                                <!-- Total -->
-                                <div class="border-t pt-4 mb-6">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-lg font-bold">Total</span>
-                                        <span class="font-bold text-lg">₱ <input type="number"
-                                                class="text-right bg-transparent w-24 font-bold" name="totalPrice"
-                                                value="0" readonly></span>
-                                    </div>
-                                </div>
-
-                                <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
-                                <button type="submit"
-                                    class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
-                            </form>
-                        </div>
-
-
-
-
-
-                    </div>
-                </div>
+                        <?php
+                    }
+                }
+                ?>
             </div>
         </div>
-    </main>
-
-    <div class="venue-comparison hidden" id="comparisonPanel">
-        <button class="comparison-close hidden" id="closeCompareBtn" onclick="closeComparison()">
-            <i class="fas fa-times text-xl"></i>
-        </button>
-        <div class="comparison-content">
-            <h2 class="text-2xl font-semibold">Compare With</h2>
-            <div id="comparisonVenues" class="space-y-4">
-                <!-- Venues will be loaded here -->
-            </div>
-        </div>
-    </div>
-
-    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
-    <script src="./js/user.jquery.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Debug logging to verify elements are found
-            console.log('Checkin:', document.querySelector('input[name="checkin"]'));
-            console.log('Checkout:', document.querySelector('input[name="checkout"]'));
-            console.log('Guests:', document.querySelector('input[name="numberOfGuest"]'));
-            console.log('Total Price:', document.querySelector('input[name="totalPrice"]'));
-            console.log('Price for Nights:', document.querySelector('input[name="totalPriceForNights"]'));
-            console.log('Service Fee:', document.querySelector('input[name="serviceFee"]'));
-            console.log('Entrance Fee:', document.querySelector('input[name="totalEntranceFee"]'));
-            console.log('Cleaning Fee:', document.querySelector('input[name="cleaningFee"]'));
-
-            const checkinInput = document.querySelector('input[name="checkin"]');
-            const checkoutInput = document.querySelector('input[name="checkout"]');
-            const guestsInput = document.querySelector('input[name="numberOfGuest"]');
-            const totalPriceInput = document.querySelector('input[name="totalPrice"]');
-            const totalPriceForNightsInput = document.querySelector('input[name="totalPriceForNights"]');
-            const serviceFeeInput = document.querySelector('input[name="serviceFee"]');
-            const entranceFeeInput = document.querySelector('input[name="totalEntranceFee"]');
-            const cleaningFeeInput = document.querySelector('input[name="cleaningFee"]');
-            const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
-            const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
-            const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
-            const serviceFeeRate = 0.15;
-            const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
-
-            const bookedDates = <?php echo json_encode($bookedDates); ?>;
-
-            function disableBookedDates(date) {
-                const dateString = date.toISOString().split('T')[0];
-                return bookedDates.includes(dateString);
-            }
-
-            function disableDates(input, minDate = "today") {
-                flatpickr(input, {
-                    minDate: minDate,
-                    disable: bookedDates,
-                    appendTo: input.parentElement,
-                    static: true,
-                    onChange: function (selectedDates, dateStr, instance) {
-                        validateDateRange();
-                        calculateTotal();
-                    }
-                });
-            }
-
-            function validateDateRange() {
-                const checkinDate = new Date(checkinInput.value);
-                const checkoutDate = new Date(checkoutInput.value);
-                const dateRange = new Date(checkinDate);
-
-                while (dateRange <= checkoutDate) {
-                    if (disableBookedDates(dateRange)) {
-                        showModal('Selected date range includes unavailable dates.', undefined, 'black_ico.png');
-                        checkinInput.value = '';
-                        checkoutInput.value = '';
-                        break;
-                    }
-                    dateRange.setDate(dateRange.getDate() + 1);
-                }
-            }
-
-            disableDates(checkinInput);
-            disableDates(checkoutInput);
-
-            // Get today's date in YYYY-MM-DD format
-            const today = new Date();
-            const todayFormatted = today.toISOString().split('T')[0];
-
-            // Set 'min' attributes to today for both checkin and checkout inputs
-            checkinInput.setAttribute('min', todayFormatted);
-            checkoutInput.setAttribute('min', todayFormatted);
-
-            // Validate and correct selected date inputs
-            function validateDate(input) {
-                const selectedDate = new Date(input.value);
-                if (selectedDate < today) {
-                    input.value = todayFormatted; // Reset to today's date if past date is selected
-                }
-            }
-
-            function calculateTotal() {
-                console.log('Calculating total...'); // Debug log
-                validateDate(checkinInput);
-                validateDate(checkoutInput);
-
-                const checkinDate = new Date(checkinInput.value);
-                const checkoutDate = new Date(checkoutInput.value);
-                const timeDiff = checkoutDate - checkinDate;
-                const days = timeDiff / (1000 * 3600 * 24);
-
-                let guests = parseInt(guestsInput.value);
-                console.log('Days:', days, 'Guests:', guests); // Debug log
-
-                if (isNaN(guests) || guests < 1) {
-                    guests = 1;
-                } else if (guests > maxGuests) {
-                    guests = maxGuests;
-                    guestsInput.value = maxGuests;
-                }
-
-                if (days > 0) {
-                    const totalPriceForNights = pricePerNight * days;
-                    const totalEntranceFee = entranceFee * guests;
-                    const serviceFee = pricePerNight * serviceFeeRate;
-                    const grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
-
-                    console.log('Calculations:', { // Debug log
-                        totalPriceForNights,
-                        totalEntranceFee,
-                        serviceFee,
-                        grandTotal
-                    });
-
-                    document.querySelector('span[total-nights]').textContent = days;
-                    document.querySelector('span[total-entrance-guests]').textContent = guests;
-                    totalPriceForNightsInput.value = totalPriceForNights.toFixed(2);
-                    entranceFeeInput.value = totalEntranceFee.toFixed(2);
-                    serviceFeeInput.value = serviceFee.toFixed(2);
-                    totalPriceInput.value = grandTotal.toFixed(2);
-                }
-            }
-
-            // Add event listeners
-            checkinInput.addEventListener('change', calculateTotal);
-            checkoutInput.addEventListener('change', calculateTotal);
-            guestsInput.addEventListener('input', calculateTotal);
-
-            // Initial calculation
-            calculateTotal();
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
-            if (!images.length) return;
-
-            const mainImage = document.querySelector('.col-span-2 .venue-image');
-            const smallImages = document.querySelectorAll('.space-y-2 .venue-image');
-            let currentMainIndex = 0;
-            let currentSmallIndices = [1, 2];
-
-            // Function to update main image with transition
-            function updateMainImage(newIndex) {
-                mainImage.classList.add('fade-out');
-
-                setTimeout(() => {
-                    mainImage.src = './' + images[newIndex];
-                    mainImage.dataset.imageIndex = newIndex;
-                    mainImage.classList.remove('fade-out');
-                    mainImage.classList.add('fade-in');
-
-                    setTimeout(() => {
-                        mainImage.classList.remove('fade-in');
-                    }, 500);
-                }, 500);
-
-                currentMainIndex = newIndex;
-            }
-
-            // Function to update small images without transition
-            function updateSmallImages() {
-                smallImages.forEach((img, i) => {
-                    const nextIndex = (currentMainIndex + i + 1) % images.length;
-                    img.src = './' + images[nextIndex];
-                    img.dataset.imageIndex = nextIndex;
-                    currentSmallIndices[i] = nextIndex;
-                });
-            }
-
-            // Add click handlers to small images
-            smallImages.forEach(img => {
-                img.addEventListener('click', function () {
-                    const clickedIndex = parseInt(this.dataset.imageIndex);
-                    updateMainImage(clickedIndex);
-
-                    // After updating main image, update small images
-                    setTimeout(() => {
-                        updateSmallImages();
-                    }, 500);
-                });
-            });
-
-            // Automatic rotation for main image only
-            setInterval(() => {
-                const nextIndex = (currentMainIndex + 1) % images.length;
-                updateMainImage(nextIndex);
-                updateSmallImages();
-            }, 5000);
-
-            // Pause shuffling when user hovers over images
-            const imageContainer = document.querySelector('.grid');
-            let rotationInterval;
-
-            function startRotation() {
-                rotationInterval = setInterval(() => {
-                    const nextIndex = (currentMainIndex + 1) % images.length;
-                    updateMainImage(nextIndex);
-                    updateSmallImages();
-                }, 5000);
-            }
-
-            imageContainer.addEventListener('mouseenter', () => {
-                clearInterval(rotationInterval);
-            });
-
-            // Resume shuffling when user moves mouse away
-            imageContainer.addEventListener('mouseleave', () => {
-                startRotation();
-            });
-
-            // Start initial rotation
-            startRotation();
-        });
-    </script>
-
-    <!-- Photo Gallery Modal -->
-    <div id="photoGalleryModal" class="fixed inset-0 z-50 hidden">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black bg-opacity-80 transition-opacity duration-300 opacity-0"
-            id="modalBackdrop"></div>
-
-        <!-- Modal Content -->
-        <div class="relative h-full w-full flex flex-col">
-            <!-- Header -->
-            <div class="absolute top-0 left-0 right-0 p-4 z-10">
-                <div class="max-w-7xl mx-auto flex justify-between items-center">
-                    <button id="closeGallery" class="text-white hover:bg-slate-50/10 p-2 rounded-full transition">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                    <span class="text-white text-sm">
-                        <span id="currentImageIndex">1</span> / <span id="totalImages">5</span>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Main Gallery Area -->
-            <div class="flex-1 flex items-center justify-center p-4">
-                <div class="relative w-full max-w-7xl mx-auto">
-                    <!-- Navigation Buttons -->
-                    <button id="prevImage"
-                        class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:bg-slate-50/10 p-4 rounded-full transition">
-                        <i class="fas fa-chevron-left text-2xl"></i>
-                    </button>
-
-                    <button id="nextImage"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:bg-slate-50/10 p-4 rounded-full transition">
-                        <i class="fas fa-chevron-right text-2xl"></i>
-                    </button>
-
-                    <!-- Main Image -->
-                    <div class="flex justify-center">
-                        <img id="mainGalleryImage" src="" alt="Venue Image" class="max-h-[80vh] object-contain">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Thumbnails -->
-            <div class="w-full p-4">
-                <div class="max-w-7xl mx-auto">
-                    <div id="thumbnailContainer" class="flex gap-2 overflow-x-auto pb-2">
-                        <!-- Thumbnails will be inserted here by JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modal = document.getElementById('photoGalleryModal');
-            const modalBackdrop = document.getElementById('modalBackdrop');
-            const mainGalleryImage = document.getElementById('mainGalleryImage');
-            const thumbnailContainer = document.getElementById('thumbnailContainer');
-            const currentImageIndex = document.getElementById('currentImageIndex');
-            const totalImages = document.getElementById('totalImages');
-            const prevButton = document.getElementById('prevImage');
-            const nextButton = document.getElementById('nextImage');
-            const closeButton = document.getElementById('closeGallery');
-
-            const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
-            let currentIndex = 0;
-
-            // Make openGallery function available globally
-            window.openGallery = function (index) {
-                currentIndex = index;
-                modal.classList.remove('hidden');
-                setTimeout(() => {
-                    modalBackdrop.classList.remove('opacity-0');
-                }, 10);
-                updateGallery();
-                createThumbnails();
-                document.body.style.overflow = 'hidden';
-            }
-
-            // Show All Photos button click handler
-            const showAllPhotosButton = document.querySelector('button[class*="border-2 border-gray-500"]');
-            if (showAllPhotosButton) {
-                showAllPhotosButton.addEventListener('click', function () {
-                    openGallery(0);
-                });
-            }
-
-            function closeGallery() {
-                modalBackdrop.classList.add('opacity-0');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }, 300);
-            }
-
-            function updateGallery() {
-                mainGalleryImage.src = './' + images[currentIndex];
-                currentImageIndex.textContent = currentIndex + 1;
-                totalImages.textContent = images.length;
-
-                // Update thumbnails active state
-                document.querySelectorAll('.thumbnail').forEach((thumb, index) => {
-                    if (index === currentIndex) {
-                        thumb.classList.add('ring-2', 'ring-white');
-                        thumb.classList.remove('opacity-70');
-                    } else {
-                        thumb.classList.remove('ring-2', 'ring-white');
-                        thumb.classList.add('opacity-70');
-                    }
-                });
-            }
-
-            function createThumbnails() {
-                thumbnailContainer.innerHTML = '';
-                images.forEach((image, index) => {
-                    const thumb = document.createElement('img');
-                    thumb.src = './' + image;
-                    thumb.classList.add('thumbnail', 'h-20', 'w-32', 'object-cover', 'cursor-pointer',
-                        'transition-opacity', 'duration-200', 'opacity-70', 'hover:opacity-100');
-                    if (index === currentIndex) {
-                        thumb.classList.add('ring-2', 'ring-white');
-                        thumb.classList.remove('opacity-70');
-                    }
-                    thumb.addEventListener('click', () => {
-                        currentIndex = index;
-                        updateGallery();
-                    });
-                    thumbnailContainer.appendChild(thumb);
-                });
-            }
-
-            // Event Listeners
-            closeButton.addEventListener('click', closeGallery);
-            modalBackdrop.addEventListener('click', closeGallery);
-
-            prevButton.addEventListener('click', () => {
-                currentIndex = (currentIndex - 1 + images.length) % images.length;
-                updateGallery();
-            });
-
-            nextButton.addEventListener('click', () => {
-                currentIndex = (currentIndex + 1) % images.length;
-                updateGallery();
-            });
-
-            // Keyboard navigation
-            document.addEventListener('keydown', (e) => {
-                if (!modal.classList.contains('hidden')) {
-                    if (e.key === 'Escape') closeGallery();
-                    if (e.key === 'ArrowLeft') prevButton.click();
-                    if (e.key === 'ArrowRight') nextButton.click();
-                }
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Comparison Panel Functionality
-            const compareButton = document.getElementById('compareButton');
-            const mainContent = document.querySelector('.main-content');
-            const comparisonPanel = document.getElementById('comparisonPanel');
-            const comparisonVenues = document.getElementById('comparisonVenues');
-            const closeCompareBtn = document.getElementById('closeCompareBtn');
-
-            // Completely separate compare button handler
-            if (compareButton) {
-                compareButton.onclick = function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation(); // Stop other events from firing
-
-                    // Remove any photo gallery related classes/states
-                    const photoGalleryModal = document.getElementById('photoGalleryModal');
-                    if (photoGalleryModal) {
-                        photoGalleryModal.classList.add('hidden');
-                    }
-
-                    openComparisonPanel();
-                    return false;
-                };
-            }
-
-            function openComparisonPanel() {
-                document.body.style.overflow = 'hidden';
-                mainContent.classList.add('shifted');
-                document.querySelector('.main-container').classList.add('shifted');
-                comparisonPanel.classList.remove('hidden');
-                comparisonPanel.classList.add('active');
-                closeCompareBtn.classList.remove('hidden');
-                loadComparisonVenues();
-            }
-
-            function closeComparison() {
-                document.body.style.overflow = '';
-                mainContent.classList.remove('shifted');
-                document.querySelector('.main-container').classList.remove('shifted');
-                comparisonPanel.classList.remove('active');
-                setTimeout(() => {
-                    comparisonPanel.classList.add('hidden');
-                    closeCompareBtn.classList.add('hidden');
-                }, 300);
-            }
-
-            async function loadComparisonVenues() {
-                try {
-                    comparisonVenues.innerHTML = '<div class="text-center py-4">Loading venues...</div>';
-                    const response = await fetch('get_comparison_venues.php?current_venue_id=<?php echo $venue['id']; ?>');
-                    const venues = await response.json();
-
-                    if (venues.length === 0) {
-                        comparisonVenues.innerHTML = '<div class="text-center py-4">No venues available for comparison</div>';
-                        return;
-                    }
-
-                    comparisonVenues.innerHTML = venues.map(venue => `
-                        <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
-                            <div class="relative">
-                                <div class="relative w-full h-48 overflow-hidden">
-                                    <img src="./${venue.image_urls[0]}" 
-                                         alt="${venue.name}" 
-                                         class="w-full h-full object-cover">
-                                </div>
-                                <div class="p-4">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h3 class="text-lg font-semibold text-gray-900">${venue.name}</h3>
-                                        <div class="flex items-center">
-                                            <p class="font-bold text-sm">${parseFloat(venue.rating).toFixed(1)}</p>
-                                            <i class="fas fa-star text-yellow-500 ml-1"></i>
-                                        </div>
-                                    </div>
-                                    <p class="text-sm text-gray-500 line-clamp-2 mb-3">${venue.description}</p>
-                                    <div class="flex justify-between items-center">
-                                        <p class="text-gray-900">
-                                            <span class="font-semibold">₱${parseFloat(venue.price).toLocaleString()}</span>
-                                            <span class="text-sm"> / night</span>
-                                        </p>
-                                        <div class="flex gap-2">
-                                            <button onclick="toggleVenueDetails(${venue.id}, this)" 
-                                                    class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
-                                                View Details
-                                            </button>
-                                            <a href="venues.php?id=${venue.id}" 
-                                               class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors">
-                                                View Venue
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="venue-details-${venue.id}" class="hidden p-4 border-t">
-                                <div class="space-y-4">
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Place Description</h4>
-                                        <p class="text-sm text-gray-600">${venue.description}</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Venue Capacity</h4>
-                                        <p class="text-sm text-gray-600">${venue.capacity} guests</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Location</h4>
-                                        <p class="text-sm text-gray-600">${venue.location}</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Amenities</h4>
-                                        <ul class="text-sm text-gray-600 space-y-1">
-                                            ${JSON.parse(venue.amenities).map(amenity => `
-                                                <li>• ${amenity}</li>
-                                            `).join('')}
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">House Rules</h4>
-                                        <ul class="text-sm text-gray-600 space-y-1">
-                                            ${venue.rules ? JSON.parse(venue.rules).map(rule => `
-                                                <li>• ${rule}</li>
-                                            `).join('') : '<li>No specific rules listed</li>'}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                } catch (error) {
-                    console.error('Error loading comparison venues:', error);
-                    comparisonVenues.innerHTML = '<div class="text-center py-4 text-red-500">Error loading venues</div>';
-                }
-            }
-
-            // Function to toggle venue details
-            window.toggleVenueDetails = function (venueId, button) {
-                const detailsSection = document.getElementById(`venue-details-${venueId}`);
-                if (detailsSection.classList.contains('hidden')) {
-                    detailsSection.classList.remove('hidden');
-                    button.textContent = 'Hide Details';
+        <!-- Current Rental Tab -->
+        <div id="current-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
+
+                <?php
+                if (empty($currentBooking)) {
+                    // Skip rendering if all fields are NULL
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any current bookings.</p>';
                 } else {
-                    detailsSection.classList.add('hidden');
-                    button.textContent = 'View Details';
+                    foreach ($currentBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
+                                </h2>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                        <?php
+                                        switch ($booking['booking_status_id']) {
+                                            case '1':
+                                                echo 'Pending';
+                                                break;
+                                            case '2':
+                                                echo 'Approved';
+                                                break;
+                                            case '3':
+                                                echo 'Cancelled';
+                                                break;
+                                            case '4':
+                                                echo 'Completed';
+                                                break;
+                                            default:
+                                                echo 'Unknown';
+                                                break;
+                                        }
+                                        ?>
+                                    </span>
+                                    <?php
+                                    if ($bookingStartDate > $currentDateTime): ?>
+                                        <span
+                                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                            Booking</span> <!-- Tag for future booking -->
+                                    <?php else: ?>
+                                        <span class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                            Booking</span> <!-- Tag for started booking -->
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="flex gap-6">
+                                <?php
+                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                ?>
+
+                                <?php if (!empty($imageUrls)): ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                        class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                                <?php endif; ?>
+
+                                <div class="flex-1">
+                                    <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
+                                    <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                    <p class="text-gray-600 mt-1">
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                        for
+                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                        days
+                                    </p>
+                                    <p class="text-gray-600 mt-1">
+                                        <?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?>
+                                    </p>
+                                    <div class="mt-4 space-x-4">
+                                        <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                            Details</button>
+                                        <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'],
+                                                'venue_name' => $booking['venue_name'],
+                                                'booking_start_date' => $booking['booking_start_date'],
+                                                'booking_end_date' => $booking['booking_end_date'],
+                                                'booking_duration' => $booking['booking_duration'],
+                                                'booking_grand_total' => $booking['booking_grand_total'],
+                                                'booking_payment_method' => $booking['booking_payment_method'],
+                                                'booking_payment_reference' => $booking['booking_payment_reference'],
+                                                'booking_service_fee' => $booking['booking_service_fee'],
+                                                'venue_location' => $booking['venue_location']
+                                            ])); ?>)" 
+                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                <i class="fas fa-print mr-2"></i>Print Receipt
+                                            </button>
+                                        <?php endif; ?>
+                                        <?php
+
+                                        if ($bookingStartDate > $currentDateTime):
+                                            ?>
+                                            <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
+                                                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                                Booking</button>
+                                            <?php
+                                        endif;
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
                 }
-            }
+                ?>
+            </div>
+        </div>
+        <!-- Previous Rentals Tab -->
+        <div id="previous-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <?php
+                // var_dump($previousBooking);
+                
+                if (empty($previousBooking)) {
+                    // Skip rendering if all fields are NULL
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
+                } else {
+                    foreach ($previousBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
 
-            // Make loadComparisonVenues available globally
-            window.loadComparisonVenues = loadComparisonVenues;
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-28 h-28 object-cover rounded-lg">
+                                    <?php endif; ?>
+                                    <div>
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?></p>
+                                        <p class="text-gray-600">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
+                                        <div class="mt-4 ">
+                                            <div class="flex flex-row">
+                                                <form id="reviewForm">
+                                                    <div class="flex items-center mb-3">
+                                                        <div class="flex items-center space-x-1">
+                                                            <input type="number" class="hidden" name="venueId"
+                                                                value="<?php echo htmlspecialchars($booking['venue_id']) ?>">
+                                                            <label onclick="rate(1)" for="one"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="1">
+                                                                <input type="radio" name="ratings" value="1" class="hidden"
+                                                                    id="one">★</label>
+                                                            <label onclick="rate(2)" for="two"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="2">
+                                                                <input type="radio" name="ratings" value="2" class="hidden"
+                                                                    id="two">★</label>
+                                                            <label onclick="rate(3)" for="three"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="3">
+                                                                <input type="radio" name="ratings" value="3" class="hidden"
+                                                                    id="three">★</label>
+                                                            <label onclick="rate(4)" for="four"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="4">
+                                                                <input type="radio" name="ratings" value="4" class="hidden"
+                                                                    id="four">★</label>
+                                                            <label onclick="rate(5)" for="five"
+                                                                class="text-2xl text-gray-300 hover:text-yellow-400 star"
+                                                                data-rating="5">
+                                                                <input type="radio" name="ratings" value="5" class="hidden"
+                                                                    id="five">★</label>
+                                                        </div>
+                                                        <span class="ml-2 text-sm text-gray-600">Rate your stay</span>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <textarea id="review-text" name="review-text"
+                                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                                                            rows="3" placeholder="Share your experience (optional)"></textarea>
+                                                    </div>
+                                                    <div class="flex space-x-4">
+                                                        <button type="submit"
+                                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                            Submit Review
+                                                        </button>
+                                                        <button
+                                                            onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
+                                                            Details</button>
+                                                        <button id="bookAgainBtn"
+                                                            data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
+                                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                            Book Again
+                                                        </button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+        <!-- Cancelled Rentals Tab -->
+        <div id="cancelled-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <?php
+                if (empty($cancelledBooking)) {
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any cancelled bookings.</p>';
+                } else {
+                    foreach ($cancelledBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
+
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-28 h-28 object-cover rounded-lg">
+                                    <?php endif; ?>
+                                    <div>
+                                        <p class="text-lg font-medium">
+                                            <?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?></p>
+                                        <p class="text-gray-600">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
+
+
+                                        <h4 class="text-gray-600">Reason:
+                                            <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
+                                        </h4>
+
+
+                                        <div class="mt-4">
+                                            <button id="bookAgainBtn"
+                                                data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
+                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                Book Again
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+
+        <!-- Details Modal -->
+        <div id="details-modal"
+            class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div
+                class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-xl font-bold" id="modal-title"></h3>
+                    <button onclick="closeModal()"
+                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Modal Content -->
+                <div id="modal-content" class="mt-4">
+                    <!-- Main image and details container -->
+                    <div class="flex flex-col items-center">
+                        <!-- Images Section -->
+                        <div class="w-full max-w-md mb-6">
+                            <!-- Main Image -->
+                            <div class="relative h-64 rounded-lg overflow-hidden mb-2">
+                                <img id="modal-main-image" src="" alt="Venue Main Image"
+                                    class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
+                            </div>
+
+                            <!-- Horizontal Thumbnail Strip -->
+                            <div class="flex gap-2 overflow-x-auto" id="image-gallery">
+                                <!-- Thumbnail images will be inserted here -->
+                            </div>
+                        </div>
+
+                        <!-- Details Section -->
+                        <div class="w-full space-y-4">
+                            <!-- Move Booking Status to left -->
+                            <div class="flex items-center gap-2">
+                                <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                                <span id="booking-type" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                            </div>
+
+                            <!-- Rest of the content -->
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <h4 class="font-semibold text-base mb-2">Price Details</h4>
+                                <div class="space-y-1">
+                                    <p id="price-per-night" class="text-xl font-bold"></p>
+                                    <p id="booking-duration" class="text-gray-600 text-sm"></p>
+                                    <p id="cleaning-fee" class="text-gray-600 text-sm"></p>
+                                </div>
+                            </div>
+
+                            <!-- Two Column Layout for Other Details -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <!-- Location Section -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Location</h4>
+                                        <div class="space-y-0.5 text-gray-600 text-sm" id="location-details">
+                                        </div>
+                                    </div>
+
+                                    <!-- Capacity -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Capacity</h4>
+                                        <p id="venue-capacity" class="text-gray-600 text-sm"></p>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <!-- Amenities -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Amenities</h4>
+                                        <ul id="amenities-list" class="text-gray-600 text-sm space-y-0.5">
+                                        </ul>
+                                    </div>
+
+                                    <!-- Contact Information -->
+                                    <div>
+                                        <h4 class="font-semibold text-base mb-1">Contact Information</h4>
+                                        <div class="space-y-0.5 text-gray-600 text-sm" id="contact-details">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex justify-center gap-3 pt-2">
+                                <div id="book-again-container" class="hidden">
+                                    <button
+                                        class="px-4 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm">
+                                        Book Again
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reviews Section -->
+                    <div id="reviews-section" class="mt-6 pt-4 border-t">
+                        <h4 class="font-semibold text-base mb-3">Reviews</h4>
+                        <div id="reviews-container" class="space-y-3">
+                            <!-- Reviews will be dynamically loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancellation Modal -->
+        <div id="cancellation-modal"
+            class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div
+                class="relative top-20 mx-auto p-6 border w-full max-w-lg shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h3 class="text-xl font-bold">Cancel Booking</h3>
+                    <button onclick="closeCancellationModal()"
+                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mt-3 mb-3">Cancellation Policy</h4>
+                    <div class="space-y-3">
+                        <p class="text-gray-700 text-xs">Free cancellation for 48 hours after booking.</p>
+                        <p class="text-gray-700 text-xs">Cancel before check-in and get a full refund, minus the
+                            service
+                            fee.</p>
+                        <div class="mt-4">
+                            <h5 class="font-medium mb-2">Refund Policy:</h5>
+                            <ul class="space-y-2 text-gray-700 text-xs">
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-green-600"></i>
+                                    <span>100% refund: Cancel 7 days before check-in</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-check text-green-600"></i>
+                                    <span>50% refund: Cancel 3-7 days before check-in</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fas fa-times text-red-600"></i>
+                                    <span>No refund: Cancel less than 3 days before check-in</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="mt-4">
+                    <form id="cancellation-form">
+                        <input type="hidden" id="cancellation-booking-id" name="booking-id">
+                        <div class="mb-4">
+                            <label for="cancellation-reason" class="block font-medium text-gray-700">Reason for
+                                Cancellation</label>
+                            <textarea id="cancellation-reason" name="cancellation-reason"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                                rows="4" placeholder="Enter your reason for cancellation"></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-4">
+                            <button type="button" onclick="closeCancellationModal()"
+                                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                            <button type="submit"
+                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script>
+    function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
         });
-    </script>
+        document.getElementById(tabName + '-tab').classList.remove('hidden');
 
-    <!-- Photo Gallery Functionality -->
-    <script>
-        // Photo Gallery Functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const showAllPhotosBtn = document.getElementById('showAllPhotosBtn');
-            const photoGalleryModal = document.getElementById('photoGalleryModal');
-
-            // Only attach photo gallery event to the show all photos button
-            if (showAllPhotosBtn) {
-                showAllPhotosBtn.onclick = function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openGallery(0);
-                    return false;
-                };
-            }
-
-            // Rest of the photo gallery code...
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('border-black', 'text-gray-900');
+            btn.classList.add('border-transparent', 'text-gray-500');
         });
-    </script>
 
-</body>
+        event.currentTarget.classList.remove('border-transparent', 'text-gray-500');
+        event.currentTarget.classList.add('border-black', 'text-gray-900');
+    }
 
-</html>
+    // Set default tab to 'pending'
+    document.addEventListener('DOMContentLoaded', function () {
+        showTab('pending');
+    });
+
+    function showDetails(booking) {
+        const modal = document.getElementById('details-modal');
+        const bookAgainContainer = document.getElementById('book-again-container');
+
+        // Show modal with fade-in effect
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.add('opacity-100');
+            modal.querySelector('.relative').classList.add('scale-100');
+            modal.querySelector('.relative').classList.remove('scale-95');
+        });
+
+        // Set main title
+        document.getElementById('modal-title').textContent = booking.venue_name;
+
+        // Setup main image and gallery
+        const mainImage = document.getElementById('modal-main-image');
+        mainImage.src = './' + booking.image_urls.split(',')[0];
+
+        // Setup image gallery with horizontal thumbnails
+        const imageGallery = document.getElementById('image-gallery');
+        const imageUrls = booking.image_urls.split(',');
+        imageGallery.innerHTML = imageUrls.map(url => `
+            <div class="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden">
+                <img src="./${url}" 
+                    alt="Venue Image" 
+                    class="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity duration-200" 
+                    onclick="changeMainImage(this.src)">
+            </div>
+        `).join('');
+
+        // Set booking status and type
+        const bookingStatus = document.getElementById('booking-status');
+        const statusText = getBookingStatusText(booking.booking_status_id);
+        bookingStatus.textContent = statusText;
+        bookingStatus.className = `px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.booking_status_id)}`;
+
+        // Set price details
+        document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
+        document.getElementById('booking-duration').textContent = `${booking.booking_duration} days`;
+        document.getElementById('cleaning-fee').textContent = `Cleaning fee: ₱500`;
+
+        // Set location details
+        const locationDetails = document.getElementById('location-details');
+        locationDetails.innerHTML = `
+            <p>${booking.venue_location}</p>
+            <p>Governor Camins Avenue, Zone II</p>
+            <p>Baliwasan, Zamboanga City</p>
+            <p>Zamboanga Peninsula, 7000</p>
+        `;
+
+        // Set capacity and amenities (using the original amenities)
+        document.getElementById('venue-capacity').textContent = `${booking.venue_capacity || 3} guests`;
+        const amenitiesList = document.getElementById('amenities-list');
+        amenitiesList.innerHTML = `
+            <li>• Pool</li>
+            <li>• WiFi</li>
+            <li>• Air-conditioned Room</li>
+            <li>• Smart TV</li>
+        `;
+
+        // Set contact details (using the original contact info)
+        const contactDetails = document.getElementById('contact-details');
+        contactDetails.innerHTML = `
+            <p>Email: joevinansoc870@gmail.com</p>
+            <p>Phone: 09053258512</p>
+        `;
+
+        // Toggle book again button
+        bookAgainContainer.classList.toggle('hidden', booking.booking_status_id === '2');
+    }
+
+    // Helper functions
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function getBookingStatusText(statusId) {
+        const statuses = {
+            '1': 'Pending',
+            '2': 'Approved',
+            '3': 'Cancelled',
+            '4': 'Completed'
+        };
+        return statuses[statusId] || 'Unknown';
+    }
+
+    function getStatusColor(statusId) {
+        const colors = {
+            '1': 'bg-yellow-100 text-yellow-800',
+            '2': 'bg-green-100 text-green-800',
+            '3': 'bg-red-100 text-red-800',
+            '4': 'bg-blue-100 text-blue-800'
+        };
+        return colors[statusId] || 'bg-gray-100 text-gray-800';
+    }
+
+    // Update close modal function with smooth transition
+    function closeModal() {
+        const modal = document.getElementById('details-modal');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('.relative').classList.remove('scale-100');
+        modal.querySelector('.relative').classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    function changeMainImage(src) {
+        const mainImage = document.getElementById('modal-main-image');
+        mainImage.style.opacity = '0';
+        setTimeout(() => {
+            mainImage.src = src;
+            mainImage.style.opacity = '1';
+        }, 200);
+    }
+
+    function cancelBooking(bookingId) {
+        document.getElementById('cancellation-booking-id').value = bookingId;
+        showCancellationModal();
+    }
+
+    function showCancellationModal() {
+        const modal = document.getElementById('cancellation-modal');
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+            modal.classList.add('opacity-100');
+            modal.querySelector('.relative').classList.add('scale-100');
+            modal.querySelector('.relative').classList.remove('scale-95');
+        });
+    }
+
+    function closeCancellationModal() {
+        const modal = document.getElementById('cancellation-modal');
+        modal.classList.remove('opacity-100');
+        modal.querySelector('.relative').classList.remove('scale-100');
+        modal.querySelector('.relative').classList.add('scale-95');
+
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    function rate(rating) {
+        currentRating = rating;
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.remove('text-gray-300');
+                star.classList.add('text-yellow-400');
+            } else {
+                star.classList.remove('text-yellow-400');
+                star.classList.add('text-gray-300');
+            }
+        });
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById('details-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    function printReceipt(bookingData) {
+        const receiptWindow = window.open('', '_blank');
+        
+        const receiptHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Booking Receipt</title>
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 1.5cm;
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        max-width: 800px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        color: #333;
+                        line-height: 1.6;
+                    }
+                    .logo {
+                        width: 180px;
+                        height: auto;
+                        margin-bottom: 10px;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 40px;
+                        padding-bottom: 20px;
+                        border-bottom: 2px solid #e5e5e5;
+                    }
+                    .header h1 {
+                        color: #1a1a1a;
+                        margin: 10px 0;
+                        font-size: 28px;
+                    }
+                    .header p {
+                        color: #666;
+                        font-size: 14px;
+                    }
+                    .receipt-details {
+                        margin-bottom: 30px;
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 20px;
+                    }
+                    .receipt-details .section {
+                        margin-bottom: 20px;
+                    }
+                    .receipt-details .section-title {
+                        font-weight: bold;
+                        color: #1a1a1a;
+                        margin-bottom: 10px;
+                        font-size: 16px;
+                    }
+                    .receipt-details .info {
+                        background: #f8f8f8;
+                        padding: 15px;
+                        border-radius: 8px;
+                    }
+                    .receipt-details .info div {
+                        margin-bottom: 8px;
+                        font-size: 14px;
+                    }
+                    .receipt-details .label {
+                        color: #666;
+                        font-weight: 500;
+                    }
+                    .total {
+                        margin-top: 30px;
+                        padding: 20px;
+                        background: #f8f8f8;
+                        border-radius: 8px;
+                    }
+                    .total-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 10px;
+                        font-size: 14px;
+                    }
+                    .grand-total {
+                        margin-top: 15px;
+                        padding-top: 15px;
+                        border-top: 2px solid #e5e5e5;
+                        font-weight: bold;
+                        font-size: 16px;
+                    }
+                    .footer {
+                        margin-top: 40px;
+                        text-align: center;
+                        color: #666;
+                        font-size: 12px;
+                        padding-top: 20px;
+                        border-top: 1px solid #e5e5e5;
+                    }
+                    @media print {
+                        .no-print {
+                            display: none;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo">
+                    <h1>Booking Receipt</h1>
+                    <p>Thank you for choosing HubVenue!</p>
+                </div>
+                
+                <div class="receipt-details">
+                    <div class="section">
+                        <div class="section-title">Booking Information</div>
+                        <div class="info">
+                            <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
+                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
+                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                            <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Venue Details</div>
+                        <div class="info">
+                            <div><span class="label">Venue Name:</span> ${bookingData.venue_name}</div>
+                            <div><span class="label">Location:</span> ${bookingData.venue_location}</div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Payment Details</div>
+                        <div class="info">
+                            <div><span class="label">Payment Method:</span> ${bookingData.booking_payment_method}</div>
+                            <div><span class="label">Reference Number:</span> ${bookingData.booking_payment_reference}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total">
+                    <div class="total-row">
+                        <span>Service Fee</span>
+                        <span>₱${parseFloat(bookingData.booking_service_fee).toFixed(2)}</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>Total Amount</span>
+                        <span>₱${parseFloat(bookingData.booking_grand_total).toFixed(2)}</span>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    <p>This is an electronically generated receipt. For questions or concerns, please contact our support team.</p>
+                    <p>© ${new Date().getFullYear()} HubVenue. All rights reserved.</p>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        receiptWindow.document.write(receiptHTML);
+        receiptWindow.document.close();
+
+        receiptWindow.onload = function() {
+            receiptWindow.print();
+            receiptWindow.onafterprint = function() {
+                receiptWindow.close();
+            };
+        };
+    }
+</script>
+
+<style>
+    #modal-main-image {
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    #image-gallery {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    }
+
+    #image-gallery::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    #image-gallery::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    #image-gallery::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+    }
+
+    #image-gallery img {
+        aspect-ratio: 1/1;
+    }
+</style>
