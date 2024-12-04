@@ -25,7 +25,7 @@
           <input type="text" id="guests" readonly placeholder="Add guests" class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent cursor-pointer">
           
           <!-- Guest counter dropdown -->
-          <div id="guestDropdown" class="hidden absolute top-full left-0 mt-2 w-72 bg-slate-50 rounded-2xl shadow-lg border border-gray-200 p-4 z-50">
+          <div id="guestDropdown" style="z-index: 500;" class="hidden absolute top-full left-0 mt-2 w-72 bg-slate-50 rounded-2xl shadow-lg border border-gray-200 p-4">
               <!-- Adults -->
               <div class="flex items-center justify-between py-3 border-b">
                   <div>
@@ -97,7 +97,7 @@
             Check venues
           </button>
         </div>
-        <div class="hidden lg:block scroll-animate" style="transition-delay: 0.6s;">
+        <div class="hidden lg:block scroll-animate" style="z-index: 100;" style="transition-delay: 0.6s;">
           <img
             src="./images/R.png"
             alt="VenueSpot Mascot"
