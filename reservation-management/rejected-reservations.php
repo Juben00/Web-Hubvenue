@@ -8,7 +8,7 @@ $accountObj = new Account();
 $allReservations = $venueObj->getBookings();
 
 // Filter for status_id = 4 (Completed)
-$Reservations = array_filter($allReservations, function($booking) {
+$Reservations = array_filter($allReservations, function ($booking) {
     return $booking['booking_status_id'] == 4;
 });
 
@@ -35,14 +35,16 @@ function formatDate($date)
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
-            <input type="text" id="customerFilter" class="border rounded p-2 w-full" placeholder="Filter by customer name">
+            <input type="text" id="customerFilter" class="border rounded p-2 w-full"
+                placeholder="Filter by customer name">
         </div>
     </div>
     <div class="flex items-center gap-2">
         <button id="applyFilters" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors">
             Apply Filters
         </button>
-        <button id="clearFilters" class="border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded hover:bg-gray-100 transition-colors">
+        <button id="clearFilters"
+            class="border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded hover:bg-gray-100 transition-colors">
             Clear
         </button>
     </div>
@@ -79,6 +81,14 @@ function formatDate($date)
                 <?php
                 if (!empty($Reservations)) {
                     foreach ($Reservations as $reservation) {
+
+                        $original_price = $reservation['booking_original_price']; // Example original price
+                        $discount_value = number_format($reservation['discount_value']); // Assuming this is 30
+                
+                        $discount_decimal = $discount_value / 100;
+
+                        $discounted_price = $original_price * $discount_decimal;
+
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
@@ -119,8 +129,8 @@ function formatDate($date)
 
 <!-- Keep the same script as cancelled-reservations.php -->
 <script>
-// Same script as cancelled-reservations.php
-$(document).ready(function() {
-    // ... (same filter functionality)
-});
-</script> 
+    // Same script as cancelled-reservations.php
+    $(document).ready(function () {
+        // ... (same filter functionality)
+    });
+</script>

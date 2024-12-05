@@ -82,8 +82,6 @@ function formatDate($date)
                 <?php
                 if (!empty($Reservations)) {
                     foreach ($Reservations as $reservation) {
-                        ?>
-                        <?php
                         $original_price = $reservation['booking_original_price']; // Example original price
                         $discount_value = number_format($reservation['discount_value']); // Assuming this is 30
                 
@@ -106,7 +104,7 @@ function formatDate($date)
                             <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_original_price'], 2); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_discount'] ?: 'N/A'; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($discounted_price, 2) ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($discounted_price, 0) ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_payment_method']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_payment_reference']; ?></td>

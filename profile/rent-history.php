@@ -9,33 +9,32 @@ $cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
 $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
 // At the top of the file, get all booked dates for all venues
-$allBookedDates = [];
-foreach ($pendingBooking as $booking) {
-    $venueBookings = $venueObj->getBookedDates($booking['venue_id']);
-    $allBookedDates[$booking['venue_id']] = [];
+// $allBookedDates = [];
+// foreach ($pendingBooking as $booking) {
+//     $venueBookings = $venueObj->getBookedDates($booking['venue_id']);
+//     $allBookedDates[$booking['venue_id']] = [];
 
-    foreach ($venueBookings as $bookedBooking) {
-        // Skip the current booking's dates when rescheduling
-        if ($booking['booking_id'] != $bookedBooking['booking_id']) {
-            $start = new DateTime($bookedBooking['startdate']);
-            $end = new DateTime($bookedBooking['enddate']);
+//     foreach ($venueBookings as $bookedBooking) {
+//         // Skip the current booking's dates when rescheduling
+//         if ($booking['booking_id'] != $bookedBooking['booking_id']) {
+//             $start = new DateTime($bookedBooking['startdate']);
+//             $end = new DateTime($bookedBooking['enddate']);
 
-            // Add each date in the range to the array
-            $current = clone $start;
-            while ($current <= $end) {
-                $allBookedDates[$booking['venue_id']][] = $current->format('Y-m-d');
-                $current->modify('+1 day');
-            }
-        }
-    }
-}
+//             // Add each date in the range to the array
+//             $current = clone $start;
+//             while ($current <= $end) {
+//                 $allBookedDates[$booking['venue_id']][] = $current->format('Y-m-d');
+//                 $current->modify('+1 day');
+//             }
+//         }
+//     }
+// }
 
 ?>
 
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
     <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Your Rent History</h1>
-
         <!-- Tabs -->
         <div class="border-b border-gray-200 mb-6">
             <nav class="-mb-px flex space-x-8">
