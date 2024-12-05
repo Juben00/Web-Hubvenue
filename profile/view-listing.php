@@ -10,6 +10,12 @@ $venueView = $venueObj->getSingleVenue($getParams);
 
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
+
+$bookings = $venueObj->getBookingByVenue($_GET['id'], 2);
+
+$bookingCount = 0;
+$bookingRevenue = 0;
+$bookingThisMonth = 0;
 ?>
 <head>
     <link rel="stylesheet" href="./output.css">
@@ -22,6 +28,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             Back to Listings
+            
         </a>
     </div>
 
@@ -481,25 +488,46 @@ $reviews = $venueObj->getReview($_GET['id']);
                     </button>
                 </div>
 
+                <?php 
+                $currentMonth = new DateTime(); // Defaults to the current date and time
+                foreach ($bookings as $booking) {
+                    $bookingCount += $booking['booking_count']; // Aggregate booking count
+                    $bookingRevenue += $booking['booking_grand_total']; // Aggregate revenue
+                
+                    $bookingEndDate = new DateTime($booking['booking_end_date']);
+
+                    if (
+                        $bookingEndDate->format('Y') === $currentMonth->format('Y') &&
+                        $bookingEndDate->format('m') === $currentMonth->format('m')
+                    ) {
+                        $bookingThisMonth += 1; // Increment count for bookings this month
+                    }
+                }
+                ?>
+
+                <?php
+                // var_dump($bookings);
+                ?>
+
                 <!-- Quick Stats -->
                 <div class="border-t pt-6">
-                    <h4 class="text-sm font-medium text-gray-700 mb-3">Quick Stats</h4>
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Booking Statistics</h4>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-sm text-gray-600">Total Bookings</p>
-                            <p class="text-xl font-semibold">24</p>
+                            <p class="text-xl font-semibold"><?php echo htmlspecialchars($bookingCount)?></p>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-sm text-gray-600">This Month</p>
-                            <p class="text-xl font-semibold">3</p>
+                            <p class="text-xl font-semibold"><?php echo htmlspecialchars($bookingThisMonth)?></p>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-sm text-gray-600">Revenue</p>
-                            <p class="text-xl font-semibold">₱360k</p>
+                            <p class="text-xl font-semibold">₱<?php echo htmlspecialchars($bookingRevenue) ?></p>
                         </div>
                         <div class="bg-gray-50 p-3 rounded-lg">
                             <p class="text-sm text-gray-600">Rating</p>
-                            <p class="text-xl font-semibold">4.8/5</p>
+                            <p class="text-xl font-semibold"><?php echo number_format($ratings['average'], 1) ?>/5</p>
                         </div>
                     </div>
                 </div>
@@ -508,25 +536,44 @@ $reviews = $venueObj->getReview($_GET['id']);
                 <div class="border-t pt-6 mt-6">
                     <h4 class="text-lg font-semibold mb-4">Recent Reservations</h4>
                     <div class="space-y-4">
+
+                        <?php 
+                        if(empty($bookings)){
+                            echo '<p class="text-gray-600 text-xs text-center">No bookings found.</p>';
+                        }
+                        foreach($bookings AS $booking):
+                        ?>
                         <!-- Sample Reservation Items -->
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-start mb-2">
                                 <div>
                                     <p class="font-medium">Wedding Reception</p>
-                                    <p class="text-sm text-gray-600">Maria Santos</p>
+                                    <p class="text-sm text-gray-600"><?php echo htmlspecialchars($booking['firstname'] . " " . $booking['middlename']. "." . " " .  $booking['lastname']); ?></p>
                                 </div>
                                 <span
                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                     Confirmed
                                 </span>
                             </div>
-                            <div class="flex justify-between text-sm text-gray-600">
-                                <p>Dec 15, 2024</p>
-                                <p>₱15,000</p>
+                            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                <p class="text-gray-600 mt-1">
+                                        <?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?>
+                                    </p>
                             </div>
+                            <p>₱<?php echo htmlspecialchars($booking['booking_grand_total'])?></p>
                         </div>
+                        <?php
+                        endforeach;
+                        ?>
+                    </div>
 
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        
+
+                        <!-- <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-start mb-2">
                                 <div>
                                     <p class="font-medium">Birthday Party</p>
@@ -558,8 +605,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                                 <p>Nov 30, 2024</p>
                                 <p>₱20,000</p>
                             </div>
-                        </div>
-                    </div>
+                        </div> -->
 
                     <!-- View All Reservations Link -->
                     <div class="mt-4 text-center">
