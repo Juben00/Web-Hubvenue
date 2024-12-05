@@ -980,7 +980,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
                     const totalEntranceFee = entranceFee * guests;
-                    const serviceFee = pricePerNight * serviceFeeRate;
+                    const serviceFee = totalPriceForNights * serviceFeeRate;
                     let grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
 
                     // Apply discount if applicable
