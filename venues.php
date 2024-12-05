@@ -904,7 +904,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         validateDateRange();
                         calculateTotal();
                         if (input.name === 'checkin') {
-                            checkoutInput.flatpickr.set('minDate', dateStr); // Set minDate for checkout based on checkin
+                            checkoutInput._flatpickr.set('minDate', dateStr); // Set minDate for checkout based on checkin
                         }
                     }
                 });
@@ -968,7 +968,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                 const discountRate = <?php
                 if ($discountStatus) {
                     if ($discountStatus['status'] == 'Active') {
-                        echo $discountStatus['discount_value'];
+                        echo $discountStatus['discount_value'] / 100; // Convert percentage to decimal
                     } else {
                         echo 0;
                     }

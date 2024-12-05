@@ -8,7 +8,7 @@ $accountObj = new Account();
 $allReservations = $venueObj->getBookings();
 
 // Filter for status_id = 3 (Cancelled)
-$Reservations = array_filter($allReservations, function($booking) {
+$Reservations = array_filter($allReservations, function ($booking) {
     return $booking['booking_status_id'] == 3;
 });
 
@@ -35,14 +35,16 @@ function formatDate($date)
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
-            <input type="text" id="customerFilter" class="border rounded p-2 w-full" placeholder="Filter by customer name">
+            <input type="text" id="customerFilter" class="border rounded p-2 w-full"
+                placeholder="Filter by customer name">
         </div>
     </div>
     <div class="flex items-center gap-2">
         <button id="applyFilters" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 transition-colors">
             Apply Filters
         </button>
-        <button id="clearFilters" class="border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded hover:bg-gray-100 transition-colors">
+        <button id="clearFilters"
+            class="border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded hover:bg-gray-100 transition-colors">
             Clear
         </button>
     </div>
@@ -79,6 +81,13 @@ function formatDate($date)
                 <?php
                 if (!empty($Reservations)) {
                     foreach ($Reservations as $reservation) {
+                        $original_price = $reservation['booking_original_price']; // Example original price
+                        $discount_value = number_format($reservation['discount_value']); // Assuming this is 30
+                
+                        $discount_decimal = $discount_value / 100;
+
+                        $discounted_price = $original_price * $discount_decimal;
+
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
@@ -119,70 +128,70 @@ function formatDate($date)
 
 <!-- Keep the same script as approved-reservations.php but remove the cancel button handlers -->
 <script>
-$(document).ready(function() {
-    // Handle filter functionality
-    $('#applyFilters').click(function() {
-        applyFilters();
-    });
-
-    // Handle clear filters
-    $('#clearFilters').click(function() {
-        $('#startDate, #endDate, #venueFilter, #customerFilter').val('');
-        $('#reservationsTable tr').show();
-        $('#noResultsRow').remove();
-    });
-
-    function applyFilters() {
-        const startDate = $('#startDate').val();
-        const endDate = $('#endDate').val();
-        const venue = $('#venueFilter').val().toLowerCase();
-        const customer = $('#customerFilter').val().toLowerCase();
-
-        $('#noResultsRow').remove();
-        const dataRows = $('#reservationsTable tr:not(thead tr)');
-        let visibleRows = 0;
-
-        dataRows.each(function() {
-            const row = $(this);
-            if (row.attr('id') === 'noResultsRow') return;
-
-            const rowStartDate = new Date(row.find('td:eq(1)').text()).getTime();
-            const rowEndDate = new Date(row.find('td:eq(2)').text()).getTime();
-            const rowVenue = row.find('td:eq(7)').text().toLowerCase();
-            const rowCustomer = row.find('td:eq(4)').text().toLowerCase();
-
-            let showRow = true;
-
-            if (startDate && endDate) {
-                const filterStartTimestamp = new Date(startDate).getTime();
-                const filterEndTimestamp = new Date(endDate).getTime();
-
-                if (rowStartDate < filterStartTimestamp || rowEndDate > filterEndTimestamp) {
-                    showRow = false;
-                }
-            }
-
-            if (venue && !rowVenue.includes(venue)) {
-                showRow = false;
-            }
-
-            if (customer && !rowCustomer.includes(customer)) {
-                showRow = false;
-            }
-
-            if (showRow) {
-                visibleRows++;
-                row.show();
-            } else {
-                row.hide();
-            }
+    $(document).ready(function () {
+        // Handle filter functionality
+        $('#applyFilters').click(function () {
+            applyFilters();
         });
 
-        if (visibleRows === 0) {
-            $('#reservationsTable tbody').append(
-                '<tr id="noResultsRow"><td colspan="18" class="py-4 text-center">No results found</td></tr>'
-            );
+        // Handle clear filters
+        $('#clearFilters').click(function () {
+            $('#startDate, #endDate, #venueFilter, #customerFilter').val('');
+            $('#reservationsTable tr').show();
+            $('#noResultsRow').remove();
+        });
+
+        function applyFilters() {
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+            const venue = $('#venueFilter').val().toLowerCase();
+            const customer = $('#customerFilter').val().toLowerCase();
+
+            $('#noResultsRow').remove();
+            const dataRows = $('#reservationsTable tr:not(thead tr)');
+            let visibleRows = 0;
+
+            dataRows.each(function () {
+                const row = $(this);
+                if (row.attr('id') === 'noResultsRow') return;
+
+                const rowStartDate = new Date(row.find('td:eq(1)').text()).getTime();
+                const rowEndDate = new Date(row.find('td:eq(2)').text()).getTime();
+                const rowVenue = row.find('td:eq(7)').text().toLowerCase();
+                const rowCustomer = row.find('td:eq(4)').text().toLowerCase();
+
+                let showRow = true;
+
+                if (startDate && endDate) {
+                    const filterStartTimestamp = new Date(startDate).getTime();
+                    const filterEndTimestamp = new Date(endDate).getTime();
+
+                    if (rowStartDate < filterStartTimestamp || rowEndDate > filterEndTimestamp) {
+                        showRow = false;
+                    }
+                }
+
+                if (venue && !rowVenue.includes(venue)) {
+                    showRow = false;
+                }
+
+                if (customer && !rowCustomer.includes(customer)) {
+                    showRow = false;
+                }
+
+                if (showRow) {
+                    visibleRows++;
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+
+            if (visibleRows === 0) {
+                $('#reservationsTable tbody').append(
+                    '<tr id="noResultsRow"><td colspan="18" class="py-4 text-center">No results found</td></tr>'
+                );
+            }
         }
-    }
-});
-</script> 
+    });
+</script>
