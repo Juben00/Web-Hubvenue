@@ -19,26 +19,25 @@ $profilePic = $account->getProfilePic($_SESSION['user']['id']);
       <div class="flex-1 min-w-0 px-4">
         <label for="location" class="block text-sm font-medium text-gray-700">Where</label>
         <input type="text" id="location" placeholder="Search location"
-          class="w-full border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+          class="w-full border-0 focus:ring-0 focus:outline-none  bg-transparent">
       </div>
 
-      <div class="w-px h-10 bg-gray-300 mx-2"></div>
+      <div class=" h-10 bg-gray-300 mx-2"></div>
       <div class="flex-1 min-w-0 px-4">
         <label for="minPrice" class="block text-sm font-medium text-gray-700">Price Range</label>
         <div class="flex items-center gap-2">
           <input type="number" id="minPrice" placeholder="Min"
-            class="w-20 border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+            class="w-20 border-0 focus:ring-0 focus:outline-none  bg-transparent">
           <span class="text-gray-500">-</span>
           <input type="number" id="maxPrice" placeholder="Max"
-            class="w-20 border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+            class="w-20 border-0 focus:ring-0 focus:outline-none  bg-transparent">
         </div>
       </div>
 
-      <div class="w-px h-10 bg-gray-300 mx-2"></div>
+      <div class=" h-10 bg-gray-300 mx-2"></div>
       <div class="flex-1 min-w-0 px-4 relative">
         <label for="guests" class="block text-sm font-medium text-gray-700">Who</label>
-        <button id="guestsButton"
-          class="w-full text-left border-0 focus:ring-0 focus:outline-none text-lg bg-transparent">
+        <button id="guestsButton" class="w-full text-left border-0 focus:ring-0 focus:outline-none  bg-transparent">
           <span id="guestCount">Add guests</span>
         </button>
       </div>

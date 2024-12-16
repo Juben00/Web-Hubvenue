@@ -21,11 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (empty($userIdErr) && empty($venueIdErr)) {
         $result = $accountObj->addBookmark($userId, $venueId);
 
-        if ($result['status'] == 'success') {
-            echo json_encode(['status' => 'success', 'message' => $result['message'], 'action' => $result['action']]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        }
+        // if ($result['status'] == 'success') {
+        //     echo json_encode(['status' => 'success', 'message' => $result['message'], 'action' => $result['action']]);
+        // } else {
+        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
+        // }
+        echo json_encode($result);
+        exit();
     } else {
         echo json_encode(['status' => 'error', 'message' => implode("<br>", [$userIdErr, $venueIdErr])]);
     }

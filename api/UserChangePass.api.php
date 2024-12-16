@@ -42,11 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($userIdErr) && empty($currentPassErr) && empty($newPassErr) && empty($confirmPassErr)) {
         $result = $accountObj->updateUserPassword($userId, $currentPass, $newPass, $confirmPass);
-        if ($result['status'] === 'success') {
-            echo json_encode(['status' => 'success', 'message' => $result['message']]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        }
+        // if ($result['status'] === 'success') {
+        //     echo json_encode(['status' => 'success', 'message' => $result['message']]);
+        // } else {
+        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
+        // }
+        echo json_encode($result);
+        exit();
     } else {
         // Return the errors as a comma-separated message
         echo json_encode([

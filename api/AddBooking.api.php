@@ -86,11 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $result = $venueObj->bookVenue($booking_start_date, $booking_end_date, $booking_duration, $booking_status_id, $booking_participants, $booking_original_price, $booking_grand_total, $booking_guest_id, $booking_venue_id, $booking_discount, $bpm, $booking_payment_reference, $booking_payment_status_id, $booking_cancellation_reason, $booking_service_fee);
 
-        if ($result) {
-            echo json_encode(['status' => 'success', 'message' => $result['message']]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        }
+        // if ($result) {
+        //     echo json_encode(['status' => 'success', 'message' => $result['message']]);
+        // } else {
+        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
+        // }
+        echo json_encode($result);
+        exit();
 
     } else {
         echo json_encode([

@@ -660,19 +660,6 @@ class Account
         }
     }
 
-    // public function getUserById($userId)
-    // {
-    //     try {
-    //         $sql = "SELECT firstname, lastname FROM users WHERE id = ?";
-    //         $stmt = $this->db->prepare($sql);
-    //         $stmt->execute([$userId]);
-    //         return $stmt->fetch();
-    //     } catch (Exception $e) {
-    //         error_log($e->getMessage());
-    //         return false;
-    //     }
-    // }
-
     public function getDiscountApplications($search = "", $filter = "")
     {
         $sql = "SELECT 
@@ -734,21 +721,7 @@ class Account
         }
     }
 
-    // public function getUserById($userId) {
-    //     try {
-    //         $sql = "SELECT firstname, lastname FROM users WHERE id = ?";
-    //         $stmt = $this->db->prepare($sql);
-    //         $stmt->execute([$userId]);
-    //         return $stmt->fetch();
-    //     } catch (Exception $e) {
-    //         error_log($e->getMessage());
-    //         return false;
-    //     }
-    // }
-
 }
-
-// session_start();
 
 
 $accountObj = new Account();

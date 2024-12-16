@@ -27,16 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($venue_idErr) && empty($ratingErr) && empty($reviewErr)) {
         $accountObj = new Account();
-        $accountObj->giveReview($userId, $venueId, $review, $rating);
+        $result = $accountObj->giveReview($userId, $venueId, $review, $rating);
 
-        echo json_encode(['status' => 'success', 'message' => 'Review added successfully.']);
+        echo json_encode($result);
+        exit();
+
     } else {
-
-        echo json_encode(['status' => 'error', 'message' => 'Failed to give reviews.']);
+        echo json_encode(['status' => 'error', 'message' => implode('<br>', [$venue_idErr, $ratingErr, $reviewErr])]);
     }
-
-
-} else {
-    echo json_encode(['status' => 'error', 'message' => implode('<br>', [$venue_idErr, $ratingErr, $reviewErr])]);
 }
 ?>

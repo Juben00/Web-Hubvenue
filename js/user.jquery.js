@@ -145,6 +145,20 @@ $(document).ready(function () {
         menuRedirection(url);
     });
 
+    //help-center
+    $(document).on('click', "#helpCenterBtn", function (e) {
+        e.preventDefault();
+        const url = $(this).data("url");
+        menuRedirection(url);
+    })
+    
+    //notifications
+    $(document).on('click', "#notificationsBtn", function (e) {
+        e.preventDefault();
+        const url = $(this).data("url");
+        menuRedirection(url);
+    })
+
     //host application button
     $('#hostApplicationForm').on("submit", function (e) {
         e.preventDefault();
@@ -259,6 +273,9 @@ $(document).ready(function () {
             processData: false,  
             contentType: false, 
             success: function (response) {
+                response = JSON.parse(response);
+                console.log(response);
+                
                 if (response.status === "success") {
                     showModal(response.message, function () {
                         formElement[0].reset();
@@ -416,7 +433,7 @@ $(document).ready(function () {
         contentType: false,
         processData: false,
         success: function (response) {
-            if (response.status == "success") {
+            if (response.status === "success") {
                 showModal(
                     "Venue added successfully",
                     function () {
