@@ -80,11 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update user info
         $result = $accountObj->updateUserInfo($userId, $firstname, $lastname, $middlename, $bio ?? null, $sex, $birthdate, $address, $email, $contact, $profileImage ?? null);
 
-        if ($result['status'] === 'success') {
-            echo json_encode(['status' => 'success', 'message' => $result['message']]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        }
+        // if ($result['status'] === 'success') {
+        //     echo json_encode(['status' => 'success', 'message' => $result['message']]);
+        // } else {
+        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
+        // }
+        echo json_encode($result);
+        exit();
     } else {
         // Return validation errors as JSON
         echo json_encode([

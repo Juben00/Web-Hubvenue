@@ -52,11 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($discount_typeErr) && empty($fullnameErr) && empty($card_imageErr) && empty($imageErr)) {
         $result = $accountObj->discountApplication($userId, $discount_type, $fullname, $discount_id, $uploadedImage);
-        if ($result) {
-            echo json_encode(['status' => 'success', 'message' => $result['message']]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        }
+        // if ($result) {
+        //     echo json_encode(['status' => 'success', 'message' => $result['message']]);
+        // } else {
+        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
+        // }
+        echo json_encode($result);
+        exit();
     } else {
         echo json_encode([
             'status' => 'error',

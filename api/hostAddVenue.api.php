@@ -125,11 +125,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Add venue with image URLs to the database
         $result = $venueObj->addVenue();
 
-        if ($result['status'] === 'success') {
-            echo json_encode(['status' => 'success', 'message' => $result['message']]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        }
+        // if ($result['status'] === 'success') {
+        //     echo json_encode(['status' => 'success', 'message' => $result['message']]);
+        // } else {
+        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
+        // }
+        echo json_encode($result);
+        exit();
     } else {
         // Return validation errors as JSON
         echo json_encode([
