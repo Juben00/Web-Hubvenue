@@ -94,9 +94,6 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             height: 80vh;
             /* 3/4 of the viewport height */
         }
-    </style>
-    <style>
-        /* ... (rest of the styles remain unchanged) */
 
         #authModal {
             transition: opacity 0.3s ease-in-out;
@@ -106,16 +103,14 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         #signupForm {
             transition: opacity 0.3s ease-in-out;
         }
-    </style>
-    <style>
+
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-    </style>
-    <style>
+
         .bookmark-btn {
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
@@ -160,8 +155,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         .bookmark-btn.animate {
             animation: heartbeat 0.8s ease-in-out;
         }
-    </style>
-    <style>
+
         .scroll-animate {
             opacity: 0;
             transform: translateY(20px);
@@ -221,7 +215,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             </div>
 
             <!-- New second section -->
-            <section class="bg-slate-50 py-16">
+            <section class="bg-white py-16">
                 <!-- Content container with left margin for sidebar -->
                 <div class="ml-20">
                     <div class="container mx-auto px-4 md:px-8">
@@ -238,7 +232,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                     </div>
 
                     <!-- Second section with white background -->
-                    <div class="bg-slate-50 p-50 pt-10 relative z-10">
+                    <div class="bg-white p-50 pt-10 relative z-10">
                         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 scroll-animate">
                             <h2 class="text-3xl font-bold mb-4">Featured Venues</h2>
                             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 w-full h-full"
@@ -250,7 +244,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                 }
                                 foreach ($venues as $venue) {
                                     ?>
-                                    <div class="bg-slate-50 rounded-2xl overflow-hidden  cursor-pointer">
+                                    <div class="bg-white rounded-2xl overflow-hidden  cursor-pointer">
                                         <div class="relative">
                                             <!-- Slideshow Container for each venue -->
                                             <div class="relative w-full h-96 overflow-hidden">
@@ -270,7 +264,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                                 </div>
                                                 <?php if (isset($venue['venue_tag_name'])): ?>
                                                     <span
-                                                        class="absolute top-3 left-3 bg-slate-50 text-black text-xs font-semibold px-2 py-1 rounded-full z-50">
+                                                        class="absolute top-3 left-3 bg-white text-black text-xs font-semibold px-2 py-1 rounded-full z-50">
                                                         <?= htmlspecialchars($venue['venue_tag_name']) ?>
                                                     </span>
                                                 <?php endif; ?>
@@ -344,7 +338,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                 <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
                                     <!-- Space Rentals Card -->
                                     <div
-                                        class="group bg-slate-50 p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
                                             <img src="./images/serviceimages/pexels-pixabay-267569.jpg" alt="Rent Space"
                                                 class="w-full h-52 object-cover transform group-hover:scale-105 transition-transform duration-300">
@@ -358,7 +352,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                                     <!-- Post Your Space Card -->
                                     <div
-                                        class="group bg-slate-50 p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
                                             <img src="./images/serviceimages/pexels-rdne-7414284.jpg"
                                                 alt="Post Listings"
@@ -373,7 +367,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                                     <!-- Book Event Space Card -->
                                     <div
-                                        class="group bg-slate-50 p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
+                                        class="group bg-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scroll-animate grid-item-delay">
                                         <div class="relative overflow-hidden rounded-xl mb-4">
                                             <img src="./images/serviceimages/pexels-tima-miroshnichenko-6694575.jpg"
                                                 alt="Book Event"
@@ -396,7 +390,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                 <div class="flex flex-col gap-4">
 
                                     <div
-                                        class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
+                                        class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
                                         <h3 class="text-xl font-semibold  text-red-500 italic">Our Story</h3>
                                         <p>
                                             Hubvenue was born out of the need to streamline the often complex and
@@ -443,7 +437,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <!-- mission -->
                                         <div
-                                            class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
+                                            class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
                                             <h3 class="text-xl font-semibold  text-red-500 italic">Our Mission</h3>
                                             <p class="text-center">
                                                 To simplify finding and booking available venues, offering users an easy
@@ -456,7 +450,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                         </div>
                                         <!-- vission -->
                                         <div
-                                            class="flex flex-col items-center bg-slate-50 border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
+                                            class="flex flex-col items-center bg-white border p-4 lg:p-4 lg:py-8 rounded-lg shadow-md gap-2 scroll-animate">
                                             <h3 class="text-xl font-semibold  text-red-500 italic">Our Vision</h3>
                                             <p class="text-center">
                                                 To be the go to platform for venue reservations, helping people connect
@@ -470,7 +464,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
                                     <!-- FAQ -->
                                     <div
-                                        class="flex flex-col bg-slate-50 border text-neutral-700 p-4 lg:p-4 lg:py-8 rounded-lg shadow-md">
+                                        class="flex flex-col bg-white border text-neutral-700 p-4 lg:p-4 lg:py-8 rounded-lg shadow-md">
                                         <h3 class="text-xl font-semibold text-red-500 italic text-center">FAQs</h3>
                                         <div class="w-full ">
                                             <div class="faq-item mb-4">

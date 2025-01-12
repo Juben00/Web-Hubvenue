@@ -1,68 +1,121 @@
 <style>
   #map {
-    height: 500px;
+    height: 300px;
     width: 100%;
   }
 </style>
 
-<div id="openStreetMapDiv" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 ">
+<div id="openStreetMapDiv" class="fixed inset-0 bg-opacity-40 flex items-center justify-center z-50 ">
 
-    <div class="bg-slate-50 rounded-lg shadow-lg p-8 max-w-3xl w-full">
+    <div class="bg-neutral-50 relative rounded-lg shadow-lg p-8 max-w-3xl w-full">
         
-        <h3 class="mb-4 font-semibold">Click on the map to pin the location</h3>
+        <button
+      id="closeMap"
+      class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+        </button>
+
+        <h3 class="mb-4 font-semibold">Click on the map to pin  location</h3>
+        <div class="w-full flex items-center gap-2 mb-3">
+            <input type="text" class="p-2 flex-1 rounded-sm border " id="searchpin" placeholder="Enter location">
+            <button id="locationSearch" class="p-2 px-4 rounded-sm text-white bg-blue-500">Search</button>
+        </div>
         <div id="map"></div>
         
         <span class=" flex items-center gap-2 mt-4">
             <input type="text" id="OpenStreetaddress" placeholder="Selected Address" readonly class="flex-1 border p-2 rounded-md" />
-            <button id="openStreetMapSubmit" class="border bg-red-500 p-2 px-4 text-white rounded-md font-semibold hover:bg-red-600">OK</button>
+            <!-- <button id="openStreetMapSubmit" class="border bg-red-500 p-2 px-4 text-white rounded-md font-semibold hover:bg-red-600">OK</button> -->
         </span>
     </div>
     
-
-<script>
-
-   map = L.map('map').setView([6.9214, 122.0790], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // let marker;
-
-    map.on('click', function (e) {
-        if (marker) {
-            map.removeLayer(marker);
-        }
-
-        marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
-
-        fetch(`./proxy.php?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-
-                const address = data.display_name || "No address found";
-                document.getElementById('OpenStreetaddress').value = address;
-                //admin side
-                if(document.getElementById('venue-location')){
-                    document.getElementById('venue-location').value = address;
-                }
-                //user side
-                if(document.getElementById('address')){
-                    document.getElementById('address').value = address;
-                }
-
-                if(document.getElementById('signupaddress')){
-                    document.getElementById('signupaddress').value = address;
-                }
-
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                document.getElementById('OpenStreetaddress').value = "Error retrieving address";
-            });
-    });
-</script>
-
 </div>
+<script>
+    // let marker; // Declare marker variable
 
+map = L.map('map').setView([6.9214, 122.0790], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+map.on('click', function (e) {
+  if (marker) {
+    map.removeLayer(marker);
+  }
+
+  marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const address = data.display_name || "No address found";
+      document.getElementById('OpenStreetaddress').value = address;
+
+      if(document.getElementById('venue-location')){
+        document.getElementById('venue-location').value = address;
+      }
+
+        if(document.getElementById('signupaddress')){
+            document.getElementById('signupaddress').value = address;
+        }
+    })
+    .catch(err => {
+      console.error('Error:', err);
+      document.getElementById('OpenStreetaddress').value = "Error retrieving address";
+    });
+});
+
+document.getElementById('closeMap').addEventListener('click', function() {
+  document.getElementById('openStreetMapDiv').style.display = 'none';
+//   document.getElementById('location').value = '';
+//   document.getElementById('OpenStreetaddress').value = '';
+//   if (marker) {
+//     map.removeLayer(marker);
+//     marker = null;
+//   }
+});
+
+document.getElementById("locationSearch").addEventListener("click", function (e) {
+    e.preventDefault();
+    const location = document.getElementById("searchpin").value.trim();
+    console.log("Location entered:", location); // Debugging step
+    if (!location) {
+        alert("Please enter a location.");
+        return;
+    }
+    getCoordinates(location);
+});
+
+
+async function getCoordinates(address) {
+  const url = `https://nominatim.openstreetmap.org/search?q=${address}&format=json`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    // console.log(data);
+    if (data.length > 0) {
+      const { lat, lon } = data[0];
+      map.setView([lat, lon], 13);
+    } else {
+      alert("No results found for the entered location.");
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+</script>

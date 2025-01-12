@@ -3,9 +3,8 @@
   class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50"
 >
   <div
-    class="bg-slate-50 rounded-lg p-8 max-w-lg w-full mx-4 relative shadow-2xl"
+    class="bg-white rounded-lg p-8 max-w-lg w-full mx-4 relative shadow-2xl"
   >
-    <!-- Decreased max-width -->
     <!-- Close button -->
     <button
       id="closeModal"
@@ -56,14 +55,14 @@
       <!-- Login Form -->
       <form id="loginForm" class="space-y-2">
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700"
+          <label for="email" class="block text-md font-medium text-gray-700"
             >Email</label
           >
           <input
             type="text"
             id="email"
             name="email"
-            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+            class="mt-1 border block w-full p-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
             placeholder="hubvenue.user@email.com"
           />
         </div>
@@ -71,10 +70,10 @@
           <span class="flex justify-between items-center">
             <label
               for="password"
-              class="block text-sm font-medium text-gray-700"
+              class="block text-md font-medium text-gray-700"
               >Password</label
             >
-            <a href="#" class="text-sm text-blue-500 hover:text-blue-700"
+            <a href="#" class="text-md text-blue-500 hover:text-blue-700"
               >Forgot password?</a
             ></span
           >
@@ -82,65 +81,65 @@
             type="password"
             id="password"
             name="password"
-            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+            class="mt-1 border block w-full p-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
             placeholder="***********"
           />
         </div>
         <button
           type="submit"
-          class="w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-md font-medium text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Login
         </button>
       </form>
 
       <!-- Sign Up Form -->
-      <form id="signupForm" class="space-y-2 hidden">
+      <form id="signupForm" class="space-y-1 hidden">
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label
               for="firstName"
-              class="block text-sm font-medium text-gray-700"
+              class="block text-md font-medium text-gray-700"
               >First Name</label
             >
             <input
               type="text"
               id="firstname"
               name="firstname"
-              class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+              class="mt-1 border block w-full p-2  text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
               placeholder="John"
             />
           </div>
           <div>
             <label
               for="lastname"
-              class="block text-sm font-medium text-gray-700"
+              class="block text-md font-medium text-gray-700"
               >Last Name</label
             >
             <input
               type="text"
               id="lastname"
               name="lastname"
-              class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+              class="mt-1 border block w-full p-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
               placeholder="Doe"
             />
           </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label for="mi" class="block text-sm font-medium text-gray-700"
+            <label for="mi" class="block text-md font-medium text-gray-700"
               >M.I.</label
             >
             <input
               type="text"
               id="middlename"
               name="middlename"
-              class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+              class="mt-1 border block w-full p-2 rounded-md text-sm  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
               placeholder="M.I."
             />
           </div>
           <div>
-            <label for="sex" class="block text-sm font-medium text-gray-700"
+            <label for="sex" class="block text-md font-medium text-gray-700"
               >Sex</label
             >
             <select
@@ -158,62 +157,62 @@
           <div>
             <label
               for="birthdate"
-              class="block text-sm font-medium text-gray-700"
+              class="block text-md font-medium text-gray-700"
               >Birthday</label
             >
             <input
               type="date"
               id="birthdate"
               name="birthdate"
-              class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+              class="mt-1 border block w-full p-2 rounded-md text-sm  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
             />
           </div>
           <div>
-            <label for="contact" class="block text-sm font-medium text-gray-700"
+            <label for="contact" class="block text-md font-medium text-gray-700"
               >Contact Number</label
             >
             <input
               type="tel"
               id="contact"
               name="contact"
-              class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+              class="mt-1 border block w-full p-2 rounded-md text-sm  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
               placeholder="09*********"
             />
           </div>
         </div>
         <div>
            <label for="address"
-                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Address</label>
+                class="text-md font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Address</label>
             <span class="flex items-center space-x-2">
                 <input id="signupaddress" name="signupaddress" placeholder="Click the button to set a location" required type="text" 
-                class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                class="mt-1 border block w-full p-2  text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
                 readonly />
-              <button id="maps-button" class=" border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
+              <button id="maps-button" class="border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
                   <svg height="24px" width="24px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon> <polygon style="fill:#d3d5de;" points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 "></polygon> <polygon points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 "></polygon> <path style="fill:#e73023;" d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z"></path> <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle> </g></svg>
               </button>
             </span>
         </div>
         <div>
-          <label for="email" class="block text-sm font-medium text-gray-700"
+          <label for="email" class="block text-md font-medium text-gray-700"
             >Email</label
           >
           <input
             type="email"
             id="email"
             name="email"
-            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+            class="mt-1 border block w-full p-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
             placeholder="john.doe@email.com"
           />
         </div>
         <div>
-          <label for="password" class="block text-sm font-medium text-gray-700"
+          <label for="password" class="block text-md font-medium text-gray-700"
             >Password</label
           >
           <input
             type="password"
             id="password"
             name="password"
-            class="mt-1 border block w-full p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+            class="mt-1 border block w-full p-2 rounded-md text-sm  border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
             placeholder="**********"
           />
         </div>
@@ -222,7 +221,7 @@
             type="checkbox"
             id="agreeTerms"
             name="agreeTerms"
-            class="h-4 w-4 rounded accent-blue-500 border-gray-300"
+            class="h-4 w-4 rounded text-sm  accent-blue-500 border-gray-300"
           />
           <label for="agreeTerms" class="ml-2 block text-xs text-gray-700">
             I agree with all the
@@ -234,7 +233,7 @@
           type="submit"
           id="signupSubmit"
           disabled
-          class="disabled:bg-gray-300 disabled:text-neutral-400 w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-sm font-medium text-white enabled:bg-gradient-to-r from-blue-500 to-purple-600 enabled:hover:from-blue-600 enabled:hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="disabled:bg-gray-300 disabled:text-white-400 w-full py-2 px-4 duration-150 border border-transparent rounded-md shadow-sm text-md font-medium text-white enabled:bg-gradient-to-r from-blue-500 to-purple-600 enabled:hover:from-blue-600 enabled:hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Sign Up
         </button>
@@ -247,8 +246,8 @@
         <div class="absolute inset-0 flex items-center">
           <div class="w-full border-t border-gray-300"></div>
         </div>
-        <div class="relative flex justify-center text-sm">
-          <span class="px-2 bg-slate-50 text-gray-500">Or continue using</span>
+        <div class="relative flex justify-center text-md">
+          <span class="px-2 bg-white-50 text-gray-500">Or continue using</span>
         </div>
       </div>
 
@@ -256,7 +255,7 @@
         <div>
           <a
             href="#"
-            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white-50 text-md font-medium text-gray-500 hover:bg-gray-50"
           >
             <span class="sr-only">Sign in with Facebook</span>
             <svg
@@ -277,7 +276,7 @@
         <div>
           <a
             href="#"
-            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white-50 text-md font-medium text-gray-500 hover:bg-gray-50"
           >
             <span class="sr-only">Sign in with Twitter</span>
             <svg
@@ -296,7 +295,7 @@
         <div>
           <a
             href="#"
-            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-sm font-medium text-gray-500 hover:bg-gray-50"
+            class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white-50 text-md font-medium text-gray-500 hover:bg-gray-50"
           >
             <span class="sr-only">Sign in with Google</span>
             <svg

@@ -126,6 +126,10 @@ session_start();
             display: block;
         }
 
+        input {
+            background: transparent;
+        }
+
         .top-bar {
             position: fixed;
             top: 0;
@@ -163,9 +167,9 @@ session_start();
     include_once './components/Menu.html';
 
     ?>
-    <div class=" container mb-12 mx-auto px-4 py-8 max-w-2xl pt-28 ">
+    <div class="mb-12 mx-auto px-4 py-8 max-w-3xl pt-28 pb-16">
 
-        <form id="add-venue-form" class="mt-28" enctype="multipart/form-data" multiple> <!-- Adjusted max-width -->
+        <form id="add-venue-form" class="" enctype="multipart/form-data" multiple> <!-- Adjusted max-width -->
             <div id="step1" class="step active">
                 <h2 class="text-3xl font-semibold mb-2">Step 1</h2>
                 <h1 class="text-4xl font-bold mb-4">Tell us about your place</h1>
@@ -177,7 +181,7 @@ session_start();
 
             <div id="step2" class="step">
                 <h2 class="text-3xl font-semibold mb-4">Which of these best describes your place?</h2>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                     <label
                         class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black cursor-pointer peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input type="radio" name="placeType" value="Corporate Space" class="hidden peer">
@@ -241,7 +245,7 @@ session_start();
                 <p class="text-gray-600 mb-6">You can add more amenities after you publish your listing.</p>
 
                 <h2 class="text-xl font-semibold mb-4">What about these guest favorites?</h2>
-                <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="grid grid-cols-4 gap-4 mb-8">
                     <label for="Wifi"
                         class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Wifi" type="checkbox" name="amenities[]" value="Wifi" class="hidden peer">
@@ -330,7 +334,7 @@ session_start();
                 </div>
 
                 <h2 class="text-xl font-semibold mb-4">Do you have any standout amenities?</h2>
-                <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="grid grid-cols-4 gap-4 mb-8">
 
                     <label for="Pool"
                         class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
@@ -454,7 +458,7 @@ session_start();
                 </div>
 
                 <h2 class="text-xl font-semibold mt-8 mb-4">Do you have any of these safety items?</h2>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-4 gap-4">
 
                     <label for="Smoke alarm"
                         class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
@@ -510,19 +514,16 @@ session_start();
             </div>
 
             <div id="step4" class="step">
-                <div class="mt-80">
-                    <div class="absolute bottom-60">
-                        <h1 class="text-3xl font-bold ">Where's your place located?</h1>
-                        <p class="text-gray-600 ">Your address is only shared with guests after they've made a
-                            reservation.
-                        </p>
-
-                    </div>
-                    <?php require_once './openStreetMap/userOpenStreetMap.html' ?>
-                    <input type="text" id="venue-location" name="venue-location" class="hidden">
+                <div class="mb-4">
+                    <h1 class="text-3xl font-bold ">Where's your place located?</h1>
+                    <p class="text-gray-600 ">Your address is only shared with guests after they've made a
+                        reservation.
+                    </p>
                 </div>
-
+                <?php require_once './openStreetMap/userOpenStreetMap.html' ?>
+                <input type="text" id="venue-location" name="venue-location" class="hidden">
             </div>
+
 
             <div id="step5" class="step">
                 <h1 class="text-4xl font-bold mb-4">Add photos of your venue</h1>
