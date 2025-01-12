@@ -53,7 +53,7 @@ session_start();
 
         /* Label styles on peer interaction */
         label.peer-checked {
-            background-color: #3490dc;
+            color: #3490dc;
             /* Light gray background for the selected option */
             border-color: black;
             /* Highlight selected border */
@@ -244,10 +244,17 @@ session_start();
                 <h1 class="text-3xl font-bold mb-4">Tell guests what your place has to offer</h1>
                 <p class="text-gray-600 mb-6">You can add more amenities after you publish your listing.</p>
 
-                <h2 class="text-xl font-semibold mb-4">What about these guest favorites?</h2>
+                <div class="flex justify-between w-full items-center mb-4">
+                    <h2 class="text-xl font-semibold ">What about these guest favorites?</h2>
+                    <label for="firstCategoryButton" id="firstCategoryButtonLabel"
+                        class="flex items-center border duration-150 text-xs border-gray-800 rounded-full py-1 px-3 gap-2 cursor-pointer text-gray-700 hover:text-gray-900 focus-within:text-gray-900">
+                        <input type="checkbox" id="firstCategoryButton">
+                        <span class="font-medium duration-150" id="firstCategoryLabel">Select all</span>
+                    </label>
+                </div>
                 <div class="grid grid-cols-4 gap-4 mb-8">
                     <label for="Wifi"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class="firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Wifi" type="checkbox" name="amenities[]" value="Wifi" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -257,9 +264,8 @@ session_start();
                         <span class="block">Wifi</span>
                     </label>
 
-
                     <label for="TV"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-blue-300 peer-checked:border-black transition">
                         <input id="TV" type="checkbox" name="amenities[]" value="TV" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -269,9 +275,8 @@ session_start();
                         <span class="block">TV</span>
                     </label>
 
-
                     <label for="Kitchen"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Kitchen" type="checkbox" name="amenities[]" value="Kitchen" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -281,9 +286,8 @@ session_start();
                         <span class="block">Kitchen</span>
                     </label>
 
-
                     <label for="Free parking on premises"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Free parking on premises" type="checkbox" name="amenities[]"
                             value="Free parking on premises" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -294,9 +298,8 @@ session_start();
                         <span class="block">Free parking on premises</span>
                     </label>
 
-
                     <label for="Paid parking on premises"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Paid parking on premises" type="checkbox" name="amenities[]"
                             value="Paid parking on premises" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -308,7 +311,7 @@ session_start();
                     </label>
 
                     <label for="Air conditioning"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Air conditioning" type="checkbox" name="amenities[]" value="Air conditioning"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -319,9 +322,8 @@ session_start();
                         <span class="block">Air conditioning</span>
                     </label>
 
-
                     <label for="Dedicated workspace"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" firstCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Dedicated workspace" type="checkbox" name="amenities[]" value="Dedicated workspace"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -333,11 +335,18 @@ session_start();
                     </label>
                 </div>
 
-                <h2 class="text-xl font-semibold mb-4">Do you have any standout amenities?</h2>
+                <div class="flex justify-between w-full items-center mb-4">
+                    <h2 class="text-xl font-semibold mb-4">Do you have any standout amenities?</h2>
+                    <label for="secondCategoryButton" id="secondCategoryButtonLabel"
+                        class="flex items-center border duration-150 text-xs border-gray-800 rounded-full py-1 px-3 gap-2 cursor-pointer text-gray-700 hover:text-gray-900 focus-within:text-gray-900">
+                        <input type="checkbox" id="secondCategoryButton">
+                        <span class="font-medium duration-150" id="secondCategoryLabel">Select all</span>
+                    </label>
+                </div>
                 <div class="grid grid-cols-4 gap-4 mb-8">
 
                     <label for="Pool"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class="p-4 border secondCategory rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Pool" type="checkbox" name="amenities[]" value="Pool" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -347,9 +356,8 @@ session_start();
                         <span class="block">Pool</span>
                     </label>
 
-
                     <label for="Hot tub"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class="p-4 border secondCategory  rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Hot tub" type="checkbox" name="amenities[]" value="Hot tub" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -359,9 +367,8 @@ session_start();
                         <span class="block">Hot tub</span>
                     </label>
 
-
                     <label for="Patio"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Patio" type="checkbox" name="amenities[]" value="Patio" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -371,9 +378,8 @@ session_start();
                         <span class="block">Patio</span>
                     </label>
 
-
                     <label for="BBQ grill"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="BBQ grill" type="checkbox" name="amenities[]" value="BBQ grill" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -383,9 +389,8 @@ session_start();
                         <span class="block">BBQ grill</span>
                     </label>
 
-
                     <label for="Outdoor dining are"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Outdoor dining are" type="checkbox" name="amenities[]" value="Outdoor dining area"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -396,9 +401,8 @@ session_start();
                         <span class="block">Outdoor dining area</span>
                     </label>
 
-
                     <label for="Fire pit"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Fire pit" type="checkbox" name="amenities[]" value="Fire pit" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -408,9 +412,8 @@ session_start();
                         <span class="block">Fire pit</span>
                     </label>
 
-
                     <label for="Pool table"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Pool table" type="checkbox" name="amenities[]" value="Pool table"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -419,9 +422,8 @@ session_start();
                         <span class="block">Pool table</span>
                     </label>
 
-
                     <label for="Indoor fireplace"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Indoor fireplace" type="checkbox" name="amenities[]" value="Indoor fireplace"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -432,9 +434,8 @@ session_start();
                         <span class="block">Indoor fireplace</span>
                     </label>
 
-
                     <label for="Piano"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Piano" type="checkbox" name="amenities[]" value="Piano" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
                             <path
@@ -445,7 +446,7 @@ session_start();
                     </label>
 
                     <label for="Exercise equipment"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" secondCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Exercise equipment" type="checkbox" name="amenities[]" value="Exercise equipment"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -457,11 +458,18 @@ session_start();
                     </label>
                 </div>
 
-                <h2 class="text-xl font-semibold mt-8 mb-4">Do you have any of these safety items?</h2>
+                <div class="flex justify-between w-full items-center mb-4">
+                    <h2 class="text-xl font-semibold mt-8 mb-4">Do you have any of these safety items?</h2>
+                    <label for="thirdCategoryButton" id="thirdCategoryButtonLabel"
+                        class="flex items-center border duration-150 text-xs border-gray-800 rounded-full py-1 px-3 gap-2 cursor-pointer text-gray-700 hover:text-gray-900 focus-within:text-gray-900">
+                        <input type="checkbox" id="thirdCategoryButton">
+                        <span class="font-medium duration-150" id="thirdCategoryLabel">Select all</span>
+                    </label>
+                </div>
                 <div class="grid grid-cols-4 gap-4">
 
                     <label for="Smoke alarm"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class="thirdCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Smoke alarm" type="checkbox" name="amenities[]" value="Smoke alarm"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -474,7 +482,7 @@ session_start();
 
 
                     <label for="First aid kit"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" thirdCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="First aid kit" type="checkbox" name="amenities[]" value="First aid kit"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -487,7 +495,7 @@ session_start();
 
 
                     <label for="Fire extinguisher"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" thirdCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Fire extinguisher" type="checkbox" name="amenities[]" value="Fire extinguisher"
                             class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -500,7 +508,7 @@ session_start();
 
 
                     <label for="Carbon monoxide alarm"
-                        class="p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
+                        class=" thirdCategory p-4 border rounded-lg text-left hover:border-black focus:outline-none focus:ring-2 focus:ring-black peer-checked:bg-gray-100 peer-checked:border-black transition">
                         <input id="Carbon monoxide alarm" type="checkbox" name="amenities[]"
                             value="Carbon monoxide alarm" class="hidden peer">
                         <svg class="w-8 h-8 mb-2" viewBox="0 0 32 32">
@@ -528,8 +536,7 @@ session_start();
             <div id="step5" class="step">
                 <h1 class="text-4xl font-bold mb-4">Add photos of your venue</h1>
                 <p class="text-xl text-gray-600 mb-8">Photos help guests imagine staying in your place. You can start
-                    with
-                    one and add more after you publish.</p>
+                    with one and add more after you publish.</p>
 
                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                     <div class="space-y-4">
@@ -550,6 +557,10 @@ session_start();
                     </div>
                 </div>
 
+                <!-- Image Previews -->
+                <div id="image-preview-container" class="mt-6 grid grid-cols-3 gap-4">
+                    <!-- Preview images will appear here -->
+                </div>
             </div>
 
             <div id="step6" class="step">
@@ -654,7 +665,7 @@ session_start();
                             <div class="w-full">
                                 <h2 class="text-xl font-semibold">Preferred Check-out Time</h2>
                                 <input type="time" name="checkout-time"
-                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                    class="w-full p-4 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                                     placeholder="Check-out Time">
                             </div>
                         </div>
@@ -996,6 +1007,137 @@ session_start();
                 alert("Please select a valid image file.");
             }
         });
+    </script>
+
+    <script>
+        // Add event listeners for category selection
+        let first = false;
+        let second = false;
+        let third = false;
+
+        document.getElementById('firstCategoryButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!first) {
+                document.querySelectorAll('.firstCategory input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = true; // Check all checkboxes
+                    document.getElementById('firstCategoryLabel').textContent = 'Unselect all';
+                    document.getElementById('firstCategoryLabel').classList.add('text-neutral-50')
+                    document.getElementById('firstCategoryButtonLabel').classList.add('bg-neutral-950')
+
+                });
+                first = true;
+            } else {
+                document.querySelectorAll('.firstCategory input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = false; // Uncheck all checkboxes
+                    document.getElementById('firstCategoryLabel').textContent = 'Select All';
+                    document.getElementById('firstCategoryLabel').classList.remove('text-neutral-50');
+                    document.getElementById('firstCategoryButtonLabel').classList.remove('bg-neutral-950');
+                });
+                first = false;
+            }
+        })
+
+        document.getElementById('secondCategoryButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!second) {
+                document.querySelectorAll('.secondCategory input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = true; // Check all checkboxes
+                    document.getElementById('secondCategoryLabel').textContent = 'Unselect all';
+                    document.getElementById('secondCategoryLabel').classList.add('text-neutral-50')
+                    document.getElementById('secondCategoryButtonLabel').classList.add('bg-neutral-950')
+
+                });
+                second = true;
+            } else {
+                document.querySelectorAll('.secondCategory input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = false; // Uncheck all checkboxes
+                    document.getElementById('secondCategoryLabel').textContent = 'Select All';
+                    document.getElementById('secondCategoryLabel').classList.remove('text-neutral-50');
+                    document.getElementById('secondCategoryButtonLabel').classList.remove('bg-neutral-950');
+                });
+                second = false;
+            }
+        })
+
+        document.getElementById('thirdCategoryButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!third) {
+                document.querySelectorAll('.thirdCategory input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = true; // Check all checkboxes
+                    document.getElementById('thirdCategoryLabel').textContent = 'Unselect all';
+                    document.getElementById('thirdCategoryLabel').classList.add('text-neutral-50')
+                    document.getElementById('thirdCategoryButtonLabel').classList.add('bg-neutral-950')
+
+                });
+                third = true;
+            } else {
+                document.querySelectorAll('.thirdCategory input[type="checkbox"]').forEach((checkbox) => {
+                    checkbox.checked = false; // Uncheck all checkboxes
+                    document.getElementById('thirdCategoryLabel').textContent = 'Select All';
+                    document.getElementById('thirdCategoryLabel').classList.remove('text-neutral-50');
+                    document.getElementById('thirdCategoryButtonLabel').classList.remove('bg-neutral-950');
+                });
+                third = false;
+            }
+        })
+    </script>
+
+    <script>
+        const fileInpute = document.getElementById('file-upload');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imageCount = document.getElementById('image-count');
+        let uploadedImages = []; // Array to track uploaded images
+        let mainImageIndex = null; // Tracks the main image
+
+        fileInpute.addEventListener('change', (event) => {
+            const files = Array.from(event.target.files);
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const imageURL = e.target.result;
+
+                    // Create a wrapper div for each image preview
+                    const imageWrapper = document.createElement('div');
+                    imageWrapper.className = 'relative border rounded-lg overflow-hidden group';
+
+                    // Image element
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imageURL;
+                    imgElement.alt = `Venue Image ${index + 1}`;
+                    imgElement.className = 'object-obtain w-full h-40 border-2 border-red-500';
+
+                    // Main Image Button
+                    const mainButton = document.createElement('button');
+                    mainButton.textContent = 'Set as Main';
+                    mainButton.className = 'absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition';
+                    mainButton.addEventListener('click', () => {
+                        mainImageIndex = index;
+                        updateMainImageHighlight();
+                    });
+
+                    // Append elements
+                    imageWrapper.appendChild(imgElement);
+                    imageWrapper.appendChild(mainButton);
+                    imagePreviewContainer.appendChild(imageWrapper);
+
+                    // Update array and image count
+                    uploadedImages.push(file);
+                    imageCount.textContent = `Uploaded images: ${uploadedImages.length}`;
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function updateMainImageHighlight() {
+            const wrappers = imagePreviewContainer.querySelectorAll('.relative');
+            wrappers.forEach((wrapper, index) => {
+                wrapper.classList.toggle('ring-4', index === mainImageIndex);
+                wrapper.classList.toggle('ring-blue-500', index === mainImageIndex);
+            });
+        }
     </script>
 </body>
 
