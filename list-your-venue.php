@@ -514,7 +514,7 @@ session_start();
             </div>
 
             <div id="step4" class="step">
-                <div class="mb-4">
+                <div class="mb-2">
                     <h1 class="text-3xl font-bold ">Where's your place located?</h1>
                     <p class="text-gray-600 ">Your address is only shared with guests after they've made a
                         reservation.
