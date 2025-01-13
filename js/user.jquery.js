@@ -224,19 +224,7 @@ $(document).ready(function () {
         success: function (response) {
           $("#openstreetmapplaceholder").html(response);
 
-          $('#openStreetMapSubmit').on("click", function (e) {
-            
-                e.preventDefault();
-                console.log("hgloasd");
-                
-                // // Capture the value of #OpenStreetaddress
-                // let openStreetAddress = $('#OpenStreetaddress').val();
-                // // Set this value to #venue-location if it exists
-                // $('#venue-location').val(openStreetAddress);
-                $('#openStreetMapDiv').addClass("hidden"); // Hide the map modal
-
-                
-            });
+          $('#openStreetMapDiv').addClass('fixed');
         },
     })
     }
