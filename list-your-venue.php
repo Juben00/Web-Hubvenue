@@ -811,7 +811,8 @@ session_start();
 
         <div class="fixed bottom-0 left-0 right-0 bg-slate-50 border-t">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <button onclick="prevStep()" class="text-black font-semibold hover:underline">Back</button>
+                <button onclick="prevStep()"
+                    class="text-black border-2 rounded-lg px-6 py-3 font-semibold hover:underline">Back</button>
                 <div class="progress-bar w-1/3">
                     <div id="progress" class="progress" style="width: 7.14%;"></div>
                 </div>
@@ -842,7 +843,7 @@ session_start();
                     );
 
                     if (!selectedPlaceType) {
-                        alert('Please select a venue type.');
+                        showModal('Please select a venue type.', undefined, 'black_ico.png');
                         return;
                     }
                 }
@@ -853,7 +854,7 @@ session_start();
                     );
 
                     if (selectedAmenities.length < 1) {
-                        alert('Please select at least one amenity.');
+                        showModal('Please select at least one amenity.', undefined, 'black_ico.png');
                         return;
                     }
                 }
@@ -862,7 +863,7 @@ session_start();
                     const venueLocation = document.getElementById('venue-location').value;
 
                     if (!venueLocation) {
-                        alert('Please select a location for your venue.');
+                        showModal('Please select a location for your venue.', undefined, 'black_ico.png');
                         return;
                     }
                 }
@@ -872,12 +873,12 @@ session_start();
                     const imagesCount = fileInput.files.length;
 
                     if (imagesCount < 5) {
-                        alert('Please upload at least 5 images.');
+                        showModal('Please upload at least 5 images.', undefined, 'black_ico.png');
                         return;
                     }
 
                     if (mainImageIndex === null || mainImageIndex === -1) {
-                        alert('Please set one image as your Main Image.');
+                        showModal('Please set one image as your Main Image.', undefined, 'black_ico.png');
                         return;
                     }
                 }
@@ -885,7 +886,7 @@ session_start();
                 if (currentStep === 6) {
                     const descriptionTextCount = document.getElementById('venue-description').value.length;
                     if (descriptionTextCount < 100) {
-                        alert('Please enter a description with at least 100 characters.');
+                        showModal('Please enter a description with at least 100 characters.', undefined, 'black_ico.png');
                         return;
                     }
                 }
@@ -893,23 +894,23 @@ session_start();
                 if (currentStep === 7) {
                     const titleTextCount = document.getElementById('venue-title').value.length;
                     if (titleTextCount < 1) {
-                        alert('Please enter a title for your venue.');
+                        showModal('Please enter a title for your venue.', undefined, 'black_ico.png');
                         return;
                     } else if (titleTextCount > 50) {
-                        alert('Title should not exceed 50 characters.');
+                        showModal('Title should not exceed 50 characters.', undefined, 'black_ico.png');
                         return;
                     }
 
                     const maxGuest = document.getElementById('venue-max-guest').value;
 
                     if (!maxGuest) {
-                        alert('Please enter the maximum number of guests.');
+                        showModal('Please enter the maximum number of guests.', undefined, 'black_ico.png');
                         return;
                     } else if (maxGuest < 1) {
-                        alert('Please enter a valid number of guests.');
+                        showModal('Please enter a valid number of guests.', undefined, 'black_ico.png');
                         return;
                     } else if (maxGuest.includes('.')) {
-                        alert('Please enter a whole number for the maximum number of guests.');
+                        showModal('Please enter a whole number for the maximum number of guests.', undefined, 'black_ico.png');
                         return;
                     }
                 }
@@ -917,20 +918,20 @@ session_start();
                 if (currentStep === 10) {
                     const price = document.getElementById('price').value;
                     if (!price) {
-                        alert('Please enter a price for your venue.');
+                        showModal('Please enter a price for your venue.', undefined, 'black_ico.png');
                         return;
                     } else if (price < 1) {
-                        alert('Please enter a valid price for your venue.');
+                        showModal('Please enter a valid price for your venue.', undefined, 'black_ico.png');
                         return;
                     } else if (price.includes('.')) {
-                        alert('Please enter a whole number for the price of your venue.');
+                        showModal('Please enter a whole number for the price of your venue.', undefined, 'black_ico.png');
                         return;
                     }
 
                     const checkinTime = document.getElementsByName('checkin-time')[0].value;
                     const checkoutTime = document.getElementsByName('checkout-time')[0].value;
                     if (checkinTime === '' || checkoutTime === '') {
-                        alert('Please enter both check-in and check-out times.');
+                        showModal('Please enter both check-in and check-out times.', undefined, 'black_ico.png');
                         return;
                     }
 
@@ -1221,7 +1222,7 @@ session_start();
 
                     reader.readAsDataURL(file);
                 } else {
-                    alert("Please select a valid image file.");
+                    showModal("Please select a valid image file.", undefined, 'black_ico.png');
                 }
             });
         });
