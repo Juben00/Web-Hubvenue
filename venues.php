@@ -21,6 +21,12 @@ if (empty($venue['name'])) {
     exit();
 }
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $_SESSION['reservationFormData'] = $_POST;
+    header("Location: payment.php");
+    exit();
+}
+
 // Retrieve the owner's information
 $owner = $accountObj->getUser($venue['host_id']);
 $bookedDate = $venueObj->getBookedDates($_GET['id']);
@@ -661,8 +667,8 @@ $reviews = $venueObj->getReview($_GET['id']);
 
 
                         <div class="sticky top-32">
-                            <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-slate-50" method="GET"
-                                action="payment.php">
+                            <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-slate-50"
+                                method="POST">
                                 <!-- Price Header -->
                                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
                                     <div class="flex items-baseline">
@@ -687,13 +693,13 @@ $reviews = $venueObj->getReview($_GET['id']);
                                         <div class="w-1/2 p-3 border-r">
                                             <label
                                                 class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
-                                            <input type="date" name="checkin" placeholder="Set Date"
+                                            <input type="date" name="checkin" id="checkin" placeholder="Set Date"
                                                 class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
                                         <div class="w-1/2 p-3">
                                             <label
                                                 class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
-                                            <input type="date" name="checkout" placeholder="Set Date"
+                                            <input type="date" name="checkout" id="checkout" placeholder="Set Date"
                                                 class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
                                     </div>
@@ -702,7 +708,8 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             GUESTS (Maximum <span
                                                 class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
                                         </label>
-                                        <input type="number" name="numberOfGuest"
+                                        <input type="number" name="numberOfGuest" id="numberOFGuest" min="1"
+                                            max="<?php echo htmlspecialchars($venue['capacity']); ?>"
                                             class="w-full bg-transparent focus:outline-none text-gray-800"
                                             placeholder="Enter number of guests">
                                     </div>

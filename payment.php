@@ -6,45 +6,41 @@ require_once './classes/account.class.php';
 
 session_start();
 $accountObj = new Account();
+$reservationData = $_SESSION['reservationFormData'];
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
         exit;
     }
-    if (!isset($_GET['venueId'])) {
+    if (!$reservationData) {
         header('Location: index.php');
-        exit;
     }
 } else {
     header('Location: index.php');
+    unset($_SESSION['reservationFormData']);
     exit;
 }
 
+
 $venueObj = new Venue();
 
-$venueId = $_GET['venueId'];
-$checkIn = new DateTime($_GET['checkin']);
-$checkOut = new DateTime($_GET['checkout']);
+// $venueId = $_GET['venueId'];
+$venueId = $reservationData['venueId'];
+$checkIn = new DateTime($reservationData['checkin']);
+$checkOut = new DateTime($reservationData['checkout']);
 $interval = $checkIn->diff($checkOut);
 $bookingDuration = $interval->days;
-$numberOfGuest = $_GET['numberOfGuest'];
-$totalPriceForNights = $_GET['totalPriceForNights'];
-$totalEntranceFee = $_GET['totalEntranceFee'];
-$cleaningFee = $_GET['cleaningFee'];
-$serviceFee = $_GET['serviceFee'];
-$totalPrice = $_GET['totalPrice'];
+$numberOfGuest = $reservationData['numberOfGuest'];
+$totalPriceForNights = $reservationData['totalPriceForNights'];
+$totalEntranceFee = $reservationData['totalEntranceFee'];
+$cleaningFee = $reservationData['cleaningFee'];
+$serviceFee = $reservationData['serviceFee'];
+$totalPrice = $reservationData['totalPrice'];
+
 
 $venueDetails = $venueObj->getSingleVenue($venueId);
 $venueName = htmlspecialchars($venueDetails["venue_name"]);
-$checkIn = htmlspecialchars($checkIn->format('Y-m-d'));
-$checkOut = htmlspecialchars($checkOut->format('Y-m-d'));
-$numberOfGuest = htmlspecialchars($numberOfGuest);
-$totalPriceForNights = htmlspecialchars($totalPriceForNights);
-$totalEntranceFee = htmlspecialchars($totalEntranceFee);
-$cleaningFee = htmlspecialchars($cleaningFee);
-$serviceFee = htmlspecialchars($serviceFee);
-$totalPrice = htmlspecialchars($totalPrice);
 
 
 $discounts = $venueObj->getAllDiscounts();
@@ -55,7 +51,7 @@ if ($discountCode !== 'none') {
     $totalPrice = applyDiscount($discounts, $discountCode, $totalPrice);
     $discountApplied = true;
 }
-
+// -----------------------------
 // // Calculate grand total if no discount is applied
 // if (!$discountApplied) {
 //     $totalPrice = $totalPriceForNights;
@@ -81,14 +77,6 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
     return $totalPrice;
 }
 
-$ratings = array(
-    "total" => 4,
-    "rating_5" => "2",
-    "rating_4" => "1",
-    "rating_3" => "1",
-    "rating_2" => "0",
-    "rating_1" => "0"
-);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,18 +119,24 @@ $ratings = array(
             </div>
 
             <form id="paymentForm">
+                <!-- Step 1:  -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
-                        <input type="date" name="startDate" value="<?php echo $checkIn ?>" class="hidden">
-                        <input type="date" name="endDate" value="<?php echo $checkOut ?>" class="hidden">
-                        <input type="number" name="participants" value="<?php echo $numberOfGuest ?>" class="hidden">
-                        <input type="number" name="originalPrice" value="<?php echo $totalPriceForNights ?>"
+                        <input type="date" name="startDate"
+                            value="<?php echo htmlspecialchars($checkIn->format('Y-m-d')); ?>" class="hidden">
+                        <input type="date" name="endDate" value="<?php htmlspecialchars($checkOut->format('Y-m-d')); ?>"
                             class="hidden">
-                        <input type="number" name="guestId" value="<?php echo $_SESSION['user']['id'] ?>"
+                        <input type="number" name="participants" value="<?php echo htmlspecialchars($numberOfGuest) ?>"
                             class="hidden">
-                        <input type="number" name="venueId" value="<?php echo $venueId ?>" class="hidden">
-                        <input type="number" name="serviceFee" value="<?php echo $serviceFee ?>" class="hidden">
+                        <input type="number" name="originalPrice"
+                            value="<?php echo htmlspecialchars($totalPriceForNights) ?>" class="hidden">
+                        <input type="number" name="guestId"
+                            value="<?php echo htmlspecialchars($_SESSION['user']['id']) ?>" class="hidden">
+                        <input type="number" name="venueId" value="<?php echo htmlspecialchars($venueId) ?>"
+                            class="hidden">
+                        <input type="number" name="serviceFee" value="<?php echo htmlspecialchars($serviceFee) ?>"
+                            class="hidden">
                         <input type="text" class="hidden" name="couponCode" id="couponsub">
 
                         <!-- Coupon Input Section -->
@@ -164,7 +158,13 @@ $ratings = array(
                         <div class="bg-gray-100 p-6 rounded-lg">
                             <h4 class="font-semibold text-lg mb-4"><?php echo $venueName ?></h4>
                             <div class="space-y-2">
-                                <p><strong>Date:</strong> <?php echo $checkIn ?> to <?php echo $checkOut ?></p>
+                                <p><strong>Date:</strong>
+                                    <?php
+                                    $checkInFormatted = date('F j, Y', strtotime($reservationData['checkin']));
+                                    $checkOutFormatted = date('F j, Y', strtotime($reservationData['checkout']));
+                                    echo $checkInFormatted . ' to ' . $checkOutFormatted;
+                                    ?>
+                                </p>
                                 <p><strong>Guests:</strong> <?php echo $numberOfGuest ?></p>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-300">
@@ -452,6 +452,7 @@ $ratings = array(
 
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
+
 </body>
 
 </html>
