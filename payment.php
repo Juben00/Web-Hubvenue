@@ -118,31 +118,16 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
-            <form id="paymentForm">
+            <form id="paymentForm" method="POST" action="PaymentProcess.api.php">
                 <!-- Step 1:  -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
-                        <input type="date" name="startDate"
-                            value="<?php echo htmlspecialchars($checkIn->format('Y-m-d')); ?>" class="hidden">
-                        <input type="date" name="endDate" value="<?php htmlspecialchars($checkOut->format('Y-m-d')); ?>"
-                            class="hidden">
-                        <input type="number" name="participants" value="<?php echo htmlspecialchars($numberOfGuest) ?>"
-                            class="hidden">
-                        <input type="number" name="originalPrice"
-                            value="<?php echo htmlspecialchars($totalPriceForNights) ?>" class="hidden">
-                        <input type="number" name="guestId"
-                            value="<?php echo htmlspecialchars($_SESSION['user']['id']) ?>" class="hidden">
-                        <input type="number" name="venueId" value="<?php echo htmlspecialchars($venueId) ?>"
-                            class="hidden">
-                        <input type="number" name="serviceFee" value="<?php echo htmlspecialchars($serviceFee) ?>"
-                            class="hidden">
-                        <input type="text" class="hidden" name="couponCode" id="couponsub">
-
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 p-4 rounded-lg mb-4">
                             <div class="flex gap-2">
-                                <input type="text" id="couponCode" placeholder="Enter coupon code" value=""
+                                <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
+                                    value=""
                                     class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10"
                                     <?php echo $discountApplied ? 'disabled' : ''; ?>>
                                 <?php if (!$discountApplied): ?>
@@ -202,15 +187,12 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                                     <div class="flex justify-between">
                                         <span>Coupon</span>
                                         <span id="discountValue">0%</span>
+
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Total</span>
                                     <span id="totalPrice">₱ <?php echo $totalPrice ?></span>
-
-                                    <input type="hidden" id="totalPriceF" value="<?php echo $totalPrice ?>"
-                                        name="grandTotal">
-                                    <?php var_dump($reservationData) ?>
                                 </div>
                             </div>
                         </div>
@@ -354,9 +336,6 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                     currentStep++;
                     updateStep();
                 } else {
-                    // const form = document.getElementById('paymentForm');
-                    // const formData = new FormData(form);
-                    // console.log(formData);
                     document.getElementById('paymentSubmit').click();
                 }
             });
@@ -371,15 +350,16 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                 .then(data => {
                     if (data.valid) {
                         const discountValue = data.discountValue;
-                        let totalPrice = <?php echo $totalPrice ?>;
-                        totalPrice = totalPrice - (totalPrice * discountValue);
 
-                        document.getElementById('totalPrice').textContent = `₱ ${totalPrice.toFixed(2)}`;
-                        document.getElementById('totalPriceF').value = totalPrice;
+                        <?php
+                        $totalPrice = $totalPrice - $totalPrice * $discountStatus['discount_value'] / 100;
+                        ?>
+
+                        document.getElementById('totalPrice').textContent = `₱ ${<?php echo $totalPrice ?>.toFixed(2)}`;
                         document.getElementById('discountValue').textContent = `${discountValue * 100}%`;
                         document.getElementById('couponMessage').classList.remove('hidden');
                         document.getElementById('couponCode').disabled = true;
-                        document.getElementById('applyCouponBtn').style.display = 'none';
+                        document.getElementById('applyCouponBtn').style.display = '';
                         document.getElementById('couponsub').value = couponCode;
                     } else {
                         showModal("Invalid Coupon Code", function () {
@@ -392,7 +372,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
         function selectPaymentMethod(method) {
             document.querySelector(`input[value="${method}"]`).checked = true;
 
-            const totalAmount = document.getElementById('totalPrice').textContent.replace('₱', '').replace(',', '');
+            const totalAmount = <?php echo $totalPrice ?>;
 
             document.getElementById('nextBtn').disabled = true;
 
