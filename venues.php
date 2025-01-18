@@ -47,9 +47,6 @@ foreach ($bookedDate as $booking) {
 $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
-// var_dump($_GET['id']);
-// var_dump($bookedDate);
-// var_dump($bookedDate[0]['startdate'])
 ?>
 
 
@@ -447,6 +444,9 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <hr class="my-6">
 
                         <h3 class="text-xl font-semibold mb-4">Ratings & Reviews</h3>
+                        <?php
+                        var_dump($venue);
+                        ?>
                         <div class="mb-8">
                             <div class="flex items-start gap-8">
                                 <!-- Overall Rating -->
@@ -666,9 +666,9 @@ $reviews = $venueObj->getReview($_GET['id']);
 
 
 
-                        <div class="sticky top-32">
-                            <form id="reservationForm" class="border rounded-xl p-6 shadow-lg bg-slate-50"
-                                method="POST">
+                        <div class="sticky top-32 border rounded-xl p-6 shadow-lg bg-slate-50">
+
+                            <form id="reservationForm" method="POST">
                                 <!-- Price Header -->
                                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
                                     <div class="flex items-baseline">
@@ -684,7 +684,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             review/s</span>
                                     </div>
                                 </div>
-
                                 <!-- Date and Guest Selection -->
                                 <div class="border rounded-xl mb-6 shadow-sm bg-gray-50 relative">
                                     <div class="flex border-b">
@@ -714,7 +713,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             placeholder="Enter number of guests">
                                     </div>
                                 </div>
-
                                 <!-- Price Breakdown -->
                                 <div class="space-y-4 mb-6">
                                     <div class="flex justify-between items-center">
@@ -723,32 +721,39 @@ $reviews = $venueObj->getReview($_GET['id']);
                                                 total-nights>0</span>
                                             nights
                                         </span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="totalPriceForNights"
-                                                value="0" readonly></span>
+                                        <span class="font-medium flex items-center">
+                                            ₱ <p class="text-right bg-transparent w-24 " name="totalPriceForNights"
+                                                value="0" readonly>0</p>
+                                        </span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">
                                             Entrance fee × <span total-entrance-guests>0</span> guest
                                         </span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="totalEntranceFee"
-                                                value="<?php echo htmlspecialchars($venue['entrance']); ?>"
-                                                readonly></span>
+                                        <span class="font-medium flex items-center">
+                                            ₱<p class="text-right bg-transparent w-24 " name="totalEntranceFee"
+                                                value="<?php echo htmlspecialchars($venue['entrance']) ?? 0; ?>"
+                                                readonly>0
+                                            </p>
+                                        </span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">Cleaning fee</span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="cleaningFee"
-                                                value="<?php echo htmlspecialchars($venue['cleaning']); ?>"
-                                                readonly></span>
+                                        <span class="font-medium flex items-center">₱
+                                            <p class="text-right bg-transparent w-24" name="cleaningFee" readonly>
+                                                <?php echo htmlspecialchars($venue['cleaning']) ?? 0; ?>
+                                            </p>
+                                        </span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service
                                             fee</span>
-                                        <span class="font-medium">₱ <input type="number"
-                                                class="text-right bg-transparent w-24" name="serviceFee" value="0"
-                                                readonly></span>
+                                        <span class="font-medium flex items-center">₱
+                                            <p class="text-right bg-transparent w-24" name="serviceFee" value="0"
+                                                readonly>
+                                                0
+                                            </p>
+                                        </span>
                                     </div>
 
                                     <div class="flex justify-between items-center">
@@ -776,22 +781,20 @@ $reviews = $venueObj->getReview($_GET['id']);
                                 <div class="border-t pt-4 mb-6">
                                     <div class="flex justify-between items-center">
                                         <span class="text-lg font-bold">Total</span>
-                                        <span class="font-bold text-lg">₱ <input type="number"
+                                        <span class="font-bold text-lg">₱ <p
                                                 class="text-right bg-transparent w-24 font-bold" name="totalPrice"
-                                                value="0" readonly></span>
+                                                value="0" readonly></p>
+
+                                        </span>
                                     </div>
                                 </div>
 
                                 <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
                                 <button type="submit"
                                     class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4">Reserve</button>
+
                             </form>
                         </div>
-
-
-
-
-
                     </div>
                 </div>
             </div>
@@ -813,7 +816,6 @@ $reviews = $venueObj->getReview($_GET['id']);
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
     <script>
-        // Define closeComparison in the global scope
         window.closeComparison = function () {
             const mainContent = document.querySelector('.main-content');
             const mainContainer = document.querySelector('.main-container');
@@ -868,26 +870,18 @@ $reviews = $venueObj->getReview($_GET['id']);
         });
     </script>
 
+    computations
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Debug logging to verify elements are found
-            console.log('Checkin:', document.querySelector('input[name="checkin"]'));
-            console.log('Checkout:', document.querySelector('input[name="checkout"]'));
-            console.log('Guests:', document.querySelector('input[name="numberOfGuest"]'));
-            console.log('Total Price:', document.querySelector('input[name="totalPrice"]'));
-            console.log('Price for Nights:', document.querySelector('input[name="totalPriceForNights"]'));
-            console.log('Service Fee:', document.querySelector('input[name="serviceFee"]'));
-            console.log('Entrance Fee:', document.querySelector('input[name="totalEntranceFee"]'));
-            console.log('Cleaning Fee:', document.querySelector('input[name="cleaningFee"]'));
 
             const checkinInput = document.querySelector('input[name="checkin"]');
             const checkoutInput = document.querySelector('input[name="checkout"]');
             const guestsInput = document.querySelector('input[name="numberOfGuest"]');
-            const totalPriceInput = document.querySelector('input[name="totalPrice"]');
-            const totalPriceForNightsInput = document.querySelector('input[name="totalPriceForNights"]');
-            const serviceFeeInput = document.querySelector('input[name="serviceFee"]');
-            const entranceFeeInput = document.querySelector('input[name="totalEntranceFee"]');
-            const cleaningFeeInput = document.querySelector('input[name="cleaningFee"]');
+            const totalPriceInput = document.querySelector('p[name="totalPrice"]');
+            const totalPriceForNightsInput = document.querySelector('p[name="totalPriceForNights"]');
+            const serviceFeeInput = document.querySelector('p[name="serviceFee"]');
+            const entranceFeeInput = document.querySelector('p[name="totalEntranceFee"]');
+            const cleaningFeeInput = document.querySelector('p[name="cleaningFee"]');
             const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
             const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
             const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
@@ -1004,10 +998,18 @@ $reviews = $venueObj->getReview($_GET['id']);
 
                     document.querySelector('span[total-nights]').textContent = days;
                     document.querySelector('span[total-entrance-guests]').textContent = guests;
-                    totalPriceForNightsInput.value = totalPriceForNights.toFixed(2);
-                    entranceFeeInput.value = totalEntranceFee.toFixed(2);
-                    serviceFeeInput.value = serviceFee.toFixed(2);
-                    totalPriceInput.value = grandTotal.toFixed(2);
+                    totalPriceForNightsInput.innerHTML = totalPriceForNights.toFixed(2);
+                    entranceFeeInput.innerHTML = totalEntranceFee.toFixed(2);
+                    serviceFeeInput.innerHTML = serviceFee.toFixed(2);
+                    totalPriceInput.innerHTML = grandTotal.toFixed(2);
+
+                    const reservationForm = document.getElementById('reservationForm');
+                    appendHiddenInput(reservationForm, 'totalPriceForNights', totalPriceForNights.toFixed(2));
+                    appendHiddenInput(reservationForm, 'entranceFee', totalEntranceFee.toFixed(2));
+                    appendHiddenInput(reservationForm, 'cleaningFee', cleaningFee.toFixed(2));
+                    appendHiddenInput(reservationForm, 'serviceFee', serviceFee.toFixed(2));
+                    appendHiddenInput(reservationForm, 'grandTotal', grandTotal.toFixed(2));
+
                 }
             }
 
@@ -1019,8 +1021,17 @@ $reviews = $venueObj->getReview($_GET['id']);
             // Initial calculation
             calculateTotal();
         });
+
+        function appendHiddenInput(form, name, value) {
+            const input = document.createElement('input');
+            input.type = 'hidden'; // Set input type to hidden
+            input.name = name; // Set the name attribute
+            input.value = value; // Set the value attribute
+            form.appendChild(input); // Append the input to the form
+        }
     </script>
 
+    <!-- image gallery -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const images = <?php echo json_encode($venue['image_urls'] ?? []); ?>;
@@ -1157,6 +1168,7 @@ $reviews = $venueObj->getReview($_GET['id']);
         </div>
     </div>
 
+    <!-- photo gallery -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const modal = document.getElementById('photoGalleryModal');
@@ -1261,6 +1273,7 @@ $reviews = $venueObj->getReview($_GET['id']);
         });
     </script>
 
+    <!-- comparison view -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Comparison Panel Functionality

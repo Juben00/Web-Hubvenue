@@ -190,6 +190,8 @@ $(document).ready(function () {
         showModal('Check-in date must be before the check-out date.', undefined, "black_ico.png");
         return;
     }
+    // Populate a hidden form with the calculated data
+                   
 });
 
     // Update user info form submission

@@ -33,10 +33,10 @@ $interval = $checkIn->diff($checkOut);
 $bookingDuration = $interval->days;
 $numberOfGuest = $reservationData['numberOfGuest'];
 $totalPriceForNights = $reservationData['totalPriceForNights'];
-$totalEntranceFee = $reservationData['totalEntranceFee'];
+$totalEntranceFee = $reservationData['entranceFee'];
 $cleaningFee = $reservationData['cleaningFee'];
 $serviceFee = $reservationData['serviceFee'];
-$totalPrice = $reservationData['totalPrice'];
+$totalPrice = $reservationData['grandTotal'];
 
 
 $venueDetails = $venueObj->getSingleVenue($venueId);
@@ -210,6 +210,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
 
                                     <input type="hidden" id="totalPriceF" value="<?php echo $totalPrice ?>"
                                         name="grandTotal">
+                                    <?php var_dump($reservationData) ?>
                                 </div>
                             </div>
                         </div>
