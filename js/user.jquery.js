@@ -167,33 +167,32 @@ $(document).ready(function () {
     });  
 
     //reservation form
-    $('#reservationForm').on('submit', function (e) {
-        e.preventDefault(); // Prevent the default form submission
-        
-        const formElement = $(this);
-        let isValid = true;
+  $('#reservationForm').on('submit', function (e) {
+    const numberOfGuests = $('#numberOFGuest').val(); // Get the value of the input
+    const checkInDate = $('#checkin').val(); // Get the value of the input
+    const checkOutDate = $('#checkout').val(); // Get the value of the input
+    if (numberOfGuests < 1) { // Check if the value is less than 1
+        e.preventDefault(); // Prevent form submission
+        showModal('Please enter a valid number of guests', undefined, "black_ico.png");
+    }
+    if (!checkInDate || !checkOutDate) { // Check if either date is empty
+        e.preventDefault(); // Prevent form submission        
+        showModal('Please select both check-in and check-out dates.', undefined, "black_ico.png");
+        return;
+    }
 
-        // Loop through all the form fields and check if they are empty
-        formElement.find('input').each(function () {    
-            if ($(this).val() === '') {
-                isValid = false;
-                $(this).addClass('border-red-500'); // Add red border to indicate the field is empty
-            } else {
-                $(this).removeClass('border-red-500'); // Remove red border if the field is filled
-            }
-        });
+    // Convert to Date objects for comparison
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
 
-        // If all fields are valid, proceed with serialization and redirection
-        if (isValid) {
-            const formData = formElement.serialize(); // Serialize form data
-            const actionUrl = formElement.attr('action'); // Get the form action URL
-            const redirectUrl = actionUrl + '?' + formData; // Construct the URL with the serialized data
-
-            window.location.href = redirectUrl; // Redirect to the constructed URL
-        } else {
-            showModal("Please fill out all the required fields.", undefined, 'black_ico.png'); // Show alert if any field is empty
-        }
-    });
+    if (checkIn >= checkOut) { // Check if the check-in date is not before the check-out date
+        e.preventDefault(); // Prevent form submission
+        showModal('Check-in date must be before the check-out date.', undefined, "black_ico.png");
+        return;
+    }
+    // Populate a hidden form with the calculated data
+                   
+});
 
     // Update user info form submission
     $('#updateUserInfoForm').on('submit', function (e) {
