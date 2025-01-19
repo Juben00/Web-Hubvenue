@@ -1,5 +1,6 @@
 <?php
 require_once '../classes/venue.class.php';
+require_once '../api/coorAddressVerify.api.php';
 
 session_start();
 $venueObj = new Venue();
@@ -28,11 +29,10 @@ $bookingThisMonth = 0;
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             Back to Listings
-            
         </a>
     </div>
 
-    <div class="flex gap-6">
+    <form class="flex gap-6">
         <!-- Main Content -->
         <div class="flex-grow">
             <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
@@ -107,7 +107,9 @@ $bookingThisMonth = 0;
                             <div class="mb-6  w-full">
                                 <h3 class="text-lg font-semibold mb-2">Location</h3>
                                 <p id="detailVenueLocation" class="text-gray-600 view-mode">
-                                    <?php echo htmlspecialchars(trim($venueView['venue_location'])); ?>
+                                    <?php
+                                    $address = getAddressByCoordinates($venueView['venue_location']);
+                                    echo htmlspecialchars(trim($address)); ?>
                                 </p>
                                 <input type="text" id="editVenueLocation"
                                     class="form-input w-full rounded-md edit-mode hidden"
@@ -616,7 +618,7 @@ $bookingThisMonth = 0;
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
