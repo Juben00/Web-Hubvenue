@@ -1,6 +1,7 @@
 <?php
 require_once '../sanitize.php';
 require_once '../classes/account.class.php';
+require_once './coorAddressVerify.api.php';
 
 session_start();
 
@@ -24,8 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sex = clean_input($_POST['sex']);
     $birthdate = clean_input($_POST['birthdate']);
     $address = clean_input($_POST['address']);
+    $coor = clean_input($_POST['addressCoor']);
     $email = clean_input($_POST['email']);
     $contact = clean_input($_POST['contact']);
+
+    // Verify the address
+    $addressData = coorAddressVerify($address, $coor);
+    if (!$addressData) {
+        $addressErr = 'Invalid address and coordinates. Please try again.';
+    }
 
     if (empty($firstname))
         $firstnameErr = "First name is required";
@@ -78,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profileImage = $uploadedImage;
 
         // Update user info
-        $result = $accountObj->updateUserInfo($userId, $firstname, $lastname, $middlename, $bio ?? null, $sex, $birthdate, $address, $email, $contact, $profileImage ?? null);
+        $result = $accountObj->updateUserInfo($userId, $firstname, $lastname, $middlename, $bio ?? null, $sex, $birthdate, $coor, $email, $contact, $profileImage ?? null);
 
         // if ($result['status'] === 'success') {
         //     echo json_encode(['status' => 'success', 'message' => $result['message']]);

@@ -826,6 +826,12 @@ session_start();
 
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
+    <script>
+        const urlParams = window.location.href;
+        if (urlParams.includes('list-your-venue.php')) {
+            document.getElementById('closeMap').style.display = 'none';
+        }
+    </script>
 
 
     <script>

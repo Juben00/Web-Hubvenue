@@ -45,12 +45,6 @@
 </div>
 <script>
 
-const urlParams = window.location.href;
-if(urlParams.includes('list-your-venue.php')){
-    document.getElementById('closeMap').style.display = 'none';
-}
-
-
     // let marker; // Declare marker variable
 
 map = L.map('map').setView([6.9214, 122.0790], 13);
@@ -77,9 +71,17 @@ map.on('click', function (e) {
         document.getElementById('venue-location').value = address;
       }
 
-        if(document.getElementById('signupaddress')){
-            document.getElementById('signupaddress').value = address;
-        }
+      //settings
+      if(document.getElementById('address')){
+        document.getElementById('address').value = address;
+        document.getElementById('addressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
+      }
+
+      //signup
+      if(document.getElementById('signupAddress')){
+          document.getElementById('signupAddress').value = address;
+          document.getElementById('signupAddressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
+      }
     })
     .catch(err => {
       console.error('Error:', err);
