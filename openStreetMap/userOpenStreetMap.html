@@ -67,8 +67,10 @@ map.on('click', function (e) {
       const address = data.display_name || "No address found";
       document.getElementById('OpenStreetaddress').value = address;
 
+      //venue listing
       if(document.getElementById('venue-location')){
         document.getElementById('venue-location').value = address;
+        document.getElementById('venueCoordinates').value = e.latlng.lat + ',' + e.latlng.lng;
       }
 
       //settings

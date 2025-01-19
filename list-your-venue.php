@@ -539,6 +539,7 @@ session_start();
                 </div>
                 <?php require_once './openStreetMap/userOpenStreetMap.html' ?>
                 <input type="text" id="venue-location" name="venue-location" class="hidden">
+                <input type="text" id="venueCoordinates" name="venueCoordinates" class="hidden">
             </div>
 
 

@@ -2,6 +2,7 @@
 
 require_once '../classes/venue.class.php';
 require_once '../sanitize.php';
+require_once './coorAddressVerify.api.php';
 session_start();
 
 $venueObj = new Venue();
@@ -17,12 +18,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = clean_input($_POST['venue-title']);
     $description = clean_input($_POST['venue-description']);
     $location = clean_input($_POST['venue-location']);
+    $coor = clean_input($_POST['venueCoordinates']);
     $price = clean_input($_POST['price']);
     $capacity = clean_input($_POST['venue-max-guest']);
     $amenities = $_POST['amenities'];
     $tag = clean_input(isset($_POST['placeType']) ? $_POST['placeType'] : '');
-    $entrance = clean_input($_POST['entrance-fee']);
-    $cleaning = clean_input($_POST['cleaning-fee']);
+    $entrance = clean_input($_POST['entrance-fee'] ?? 0);
+    $cleaning = clean_input($_POST['cleaning-fee']) ?? 0;
+    $thumbnail = clean_input($_POST['imageThumbnail']);
     $rules = isset($_POST['fixedRules']) && is_array($_POST['fixedRules']) ? $_POST['fixedRules'] : [];
     $sanitizedRules = array_map('clean_input', $rules); // Sanitize each checkbox value
     $addRules = isset($_POST['additionalRules']) ? clean_input($_POST['additionalRules']) : '';
@@ -30,6 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkOut = clean_input($_POST['checkout-time']);
     $check_inout = json_encode(['check_in' => $checkIn, 'check_out' => $checkOut]);
 
+    // Validate address
+    $addressData = coorAddressVerify($location, $coor);
+    if (!$addressData) {
+        $locationErr = 'Invalid address and coordinates. Please try again.';
+    }
     // Validation for required fields
     if (empty($name))
         $nameErr = "Name is required";
@@ -45,16 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $amenitiesErr = "Amenities are required";
     if (empty($tag))
         $tagErr = "Tag is required";
-    if (empty($entrance))
-        $entranceErr = "Entrance field is required";
-    if (empty($cleaning))
-        $cleaningErr = "Cleaning field is required";
     if (empty($rules))
         $rulesErr = "Rules are required";
     if (empty($checkIn))
         $checkInErr = "Check-in time is required";
     if (empty($checkOut))
         $checkOutErr = "Check-out time is required";
+    if ($thumbnail === '' || $thumbnail === null)
+        $imageErr = "Thumbnail is required";
+
 
     // Prepare amenities JSON
     $amenitiesJson = json_encode($amenities);
@@ -112,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Set venue object data
         $venueObj->name = $name;
         $venueObj->description = $description;
-        $venueObj->location = $location;
+        $venueObj->location = $coor;
         $venueObj->price = $price;
         $venueObj->capacity = $capacity;
         $venueObj->amenities = $amenitiesJson;
@@ -123,15 +130,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->cleaning = $cleaning;
         $venueObj->check_inout = $check_inout;
         $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
+        $venueObj->imageThumbnail = $thumbnail;
 
         // Add venue with image URLs to the database
         $result = $venueObj->addVenue();
 
-        // if ($result['status'] === 'success') {
-        //     echo json_encode(['status' => 'success', 'message' => $result['message']]);
-        // } else {
-        //     echo json_encode(['status' => 'error', 'message' => $result['message']]);
-        // }
         echo json_encode($result);
         exit();
     } else {
