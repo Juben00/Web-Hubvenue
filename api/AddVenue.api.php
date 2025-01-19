@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $capacity = clean_input($_POST['capacity']);
     $amenities = clean_input($_POST['amenities']);
     $tag = clean_input($_POST['tag']);
+    $thumbnail = clean_input($_POST['imageThumbnail']);
     $entrance = clean_input($_POST['entrance']);
     $cleaning = clean_input($_POST['cleaning']);
 
@@ -43,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $entranceErr = "Entrance field is required";
     if (empty($cleaning))
         $cleaningErr = "Cleaning field is required";
+    if (empty($thumbnail))
+        $imageErr = "Thumbnail is required";
 
     // Handle multiple image uploads
     $imageErr = [];
@@ -102,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->entrance = $entrance;
         $venueObj->cleaning = $cleaning;
         $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
+        $venueObj->imageThumbnail = $thumbnail;
 
         // Add venue with image URLs to the database
         $result = $venueObj->addVenue();

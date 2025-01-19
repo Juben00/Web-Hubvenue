@@ -12,6 +12,8 @@ class Venue
     public $capacity;
     public $amenities;
 
+    public $imageThumbnail;
+
     public $rules;
     public $tag;
     public $entrance;
@@ -40,8 +42,8 @@ class Venue
             $conn->beginTransaction();
 
             // Insert venue information
-            $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, rules, entrance, cleaning, venue_tag, time_inout, host_id, status_id, availability_id) 
-                VALUES (:name, :description, :location, :price, :capacity, :amenities, :rules, :entrance, :cleaning, :venue_tag, :time_inout, :host_id, :status_id, :availability_id)';
+            $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, rules, entrance, cleaning, venue_tag, thumbnail, time_inout, host_id, status_id, availability_id) 
+                VALUES (:name, :description, :location, :price, :capacity, :amenities, :rules, :entrance, :cleaning, :venue_tag, :thumbnail, :time_inout, :host_id, :status_id, :availability_id)';
             $stmt = $conn->prepare($sql);
 
             // Bind parameters
@@ -55,6 +57,7 @@ class Venue
             $stmt->bindParam(':entrance', $this->entrance);
             $stmt->bindParam(':cleaning', $this->cleaning);
             $stmt->bindParam(':venue_tag', $this->tag);
+            $stmt->bindParam(':thumbnail', $this->imageThumbnail);
             $stmt->bindParam(':time_inout', $this->check_inout);
             $stmt->bindParam(':host_id', $this->host_id);
             $stmt->bindParam(':status_id', $this->status);
