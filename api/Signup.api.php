@@ -1,10 +1,11 @@
 <?php
 require_once '../classes/account.class.php';
 require_once '../sanitize.php';
+require_once './coorAddressVerify.api.php';
 
 $accountObj = new Account();
 
-$firstname = $lastname = $middlename = $sex = $birthdate = $contact_number = $address = $email = $password = $user_type = '';
+$firstname = $lastname = $middlename = $sex = $birthdate = $contact_number = $address = $coor = $email = $password = $user_type = '';
 $firstnameErr = $lastnameErr = $middlenameErr = $sexErr = $birthdateErr = $contact_numberErr = $addressErr = $emailErr = $passwordErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -14,10 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sex = clean_input($_POST['sex']);
     $birthdate = clean_input($_POST['birthdate']);
     $contact_number = clean_input($_POST['contact']);
-    $address = clean_input($_POST['signupaddress']);
+
+    $address = clean_input($_POST['signupAddress']);
+    $coor = clean_input($_POST['signupAddressCoor']);
+
     $email = clean_input($_POST['email']);
     $password = clean_input($_POST['password']);
     $user_type = clean_input(isset($_POST['userRole']) ? $_POST['userRole'] : '2');
+
+
+    $addressData = coorAddressVerify($address, $coor);
+    if (!$addressData) {
+        $addressErr = 'Invalid address and coordinates. Please try again.';
+    }
 
     if (empty($firstname)) {
         $firstnameErr = 'First name is required';
@@ -82,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $accountObj->sex = $sex;
         $accountObj->birthdate = $birthdate;
         $accountObj->contact_number = $contact_number;
-        $accountObj->address = $address;
+        $accountObj->address = $coor;
         $accountObj->email = $email;
         $accountObj->password = $password;
         $accountObj->usertype = $user_type;

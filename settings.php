@@ -3,6 +3,7 @@
 require_once './sanitize.php';
 require_once './classes/venue.class.php';
 require_once './classes/account.class.php';
+require_once './api/coorAddressVerify.api.php';
 
 session_start();
 $accountObj = new Account();
@@ -15,6 +16,8 @@ if (isset($_SESSION['user'])) {
 }
 
 $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+
+$address = getAddressByCoordinates($user['address']);
 
 ?>
 
@@ -205,9 +208,10 @@ $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
                                     <label class="block text-sm font-medium text-gray-700">Address</label>
                                     <div class="flex gap-2">
                                         <input type="text" name="address" id="address" readonly
-                                            value="<?php echo htmlspecialchars($user['address']); ?>"
+                                            value="<?php echo htmlspecialchars($address); ?>"
                                             class="w-full h-12 px-3 py-2 text-lg border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-black transition-colors"
                                             placeholder="Enter your address">
+                                        <input type="hidden" name="addressCoor" id="addressCoor" hidden>
                                         <button id="maps-button"
                                             class=" border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
                                             <svg height="24px" width="24px" version="1.1" id="Layer_1"
