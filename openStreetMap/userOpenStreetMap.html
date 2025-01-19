@@ -44,6 +44,13 @@
     
 </div>
 <script>
+
+const urlParams = window.location.href;
+if(urlParams.includes('list-your-venue.php')){
+    document.getElementById('closeMap').style.display = 'none';
+}
+
+
     // let marker; // Declare marker variable
 
 map = L.map('map').setView([6.9214, 122.0790], 13);
@@ -84,7 +91,7 @@ document.getElementById('closeMap').addEventListener('click', function() {
   document.getElementById('openStreetMapDiv').style.display = 'none';
 //   document.getElementById('location').value = '';
 //   document.getElementById('OpenStreetaddress').value = '';
-//   if (marker) {
+//   if (marker) {  
 //     map.removeLayer(marker);
 //     marker = null;
 //   }
@@ -95,11 +102,18 @@ document.getElementById("locationSearch").addEventListener("click", function (e)
     const location = document.getElementById("searchpin").value.trim();
     console.log("Location entered:", location); // Debugging step
     if (!location) {
-        alert("Please enter a location.");
+        showModal("Please enter a location.", undefined, "black_ico.png");
         return;
     }
-    getCoordinates(location);
+    getCoordinates(location + ", Zamboanga City, Philippines");
 });
+
+document.getElementById("searchpin").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+        document.getElementById("locationSearch").click();
+    }
+});
+
 
 
 async function getCoordinates(address) {
@@ -112,10 +126,11 @@ async function getCoordinates(address) {
       const { lat, lon } = data[0];
       map.setView([lat, lon], 13);
     } else {
-      alert("No results found for the entered location.");
+      showModal("No results found for the entered location.", undefined, "black_ico.png");
     }
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 }
+
 </script>

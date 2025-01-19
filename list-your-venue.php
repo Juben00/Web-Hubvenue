@@ -568,6 +568,7 @@ session_start();
                         <div id="image-preview-container" class="mt-6 grid grid-cols-3 gap-4">
                             <!-- Preview images will appear here -->
                         </div>
+                        <input type="hidden" name="imageThumbnail" id="imageThumbnail">
                     </div>
                 </div>
 
@@ -1208,6 +1209,7 @@ session_start();
                             e.preventDefault();
                             mainImageIndex = index; // Set index as main
                             console.log("Main image set to index", index);
+                            document.getElementById('imageThumbnail').value = index;
                             updateMainImageHighlight();
                         });
 
