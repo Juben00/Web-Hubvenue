@@ -1,12 +1,13 @@
 <?php
+require_once './classes/account.class.php';
+require_once './api/coorAddressVerify.api.php';
 session_start();
 
 if (!isset($_SESSION['user'])) {
-    header("Location: index.php");
+    header("Location: user.php");
     exit();
 }
 
-require_once './classes/account.class.php';
 
 $accountObj = new Account();
 
@@ -14,6 +15,8 @@ $user = $accountObj->getUser($_SESSION['user']['id']);
 
 $appliedHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 1);
 $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
+
+$address = getAddressByCoordinates($user['address']);
 
 ?>
 
@@ -114,7 +117,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-user: 1000;
         }
 
         .address-confirm-content {
@@ -201,23 +204,21 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
                         <p class="text-gray-600 mb-6">Let's start with your personal information.</p>
                         <div class="flex flex-col gap-4">
 
-                            <?php
-                            foreach ($user as $index): ?>
-                                <div>
-                                    <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                                    <input type="text" id="fullName" name="fullName" placeholder="Last Name, First Name M.I."
-                                        required
+                            <div>
+                                <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                <input type="text" id="fullName" name="fullName" placeholder="Last Name, First Name M.I."
+                                    required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    value="<?php echo htmlspecialchars($user['lastname'] . ', ' . $user['firstname'] . ' ' . $user['middlename']) . '.'; ?>"
+                                    readonly>
+                            </div>
+                            <div>
+                                <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                <span class="flex items-center space-x-2">
+                                    <input type="text" id="address" name="address" placeholder="Where do you live?" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        value="<?php echo htmlspecialchars($index['lastname'] . ', ' . $index['firstname'] . ' ' . $index['middlename']) . '.'; ?>"
-                                        readonly>
-                                </div>
-                                <div>
-                                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                                    <span class="flex items-center space-x-2">
-                                        <input type="text" id="address" name="address" placeholder="Where do you live?" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                            value="<?php echo htmlspecialchars($index['address']); ?>" readonly>
-                                        <button class="maps-button border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
+                                        value="<?php echo htmlspecialchars($address); ?>" readonly>
+                                    <!-- <button class="maps-button border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
                                             <svg height="24px" width="24px" version="1.1" id="Layer_1"
                                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                                 viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
@@ -237,16 +238,15 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
                                                     <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
                                                 </g>
                                             </svg>
-                                        </button>
-                                    </span>
-                                </div>
-                                <div>
-                                    <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
-                                    <input type="date" id="hostBd" name="birthdate" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-                                        value="<?php echo htmlspecialchars($index['birthdate']); ?>" readonly>
-                                </div>
-                        <?php endforeach; ?>
+                                        </button> -->
+                                </span>
+                            </div>
+                            <div>
+                                <label for="birthdate" class="block text-sm font-medium text-gray-700">Birthdate</label>
+                                <input type="date" id="hostBd" name="birthdate" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    value="<?php echo htmlspecialchars($user['birthdate']); ?>" readonly>
+                            </div>
 
                         </div>
                     </div>
@@ -310,7 +310,7 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
 
 
                     <!-- Step 4: Review and Submit -->
-                    <div id="step5" class="step hidden">
+                    <div id="step4" class="step hidden">
                         <h1 class="text-2xl font-bold mb-2">Review and Submit</h1>
                         <p class="text-gray-600 mb-6">Please review your information before submitting.</p>
                         <div id="reviewContent" class="space-y-2"></div>
@@ -347,14 +347,14 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
             const reviewContent = document.getElementById('reviewContent');
             let currentStep = 0;
 
-            // Show specific step based on current index
-            function showStep(stepIndex) {
-                steps.forEach((step, index) => {
-                    step.classList.toggle('hidden', index !== stepIndex);
+            // Show specific step based on current user
+            function showStep(stepuser) {
+                steps.forEach((step, user) => {
+                    step.classList.toggle('hidden', user !== stepuser);
                 });
-                prevBtn.style.display = stepIndex === 0 ? 'none' : 'block';
-                nextBtn.textContent = stepIndex === steps.length - 1 ? 'Submit' : 'Next';
-                progressBarFill.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
+                prevBtn.style.display = stepuser === 0 ? 'none' : 'block';
+                nextBtn.textContent = stepuser === steps.length - 1 ? 'Submit' : 'Next';
+                progressBarFill.style.width = `${((stepuser + 1) / steps.length) * 100}%`;
             }
 
             // Update review content with user inputs
@@ -391,24 +391,69 @@ $isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
 
 
             // Handle the Next button click
-            nextBtn.addEventListener('click', function () {
-                if (validateStep()) {
-                    if (currentStep < steps.length - 1) {
-                        if (currentStep === steps.length - 2) {
-                            updateReviewContent();
-                        }
-                        currentStep++;
-                        showStep(currentStep);
-                    } else {
-                        document.getElementById('sform').click();
-                    }
-                } else {
-                    showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
-                }
-            });
+            nextBtn?.addEventListener('click', function () {
+                // Step-specific validations
+                if (currentStep === 1) {
+                    const idType = document.getElementById('idType').value;
+                    const idImage = document.getElementById('idImage').files.length;
 
-            // Handle the Previous button click
-            prevBtn.addEventListener('click', function () {
+                    if (!idType) {
+                        showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
+                        return;
+                    }
+
+                    if (idImage === 0) {
+                        showModal('Please upload an image of your ID card.', undefined, "black_ico.png");
+                        return;
+                    }
+                }
+
+                if (currentStep === 2) {
+                    const idType = document.getElementById('idType').value;
+                    const idType2 = document.getElementById('idType2').value;
+                    const idImage = document.getElementById('idImage').files.length;
+                    const idImage2 = document.getElementById('idImage2').files.length;
+
+                    if (!idType2) {
+                        showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
+                        return;
+                    }
+
+                    if (idImage === 0) {
+                        showModal('Please upload an image of your ID card.', undefined, "black_ico.png");
+                        return;
+                    }
+
+                    if (idType === idType2) {
+                        showModal('Please upload a different type of ID card.', undefined, "black_ico.png");
+                        return;
+                    }
+
+                    if (idImage2 === 0) {
+                        showModal('Please upload an image of your ID card.', undefined, "black_ico.png");
+                        return;
+                    }
+                }
+
+                // Proceed to the next step if it's not the last step
+                if (currentStep < steps.length - 1) {
+                    // Update review content on the second-to-last step
+                    if (currentStep === steps.length - 2) {
+                        updateReviewContent();
+                    }
+
+                    // Move to the next step
+                    currentStep++;
+                    showStep(currentStep);
+                    return; // Exit after moving to the next step
+                }
+
+                // Submit the form if it's the final step
+                if (currentStep === steps.length - 1) {
+                    document.getElementById('sform').click();
+                }
+            });       // Handle the Previous button click
+            prevBtn?.addEventListener('click', function () {
                 if (currentStep > 0) {
                     currentStep--;
                     showStep(currentStep);

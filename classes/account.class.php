@@ -176,7 +176,7 @@ class Account
             $stmt->execute();
 
             // Fetch the user data as an associative array
-            $user = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Return the user data
             return $user;
