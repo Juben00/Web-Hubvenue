@@ -46,7 +46,7 @@ $venuePost = $venueObj->getAllVenues('', $_SESSION['user']['id']);
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php foreach ($venuePost as $venue):
-                    $address = getAddressByCoordinates($venue['location']);
+                    // $address = getAddressByCoordinates($venue['location']);
                     ?>
                     <a class="venue-card cursor-pointer" data-id="<?php echo htmlspecialchars($venue['venue_id']); ?>">
                         <div class="bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition duration-300">
@@ -64,18 +64,19 @@ $venuePost = $venueObj->getAllVenues('', $_SESSION['user']['id']);
                                         break;
                                 }
                                 ?>
-                                <img src="./<?php echo !empty($venue['image_urls'][0]) ? $venue['image_urls'][0] : '../images/black_ico.png'; ?>"
+                                <img src="./<?php echo !empty($venue['image_urls'][0]) ? $venue['image_urls'][$venue['thumbnail']] : '../images/black_ico.png'; ?>"
                                     alt="<?php echo htmlspecialchars($venue['name'] ?? 'Venue'); ?>"
                                     class="w-full h-48 object-cover">
                             </div>
                             <div class="p-4">
                                 <h3 class="font-medium text-lg mb-1"><?php echo htmlspecialchars($venue['name']); ?></h3>
                                 <p class="text-gray-500 text-sm mb-2">
-                                    <?php echo htmlspecialchars($address ?? 'No location specified'); ?>
+                                    <?php echo htmlspecialchars($venue['venue_tag_name'] ?? 'No tag specified'); ?>
                                 </p>
                                 <!-- <p class="text-black font-semibold">
                                     <?php echo htmlspecialchars($venue['price'] ?? 'Price not specified'); ?> / day
                                 </p> -->
+                                <!-- <?php var_dump($venue) ?> -->
                             </div>
                         </div>
                     </a>
