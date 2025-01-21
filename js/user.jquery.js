@@ -326,7 +326,20 @@ $(document).ready(function () {
                     $('.venue-card').on('click', function (e) {
                         e.preventDefault();
                         const url = $(this).data("id");
-                        viewListing(url);
+
+                        //set the url to the id of the venue
+                        $.ajax({
+                            type: "GET",
+                            url: "./profile/view-listing.php?id=" + url,
+                            data: {
+                                id: url
+                            },
+                            success: function (response) {
+                                $('#profileDisplay').html(response);
+                            }
+                        });
+
+                        // viewListing(url);
                     });
 
                     //view bookmarks
@@ -370,24 +383,18 @@ $(document).ready(function () {
         )
     }
     
-    function viewListing(url) {
-        $.ajax({
-            type: "GET",
-            url: "./profile/view-listing.php?id=" + url,
-            data: {
-                id: url
-            },
-            success: function (response) {
-                $('#profileDisplay').html(response);
-
-                //back to listing
-                $('#backToListing').on('click', function(e) {
-                    e.preventDefault();
-                    openProfileNav('listings');
-                })
-            }
-        });
-    }
+    // function viewListing(url) {
+    //     $.ajax({
+    //         type: "GET",
+    //         url: "./profile/view-listing.php?id=" + url,
+    //         data: {
+    //             id: url
+    //         },
+    //         success: function (response) {
+    //             $('#profileDisplay').html(response);
+    //         }
+    //     });
+    // }
 
     function addReview(formElement) {
         let form = new FormData(formElement[0]);

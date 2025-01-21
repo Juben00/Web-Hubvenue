@@ -36,7 +36,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         <h1 id="detailVenueName" class="text-gray-600 text-2xl viewMode">
                             <?php echo htmlspecialchars($venueView['venue_name']); ?>
                         </h1>
-                        <input id="editVenueName" class="text-2xl font-bold w-full editMode"
+                        <input id="editVenueName" class="text-2xl font-bold w-full editMode hidden"
                             value="<?php echo htmlspecialchars(trim($venueView['venue_name'])); ?>">
                         <button id="editVenueButton" class=" text-xs px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center
                             gap-2">
@@ -49,8 +49,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     </div>
 
                     <!-- Image Gallery -->
-                    <div class="mb-6 grid grid-cols-2 gap-4 relative">
-                        <div class="col-span-2">
+                    <div class="mb-6 grid grid-cols-2 gap-2 relative viewMode">
+                        <div class="col-span-2 ">
                             <?php if (!empty($venueView['image_urls'])): ?>
                                 <img src="./<?= htmlspecialchars($thumbnail) ?>" alt="Venue Image"
                                     class="w-full h-96 object-cover rounded-lg">
@@ -59,7 +59,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                     class="bg-slate-50 w-full h-96 object-cover rounded-lg">
                             <?php endif; ?>
                         </div>
-                        <div class="grid grid-cols-3 col-span-2 gap-2">
+                        <div class="grid grid-cols-3 col-span-2 gap-2 ">
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 1): ?>
                                 <img src="./<?= htmlspecialchars($venueView['image_urls'][1]) ?>" alt="Venue Image"
                                     class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
@@ -96,6 +96,31 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         </button>
                     </div>
 
+                    <!-- Image gallery editMode hidden -->
+                    <div class="mb-6 grid-cols-3 col-span-6 gap-2 relative editMode hidden" id="editImageGallery">
+                        <?php
+                        foreach ($venueView['image_urls'] as $image_url) {
+                            $index = array_search($image_url, $venueView['image_urls']); // Get the index of the image
+                        
+                            echo '<div class="relative image-container" id="image-' . $index . '">
+                                    <img src="./' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                    <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" 
+                                        data-bs-marked="' . $index . '" onclick="markForDeletion(event)">Remove</button>
+                                </div>';
+
+                        }
+                        ?>
+                    </div>
+                    <div id="newImagesContainer" class=" grid-cols-3 gap-2 editMode hidden">
+                        <!-- New images will be appended here -->
+                    </div>
+                    <div class="mt-4 editMode hidden">
+                        <input type="file" id="imageUpload" class="hidden" accept="image/*"
+                            onchange="previewImage(event)">
+                        <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+                            id="addImageTrigger">Add Image</button>
+                    </div>
+
                     <div class="flex gap-6 w-full ">
                         <div class=" w-full">
                             <!-- Location -->
@@ -106,9 +131,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                     $address = getAddressByCoordinates($venueView['venue_location']);
                                     echo htmlspecialchars(trim($address)); ?>
                                 </p>
-                                <div class="editMode">
-                                    <span class="flex items-center space-x-2  border border-red-500">
-                                        <input id="editVenueAddressCoorView" name="editVenueAddressCoorView"
+                                <div class="editMode hidden">
+                                    <span class="flex items-center space-x-2">
+                                        <input id="editVenueAddress" name="editVenueAddress"
                                             placeholder="Click the button to set a location" required type="text"
                                             class="mt-1 border block w-full p-2  text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
                                             value="<?php echo htmlspecialchars(trim($address)); ?>" readonly />
@@ -150,7 +175,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <p id="detailVenueDescription" class="text-gray-600 viewMode">
                                     <?php echo trim(htmlspecialchars($venueView['venue_description'])); ?>
                                 </p>
-                                <textarea id="editVenueDescription" class="w-full rounded-md editMode"
+                                <textarea id="editVenueDescription" class="w-full rounded-md editMode hidden"
                                     rows="4"><?php echo trim(htmlspecialchars($venueView['venue_description'])); ?></textarea>
                             </div>
 
@@ -160,7 +185,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <p id="detailVenueCapacity" class="text-gray-600 viewMode">
                                     <?php echo trim(htmlspecialchars($venueView['capacity'])); ?> guests
                                 </p>
-                                <input type="number" id="editVenueCapacity" class=" w-full rounded-md editMode"
+                                <input type="number" id="editVenueCapacity" class=" w-full rounded-md editMode hidden"
                                     value=<?php echo trim(htmlspecialchars($venueView['capacity'])); ?>>
                             </div>
 
@@ -185,7 +210,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <?php else: ?>
                                     <p class="text-sm text-gray-500">No amenities available</p>
                                 <?php endif; ?>
-                                <textarea type="text" id="editVenueAmenities" class="editMode space-y-2  w-full"
+                                <textarea type="text" id="editVenueAmenities" class="editMode hidden space-y-2  w-full"
                                     rows="4"><?php
                                     if ($amenities):
                                         $formattedAmenities = implode(', ', array_map('htmlspecialchars', $amenities));
@@ -215,12 +240,13 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <?php else: ?>
                                     <p class="text-sm text-gray-500">No Rules Stated</p>
                                 <?php endif; ?>
-                                <textarea type="text" id="editVenueRules" class="editMode space-y-2  w-full" rows="4"><?php
-                                if ($rules):
-                                    $formattedRules = implode(', ', array_map('htmlspecialchars', $rules));
-                                    echo trim($formattedRules);
-                                endif;
-                                ?></textarea>
+                                <textarea type="text" id="editVenueRules" class="editMode hidden space-y-2  w-full"
+                                    rows="4"><?php
+                                    if ($rules):
+                                        $formattedRules = implode(', ', array_map('htmlspecialchars', $rules));
+                                        echo trim($formattedRules);
+                                    endif;
+                                    ?></textarea>
                             </div>
 
                             <!-- Cancellation Policy -->
@@ -229,7 +255,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <div class="viewMode">
                                     <div id="detailCancellationPolicy" class="text-gray-600"></div>
                                 </div>
-                                <div class="editMode">
+                                <div class="editMode hidden">
                                     <select id="editCancellationPolicy" class="form-select rounded-md w-full mb-2">
                                         <option value="flexible">Flexible - Full refund 24 hours prior</option>
                                         <option value="moderate">Moderate - Full refund 5 days prior</option>
@@ -659,8 +685,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
 <script>
     let isEditVenue = false;
-    // hide all the edit mode classes
-    document.querySelectorAll('.editMode').forEach(function (element) {
+
+    document.querySelectorAll('.editMode hidden').forEach(function (element) {
         element.style.display = 'none';
     });
 
@@ -669,26 +695,119 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
         e.preventDefault();
 
         if (isEditVenue) {
-            isEditVenue = false;
-            document.getElementById('editVenueButton').innerText = 'Cancel Editing';
-            document.querySelectorAll('.viewMode').forEach(function (element) {
-                element.style.display = 'block';
-            });
-            document.querySelectorAll('.editMode').forEach(function (element) {
-                element.style.display = 'none';
-            });
-        } else {
-            isEditVenue = true;
             document.getElementById('editVenueButton').innerText = 'Edit Details';
-
-            document.querySelectorAll('.viewMode').forEach(function (element) {
-                element.style.display = 'none';
-            });
-
-            document.querySelectorAll('.editMode').forEach(function (element) {
-                element.style.display = 'block';
-            });
+            document.getElementById('newImagesContainer').innerHTML = '';
+            document.getElementById('imageUpload').value = '';
+        } else {
+            document.getElementById('editVenueButton').innerText = 'Cancel Editing';
         }
+        document.querySelectorAll('.viewMode').forEach(function (element) {
+            element.classList.toggle("hidden");
+
+        });
+        document.querySelectorAll('.editMode').forEach(function (element) {
+            element.classList.toggle("hidden");
+        });
+
+        document.getElementById('editImageGallery').classList.toggle("grid");
+        document.getElementById('newImagesContainer').classList.toggle("grid");
+
+        //remove the content of the input image
+
+        isEditVenue = !isEditVenue;
+
     });
+
+    document.getElementById('addImageTrigger').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('imageUpload').click();
+    });
+
+    // Temporary arrays to track changes
+    let imagesToDelete = [];
+    let newImages = []; // Stores new image files temporarily
+
+    // Mark an image for deletion
+    function markForDeletion(e) {
+        e.preventDefault();
+
+        // Get the index from the button's data-bs-marked attribute
+        const index = e.target.getAttribute('data-bs-marked');
+
+        if (!imagesToDelete.includes(index)) {
+            imagesToDelete.push(index);
+        }
+
+        // Hide the corresponding image visually
+        const imageDiv = document.getElementById(`image-${index}`);
+        if (imageDiv) {
+            imageDiv.style.display = 'none';
+        }
+    }
+
+
+
+    // Preview new image before adding
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // Create a new image container
+                const container = document.createElement('div');
+                container.className = 'relative image-container';
+                container.innerHTML = `
+                <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+            `;
+                document.getElementById('newImagesContainer').appendChild(container);
+            };
+            reader.readAsDataURL(file);
+
+            // Add the file to the newImages array
+            newImages.push(file);
+        }
+    }
+
+    // Remove a new image from the view
+    function removeNewImage(filename) {
+        newImages = newImages.filter(image => image.name !== filename);
+        const containers = document.getElementById('newImagesContainer').children;
+        for (const container of containers) {
+            if (container.querySelector('img').src.includes(filename)) {
+                container.remove();
+                break;
+            }
+        }
+    }
+
+    // Save changes
+    function saveChanges() {
+        const formData = new FormData();
+
+        // Append images to delete
+        formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+
+        // Append new images
+        newImages.forEach((image, index) => {
+            formData.append(`newImages[${index}]`, image);
+        });
+
+        fetch('manage_images.php', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Changes saved successfully.');
+                    location.reload();
+                } else {
+                    alert('Failed to save changes.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 
 </script>
