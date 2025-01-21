@@ -84,7 +84,14 @@ map.on('click', function (e) {
           document.getElementById('signupAddress').value = address;
           document.getElementById('signupAddressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
       }
+
+      //edit venue
+      if(document.getElementById('editVenueAddress')){
+        document.getElementById('editVenueAddress').value = address;
+        document.getElementById('editVenueAddressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
+      }
     })
+    
     .catch(err => {
       console.error('Error:', err);
       document.getElementById('OpenStreetaddress').value = "Error retrieving address";
