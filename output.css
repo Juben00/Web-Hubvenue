@@ -648,6 +648,10 @@ video {
   left: 0.125rem;
 }
 
+.left-1 {
+  left: 0.25rem;
+}
+
 .left-2 {
   left: 0.5rem;
 }
@@ -662,6 +666,10 @@ video {
 
 .right-0 {
   right: 0px;
+}
+
+.right-1 {
+  right: 0.25rem;
 }
 
 .right-2 {
@@ -1364,10 +1372,6 @@ video {
 
 .grid-cols-7 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-
-.grid-cols-6 {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .flex-row {
