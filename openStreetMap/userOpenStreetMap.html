@@ -44,6 +44,7 @@
     
 </div>
 <script>
+  
 
     // let marker; // Declare marker variable
 
@@ -61,41 +62,71 @@ map.on('click', function (e) {
   marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
 
   fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      const address = data.display_name || "No address found";
-      document.getElementById('OpenStreetaddress').value = address;
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  })
+  .then(data => {
+    if (data.error) {
+      throw new Error('Error retrieving data from Nominatim API');
+    }
 
-      //venue listing
-      if(document.getElementById('venue-location')){
-        document.getElementById('venue-location').value = address;
-        document.getElementById('venueCoordinates').value = e.latlng.lat + ',' + e.latlng.lng;
-      }
+    // Safely set the value of 'OpenStreetaddress' if it exists
+    const openStreetAddress = document.getElementById('OpenStreetaddress');
+    if (openStreetAddress) {
+      openStreetAddress.value = data.display_name || "No address found";
+    }
 
-      //settings
-      if(document.getElementById('address')){
-        document.getElementById('address').value = address;
-        document.getElementById('addressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
-      }
+    console.log(data);
+    const address = data.display_name || "No address found";
+    const coordinates = `${e.latlng.lat},${e.latlng.lng}`;
 
-      //signup
-      if(document.getElementById('signupAddress')){
-          document.getElementById('signupAddress').value = address;
-          document.getElementById('signupAddressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
+    if (document.getElementById('venue-location')) {
+      document.getElementById('venue-location').value = address;
+      const venueCoordinates = document.getElementById('venueCoordinates');
+      if (venueCoordinates) {
+        venueCoordinates.value = coordinates;
       }
+    }  
+    if (document.getElementById('address')) {
+      document.getElementById('address').value = address;
+      const addressCoor = document.getElementById('addressCoor');
+      if (addressCoor) {
+        addressCoor.value = coordinates;
+      }
+    }  
+    if (document.getElementById('signupAddress')) {
+      document.getElementById('signupAddress').value = address;
+      const signupAddressCoor = document.getElementById('signupAddressCoor');
+      if (signupAddressCoor) {
+        signupAddressCoor.value = coordinates;
+      }
+    } 
+    if (document.getElementById('editVenueAdd')) {
+      console.log(address);
+      document.getElementById('editVenueAdd').value = address;
+      const editVenueAddressCoor = document.getElementById('editVenueAddCoordinates');
+      if (editVenueAddressCoor) {
+        editVenueAddressCoor.value = coordinates;
+      }
+    }
 
-      //edit venue
-      if(document.getElementById('editVenueAddress')){
-        document.getElementById('editVenueAddress').value = address;
-        document.getElementById('editVenueAddressCoor').value = e.latlng.lat + ',' + e.latlng.lng;
-      }
-    })
-    
-    .catch(err => {
-      console.error('Error:', err);
-      document.getElementById('OpenStreetaddress').value = "Error retrieving address";
-    });
+    console.log("Address:", address);
+    console.log("Coordinates:", coordinates);
+  })
+  .catch(err => {
+    console.error('Error:', err);
+
+    // Safely handle the error for 'OpenStreetaddress'
+    const openStreetAddress = document.getElementById('OpenStreetaddress');
+    if (openStreetAddress) {
+      openStreetAddress.value = "Error retrieving address";
+    }
+  });
+
+
 });
 
 document.getElementById('closeMap').addEventListener('click', function() {

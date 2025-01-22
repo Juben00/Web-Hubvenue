@@ -27,7 +27,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 <div id="openstreetmapplaceholder"></div>
 <!-- Venue Details View (Initially Hidden) -->
 <div id="venueDetailsView" class="container mx-auto pt-20">
-    <form class="flex gap-6">
+    <form class="flex gap-6" id="editVenueForm">
         <!-- Main Content -->
         <div class="flex-grow">
             <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
@@ -36,7 +36,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         <h1 id="detailVenueName" class="text-gray-600 text-2xl viewMode">
                             <?php echo htmlspecialchars($venueView['venue_name']); ?>
                         </h1>
-                        <input id="editVenueName" class="text-2xl font-bold w-full editMode hidden"
+                        <input id="VenueName" name="editVenueName" class="text-2xl font-bold w-full editMode hidden"
                             value="<?php echo htmlspecialchars(trim($venueView['venue_name'])); ?>">
                         <button id="editVenueButton" class=" text-xs px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center
                             gap-2">
@@ -99,17 +99,23 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <!-- Image gallery editMode hidden -->
                     <div class="mb-6 grid-cols-3 col-span-6 gap-2 relative editMode hidden" id="editImageGallery">
                         <?php
-                        foreach ($venueView['image_urls'] as $image_url) {
-                            $index = array_search($image_url, $venueView['image_urls']); // Get the index of the image
-                        
-                            echo '<div class="relative image-container" id="image-' . $index . '">
-                                    <img src="./' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
-                                    <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" 
-                                        data-bs-marked="' . $index . '" onclick="markForDeletion(event)">Remove</button>
-                                </div>';
+                        // Re-index the image URLs array
+                        $venueView['image_urls'] = array_values($venueView['image_urls']);
 
+                        foreach ($venueView['image_urls'] as $index => $image_url) {
+                            $isThumbnail = $index == $venueView['thumbnail']; // Check if the image is the thumbnail
+                            echo '<div class="relative image-container  ' . ($isThumbnail ? 'border-4 border-blue-500' : '') . '"  id="image-' . $index . '">
+                            <img  src="./' . htmlspecialchars($image_url) . '" data-bs-src="' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75" 
+                                data-bs-index="' . $index . '">
+                            <button class="thumbnailButton absolute top-2 left-1 text-xs text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600" data-index="' . $index . '" onclick="setThumbnail(event)">
+                                Set as Thumbnail
+                            </button>
+                            <button class="absolute top-2 right-1 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" 
+                                data-bs-marked="' . $index . '" onclick="markForDeletion(event)">Remove</button>
+                        </div>';
                         }
                         ?>
+
                     </div>
                     <div id="newImagesContainer" class=" grid-cols-3 gap-2 editMode hidden">
                         <!-- New images will be appended here -->
@@ -133,12 +139,12 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 </p>
                                 <div class="editMode hidden">
                                     <span class="flex items-center space-x-2">
-                                        <input id="editVenueAddress" name="editVenueAddress"
-                                            placeholder="Click the button to set a location" required type="text"
-                                            class="mt-1 border block w-full p-2  text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
+                                        <input id="editVenueAdd" placeholder="Click the button to set a location"
+                                            required type="text"
+                                            class="mt-1 border block w-full p-2 editVenueAddress text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
                                             value="<?php echo htmlspecialchars(trim($address)); ?>" readonly />
-                                        <input type="hidden" class="" id="editVenueAddressCoor"
-                                            name="editVenueAddressCoor" />
+                                        <input type="hidden" class="" id="editVenueAddCoordinates"
+                                            name="editVenueAddCoor" />
                                         <button id="maps-button"
                                             class="border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
                                             <svg height="24px" width="24px" version="1.1" id="Layer_1"
@@ -175,7 +181,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <p id="detailVenueDescription" class="text-gray-600 viewMode">
                                     <?php echo trim(htmlspecialchars($venueView['venue_description'])); ?>
                                 </p>
-                                <textarea id="editVenueDescription" class="w-full rounded-md editMode hidden"
+                                <textarea id="editVenueDescription" name="editVenueDescription"
+                                    class="w-full rounded-md editMode hidden"
                                     rows="4"><?php echo trim(htmlspecialchars($venueView['venue_description'])); ?></textarea>
                             </div>
 
@@ -185,7 +192,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <p id="detailVenueCapacity" class="text-gray-600 viewMode">
                                     <?php echo trim(htmlspecialchars($venueView['capacity'])); ?> guests
                                 </p>
-                                <input type="number" id="editVenueCapacity" class=" w-full rounded-md editMode hidden"
+                                <input type="number" id="VenueCapacity" name="editVenueCapacity" class=" w-full rounded-md editMode hidden"
                                     value=<?php echo trim(htmlspecialchars($venueView['capacity'])); ?>>
                             </div>
 
@@ -210,8 +217,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <?php else: ?>
                                     <p class="text-sm text-gray-500">No amenities available</p>
                                 <?php endif; ?>
-                                <textarea type="text" id="editVenueAmenities" class="editMode hidden space-y-2  w-full"
-                                    rows="4"><?php
+                                <textarea type="text" id="editVenueAmenities" name="editVenueAmenities"
+                                    class="editMode hidden space-y-2  w-full" rows="4"><?php
                                     if ($amenities):
                                         $formattedAmenities = implode(', ', array_map('htmlspecialchars', $amenities));
                                         echo trim($formattedAmenities);
@@ -240,8 +247,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <?php else: ?>
                                     <p class="text-sm text-gray-500">No Rules Stated</p>
                                 <?php endif; ?>
-                                <textarea type="text" id="editVenueRules" class="editMode hidden space-y-2  w-full"
-                                    rows="4"><?php
+                                <textarea type="text" id="editVenueRules" name="editVenueRules"
+                                    class="editMode hidden space-y-2  w-full" rows="4"><?php
                                     if ($rules):
                                         $formattedRules = implode(', ', array_map('htmlspecialchars', $rules));
                                         echo trim($formattedRules);
@@ -250,13 +257,13 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                             </div>
 
                             <!-- Cancellation Policy -->
-                            <div class="mb-6">
+                            <!-- <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">Cancellation Policy</h3>
                                 <div class="viewMode">
                                     <div id="detailCancellationPolicy" class="text-gray-600"></div>
                                 </div>
                                 <div class="editMode hidden">
-                                    <select id="editCancellationPolicy" class="form-select rounded-md w-full mb-2">
+                                    <select id="editCancellationPolicy" class=" rounded-md w-full mb-2">
                                         <option value="flexible">Flexible - Full refund 24 hours prior</option>
                                         <option value="moderate">Moderate - Full refund 5 days prior</option>
                                         <option value="strict">Strict - 50% refund 7 days prior</option>
@@ -265,7 +272,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                     <textarea id="editCustomPolicy" class=" w-full rounded-md mt-2 hidden" rows="4"
                                         placeholder="Enter your custom cancellation policy..."></textarea>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -454,24 +461,24 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                 </div>
 
                 <!-- Settings Panel -->
-                <div class="mt-6 border rounded-lg p-4">
+                <!-- <div class="mt-6 border rounded-lg p-4">
                     <h4 class="text-lg font-semibold mb-4">Settings</h4>
                     <p class="text-sm text-gray-600 mb-4">These apply to all nights, unless you customize them
                         by date.</p>
 
                     <!-- Pricing Tab -->
-                    <div class="border-b pb-4 mb-4">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Base price</span>
-                            <span class="text-sm text-gray-500">PHP</span>
-                        </div>
-                        <div class="mt-2">
-                            <label class="block text-sm text-gray-600 mb-1">Per night</label>
-                            <p>₱ <?php echo htmlspecialchars($venueView['price']) ?></p>
-                        </div>
+                <!-- <div class="border-b pb-4 mb-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Base price</span>
+                        <span class="text-sm text-gray-500">PHP</span>
                     </div>
+                    <div class="mt-2">
+                        <label class="block text-sm text-gray-600 mb-1">Per night</label>
+                        <p>₱ <?php echo htmlspecialchars($venueView['price']) ?></p>
+                    </div>
+                </div> -->
 
-                    <!-- Custom Weekend Price -->
+                <!-- Custom Weekend Price -
                     <div class="border-b pb-4 mb-4">
                         <div class="flex justify-between items-center">
                             <span class="font-medium">Custom weekend price</span>
@@ -479,7 +486,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         </div>
                     </div>
 
-                    <!-- Smart Pricing Toggle -->
+                    <!-- Smart Pricing Toggle -
                     <div class="flex justify-between items-center">
                         <div>
                             <span class="font-medium block">Smart Pricing</span>
@@ -493,7 +500,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                             </div>
                         </label>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -503,26 +510,156 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                 <div class="mb-6">
                     <h3 class="text-lg font-semibold mb-4">Venue Settings</h3>
 
+                    <!-- Venue Status -->
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Venue Status</span>
+                            <p><?php echo htmlspecialchars($venueView['availability_id'] == 1 ? "Active" : "Onhold") ?></p>
+                        </div>
+                     </div>
+                     <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Venue Status</label>
+                        <div class=" flex items-center gap-2">
+                            <div class="flex items center gap-2">
+                                <label class="switch">
+                                    <input type="radio" name="editVenueStatus" id="editVenueStatus" <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="text-sm text-gray-600">Active</span>
+                            </div>
+                            <div class="flex items center gap-2">
+                                <label class="switch">
+                                    <input type="radio" name="editVenueStatus" id="editVenueStatus" <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?>>
+                                    <span class="slider round"></span>
+                                </label>
+                                <span class="text-sm text-gray-600">Onhold</span>
+                            </div>
+                        </div>
+                     </div>
+
+                    <!-- Venue Type -->
+                      <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Venue Status</span>
+                            <p><?php 
+                            $venueType = $venueView['venue_tag'];
+
+                            switch ($venueType) {
+                                case 1:
+                                    echo "Corporate Events";
+                                    break;
+                                case 2:
+                                    echo "Reception Hall";
+                                    break;
+                                case 3:
+                                    echo "Intimate Gatherings";
+                                    break;
+                                case 4:
+                                    echo "Outdoor";
+                                    break;
+                                default:
+                                    echo "Unknown";
+                                    break;
+                            }
+                            ?></p>
+                        </div>
+                    </div>
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Venue Type</label>
+                        <select class="block w-full p-2 pl-10 text-sm text-gray-700 rounded-md" name="editVenueType"
+                            id="">
+                            <option value="1" <?php echo ($venueView['venue_tag'] == 1) ? 'selected' : ''; ?>>Corporate Events</option>
+                            <option value="2" <?php echo ($venueView['venue_tag'] == 2) ? 'selected' : ''; ?>>Reception Hall</option>
+                            <option value="3" <?php echo ($venueView['venue_tag'] == 3) ? 'selected' : ''; ?>>Intimate Gatherings</option>
+                            <option value="4" <?php echo ($venueView['venue_tag'] == 4) ? 'selected' : ''; ?>>Outdoor</option>
+                        </select>
+                    </div>
+
+
                     <!-- Price Setting -->
-                    <div class="mb-4">
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Price per day</span>
+                            <p>₱<?php echo htmlspecialchars($venueView['price']) ?></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Price per day</label>
                         <div class="flex items-center">
                             <span class="text-gray-500 mr-2">₱</span>
-                            <input type="number" id="venuePrice" class=" rounded-md w-full"
+                            <input type="number" id="venuePrice" name="editVenuePrice" class=" rounded-md w-full"
                                 value="<?php echo htmlspecialchars($venueView['price']) ?>">
                         </div>
                     </div>
 
                     <!-- Down Payment Options -->
-                    <div class="mb-4">
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Down Payment Options</span>
+                            <p><?php
+                            $downPayment = $venueView['down_payment_id'];
+                            $downPaymentName = $downPayment == 1 ? '30% Down Payment' : ($downPayment == 2 ? '50% Down Payment' : 'Full Payment Required');
+                            echo htmlspecialchars($downPaymentName);
+                            ?></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment
                             Required</label>
-                        <select class="form-select rounded-md w-full">
-                            <option value="30">30% of total amount</option>
-                            <option value="40">40% of total amount</option>
-                            <option value="100">Full payment required</option>
+                        <select class=" rounded-md w-full" name="editDownPayment" id="editDownPayment">
+                            <option value="30" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
+                                of
+                                total amount
+                            </option>
+                            <option value="50" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50%
+                                of
+                                total amount
+                            </option>
+                            <option value="100" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full
+                                payment
+                                required</option>
                         </select>
                     </div>
+
+
+                    <!-- Entrance -->
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Entrance per person</span>
+                            <p>₱<?php echo htmlspecialchars($venueView['entrance']) ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Entrance per person</label>
+                        <div class="flex items-center">
+                            <span class="text-gray-500 mr-2">₱</span>
+                            <input type="number" id="venueEntrance" name="editVenueEntrance" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['entrance']) ?>">
+                        </div>
+                    </div>
+
+                    <!-- Cleaning Fee -->
+                      <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Cleaning Fee</span>
+                            <p>₱<?php echo htmlspecialchars($venueView['cleaning']) ?></p>
+                        </div>
+                    </div>
+
+                    
+                    
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cleaning Fee</label>
+                        <div class="flex items-center">
+                            <span class="text-gray-500 mr-2">₱</span>
+                            <input type="number" id="venueCleaning" name="editVenueCleaning" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['cleaning']) ?>">
+                        </div>
+                    </div>
+
 
                     <!-- Discounts -->
                     <div class="mb-4">
@@ -544,7 +681,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     </div>
 
                     <!-- Save Changes Button -->
-                    <button onclick="saveChanges()"
+                    <button onclick="saveChanges(event)"
                         class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 mt-4">
                         Save Changes
                     </button>
@@ -681,133 +818,238 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             </div>
         </div>
     </form>
-</div>
+</>
 
 <script>
-    let isEditVenue = false;
 
-    document.querySelectorAll('.editMode hidden').forEach(function (element) {
-        element.style.display = 'none';
+    // Temporary arrays to track changes
+    let imagesToDelete = [];
+    let newImages = [];
+    let isEditVenue = false;
+    let thumbnailIndex;
+    // const submitButton = document.getElementById('saveChanges');
+
+    // Initialize: Hide edit-mode elements
+    document.querySelectorAll('.editMode').forEach(function (element) {
+        element.classList.add('hidden');
     });
 
-    // show all the view mode classes
+
+    // Toggle edit mode
+    // Store the initial HTML of the editImageGallery
+    const originalEditImageGalleryHTML = document.getElementById('editImageGallery').innerHTML;
+
     document.getElementById('editVenueButton').addEventListener('click', function (e) {
         e.preventDefault();
 
         if (isEditVenue) {
+            // submitButton.disabled = true;
+            // Reset edit mode
             document.getElementById('editVenueButton').innerText = 'Edit Details';
+
+            // Reset the editImageGallery content to its original state
+            document.getElementById('editImageGallery').innerHTML = originalEditImageGalleryHTML;
+
+            // Show all the removed images before clearing the array
+            imagesToDelete.forEach(index => {
+                const imageDiv = document.getElementById(`image-${index}`);
+                if (imageDiv) {
+                    imageDiv.style.display = ''; // Reset to its default display value
+                }
+            });
+
+            // Clear the removed images array and new images
+            imagesToDelete = [];
+            newImages = [];
             document.getElementById('newImagesContainer').innerHTML = '';
             document.getElementById('imageUpload').value = '';
+
         } else {
+            // submitButton.disabled = false;
             document.getElementById('editVenueButton').innerText = 'Cancel Editing';
         }
-        document.querySelectorAll('.viewMode').forEach(function (element) {
-            element.classList.toggle("hidden");
 
+        // Toggle visibility of view/edit modes
+        document.querySelectorAll('.viewMode').forEach(function (element) {
+            element.classList.toggle('hidden');
         });
         document.querySelectorAll('.editMode').forEach(function (element) {
-            element.classList.toggle("hidden");
+            element.classList.toggle('hidden');
         });
 
-        document.getElementById('editImageGallery').classList.toggle("grid");
-        document.getElementById('newImagesContainer').classList.toggle("grid");
-
-        //remove the content of the input image
+        // Toggle gallery grids
+        document.getElementById('editImageGallery').classList.toggle('grid');
+        document.getElementById('newImagesContainer').classList.toggle('grid');
 
         isEditVenue = !isEditVenue;
-
     });
 
+    // Trigger file upload
     document.getElementById('addImageTrigger').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('imageUpload').click();
     });
 
-    // Temporary arrays to track changes
-    let imagesToDelete = [];
-    let newImages = []; // Stores new image files temporarily
+    function setThumbnail(e) {
+        e.preventDefault();
+
+        // Get the index from the button's data attribute
+        thumbnailIndex = e.target.getAttribute('data-index');
+
+        // Remove the blue border from all images
+        document.querySelectorAll('.image-container').forEach((container) => {
+            container.classList.remove('border-4', 'border-blue-500');
+        });
+
+        // Add the blue border to the selected image
+        const selectedImage = document.getElementById(`image-${thumbnailIndex}`);
+        if (selectedImage) {
+            selectedImage.classList.add('border-4', 'border-blue-500');
+        }
+
+        // Optionally update the thumbnail value in your backend via AJAX
+        console.log(`Thumbnail set to index: ${thumbnailIndex}`);
+
+        // // Toggle visibility of all thumbnail buttons
+        // document.querySelectorAll('.thumbnailButton').forEach((button) => {
+        //     if (button.getAttribute('data-index') === index) {
+        //         button.classList.remove('hidden');
+        //     } else {
+        //         button.classList.add('hidden');
+        //     }
+        // });
+    }
+
+
 
     // Mark an image for deletion
     function markForDeletion(e) {
         e.preventDefault();
 
-        // Get the index from the button's data-bs-marked attribute
         const index = e.target.getAttribute('data-bs-marked');
 
+        // Add the index to the deletion list
         if (!imagesToDelete.includes(index)) {
             imagesToDelete.push(index);
         }
 
-        // Hide the corresponding image visually
-        const imageDiv = document.getElementById(`image-${index}`);
-        if (imageDiv) {
-            imageDiv.style.display = 'none';
+        // Remove the corresponding image container
+        const imageContainer = e.target.closest('.image-container');
+        if (imageContainer) {
+            imageContainer.remove();
         }
+
+        // Update the indices of remaining images
+        const remainingImages = [];
+        document.querySelectorAll('.image-container').forEach((container, newIndex) => {
+            // Update the container's id and relevant attributes
+            container.id = `image-${newIndex}`;
+            container.querySelector('img').setAttribute('data-bs-index', newIndex);
+            container.querySelector('.thumbnailButton').setAttribute('data-index', newIndex);
+            container.querySelector('[data-bs-marked]').setAttribute('data-bs-marked', newIndex);
+
+            // Collect remaining image data from data-bs-src
+            const imgDataSrc = container.querySelector('img').getAttribute('data-bs-src');
+            if (imgDataSrc) {
+                remainingImages.push(imgDataSrc);
+            }
+
+        });
+        if (thumbnailIndex == index) {
+            thumbnailIndex = 0;
+        }
+
+        if (index < thumbnailIndex) {
+            thumbnailIndex--;
+        }
+
+        if (index > thumbnailIndex) {
+            thumbnailIndex = thumbnailIndex;
+        }
+        // Log the remaining images
+        console.log("Remaining Images:", remainingImages);
+        console.log("Thumbnail index: ", thumbnailIndex);
+        console.log("remaining length: ", remainingImages.length - 1);
+
+
     }
 
 
-
-    // Preview new image before adding
+    // Preview newly added images
     function previewImage(event) {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function (e) {
-                // Create a new image container
                 const container = document.createElement('div');
                 container.className = 'relative image-container';
                 container.innerHTML = `
-                <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
-            `;
+                    <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                    <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" data-bs-newImage="${file.name}" onclick="removeNewImage(event)">Remove</button>
+                `;
                 document.getElementById('newImagesContainer').appendChild(container);
             };
             reader.readAsDataURL(file);
 
-            // Add the file to the newImages array
             newImages.push(file);
         }
     }
 
-    // Remove a new image from the view
-    function removeNewImage(filename) {
+    // Remove a newly added image
+    function removeNewImage(event) {
+        event.preventDefault();
+
+        const filename = event.target.getAttribute('data-bs-newImage');
         newImages = newImages.filter(image => image.name !== filename);
-        const containers = document.getElementById('newImagesContainer').children;
-        for (const container of containers) {
-            if (container.querySelector('img').src.includes(filename)) {
-                container.remove();
-                break;
-            }
+
+        const container = event.target.parentElement;
+        if (container) {
+            container.remove();
         }
     }
 
     // Save changes
-    function saveChanges() {
-        const formData = new FormData();
+    function saveChanges(e) {
+        e.preventDefault();
 
-        // Append images to delete
+        const form = document.querySelector('#editVenueForm'); // Form element
+        const formData = new FormData(form); // Create FormData from the form
+
         formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
 
-        // Append new images
-        newImages.forEach((image, index) => {
-            formData.append(`newImages[${index}]`, image);
-        });
+        formData.append('thumbnailIndex', thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
 
-        fetch('manage_images.php', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Changes saved successfully.');
-                    location.reload();
-                } else {
-                    alert('Failed to save changes.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        formData.append('venueID', <?php echo $getParams?>);
+        // Append new images as files, not as JSON string
+        newImages.forEach(file => {
+        console.log(file);  // Log each file to inspect the details
+        formData.append('newImages[]', file);  // Append each new image file to the FormData
+    });
+
+    // Optional: Log the FormData object to inspect the data
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);  // Log each key-value pair in the FormData
     }
+        // newImages.forEach((image, index) => {
+        //     formData.append(`newImages[${index}]`, image);
+        // });
 
+        // fetch('manage_images.php', {
+        //     method: 'POST',
+        //     body: formData,
+        // })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             alert('Changes saved successfully.');
+        //             location.reload();
+        //         } else {
+        //             alert(`Failed to save changes: ${data.error || 'Unknown error'}`);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('An error occurred while saving changes.');
+        //     });
+    }
 </script>
