@@ -75,11 +75,11 @@ function getAddressByCoordinates($coor)
     $context = stream_context_create($options);
     $response = @file_get_contents($url, false, $context);
     if ($response === false) {
-        throw new Exception('Failed to fetch data from the API');
+        return $coor;
     }
     $data = json_decode($response, true);
     if (empty($data) || !isset($data['display_name'])) {
-        throw new Exception('API returned an empty or invalid response');
+        return $coor;
     }
     return $data['display_name'];
 }

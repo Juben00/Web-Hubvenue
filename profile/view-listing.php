@@ -111,7 +111,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 Set as Thumbnail
                             </button>
                             <button class="absolute top-2 right-1 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" 
-                                data-bs-marked="' . $index . '" onclick="markForDeletion(event)">Remove</button>
+                                data-bs-marked="' . $image_url . '" onclick="markForDeletion(event)">Remove</button>
                         </div>';
                         }
                         ?>
@@ -144,7 +144,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                             class="mt-1 border block w-full p-2 editVenueAddress text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
                                             value="<?php echo htmlspecialchars(trim($address)); ?>" readonly />
                                         <input type="hidden" class="" id="editVenueAddCoordinates"
-                                            name="editVenueAddCoor" />
+                                            name="editVenueAddCoor" value="<?php echo htmlspecialchars($venueView['venue_location']) ?>"/>
                                         <button id="maps-button"
                                             class="border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
                                             <svg height="24px" width="24px" version="1.1" id="Layer_1"
@@ -519,28 +519,44 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                      </div>
                      <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Venue Status</label>
-                        <div class=" flex items-center gap-2">
-                            <div class="flex items center gap-2">
-                                <label class="switch">
-                                    <input type="radio" name="editVenueStatus" id="editVenueStatus" <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <span class="text-sm text-gray-600">Active</span>
-                            </div>
-                            <div class="flex items center gap-2">
-                                <label class="switch">
-                                    <input type="radio" name="editVenueStatus" id="editVenueStatus" <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <span class="text-sm text-gray-600">Onhold</span>
-                            </div>
+                        <div class="flex items-center gap-2">
+                        <!-- Active Status -->
+                        <div class="flex items-center gap-2">
+                            <label class="switch">
+                                <input 
+                                    type="radio" 
+                                    name="editVenueStatus" 
+                                    id="editVenueStatusActive" 
+                                    value="1" 
+                                    <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?>
+                                >
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="text-sm text-gray-600">Active</span>
                         </div>
+    
+                        <!-- Onhold Status -->
+                        <div class="flex items-center gap-2">
+                            <label class="switch">
+                                <input 
+                                    type="radio" 
+                                    name="editVenueStatus" 
+                                    id="editVenueStatusOnhold" 
+                                    value="2" 
+                                    <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?>
+                                >
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="text-sm text-gray-600">Onhold</span>
+                        </div>
+                    </div>
+
                      </div>
 
                     <!-- Venue Type -->
                       <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Venue Status</span>
+                            <span class="">Venue Tag</span>
                             <p><?php 
                             $venueType = $venueView['venue_tag'];
 
@@ -609,15 +625,15 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment
                             Required</label>
                         <select class=" rounded-md w-full" name="editDownPayment" id="editDownPayment">
-                            <option value="30" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
+                            <option value="1" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
                                 of
                                 total amount
                             </option>
-                            <option value="50" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50%
+                            <option value="2" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50%
                                 of
                                 total amount
                             </option>
-                            <option value="100" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full
+                            <option value="3" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full
                                 payment
                                 required</option>
                         </select>
@@ -818,7 +834,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             </div>
         </div>
     </form>
-</>
+</div>
 
 <script>
 
@@ -1010,46 +1026,53 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
     // Save changes
     function saveChanges(e) {
-        e.preventDefault();
+        e.preventDefault();        
 
         const form = document.querySelector('#editVenueForm'); // Form element
         const formData = new FormData(form); // Create FormData from the form
+        const defaultImages = <?php echo json_encode($venueView['image_urls']); ?>;
 
         formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+        // Append it to the FormData as a JSON string
+        formData.append('defaultImages', JSON.stringify(defaultImages));
 
         formData.append('thumbnailIndex', thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
 
         formData.append('venueID', <?php echo $getParams?>);
         // Append new images as files, not as JSON string
         newImages.forEach(file => {
-        console.log(file);  // Log each file to inspect the details
-        formData.append('newImages[]', file);  // Append each new image file to the FormData
-    });
+            console.log(file);  // Log each file to inspect the details
+            formData.append('newImages[]', file);  // Append each new image file to the FormData
+        });
 
-    // Optional: Log the FormData object to inspect the data
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);  // Log each key-value pair in the FormData
-    }
-        // newImages.forEach((image, index) => {
-        //     formData.append(`newImages[${index}]`, image);
-        // });
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);  // Log each key-value pair in the FormData
+        }
 
-        // fetch('manage_images.php', {
-        //     method: 'POST',
-        //     body: formData,
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.success) {
-        //             alert('Changes saved successfully.');
-        //             location.reload();
-        //         } else {
-        //             alert(`Failed to save changes: ${data.error || 'Unknown error'}`);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         alert('An error occurred while saving changes.');
-        //     });
+        fetch('./api/updateVenue.api.php', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle HTTP errors
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status == 'success') {
+                    showModal(data.message, function () {
+                        location.reload();
+                    } , "black_ico.png");
+                } else {
+                    showModal(`Failed to save changes: ${data.message || 'Unknown error'}`, undefined, "black_ico.png");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal('An error occurred while saving changes. Please try again.', undefined, "black_ico.png");
+            });
+
     }
 </script>

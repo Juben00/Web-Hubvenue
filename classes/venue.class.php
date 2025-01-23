@@ -700,6 +700,80 @@ LEFT JOIN
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueStatus, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $removedImage)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            // Begin transaction
+            $conn->beginTransaction();
+
+            // Delete removed images from `venue_images`
+            if (!empty($removedImage)) {
+                $placeholders = implode(',', array_fill(0, count($removedImage), '?'));
+                $sql = "DELETE FROM venue_images WHERE venue_id = ? AND image_url IN ($placeholders)";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute(array_merge([$venueId], $removedImage));
+            }
+
+            // Update venue details in `venues` table
+            $sql = "UPDATE venues 
+                SET 
+                    name = :name, 
+                    description = :description, 
+                    location = :location, 
+                    price = :price, 
+                    capacity = :capacity, 
+                    amenities = :amenities, 
+                    rules = :rules, 
+                    entrance = :entrance, 
+                    cleaning = :cleaning, 
+                    down_payment_id = :down_payment_id, 
+                    venue_tag = :venue_tag, 
+                    thumbnail = :thumbnail, 
+                    status_id = :status_id, 
+                    availability_id = :availability_id 
+                WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':name', $venueName);
+            $stmt->bindParam(':description', $venueDescription);
+            $stmt->bindParam(':location', $venueLocation);
+            $stmt->bindParam(':price', $venuePrice);
+            $stmt->bindParam(':capacity', $venueCapacity);
+            $stmt->bindParam(':amenities', $venueAmenities); // Store as JSON
+            $stmt->bindParam(':rules', $venueRules); // Store as JSON
+            $stmt->bindParam(':entrance', $venueEntrance);
+            $stmt->bindParam(':cleaning', $venueCleaning);
+            $stmt->bindParam(':down_payment_id', $venueDownpayment);
+            $stmt->bindParam(':venue_tag', $venueType);
+            $stmt->bindParam(':thumbnail', $venueThumbnail);
+            $stmt->bindParam(':status_id', $venueStatus);
+            $stmt->bindParam(':availability_id', $venueAvailability);
+            $stmt->bindParam(':id', $venueId);
+            $stmt->execute();
+
+            // Insert new images into `venue_images`
+            if (!empty($venueImgs)) {
+                $sql = "INSERT INTO venue_images (venue_id, image_url) VALUES (?, ?)";
+                $stmt = $conn->prepare($sql);
+                foreach ($venueImgs as $image) {
+                    $stmt->execute([$venueId, $image]);
+                }
+            }
+
+            // Commit transaction
+            $conn->commit();
+
+            return ['status' => 'success', 'message' => 'Venue updated successfully.'];
+        } catch (PDOException $e) {
+            // Rollback transaction on error
+            $conn->rollBack();
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 $venueObj = new Venue();

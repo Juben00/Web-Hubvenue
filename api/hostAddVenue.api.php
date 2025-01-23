@@ -84,38 +84,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tag = 4;
     }
 
+    $imageErr = [];
+    $uploadedImages = [];
+
+    if (empty($_FILES['venue_images']['name'][0])) {
+        $imageErr[] = 'At least one image is required.';
+    } else {
+        foreach ($_FILES['venue_images']['name'] as $key => $image) {
+            $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+
+            // Validate each image
+            if (!in_array($imageFileType, $allowedType)) {
+                $imageErr[] = "File " . $_FILES['venue_images']['name'][$key] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
+            } else {
+                // Generate a unique target path for each image
+                $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
+
+                // Move the uploaded file to the target directory
+                if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], '..' . $targetImage)) {
+                    $uploadedImages[] = $targetImage;
+                } else {
+                    $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
+                }
+            }
+        }
+    }
+
     // Proceed if no errors
     if (
         empty($nameErr) && empty($descriptionErr) && empty($checkInErr) && empty($checkOutErr) && empty($locationErr) && empty($priceErr) && empty($capacityErr) && empty($amenitiesErr)
         && empty($imageErr)
     ) {
-        // Upload multiple images
-
-        $imageErr = [];
-        $uploadedImages = [];
-
-        if (empty($_FILES['venue_images']['name'][0])) {
-            $imageErr[] = 'At least one image is required.';
-        } else {
-            foreach ($_FILES['venue_images']['name'] as $key => $image) {
-                $imageFileType = strtolower(pathinfo($image, PATHINFO_EXTENSION));
-
-                // Validate each image
-                if (!in_array($imageFileType, $allowedType)) {
-                    $imageErr[] = "File " . $_FILES['venue_images']['name'][$key] . " has an invalid format. Only jpg, jpeg, and png are allowed.";
-                } else {
-                    // Generate a unique target path for each image
-                    $targetImage = $uploadDir . uniqid() . '.' . $imageFileType;
-
-                    // Move the uploaded file to the target directory
-                    if (move_uploaded_file($_FILES['venue_images']['tmp_name'][$key], '..' . $targetImage)) {
-                        $uploadedImages[] = $targetImage;
-                    } else {
-                        $imageErr[] = "Failed to upload image: " . $_FILES['venue_images']['name'][$key];
-                    }
-                }
-            }
-        }
         // Set venue object data
         $venueObj->name = $name;
         $venueObj->description = $description;
