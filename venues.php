@@ -340,7 +340,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <span class="mx-2">·</span>
                         <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['tag']) ?></span>
                         <span class="mx-2">·</span>
-                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['location']) ?></span>
+                        <span class="text-sm font-semibold"><?php echo htmlspecialchars($venue['address']) ?></span>
                     </div>
                 </div>
 
@@ -391,7 +391,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <div class="flex justify-between items-center mb-6 gap-4">
                             <div>
                                 <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($venue['tag']) ?> at
-                                    <?php echo htmlspecialchars($venue['location']) ?>
+                                    <?php echo htmlspecialchars($venue['address']) ?>
                                 </h2>
                             </div>
                         </div>
@@ -444,9 +444,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <hr class="my-6">
 
                         <h3 class="text-xl font-semibold mb-4">Ratings & Reviews</h3>
-                        <?php
-                        var_dump($venue);
-                        ?>
                         <div class="mb-8">
                             <div class="flex items-start gap-8">
                                 <!-- Overall Rating -->
@@ -637,7 +634,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <div class="border rounded-xl p-6 shadow-lg mb-6">
                             <h3 class="text-xl font-semibold mb-4">The Owner</h3>
                             <div class="flex gap-4">
-                                <a href="owner-page.php"
+                                <a href="owner-page.php?id=<?php echo htmlspecialchars($owner['id']); ?>"
                                     class="bg-slate-50 p-6 w-full hover:bg-slate-100 transition duration-300 cursor-pointer">
                                     <!-- Card Header -->
                                     <div class="text-center mb-4">
@@ -645,16 +642,16 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
                                             <?php
 
-                                            $profilePic = $account->getProfilePic($owner[0]['id']);
+                                            $profilePic = $account->getProfilePic($owner['id']);
                                             if (isset($owner) && empty($profilePic)) {
-                                                echo $owner[0]['firstname'][0];
+                                                echo $owner['firstname'][0];
                                             } else {
                                                 echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
                                             }
                                             ?>
                                         </div>
                                         <h2 class="text-xl font-semibold text-gray-800">
-                                            <?php echo htmlspecialchars($owner[0]['firstname'] . " " . $owner[0]['lastname']); ?>
+                                            <?php echo htmlspecialchars($owner['firstname'] . " " . $owner['lastname']); ?>
                                         </h2>
                                         <p class="text-xs text-gray-500">Owner</p>
 
@@ -781,10 +778,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                                 <div class="border-t pt-4 mb-6">
                                     <div class="flex justify-between items-center">
                                         <span class="text-lg font-bold">Total</span>
-                                        <span class="font-bold text-lg">₱ <p
-                                                class="text-right bg-transparent w-24 font-bold" name="totalPrice"
+                                        <span class="font-bold flex text-lg">
+                                            ₱
+                                            <p class="text-right bg-transparent w-24 font-bold" name="totalPrice"
                                                 value="0" readonly></p>
-
                                         </span>
                                     </div>
                                 </div>

@@ -1,3 +1,21 @@
+<?php
+session_start();
+require_once __DIR__ . '/classes/venue.class.php';
+require_once __DIR__ . '/classes/account.class.php';
+
+$venueObj = new Venue();
+$accountObj = new Account();
+
+$owner = $accountObj->getUser($_GET['id']);
+
+if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
+    header("Location: index.php");
+    exit();
+} else if (!$owner) {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +30,6 @@
 
 <body class="bg-slate-50">
     <?php
-    session_start();
     // Include navbar based on login status
     if (isset($_SESSION['user'])) {
         include_once './components/navbar.logged.in.php';
@@ -23,6 +40,7 @@
 
     <div class="container mx-auto px-4 py-8 pt-24">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <?php var_dump($owner) ?>
             <!-- Venue Owner Profile Card -->
             <div class="bg-slate-50 rounded-xl shadow-xl p-6 md:col-span-1">
                 <div class="flex flex-col items-center mt-16 space-y-4 mb-4">

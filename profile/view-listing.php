@@ -27,7 +27,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 <div id="openstreetmapplaceholder"></div>
 <!-- Venue Details View (Initially Hidden) -->
 <div id="venueDetailsView" class="container mx-auto pt-20">
-    <form class="flex gap-6" id="editVenueForm">
+   <form class="flex gap-6" id="editVenueForm" enctype="multipart/form-data">
         <!-- Main Content -->
         <div class="flex-grow">
             <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
@@ -98,30 +98,30 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
                     <!-- Image gallery editMode hidden -->
                     <div class="mb-6 grid-cols-3 col-span-6 gap-2 relative editMode hidden" id="editImageGallery">
-                        <?php
-                        // Re-index the image URLs array
-                        $venueView['image_urls'] = array_values($venueView['image_urls']);
+                    <?php
+                    // Re-index the image URLs array
+                    $venueView['image_urls'] = array_values($venueView['image_urls']);
 
-                        foreach ($venueView['image_urls'] as $index => $image_url) {
-                            $isThumbnail = $index == $venueView['thumbnail']; // Check if the image is the thumbnail
-                            echo '<div class="relative image-container  ' . ($isThumbnail ? 'border-4 border-blue-500' : '') . '"  id="image-' . $index . '">
-                            <img  src="./' . htmlspecialchars($image_url) . '" data-bs-src="' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75" 
-                                data-bs-index="' . $index . '">
-                            <button class="thumbnailButton absolute top-2 left-1 text-xs text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600" data-index="' . $index . '" onclick="setThumbnail(event)">
-                                Set as Thumbnail
-                            </button>
-                            <button class="absolute top-2 right-1 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" 
-                                data-bs-marked="' . $index . '" onclick="markForDeletion(event)">Remove</button>
-                        </div>';
-                        }
-                        ?>
+                    foreach ($venueView['image_urls'] as $index => $image_url) {
+                        $isThumbnail = $index == $venueView['thumbnail']; // Check if the image is the thumbnail
+                        echo '<div class="relative image-container ' . ($isThumbnail ? 'border-4 border-blue-500' : '') . ' group" id="image-' . $index . '">
+        <img src="./' . htmlspecialchars($image_url) . '" data-bs-src="' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75" 
+            data-bs-index="' . $index . '">
+        <button class="thumbnailButton absolute top-2 left-1 text-xs text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" data-index="' . $index . '" onclick="setThumbnail(event)">
+            Set as Thumbnail
+        </button>
+        <button class="absolute top-2 right-1 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+            data-bs-marked="' . $image_url . '" onclick="markForDeletion(event)">Remove</button>
+    </div>';
+                    }
+                    ?>
 
                     </div>
                     <div id="newImagesContainer" class=" grid-cols-3 gap-2 editMode hidden">
                         <!-- New images will be appended here -->
                     </div>
                     <div class="mt-4 editMode hidden">
-                        <input type="file" id="imageUpload" class="hidden" accept="image/*"
+                        <input type="file" id="imageUpload" class="hidden" accept="image/*" multiple
                             onchange="previewImage(event)">
                         <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
                             id="addImageTrigger">Add Image</button>
@@ -134,17 +134,17 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <h3 class="text-lg font-semibold mb-2">Location</h3>
                                 <p id="detailVenueLocation" class="text-gray-600 viewMode">
                                     <?php
-                                    $address = getAddressByCoordinates($venueView['venue_location']);
-                                    echo htmlspecialchars(trim($address)); ?>
+                                    // $address = getAddressByCoordinates($venueView['venue_location']);
+                                    echo htmlspecialchars(trim($venueView['address'])); ?>
                                 </p>
                                 <div class="editMode hidden">
                                     <span class="flex items-center space-x-2">
                                         <input id="editVenueAdd" placeholder="Click the button to set a location"
                                             required type="text"
                                             class="mt-1 border block w-full p-2 editVenueAddress text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
-                                            value="<?php echo htmlspecialchars(trim($address)); ?>" readonly />
+                                            value="<?php echo htmlspecialchars(trim($venueView['address'])); ?>" readonly />
                                         <input type="hidden" class="" id="editVenueAddCoordinates"
-                                            name="editVenueAddCoor" />
+                                            name="editVenueAddCoor" value="<?php echo htmlspecialchars($venueView['venue_location']) ?>"/>
                                         <button id="maps-button"
                                             class="border bg-gray-50 hover:bg-gray-100 duration-150 p-2 rounded-md">
                                             <svg height="24px" width="24px" version="1.1" id="Layer_1"
@@ -519,28 +519,44 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                      </div>
                      <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Venue Status</label>
-                        <div class=" flex items-center gap-2">
-                            <div class="flex items center gap-2">
-                                <label class="switch">
-                                    <input type="radio" name="editVenueStatus" id="editVenueStatus" <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <span class="text-sm text-gray-600">Active</span>
-                            </div>
-                            <div class="flex items center gap-2">
-                                <label class="switch">
-                                    <input type="radio" name="editVenueStatus" id="editVenueStatus" <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                                <span class="text-sm text-gray-600">Onhold</span>
-                            </div>
+                        <div class="flex items-center gap-2">
+                        <!-- Active Status -->
+                        <div class="flex items-center gap-2">
+                            <label class="switch">
+                                <input 
+                                    type="radio" 
+                                    name="editVenueStatus" 
+                                    id="editVenueStatusActive" 
+                                    value="1" 
+                                    <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?>
+                                >
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="text-sm text-gray-600">Active</span>
                         </div>
+    
+                        <!-- Onhold Status -->
+                        <div class="flex items-center gap-2">
+                            <label class="switch">
+                                <input 
+                                    type="radio" 
+                                    name="editVenueStatus" 
+                                    id="editVenueStatusOnhold" 
+                                    value="2" 
+                                    <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?>
+                                >
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="text-sm text-gray-600">Onhold</span>
+                        </div>
+                    </div>
+
                      </div>
 
                     <!-- Venue Type -->
                       <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Venue Status</span>
+                            <span class="">Venue Tag</span>
                             <p><?php 
                             $venueType = $venueView['venue_tag'];
 
@@ -609,15 +625,15 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment
                             Required</label>
                         <select class=" rounded-md w-full" name="editDownPayment" id="editDownPayment">
-                            <option value="30" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
+                            <option value="1" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
                                 of
                                 total amount
                             </option>
-                            <option value="50" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50%
+                            <option value="2" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50%
                                 of
                                 total amount
                             </option>
-                            <option value="100" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full
+                            <option value="3" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full
                                 payment
                                 required</option>
                         </select>
@@ -818,15 +834,11 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             </div>
         </div>
     </form>
-</>
+</div>
 
 <script>
 
     // Temporary arrays to track changes
-    let imagesToDelete = [];
-    let newImages = [];
-    let isEditVenue = false;
-    let thumbnailIndex;
     // const submitButton = document.getElementById('saveChanges');
 
     // Initialize: Hide edit-mode elements
@@ -837,18 +849,15 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
     // Toggle edit mode
     // Store the initial HTML of the editImageGallery
-    const originalEditImageGalleryHTML = document.getElementById('editImageGallery').innerHTML;
+    // const originalEditImageGalleryHTML = document.getElementById('editImageGallery').innerHTML;
 
     document.getElementById('editVenueButton').addEventListener('click', function (e) {
         e.preventDefault();
 
         if (isEditVenue) {
-            // submitButton.disabled = true;
-            // Reset edit mode
             document.getElementById('editVenueButton').innerText = 'Edit Details';
 
-            // Reset the editImageGallery content to its original state
-            document.getElementById('editImageGallery').innerHTML = originalEditImageGalleryHTML;
+            document.getElementById('editImageGallery').innerHTML = document.getElementById('editImageGallery').innerHTML;
 
             // Show all the removed images before clearing the array
             imagesToDelete.forEach(index => {
@@ -865,7 +874,6 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             document.getElementById('imageUpload').value = '';
 
         } else {
-            // submitButton.disabled = false;
             document.getElementById('editVenueButton').innerText = 'Cancel Editing';
         }
 
@@ -946,7 +954,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             container.id = `image-${newIndex}`;
             container.querySelector('img').setAttribute('data-bs-index', newIndex);
             container.querySelector('.thumbnailButton').setAttribute('data-index', newIndex);
-            container.querySelector('[data-bs-marked]').setAttribute('data-bs-marked', newIndex);
+            // container.querySelector('[data-bs-marked]').setAttribute('data-bs-marked', newIndex);
 
             // Collect remaining image data from data-bs-src
             const imgDataSrc = container.querySelector('img').getAttribute('data-bs-src');
@@ -974,26 +982,28 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
     }
 
-
     // Preview newly added images
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const container = document.createElement('div');
-                container.className = 'relative image-container';
-                container.innerHTML = `
-                    <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
-                    <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" data-bs-newImage="${file.name}" onclick="removeNewImage(event)">Remove</button>
-                `;
-                document.getElementById('newImagesContainer').appendChild(container);
-            };
-            reader.readAsDataURL(file);
+        function previewImage(event) {
+        const files = event.target.files; // Get all selected files
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const container = document.createElement('div');
+                    container.className = 'relative image-container';
+                    container.innerHTML = `
+                        <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                        <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" data-bs-newImage="${file.name}" onclick="removeNewImage(event)">Remove</button>
+                    `;
+                    document.getElementById('newImagesContainer').appendChild(container);
+                };
+                reader.readAsDataURL(file);
 
-            newImages.push(file);
+                // Add the file to the newImages array
+                newImages.push(file);
+            });
         }
-    }
+        }
 
     // Remove a newly added image
     function removeNewImage(event) {
@@ -1010,46 +1020,53 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
     // Save changes
     function saveChanges(e) {
-        e.preventDefault();
+        e.preventDefault();        
 
         const form = document.querySelector('#editVenueForm'); // Form element
         const formData = new FormData(form); // Create FormData from the form
+        const defaultImages = <?php echo json_encode($venueView['image_urls']); ?>;
 
         formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+        // Append it to the FormData as a JSON string
+        formData.append('defaultImages', JSON.stringify(defaultImages));
 
         formData.append('thumbnailIndex', thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
 
         formData.append('venueID', <?php echo $getParams?>);
         // Append new images as files, not as JSON string
         newImages.forEach(file => {
-        console.log(file);  // Log each file to inspect the details
-        formData.append('newImages[]', file);  // Append each new image file to the FormData
-    });
+            console.log(file);  // Log each file to inspect the details
+            formData.append('newImages[]', file);  // Append each new image file to the FormData
+        });
 
-    // Optional: Log the FormData object to inspect the data
-    for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);  // Log each key-value pair in the FormData
-    }
-        // newImages.forEach((image, index) => {
-        //     formData.append(`newImages[${index}]`, image);
-        // });
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);  // Log each key-value pair in the FormData
+        }
 
-        // fetch('manage_images.php', {
-        //     method: 'POST',
-        //     body: formData,
-        // })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.success) {
-        //             alert('Changes saved successfully.');
-        //             location.reload();
-        //         } else {
-        //             alert(`Failed to save changes: ${data.error || 'Unknown error'}`);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         alert('An error occurred while saving changes.');
-        //     });
+        fetch('./api/updateVenue.api.php', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle HTTP errors
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status == 'success') {
+                    showModal(data.message, function () {
+                        location.reload();
+                    } , "black_ico.png");
+                } else {
+                    showModal(`Failed to save changes: ${data.message || 'Unknown error'}`, undefined, "black_ico.png");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal('An error occurred while saving changes. Please try again.', undefined, "black_ico.png");
+            });
+
     }
 </script>

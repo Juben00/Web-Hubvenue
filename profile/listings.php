@@ -86,6 +86,8 @@ $venuePost = $venueObj->getAllVenues('', $_SESSION['user']['id']);
     </div>
 </main>
 
+
+
 <!-- <script>
     function showVenueDetails(venue) {
         // Hide listings view and show details view
