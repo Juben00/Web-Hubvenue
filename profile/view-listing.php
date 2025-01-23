@@ -98,23 +98,23 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
                     <!-- Image gallery editMode hidden -->
                     <div class="mb-6 grid-cols-3 col-span-6 gap-2 relative editMode hidden" id="editImageGallery">
-                        <?php
-                        // Re-index the image URLs array
-                        $venueView['image_urls'] = array_values($venueView['image_urls']);
+                    <?php
+                    // Re-index the image URLs array
+                    $venueView['image_urls'] = array_values($venueView['image_urls']);
 
-                        foreach ($venueView['image_urls'] as $index => $image_url) {
-                            $isThumbnail = $index == $venueView['thumbnail']; // Check if the image is the thumbnail
-                            echo '<div class="relative image-container  ' . ($isThumbnail ? 'border-4 border-blue-500' : '') . '"  id="image-' . $index . '">
-                            <img  src="./' . htmlspecialchars($image_url) . '" data-bs-src="' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75" 
-                                data-bs-index="' . $index . '">
-                            <button class="thumbnailButton absolute top-2 left-1 text-xs text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600" data-index="' . $index . '" onclick="setThumbnail(event)">
-                                Set as Thumbnail
-                            </button>
-                            <button class="absolute top-2 right-1 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" 
-                                data-bs-marked="' . $image_url . '" onclick="markForDeletion(event)">Remove</button>
-                        </div>';
-                        }
-                        ?>
+                    foreach ($venueView['image_urls'] as $index => $image_url) {
+                        $isThumbnail = $index == $venueView['thumbnail']; // Check if the image is the thumbnail
+                        echo '<div class="relative image-container ' . ($isThumbnail ? 'border-4 border-blue-500' : '') . ' group" id="image-' . $index . '">
+        <img src="./' . htmlspecialchars($image_url) . '" data-bs-src="' . htmlspecialchars($image_url) . '" alt="Venue Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75" 
+            data-bs-index="' . $index . '">
+        <button class="thumbnailButton absolute top-2 left-1 text-xs text-white bg-blue-500 px-2 py-1 rounded-lg hover:bg-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" data-index="' . $index . '" onclick="setThumbnail(event)">
+            Set as Thumbnail
+        </button>
+        <button class="absolute top-2 right-1 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+            data-bs-marked="' . $image_url . '" onclick="markForDeletion(event)">Remove</button>
+    </div>';
+                    }
+                    ?>
 
                     </div>
                     <div id="newImagesContainer" class=" grid-cols-3 gap-2 editMode hidden">
@@ -134,15 +134,15 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <h3 class="text-lg font-semibold mb-2">Location</h3>
                                 <p id="detailVenueLocation" class="text-gray-600 viewMode">
                                     <?php
-                                    $address = getAddressByCoordinates($venueView['venue_location']);
-                                    echo htmlspecialchars(trim($address)); ?>
+                                    // $address = getAddressByCoordinates($venueView['venue_location']);
+                                    echo htmlspecialchars(trim($venueView['address'])); ?>
                                 </p>
                                 <div class="editMode hidden">
                                     <span class="flex items-center space-x-2">
                                         <input id="editVenueAdd" placeholder="Click the button to set a location"
                                             required type="text"
                                             class="mt-1 border block w-full p-2 editVenueAddress text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0"
-                                            value="<?php echo htmlspecialchars(trim($address)); ?>" readonly />
+                                            value="<?php echo htmlspecialchars(trim($venueView['address'])); ?>" readonly />
                                         <input type="hidden" class="" id="editVenueAddCoordinates"
                                             name="editVenueAddCoor" value="<?php echo htmlspecialchars($venueView['venue_location']) ?>"/>
                                         <button id="maps-button"

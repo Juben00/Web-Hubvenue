@@ -26,7 +26,7 @@
     var marker = L.marker([<?php echo $latitude ?? '6.918973780293266' ?>, <?php echo $longitude ?? '122.06593990292278' ?>]).addTo(map);
 
     // Add a popup to the marker
-    marker.bindPopup("<?php echo htmlspecialchars($venue['location']) ?>").openPopup();
+    marker.bindPopup("<?php echo htmlspecialchars($venue['address']) ?>").openPopup();
 
     // Ensure the map container fills its parent
     document.addEventListener('DOMContentLoaded', function () {

@@ -429,7 +429,7 @@ $(document).ready(function () {
         success: function (response) {
             if (response.status === "success") {
                 showModal(
-                    "Venue added successfully",
+                    response.message,
                     function () {
                         $("#add-venue-form")[0].reset();
                         window.location.href = "./profile.php";
@@ -438,7 +438,7 @@ $(document).ready(function () {
                 );
             } else {
                 showModal(
-                    "Venue not added",
+                    response.errors,
                     undefined,
                     "black_ico.png"
                 );

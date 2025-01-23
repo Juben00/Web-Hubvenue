@@ -35,8 +35,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <style>
-        .slideshow-container .slide {
+    <!-- .slideshow-container .slide {
             display: none;
             opacity: 0;
             position: absolute;
@@ -51,9 +50,9 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             display: block;
             opacity: 1;
             z-index: 1;
-        }
+        } -->
 
-
+    <style>
         body {
             background: #3490dc;
         }
@@ -249,18 +248,14 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             <!-- Slideshow Container for each venue -->
                                             <div class="relative w-full h-96 overflow-hidden">
                                                 <!-- Image Slideshow for each venue -->
-                                                <div class="slideshow-container venueCard"
+                                                <div class="slideshow-container venueCard h-full w-full "
                                                     data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
                                                     data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
-                                                    <?php if (!empty($venue['image_urls'])): ?>
-                                                        <?php foreach ($venue['image_urls'] as $index => $imageUrl): ?>
-                                                            <div class="slide <?= $index === 0 ? 'active' : '' ?>">
-                                                                <img src="./<?= htmlspecialchars($imageUrl) ?>"
-                                                                    alt="<?= htmlspecialchars($venue['name']) ?>"
-                                                                    class="w-full h-full object-cover rounded-2xl transition-opacity duration-1000">
-                                                            </div>
-                                                        <?php endforeach; ?>
-                                                    <?php endif; ?>
+                                                    <div class="slide h-full w-full">
+                                                        <img src="./<?= htmlspecialchars($venue['image_urls'][$venue['thumbnail']]) ?>"
+                                                            alt="<?= htmlspecialchars($venue['name']) ?>"
+                                                            class="w-full h-full object-fill rounded-2xl transition-opacity duration-1000">
+                                                    </div>
                                                 </div>
                                                 <?php if (isset($venue['venue_tag_name'])): ?>
                                                     <span
@@ -578,7 +573,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         let marker;
     </script>
     <!-- venue slideshow -->
-    <script>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', () => {
             const venueSlideshows = document.querySelectorAll('.slideshow-container');
 
@@ -624,7 +619,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             });
         });
 
-    </script>
+    </script> -->
 
     <!-- <script>
         // Date picker functionality

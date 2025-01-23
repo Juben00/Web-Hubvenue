@@ -1,3 +1,13 @@
+<?php
+session_start();
+require_once __DIR__ . '/classes/venue.class.php';
+require_once __DIR__ . '/classes/account.class.php';
+
+if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
+    header("Location: index.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 

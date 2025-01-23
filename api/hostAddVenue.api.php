@@ -7,7 +7,7 @@ session_start();
 
 $venueObj = new Venue();
 
-$name = $description = $location = $price = $capacity = $amenities = $tag = $entrance = $cleaning = $rules = $addRules = $checkIn = $checkOut = $check_inout = "";
+$name = $description = $location = $address = $price = $capacity = $amenities = $tag = $entrance = $cleaning = $rules = $addRules = $checkIn = $checkOut = $check_inout = "";
 $nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $tagErr = $entranceErr = $cleaningErr = $imageErr = $rulesErr = $checkInErr = $checkOutErr = "";
 
 $uploadDir = '/venue_image_uploads/';
@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description = clean_input($_POST['venue-description']);
     $location = clean_input($_POST['venue-location']);
     $coor = clean_input($_POST['venueCoordinates']);
+    $address = getAddressByCoordinates($coor);
     $price = clean_input($_POST['price']);
     $capacity = clean_input($_POST['venue-max-guest']);
     $amenities = $_POST['amenities'];
@@ -34,10 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $check_inout = json_encode(['check_in' => $checkIn, 'check_out' => $checkOut]);
 
     // Validate address
-    $addressData = coorAddressVerify($location, $coor);
-    if (!$addressData) {
-        $locationErr = 'Invalid address and coordinates. Please try again.';
-    }
+    // $addressData = coorAddressVerify($location, $coor);
+    // if (!$addressData) {
+    //     $locationErr = 'Invalid address and coordinates. Please try again.';
+    // }
     // Validation for required fields
     if (empty($name))
         $nameErr = "Name is required";
@@ -61,6 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $checkOutErr = "Check-out time is required";
     if ($thumbnail === '' || $thumbnail === null)
         $imageErr = "Thumbnail is required";
+    if (empty($address))
+        $locationErr = "Invalid address";
 
 
     // Prepare amenities JSON
@@ -130,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->check_inout = $check_inout;
         $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
         $venueObj->imageThumbnail = $thumbnail;
+        $venueObj->address = $address;
 
         // Add venue with image URLs to the database
         $result = $venueObj->addVenue();

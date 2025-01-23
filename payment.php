@@ -352,7 +352,9 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                         const discountValue = data.discountValue;
 
                         <?php
-                        $totalPrice = $totalPrice - $totalPrice * $discountStatus['discount_value'] / 100;
+                        if (is_array($discountStatus) && isset($discountStatus['discount_value'])) {
+                            $totalPrice = $totalPrice - $totalPrice * $discountStatus['discount_value'] / 100;
+                        }
                         ?>
 
                         document.getElementById('totalPrice').textContent = `₱ ${<?php echo $totalPrice ?>.toFixed(2)}`;

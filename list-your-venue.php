@@ -560,7 +560,7 @@ session_start();
                             <span class="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">Upload from your
                                 device</span>
                             <input id="file-upload" class="hidden" type="file" name="venue_images[]" multiple
-                                accept="image/*" required>
+                                accept=".jpg,.jpeg,.png" required>
                         </label>
                         <p class="text-gray-500">Upload at least 5 photos</p>
                         <div id="image-count" class="text-gray-600 mt-2 text-xl font-semibold">Uploaded images: 0</div>
