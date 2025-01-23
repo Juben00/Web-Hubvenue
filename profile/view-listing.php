@@ -27,7 +27,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 <div id="openstreetmapplaceholder"></div>
 <!-- Venue Details View (Initially Hidden) -->
 <div id="venueDetailsView" class="container mx-auto pt-20">
-    <form class="flex gap-6" id="editVenueForm">
+   <form class="flex gap-6" id="editVenueForm" enctype="multipart/form-data">
         <!-- Main Content -->
         <div class="flex-grow">
             <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
@@ -121,7 +121,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         <!-- New images will be appended here -->
                     </div>
                     <div class="mt-4 editMode hidden">
-                        <input type="file" id="imageUpload" class="hidden" accept="image/*"
+                        <input type="file" id="imageUpload" class="hidden" accept="image/*" multiple
                             onchange="previewImage(event)">
                         <button class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
                             id="addImageTrigger">Add Image</button>
@@ -839,10 +839,6 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 <script>
 
     // Temporary arrays to track changes
-    let imagesToDelete = [];
-    let newImages = [];
-    let isEditVenue = false;
-    let thumbnailIndex;
     // const submitButton = document.getElementById('saveChanges');
 
     // Initialize: Hide edit-mode elements
@@ -853,18 +849,15 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
     // Toggle edit mode
     // Store the initial HTML of the editImageGallery
-    const originalEditImageGalleryHTML = document.getElementById('editImageGallery').innerHTML;
+    // const originalEditImageGalleryHTML = document.getElementById('editImageGallery').innerHTML;
 
     document.getElementById('editVenueButton').addEventListener('click', function (e) {
         e.preventDefault();
 
         if (isEditVenue) {
-            // submitButton.disabled = true;
-            // Reset edit mode
             document.getElementById('editVenueButton').innerText = 'Edit Details';
 
-            // Reset the editImageGallery content to its original state
-            document.getElementById('editImageGallery').innerHTML = originalEditImageGalleryHTML;
+            document.getElementById('editImageGallery').innerHTML = document.getElementById('editImageGallery').innerHTML;
 
             // Show all the removed images before clearing the array
             imagesToDelete.forEach(index => {
@@ -881,7 +874,6 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             document.getElementById('imageUpload').value = '';
 
         } else {
-            // submitButton.disabled = false;
             document.getElementById('editVenueButton').innerText = 'Cancel Editing';
         }
 
@@ -962,7 +954,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             container.id = `image-${newIndex}`;
             container.querySelector('img').setAttribute('data-bs-index', newIndex);
             container.querySelector('.thumbnailButton').setAttribute('data-index', newIndex);
-            container.querySelector('[data-bs-marked]').setAttribute('data-bs-marked', newIndex);
+            // container.querySelector('[data-bs-marked]').setAttribute('data-bs-marked', newIndex);
 
             // Collect remaining image data from data-bs-src
             const imgDataSrc = container.querySelector('img').getAttribute('data-bs-src');
@@ -990,26 +982,28 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
     }
 
-
     // Preview newly added images
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const container = document.createElement('div');
-                container.className = 'relative image-container';
-                container.innerHTML = `
-                    <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
-                    <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" data-bs-newImage="${file.name}" onclick="removeNewImage(event)">Remove</button>
-                `;
-                document.getElementById('newImagesContainer').appendChild(container);
-            };
-            reader.readAsDataURL(file);
+        function previewImage(event) {
+        const files = event.target.files; // Get all selected files
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const container = document.createElement('div');
+                    container.className = 'relative image-container';
+                    container.innerHTML = `
+                        <img src="${e.target.result}" alt="New Image" class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                        <button class="absolute top-2 right-2 text-xs text-white bg-red-500 px-2 py-1 rounded-lg hover:bg-red-600" data-bs-newImage="${file.name}" onclick="removeNewImage(event)">Remove</button>
+                    `;
+                    document.getElementById('newImagesContainer').appendChild(container);
+                };
+                reader.readAsDataURL(file);
 
-            newImages.push(file);
+                // Add the file to the newImages array
+                newImages.push(file);
+            });
         }
-    }
+        }
 
     // Remove a newly added image
     function removeNewImage(event) {

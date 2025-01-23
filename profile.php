@@ -153,4 +153,12 @@ if (!isset($_SESSION['user'])) {
             });
         });
     </script>
+    <script>
+
+        // Temporary arrays to track changes
+        let imagesToDelete = [];
+        let newImages = [];
+        let isEditVenue = false;
+        let thumbnailIndex;
+    </script>
 </body>

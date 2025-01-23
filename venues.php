@@ -444,9 +444,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <hr class="my-6">
 
                         <h3 class="text-xl font-semibold mb-4">Ratings & Reviews</h3>
-                        <?php
-                        var_dump($venue);
-                        ?>
                         <div class="mb-8">
                             <div class="flex items-start gap-8">
                                 <!-- Overall Rating -->
@@ -645,16 +642,16 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
                                             <?php
 
-                                            $profilePic = $account->getProfilePic($owner[0]['id']);
+                                            $profilePic = $account->getProfilePic($owner['id']);
                                             if (isset($owner) && empty($profilePic)) {
-                                                echo $owner[0]['firstname'][0];
+                                                echo $owner['firstname'][0];
                                             } else {
                                                 echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
                                             }
                                             ?>
                                         </div>
                                         <h2 class="text-xl font-semibold text-gray-800">
-                                            <?php echo htmlspecialchars($owner[0]['firstname'] . " " . $owner[0]['lastname']); ?>
+                                            <?php echo htmlspecialchars($owner['firstname'] . " " . $owner['lastname']); ?>
                                         </h2>
                                         <p class="text-xs text-gray-500">Owner</p>
 

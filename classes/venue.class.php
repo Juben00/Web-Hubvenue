@@ -21,6 +21,8 @@ class Venue
     public $host_id;
     public $status = 1;
     public $availability = 1;
+
+    public $downPayment = 3;
     public $image_url;
 
     public $check_inout;
@@ -42,8 +44,8 @@ class Venue
             $conn->beginTransaction();
 
             // Insert venue information
-            $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, rules, entrance, cleaning, venue_tag, thumbnail, time_inout, host_id, status_id, availability_id) 
-                VALUES (:name, :description, :location, :price, :capacity, :amenities, :rules, :entrance, :cleaning, :venue_tag, :thumbnail, :time_inout, :host_id, :status_id, :availability_id)';
+            $sql = 'INSERT INTO venues (name, description, location, price, capacity, amenities, rules, entrance, cleaning, down_payment_id, venue_tag, thumbnail, time_inout, host_id, status_id, availability_id) 
+                VALUES (:name, :description, :location, :price, :capacity, :amenities, :rules, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :time_inout, :host_id, :status_id, :availability_id)';
             $stmt = $conn->prepare($sql);
 
             // Bind parameters
@@ -56,6 +58,7 @@ class Venue
             $stmt->bindParam(':rules', $this->rules);
             $stmt->bindParam(':entrance', $this->entrance);
             $stmt->bindParam(':cleaning', $this->cleaning);
+            $stmt->bindParam(':down_payment_id', $this->downPayment);
             $stmt->bindParam(':venue_tag', $this->tag);
             $stmt->bindParam(':thumbnail', $this->imageThumbnail);
             $stmt->bindParam(':time_inout', $this->check_inout);
@@ -709,13 +712,7 @@ LEFT JOIN
             // Begin transaction
             $conn->beginTransaction();
 
-            // Delete removed images from `venue_images`
-            if (!empty($removedImage)) {
-                $placeholders = implode(',', array_fill(0, count($removedImage), '?'));
-                $sql = "DELETE FROM venue_images WHERE venue_id = ? AND image_url IN ($placeholders)";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute(array_merge([$venueId], $removedImage));
-            }
+
 
             // Update venue details in `venues` table
             $sql = "UPDATE venues 
@@ -732,7 +729,7 @@ LEFT JOIN
                     down_payment_id = :down_payment_id, 
                     venue_tag = :venue_tag, 
                     thumbnail = :thumbnail, 
-                    status_id = :status_id, 
+                    -- status_id = :status_id, 
                     availability_id = :availability_id 
                 WHERE id = :id";
             $stmt = $conn->prepare($sql);
@@ -748,13 +745,20 @@ LEFT JOIN
             $stmt->bindParam(':down_payment_id', $venueDownpayment);
             $stmt->bindParam(':venue_tag', $venueType);
             $stmt->bindParam(':thumbnail', $venueThumbnail);
-            $stmt->bindParam(':status_id', $venueStatus);
+            // $stmt->bindParam(':status_id', $venueStatus);
             $stmt->bindParam(':availability_id', $venueAvailability);
             $stmt->bindParam(':id', $venueId);
             $stmt->execute();
 
             // Insert new images into `venue_images`
             if (!empty($venueImgs)) {
+                $sqldel = "DELETE FROM venue_images WHERE venue_id = :id";
+                $stmt = $conn->prepare($sqldel);
+                $stmt->bindParam(':id', $venueId);
+                $stmt->execute();
+
+
+
                 $sql = "INSERT INTO venue_images (venue_id, image_url) VALUES (?, ?)";
                 $stmt = $conn->prepare($sql);
                 foreach ($venueImgs as $image) {
