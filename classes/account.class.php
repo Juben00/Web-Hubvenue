@@ -115,7 +115,7 @@ class Account
         }
     }
 
-    public function retrieveUser($id)
+    public function getOwner($id)
     {
         try {
 
@@ -123,17 +123,21 @@ class Account
             $user_id = "%" . $id . "%";
 
             // SQL query to fetch user data along with their sex and user type
-            $sql = 'SELECT u.*, ss.name AS sex, ust.name AS user_type 
-            FROM users u 
-            JOIN sex_sub ss ON u.sex_id = ss.id 
-            JOIN user_types_sub ust ON ust.id = u.user_type_id 
-            WHERE u.id LIKE :user_id';
+            $sql = 'SELECT u.*, 
+                    ss.name AS sex, 
+                    ust.name AS user_type, 
+                    ha.created_at AS host_application_date
+                FROM users u 
+                JOIN sex_sub ss ON u.sex_id = ss.id 
+                JOIN user_types_sub ust ON ust.id = u.user_type_id 
+                JOIN host_application ha ON ha.userId = u.id
+                WHERE u.id = :user_id;';
 
             // Prepare the SQL statement
             $stmt = $this->db->connect()->prepare($sql);
 
             // Bind the parameters with wildcards for LIKE clause
-            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':user_id', $id);
 
             // Execute the SQL query
             $stmt->execute();

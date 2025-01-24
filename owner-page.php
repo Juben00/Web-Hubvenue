@@ -6,7 +6,8 @@ require_once __DIR__ . '/classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-$owner = $accountObj->getUser($_GET['id']);
+$owner = $accountObj->getOwner($_GET['id']);
+$venues = $venueObj->getAllVenues(2, $_GET['id']);
 
 if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: index.php");
@@ -40,110 +41,135 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
 
     <div class="container mx-auto px-4 py-8 pt-24">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <?php var_dump($owner) ?>
             <!-- Venue Owner Profile Card -->
-            <div class="bg-slate-50 rounded-xl shadow-xl p-6 md:col-span-1">
-                <div class="flex flex-col items-center mt-16 space-y-4 mb-4">
-                    <img src="/placeholder.svg?height=80&width=80" alt="Doom Cat"
-                        class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
-                    <div class="text-center">
-                        <h2 class="text-xl font-bold">Doom Cat</h2>
-                        <p class="text-gray-500">Venue Owner since 2020</p>
+            <div class="">
+                <div class="bg-slate-50 rounded-xl border shadow-lg p-6 md:col-span-1 mt-12">
+                    <div class="flex flex-col items-center mt-16 space-y-4 mb-4">
+                        <div class="relative">
+                            <div
+                                class="h-24 w-24 text-4xl font-semibold rounded-full bg-black text-white flex items-center justify-center">
+                                <?php
+                                if (isset($_SESSION['user']) && empty($profilePic)) {
+                                    echo $_SESSION['user']['firstname'][0];
+                                } else {
+                                    echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h2 class="text-xl font-bold">
+                                <?php echo htmlspecialchars($owner['firstname'] . ' ' . $owner['lastname']) ?>
+                            </h2>
+                            <p class="text-gray-500 text-sm">Venue Owner since
+                                <?php echo htmlspecialchars(date('F Y', strtotime($owner['host_application_date']))) ?>
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <p class="text-sm text-gray-600 mb-4">
-                    Passionate about creating unforgettable experiences through unique venues. I specialize in urban and
-                    rustic spaces perfect for any occasion.
-                </p>
-                <div class="flex items-center space-x-2 mb-2">
-                    <i class="fas fa-star text-yellow-400"></i>
-                    <span class="font-semibold">4.9</span>
-                    <span class="text-sm text-gray-500">(120 reviews)</span>
-                </div>
-                <div class="flex items-center space-x-2 mb-2">
-                    <i class="fas fa-map-marker-alt text-gray-400"></i>
-                    <span class="text-sm text-gray-500">Zamboanga City, Zamboanga del Sur</span>
-                </div>
-                <div class="flex items-center space-x-2 mb-4">
-                    <i class="fas fa-clock text-gray-400"></i>
-                    <span class="text-sm text-gray-500">Usually responds within 1 hour</span>
-                </div>
-                <button
-                    class="w-full mt-12 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center justify-center">
-                    <i class="fas fa-comment-alt mr-2"></i>
-                    Contact Doom Cat
-                </button>
-
-                <!-- Add the Share Profile dropdown -->
-                <div class="relative mt-4">
-                    <button id="shareDropdownButton"
-                        class="w-full bg-slate-50 text-black border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 flex items-center justify-center">
-                        <i class="fas fa-share-alt mr-2"></i>
-                        Share Profile
+                    <!-- <p class="text-sm text-gray-600 mb-4">
+                                        <?php echo htmlspecialchars($owner['email']) ?>
+                                    </p> -->
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <span class="font-semibold">4.9</span>
+                        <span class="text-sm text-gray-500">(120 reviews)</span>
+                    </div>
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-map-marker-alt text-gray-400"></i>
+                        <span class="text-sm text-gray-500">Zamboanga City, Zamboanga del Sur</span>
+                    </div>
+                    <button
+                        class="w-full mt-12 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-comment-alt mr-2"></i>
+                        Contact <?php echo htmlspecialchars($owner['firstname'] . ' ' . $owner['lastname']) ?>
                     </button>
-                    <div id="shareDropdown"
-                        class="hidden absolute left-0 right-0 mt-2 bg-slate-50 border border-gray-200 rounded-lg shadow-lg z-50">
-                        <a href="#" onclick="shareOnFacebook()"
-                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
-                            <i class="fab fa-facebook text-blue-600 mr-2"></i>
-                            Facebook
-                        </a>
-                        <a href="#" onclick="shareOnTwitter()"
-                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
-                            <i class="fab fa-twitter text-blue-400 mr-2"></i>
-                            Twitter
-                        </a>
-                        <a href="#" onclick="shareOnLinkedIn()"
-                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
-                            <i class="fab fa-linkedin text-blue-700 mr-2"></i>
-                            LinkedIn
-                        </a>
-                        <a href="#" onclick="shareOnWhatsApp()"
-                            class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
-                            <i class="fab fa-whatsapp text-green-500 mr-2"></i>
-                            WhatsApp
-                        </a>
-                        <button onclick="copyProfileLink()"
-                            class="w-full flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
-                            <i class="fas fa-link text-gray-600 mr-2"></i>
-                            Copy Link
+
+                    <!-- Add the Share Profile dropdown -->
+                    <div class="relative mt-4">
+                        <button id="shareDropdownButton"
+                            class="w-full bg-slate-50 text-black border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-share-alt mr-2"></i>
+                            Share Profile
                         </button>
+                        <div id="shareDropdown"
+                            class="hidden absolute left-0 right-0 mt-2 bg-slate-50 border border-gray-200 rounded-lg shadow-lg z-50">
+                            <a href="#" onclick="shareOnFacebook()"
+                                class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                                <i class="fab fa-facebook text-blue-600 mr-2"></i>
+                                Facebook
+                            </a>
+                            <a href="#" onclick="shareOnTwitter()"
+                                class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                                <i class="fab fa-twitter text-blue-400 mr-2"></i>
+                                Twitter
+                            </a>
+                            <a href="#" onclick="shareOnLinkedIn()"
+                                class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                                <i class="fab fa-linkedin text-blue-700 mr-2"></i>
+                                LinkedIn
+                            </a>
+                            <a href="#" onclick="shareOnWhatsApp()"
+                                class="flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                                <i class="fab fa-whatsapp text-green-500 mr-2"></i>
+                                WhatsApp
+                            </a>
+                            <button onclick="copyProfileLink()"
+                                class="w-full flex items-center px-4 py-2 hover:bg-gray-100 transition duration-300">
+                                <i class="fas fa-link text-gray-600 mr-2"></i>
+                                Copy Link
+                            </button>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- Venue Listings -->
             <div class="md:col-span-3 ml-12 ">
-                <h2 class="text-2xl mt-12 font-bold mb-6">Doom Cat's Venues</h2>
+                <h2 class="text-2xl mt-12 font-bold mb-6"><?php echo htmlspecialchars($owner['firstname'] . "'s") ?>
+                    Venues</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <!-- Venue Cards -->
-                    <div class="bg-transparent rounded-xl overflow-hidden transition duration-300">
-                        <img src="/placeholder.svg?height=400&width=600" alt="Urban Loft Space"
-                            class="w-full h-48 object-cover">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold mb-2">Urban Loft Space</h3>
-                            <p class="text-gray-600 mb-4">Perfect for photoshoots and small gatherings</p>
-                            <div class="flex justify-between items-center mb-2">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-map-marker-alt text-gray-400"></i>
-                                    <span class="text-sm text-gray-500">Downtown SF</span>
+                    <?php
+                    foreach ($venues as $venue) {
+                        ?>
+                        <div class="bg-transparent shadow-md rounded-xl overflow-hidden transition duration-300">
+                            <img src="./<?= htmlspecialchars($venue['image_urls'][$venue['thumbnail']]) ?>"
+                                alt="<?php echo htmlspecialchars($venue['name']) ?>" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-2"><?php echo htmlspecialchars($venue['name']) ?></h3>
+                                <p class="text-gray-600 mb-4 truncate"><?php echo htmlspecialchars($venue['description']) ?>
+                                </p>
+                                <div class="mb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-map-marker-alt text-gray-400"></i>
+                                        <span
+                                            class="text-sm text-gray-500 truncate"><?php echo htmlspecialchars($venue['address']) ?></span>
+                                    </div>
+
                                 </div>
-                                <span
-                                    class="bg-blue-50 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">₱200/Day</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-users text-gray-400"></i>
-                                    <span class="text-sm text-gray-500">Up to 50 guests</span>
+                                <div class="mb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-users text-gray-400"></i>
+                                        <span class="text-sm text-gray-500">Up to
+                                            <?php echo htmlspecialchars($venue['capacity']) ?> guests</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center space-x-1">
-                                    <i class="fas fa-star text-yellow-400"></i>
-                                    <span class="font-semibold">4.8</span>
-                                    <span class="text-sm text-gray-500">(45)</span>
+                                <div class="flex justify-between items-center">
+                                    <span
+                                        class="bg-blue-50 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">₱<?php echo htmlspecialchars($venue['price']) ?>/Day</span>
+                                    <div class="flex items-center space-x-1">
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                        <span class="font-semibold">4.8</span>
+                                        <span class="text-sm text-gray-500">(45)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <?php
+                    }
+                    ?>
+
 
                     <!-- Additional venue cards follow the same pattern... -->
                 </div>

@@ -12,7 +12,7 @@ if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
     }
-    $user = $accountObj->retrieveUser($_SESSION['user']['id']);
+    $user = $accountObj->getUser($_SESSION['user']['id']);
 }
 
 $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
