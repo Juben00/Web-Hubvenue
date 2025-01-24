@@ -215,6 +215,13 @@ $(document).ready(function () {
         mandatoryDiscount(formElement);
     });
 
+    //host review form submission
+    $('#hostReviewForm').on('submit', function (e) {
+        e.preventDefault();
+        const formElement = $(this);
+        addHostReview(formElement);
+    });
+
     function viewOpenStreetMap(){
     $.ajax({
         type: "GET",
@@ -588,6 +595,28 @@ $(document).ready(function () {
             }
         });
 
+    }
+
+    function addHostReview(formElement){
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/rateHost.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                let res = JSON.parse(response); // Parse the response if it's not automatically parsed
+                if (res.status === "success") {
+                    showModal(res.message, function(){
+                        formElement[0].reset();
+                        window.location.reload();
+                    }, "black_ico.png");
+                } else {
+                    showModal(res.message, undefined, "black_ico.png");
+                }
+            }
+        });
     }
     // setting default view for profile
     openProfileNav('rent-history');
