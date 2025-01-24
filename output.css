@@ -1130,10 +1130,6 @@ video {
   width: 33.333333%;
 }
 
-.w-10 {
-  width: 2.5rem;
-}
-
 .w-11 {
   width: 2.75rem;
 }
@@ -1228,6 +1224,10 @@ video {
 
 .w-px {
   width: 1px;
+}
+
+.w-10 {
+  width: 2.5rem;
 }
 
 .min-w-0 {
@@ -1846,6 +1846,11 @@ video {
 .bg-green-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
+}
+
+.bg-neutral-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity, 1));
 }
 
 .bg-neutral-200 {

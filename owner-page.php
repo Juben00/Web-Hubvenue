@@ -8,11 +8,20 @@ $accountObj = new Account();
 
 $owner = $accountObj->getOwner($_GET['id']);
 $venues = $venueObj->getAllVenues(2, $_GET['id']);
+$userID = $_SESSION['user']['id'] ?? null;
+$profilePic = $owner['profile_pic'] ?? null;
+
+$rating = $venueObj->getHostRatings($userID);
+
+$reviews = $venueObj->getHostReviews($userID);
 
 if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: index.php");
     exit();
 } else if (!$owner) {
+    header("Location: index.php");
+    exit();
+} else if (!$userID) {
     header("Location: index.php");
     exit();
 }
@@ -56,8 +65,8 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                             <div
                                 class="h-24 w-24 text-4xl font-semibold rounded-full bg-black text-white flex items-center justify-center">
                                 <?php
-                                if (isset($_SESSION['user']) && empty($profilePic)) {
-                                    echo $_SESSION['user']['firstname'][0];
+                                if (isset($owner) && empty($profilePic)) {
+                                    echo $owner['firstname'][0];
                                 } else {
                                     echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
                                 }
@@ -78,8 +87,10 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                                     </p> -->
                     <div class="flex items-center space-x-2 mb-2">
                         <i class="fas fa-star text-yellow-400"></i>
-                        <span class="font-semibold">4.9</span>
-                        <span class="text-sm text-gray-500">(120 reviews)</span>
+                        <span class="font-semibold"><?php echo number_format($rating['average'], 1) ?></span>
+
+                        <span class="text-sm text-gray-500"><?php echo htmlspecialchars($rating['total']) ?>
+                            Reviews</span>
                     </div>
                     <div class="flex items-center space-x-2 mb-2">
                         <i class="fas fa-map-marker-alt text-gray-400"></i>
@@ -194,35 +205,104 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
             <h2 class="text-2xl font-bold mb-6">Reviews</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <!-- Review Cards -->
-                <div class="bg-transparent rounded-xl shadow-sm p-6 border-2 border-red-500">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <img src="/placeholder.svg?height=40&width=40" alt=" Munchkin Doom Catson"
-                            class="w-10 h-10 rounded-full object-cover">
-                        <div>
-                            <h3 class="text-lg font-semibold">Munchkin Ninja</h3>
-                            <p class="text-gray-500">Reviewed Urban Loft Space</p>
+
+                <?php if (!empty($reviews) && is_array($reviews)): ?>
+                    <?php foreach ($reviews as $index => $review): ?>
+                        <div class="shadow-lg p-6 rounded-lg space-y-6">
+                            <div class="border-b pb-6 review" data-index="<?php echo $index; ?>">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <?php
+                                    // Check if profile picture exists, otherwise display a placeholder with the user's initial
+                                    if (empty($review['profile_pic'])) {
+                                        echo '<div class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">';
+                                        echo htmlspecialchars($review['user_name'][0] ?? 'U'); // Display the first letter of the user's name or 'U' if name is missing
+                                        echo '</div>';
+                                    } else {
+                                        echo '<img class="w-12 h-12 bg-gray-200 rounded-full" src="' . htmlspecialchars($review['profile_pic']) . '" alt="Profile Picture">';
+                                    }
+                                    ?>
+
+                                    <div>
+                                        <a href="user-page.php"
+                                            class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name'] ?? 'Unknown User'); ?></a>
+                                        <p class="text-sm text-gray-500">
+                                            <?php
+                                            // Format the date if it exists, otherwise display a default message
+                                            if (!empty($review['date'])) {
+                                                $originalDate = $review['date'];
+                                                $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate)); // Format the date
+                                                echo htmlspecialchars($formattedDate);
+                                            } else {
+                                                echo 'Date not available';
+                                            }
+                                            ?>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex text-yellow-400 mb-2">
+                                    <?php
+                                    // Display stars based on the rating, default to 0 if rating is missing or invalid
+                                    $rating = isset($review['rating']) && is_numeric($review['rating']) ? (int) $review['rating'] : 0;
+                                    for ($i = 0; $i < $rating; $i++): ?>
+                                        <i class="fas fa-star"></i>
+                                    <?php endfor; ?>
+                                </div>
+                                <p class="text-gray-700">
+                                    <?php echo htmlspecialchars($review['review'] ?? 'No review provided.'); ?>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center space-x-1 mb-2">
-                        <i class="fas fa-star text-yellow-400"></i>
-                        <i class="fas fa-star text-yellow-400"></i>
-                        <i class="fas fa-star text-yellow-400"></i>
-                        <i class="fas fa-star text-yellow-400"></i>
-                        <i class="fas fa-star text-yellow-400"></i>
-                        <span class="ml-2 text-sm text-gray-500">1 month ago</span>
-                    </div>
-                    <p class="text-gray-700">
-                        The Urban Loft Space was perfect for our company photoshoot. Doom Cat was incredibly helpful and
-                        accommodating. The natural light in the space is amazing!
-                    </p>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-gray-500">No reviews available.</p>
+                <?php endif; ?>
 
                 <!-- Additional review cards... -->
             </div>
-            <div class="border-2 border-red-500 w-full"></div>
+            <form id="hostReviewForm">
+                <h2 class="text-2xl font-bold mb-4">Give a Review</h2>
+                <div class="border shadow-md p-6 bg-neutral-100">
+                    <div class="flex items-center mb-3 gap-4">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" class="hidden" name="user_id"
+                                value="<?php echo htmlspecialchars($userID) ?>">
+                            <input type="number" class="hidden" name="host_id"
+                                value="<?php echo htmlspecialchars($owner['id']) ?>">
+
+                            <label onclick="rate(1)" for="one" class="text-5xl text-gray-300 hover:text-yellow-400 star"
+                                data-rating="1">
+                                <input type="radio" name="ratings" value="1" class="hidden" id="one">★</label>
+                            <label onclick="rate(2)" for="two" class="text-5xl text-gray-300 hover:text-yellow-400 star"
+                                data-rating="2">
+                                <input type="radio" name="ratings" value="2" class="hidden" id="two">★</label>
+                            <label onclick="rate(3)" for="three"
+                                class="text-5xl text-gray-300 hover:text-yellow-400 star" data-rating="3">
+                                <input type="radio" name="ratings" value="3" class="hidden" id="three">★</label>
+                            <label onclick="rate(4)" for="four"
+                                class="text-5xl text-gray-300 hover:text-yellow-400 star" data-rating="4">
+                                <input type="radio" name="ratings" value="4" class="hidden" id="four">★</label>
+                            <label onclick="rate(5)" for="five"
+                                class="text-5xl text-gray-300 hover:text-yellow-400 star" data-rating="5">
+                                <input type="radio" name="ratings" value="5" class="hidden" id="five">★</label>
+                        </div>
+                        <h1 class="text-2xl font-semibold" id="rateFeedback"></h1>
+                    </div>
+                    <div class="mb-4">
+                        <textarea id="review-text" name="review-text"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                            rows="3" placeholder="Share your experience (optional)"></textarea>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                            Submit Review
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
     <script>
         // Your existing JavaScript with improved event handling...
 
@@ -269,6 +349,38 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
             }).catch(err => {
                 console.error('Failed to copy link: ', err);
             });
+        }
+
+        function rate(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star');
+            const rateFeedback = document.getElementById('rateFeedback');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('text-gray-300');
+                    star.classList.add('text-yellow-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-gray-300');
+                }
+            });
+            switch (rating) {
+                case 1:
+                    rateFeedback.innerText = 'Terrible Experience!';
+                    break;
+                case 2:
+                    rateFeedback.innerText = 'Below Expectations!';
+                    break;
+                case 3:
+                    rateFeedback.innerText = 'Average Experience!';
+                    break;
+                case 4:
+                    rateFeedback.innerText = 'Very Good!';
+                    break;
+                case 5:
+                    rateFeedback.innerText = 'Exceptional!';
+                    break;
+            }
         }
     </script>
 </body>

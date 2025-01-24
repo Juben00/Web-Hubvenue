@@ -778,6 +778,78 @@ LEFT JOIN
         }
     }
 
+    function rateHost($user_id, $host_id, $rating, $review)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "INSERT INTO host_reviews (user_id, host_id, rating, review) VALUES (:user_id, :host_id, :rating, :review)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':host_id', $host_id);
+            $stmt->bindParam(':rating', $rating);
+            $stmt->bindParam(':review', $review);
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    function getHostRatings($host_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT 
+                AVG(rating) AS average,
+                COUNT(rating) AS total,
+                SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) AS rating_5,
+                SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) AS rating_4,
+                SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) AS rating_3,
+                SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) AS rating_2,
+                SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) AS rating_1
+            FROM host_reviews WHERE host_id = :host_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':host_id', $host_id);
+            $stmt->execute();
+            $ratings = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $ratings;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function getHostReviews($host_id)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT 
+                r.id,
+                r.review,
+                r.rating,
+                r.created_at AS date,
+                u.id AS user_id,
+                CONCAT(u.firstname, ' ', u.lastname) AS user_name,
+                u.profile_pic AS profile_pic
+            FROM host_reviews r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.host_id = :host_id
+            ORDER BY date DESC;";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':host_id', $host_id);
+            $stmt->execute();
+            $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $reviews;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 $venueObj = new Venue();
