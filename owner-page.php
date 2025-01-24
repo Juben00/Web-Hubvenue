@@ -23,7 +23,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Venue Owner Profile - HubVenue</title>
+    <title>Host Profile - HubVenue</title>
     <link rel="stylesheet" href="./output.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link rel="icon" href="./images/black_ico.png">
@@ -37,11 +37,18 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
     } else {
         include_once './components/navbar.html';
     }
+
+
+    include_once './components/SignupForm.html';
+    include_once './components/feedback.modal.html';
+    include_once './components/confirm.feedback.modal.html';
+    include_once './components/Menu.html';
+
     ?>
 
     <div class="container mx-auto px-4 py-8 pt-24">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- Venue Owner Profile Card -->
+            <!-- Host Profile Card -->
             <div class="">
                 <div class="bg-slate-50 rounded-xl border shadow-lg p-6 md:col-span-1 mt-12">
                     <div class="flex flex-col items-center mt-16 space-y-4 mb-4">
@@ -61,7 +68,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                             <h2 class="text-xl font-bold">
                                 <?php echo htmlspecialchars($owner['firstname'] . ' ' . $owner['lastname']) ?>
                             </h2>
-                            <p class="text-gray-500 text-sm">Venue Owner since
+                            <p class="text-gray-500 text-sm">Host since
                                 <?php echo htmlspecialchars(date('F Y', strtotime($owner['host_application_date']))) ?>
                             </p>
                         </div>
@@ -133,7 +140,8 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                     <?php
                     foreach ($venues as $venue) {
                         ?>
-                        <div class="bg-transparent shadow-md rounded-xl overflow-hidden transition duration-300">
+                        <a href="venues.php?id=<?php echo htmlspecialchars($venue['id']); ?>"
+                            class="bg-transparent shadow-md rounded-xl overflow-hidden transition duration-300">
                             <img src="./<?= htmlspecialchars($venue['image_urls'][$venue['thumbnail']]) ?>"
                                 alt="<?php echo htmlspecialchars($venue['name']) ?>" class="w-full h-48 object-cover">
                             <div class="p-6">
@@ -160,12 +168,17 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                                         class="bg-blue-50 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">₱<?php echo htmlspecialchars($venue['price']) ?>/Day</span>
                                     <div class="flex items-center space-x-1">
                                         <i class="fas fa-star text-yellow-400"></i>
-                                        <span class="font-semibold">4.8</span>
-                                        <span class="text-sm text-gray-500">(45)</span>
+                                        <span class="font-semibold">
+                                            <p class="font-bold text-xs">
+                                                <?php echo number_format($venue['rating'], 1) ?? "0" ?>
+                                            </p>
+                                        </span>
+                                        <span
+                                            class="text-sm text-gray-500">(<?php echo htmlspecialchars($venue['total_reviews']) ?>)</span>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                         <?php
                     }
                     ?>
@@ -179,9 +192,9 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
         <!-- Reviews Section -->
         <div class="mt-12">
             <h2 class="text-2xl font-bold mb-6">Reviews</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <!-- Review Cards -->
-                <div class="bg-transparent rounded-xl shadow-sm p-6">
+                <div class="bg-transparent rounded-xl shadow-sm p-6 border-2 border-red-500">
                     <div class="flex items-center space-x-4 mb-4">
                         <img src="/placeholder.svg?height=40&width=40" alt=" Munchkin Doom Catson"
                             class="w-10 h-10 rounded-full object-cover">
@@ -206,12 +219,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
 
                 <!-- Additional review cards... -->
             </div>
-            <div class="mt-6 text-center">
-                <button
-                    class="bg-slate-50 text-black border border-black py-2 px-6 rounded-lg hover:bg-gray-50 transition duration-300">
-                    View All Reviews
-                </button>
-            </div>
+            <div class="border-2 border-red-500 w-full"></div>
         </div>
     </div>
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
@@ -240,7 +248,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
 
         function shareOnTwitter() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent("Check out this venue owner's profile on HubVenue!");
+            const text = encodeURIComponent("Check out this Host's profile on HubVenue!");
             window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
         }
 
@@ -251,7 +259,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
 
         function shareOnWhatsApp() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent("Check out this venue owner's profile on HubVenue!");
+            const text = encodeURIComponent("Check out this Host's profile on HubVenue!");
             window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
         }
 

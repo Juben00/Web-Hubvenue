@@ -175,7 +175,6 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
-
     function getSingleVenue($venue_id = '')
     {
         try {
@@ -231,7 +230,6 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
-
     function getRatings($venue_id)
     {
         try {
@@ -255,7 +253,6 @@ class Venue
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
-
     function getReview($venue_id)
     {
         try {
