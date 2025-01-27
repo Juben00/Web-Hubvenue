@@ -576,7 +576,7 @@ class Venue
 
     v.id AS venue_id,
     v.name AS venue_name,
-    v.location AS venue_location,
+    v.address AS venue_location,
     v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,

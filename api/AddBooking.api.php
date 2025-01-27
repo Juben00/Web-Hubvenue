@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $booking_discount = clean_input(isset($_POST['couponCode']) && !empty($_POST['couponCode']) ? $_POST['couponCode'] : 'none');
     $booking_payment_method = clean_input($_POST['paymentMethod']);
     $booking_payment_reference = clean_input($_POST['finalRef']);
+    $booking_payment_receipt = clean_input($_FILES["receiptUpload"]["name"]);
     $booking_payment_status_id = 1;
     $booking_service_fee = clean_input($reservationData['serviceFee']);
 
@@ -78,7 +79,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else if ($booking_payment_method === "paymaya") {
         $bpm = "PayMaya";
     }
-    if (empty($booking_payment_reference)) {
+
+    if ($booking_payment_receipt !== "") {
+        $target_dir = "/paymentReceipts/";
+        $target_file = $target_dir . basename($_FILES["receiptUpload"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        // Check if image file is a actual image or fake image
+        $check = getimagesize($_FILES["receiptUpload"]["tmp_name"]);
+        if ($check !== false) {
+            $uploadOk = 1;
+        } else {
+            $uploadOk = 0;
+        }
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            $uploadOk = 0;
+        }
+        // Check file size
+        if ($_FILES["receiptUpload"]["size"] > 500000) {
+            $uploadOk = 0;
+        }
+        // Allow certain file formats
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+            $uploadOk = 0;
+        }
+        // Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) {
+            $booking_payment_receipt = "";
+        } else {
+            if (move_uploaded_file($_FILES["receiptUpload"]["tmp_name"], ".." . $target_file)) {
+                $booking_payment_receipt = $target_file;
+            } else {
+                $booking_payment_receipt = "";
+            }
+        }
+    }
+
+    if (empty($booking_payment_receipt) && empty($booking_payment_reference)) {
         $booking_payment_referenceErr = "Payment reference is required";
     }
 
@@ -89,6 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         empty($booking_guest_idErr) && empty($booking_venue_idErr) && empty($booking_payment_methodErr) &&
         empty($booking_payment_referenceErr)
     ) {
+        $booking_payment_reference = $booking_payment_reference === "" ? $booking_payment_receipt : $booking_payment_reference;
 
         $result = $venueObj->bookVenue(
             $booking_start_date,

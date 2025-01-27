@@ -8,28 +8,6 @@ $currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
 $cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
 $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
-// At the top of the file, get all booked dates for all venues
-// $allBookedDates = [];
-// foreach ($pendingBooking as $booking) {
-//     $venueBookings = $venueObj->getBookedDates($booking['venue_id']);
-//     $allBookedDates[$booking['venue_id']] = [];
-
-//     foreach ($venueBookings as $bookedBooking) {
-//         // Skip the current booking's dates when rescheduling
-//         if ($booking['booking_id'] != $bookedBooking['booking_id']) {
-//             $start = new DateTime($bookedBooking['startdate']);
-//             $end = new DateTime($bookedBooking['enddate']);
-
-//             // Add each date in the range to the array
-//             $current = clone $start;
-//             while ($current <= $end) {
-//                 $allBookedDates[$booking['venue_id']][] = $current->format('Y-m-d');
-//                 $current->modify('+1 day');
-//             }
-//         }
-//     }
-// }
-
 ?>
 
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
@@ -140,33 +118,37 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
                                             Details</button>
                                         <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'],
-                                                'venue_name' => $booking['venue_name'],
-                                                'booking_start_date' => $booking['booking_start_date'],
-                                                'booking_end_date' => $booking['booking_end_date'],
-                                                'booking_duration' => $booking['booking_duration'],
-                                                'booking_grand_total' => $booking['booking_grand_total'],
-                                                'booking_payment_method' => $booking['booking_payment_method'],
-                                                'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                'booking_service_fee' => $booking['booking_service_fee'],
-                                                'venue_location' => $booking['venue_location']
-                                            ])); ?>)" type="button"
+                                            <button onclick="printReceipt(<?php
+                                            echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'] ?? '',
+                                                'venue_name' => $booking['venue_name'] ?? '',
+                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
+                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
+                                                'booking_duration' => $booking['booking_duration'] ?? '',
+                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                'venue_location' => $booking['venue_location'] ?? ''
+                                            ]), ENT_QUOTES, 'UTF-8');
+                                            ?>)" type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-print mr-2"></i>Print Receipt
                                             </button>
-                                            <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'],
-                                                'venue_name' => $booking['venue_name'],
-                                                'booking_start_date' => $booking['booking_start_date'],
-                                                'booking_end_date' => $booking['booking_end_date'],
-                                                'booking_duration' => $booking['booking_duration'],
-                                                'booking_grand_total' => $booking['booking_grand_total'],
-                                                'booking_payment_method' => $booking['booking_payment_method'],
-                                                'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                'booking_service_fee' => $booking['booking_service_fee'],
-                                                'venue_location' => $booking['venue_location']
-                                            ])); ?>)" type="button"
+                                            <button onclick="downloadReceipt(<?php
+                                            echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'] ?? '',
+                                                'venue_name' => $booking['venue_name'] ?? '',
+                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
+                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
+                                                'booking_duration' => $booking['booking_duration'] ?? '',
+                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                'venue_location' => $booking['venue_location'] ?? ''
+                                            ]), ENT_QUOTES, 'UTF-8');
+                                            ?>)" type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-download mr-2"></i>Download Receipt
                                             </button>
@@ -275,33 +257,37 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
                                             Details</button>
                                         <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'],
-                                                'venue_name' => $booking['venue_name'],
-                                                'booking_start_date' => $booking['booking_start_date'],
-                                                'booking_end_date' => $booking['booking_end_date'],
-                                                'booking_duration' => $booking['booking_duration'],
-                                                'booking_grand_total' => $booking['booking_grand_total'],
-                                                'booking_payment_method' => $booking['booking_payment_method'],
-                                                'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                'booking_service_fee' => $booking['booking_service_fee'],
-                                                'venue_location' => $booking['venue_location']
-                                            ])); ?>)" type="button"
+                                            <button onclick="printReceipt(<?php
+                                            echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'] ?? '',
+                                                'venue_name' => $booking['venue_name'] ?? '',
+                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
+                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
+                                                'booking_duration' => $booking['booking_duration'] ?? '',
+                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                'venue_location' => $booking['venue_location'] ?? ''
+                                            ]), ENT_QUOTES, 'UTF-8');
+                                            ?>)" type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-print mr-2"></i>Print Receipt
                                             </button>
-                                            <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'],
-                                                'venue_name' => $booking['venue_name'],
-                                                'booking_start_date' => $booking['booking_start_date'],
-                                                'booking_end_date' => $booking['booking_end_date'],
-                                                'booking_duration' => $booking['booking_duration'],
-                                                'booking_grand_total' => $booking['booking_grand_total'],
-                                                'booking_payment_method' => $booking['booking_payment_method'],
-                                                'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                'booking_service_fee' => $booking['booking_service_fee'],
-                                                'venue_location' => $booking['venue_location']
-                                            ])); ?>)" type="button"
+                                            <button onclick="downloadReceipt(<?php
+                                            echo htmlspecialchars(json_encode([
+                                                'booking_id' => $booking['booking_id'] ?? '',
+                                                'venue_name' => $booking['venue_name'] ?? '',
+                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
+                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
+                                                'booking_duration' => $booking['booking_duration'] ?? '',
+                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                'venue_location' => $booking['venue_location'] ?? ''
+                                            ]), ENT_QUOTES, 'UTF-8');
+                                            ?>)" type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-download mr-2"></i>Download Receipt
                                             </button>
@@ -499,7 +485,6 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                 ?>
             </div>
         </div>
-
         <!-- Details Modal -->
         <div id="details-modal"
             class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">

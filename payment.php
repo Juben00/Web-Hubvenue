@@ -113,7 +113,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
-            <form id="paymentForm" method="POST">
+            <form id="paymentForm" method="POST" enctype="multipart/form-data">
                 <!-- Step 1:  -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
@@ -217,7 +217,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                                 onclick="selectPaymentMethod('gcash')">
                                 <div class="flex items-center justify-between mb-4">
                                     <img src="./images/gcash.png" alt="GCash" class="h-8">
-                                    <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4">
+                                    <input type="radio" name="paymentMethod" value="gcash" class="h-4 w-4 pMethod">
                                 </div>
                                 <p class="text-sm text-gray-600">Pay securely using your GCash account</p>
                             </div>
@@ -226,11 +226,12 @@ $_SESSION['reservationFormData'] = $reservationData;
                                 onclick="selectPaymentMethod('paymaya')">
                                 <div class="flex items-center justify-between mb-4">
                                     <img src="./images/paymaya.png" alt="PayMaya" class="h-8">
-                                    <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4">
+                                    <input type="radio" name="paymentMethod" value="paymaya" class="h-4 w-4 pMethod">
                                 </div>
                                 <p class="text-sm text-gray-600">Pay securely using your PayMaya account</p>
                             </div>
                             <input type="hidden" id="finalRef" name="finalRef">
+                            <input type="file" id="receiptUpload" name="receiptUpload" class="hidden">
                         </div>
                     </div>
                 </div>
@@ -260,9 +261,8 @@ $_SESSION['reservationFormData'] = $reservationData;
     </main>
 
     <div id="qrModal"
-        class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0"
-        onclick="handleModalClick(event)">
-        <div class="bg-slate-50 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
+        class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 transition-all duration-300 ease-in-out opacity-0">
+        <div class="bg-slate-50 rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl transform transition-all duration-300 ease-in-out scale-95 opacity-0 translate-y-4"
             id="qrModalContent">
             <div class="flex justify-between items-start mb-6">
                 <div>
@@ -270,35 +270,101 @@ $_SESSION['reservationFormData'] = $reservationData;
                     <p class="text-sm text-gray-600 mt-2">Scan QR code to pay for your reservation</p>
                 </div>
                 <button onclick="closeQrModal()"
-                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
-                    <i class="lucide-x h-5 w-5"></i>
+                    class="text-gray-900 hover:text-gray-600 transition-colors duration-200 p-1 hover:bg-gray-100 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
 
-            <!-- QR Code Section -->
-            <div class="text-center">
-                <div class="bg-gray-50 p-8 rounded-xl mb-6 border border-gray-100">
-                    <img id="qrCodeImage" src="" alt="Payment QR Code" class="mx-auto mb-4 rounded-lg shadow-md">
-                    <p class="text-sm text-gray-600 mb-2">Total Amount: <span class="font-semibold text-black">₱<span
-                                id="qrPaymentAmount">0</span></span></p>
-                    <p class="text-sm text-gray-600">Scan this QR code using your <span id="selectedPaymentMethod"
-                            class="font-medium"></span> app</p>
+            <!-- QR Code and Input Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
+                <!-- QR Code Section -->
+                <div class="flex flex-col items-center bg-gray-50 p-4 rounded-xl border border-gray-200">
+                    <img id="qrCodeImage" src="" alt="Payment QR Code" class="mb-4 rounded-lg shadow-md max-h-60">
+                    <p class="text-sm text-gray-600 mb-2">Total Amount:
+                        <span class="font-semibold text-black">₱<span id="qrPaymentAmount">0</span></span>
+                    </p>
+                    <p class="text-sm text-gray-600 text-center">Scan this QR code using your
+                        <span id="selectedPaymentMethod" class="font-medium"></span> app
+                    </p>
                 </div>
-                <!-- Reference Number Input -->
-                <div class="mt-8 pt-6 border-t border-gray-200">
-                    <label for="referenceNumber" class="block text-sm font-medium text-gray-700 mb-2">Already paid?
-                        Enter your reference number</label>
-                    <div class="flex gap-2">
+
+                <!-- Reference Number Section -->
+                <div>
+                    <p class="block text-sm font-medium text-gray-700 mb-4">Enter your
+                        reference number or upload receipt
+                    </p>
+                    <div class="flex flex-col gap-4">
+                        <!-- Reference Number Input -->
                         <input type="text" id="referenceNumber" name="referenceNumber" placeholder="Reference Number"
-                            class="flex-1 rounded-lg border-gray-300 shadow-sm px-1 focus:border-primary focus:ring-primary h-11">
+                            class="rounded-lg border-gray-300 border shadow-sm px-3 py-2 focus:border-primary focus:ring-primary">
+                        <!-- File Upload -->
+                        <p class="block text-center text-sm font-medium text-gray-700">OR</p>
+                        <div class="relative group">
+                            <label for="receiptUpload" id="receiptLabel" class="flex items-center justify-between gap-2 cursor-pointer 
+        border border-gray-300 rounded-lg px-4 py-3 shadow-sm bg-gray-50 
+        text-sm text-gray-600 hover:bg-gray-100 hover:border-gray-400 transition">
+                                <div class="flex items-center gap-2">
+                                    <!-- Upload Icon -->
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5 text-gray-500 group-hover:text-gray-700" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    <span id="fileLabelText">Choose File</span>
+                                </div>
+                                <!-- Clear Button (Hidden by Default) -->
+                                <button id="clearButton" type="button"
+                                    class="hidden text-xs text-red-600 hover:text-red-800 transition">
+                                    Clear
+                                </button>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
                         <button id="submitref"
-                            class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">Okay</button>
+                            class="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-all duration-200">
+                            Submit
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        const fileInput = document.getElementById("receiptUpload");
+        const labelText = document.getElementById("fileLabelText");
+        const label = document.getElementById("receiptLabel");
+        const clearButton = document.getElementById("clearButton");
+
+        fileInput.addEventListener("change", () => {
+            if (fileInput.files.length > 0) {
+                labelText.textContent = fileInput.files[0].name; // Show file name
+                label.classList.add("border-green-500", "bg-green-50", "text-green-600"); // Add success styling
+                label.classList.remove("border-gray-300", "bg-gray-50", "text-gray-600"); // Remove default styling
+                clearButton.classList.remove("hidden"); // Show clear button
+            } else {
+                resetInput();
+            }
+        });
+
+        clearButton.addEventListener("click", () => {
+            fileInput.value = "";
+            resetInput();
+        });
+
+        function resetInput() {
+            labelText.textContent = "Choose File";
+            label.classList.remove("border-green-500", "bg-green-50", "text-green-600");
+            label.classList.add("border-gray-300", "bg-gray-50", "text-gray-600");
+            clearButton.classList.add("hidden");
+        }
+    </script>
     <script>
 
         let totalToPay = <?php echo $Total; ?>;
@@ -411,34 +477,20 @@ $_SESSION['reservationFormData'] = $reservationData;
             document.getElementById('nextBtn').disabled = false;
         }
 
+
+
         function closeQrModal() {
-            const referenceNumber = document.getElementById('referenceNumber').value.trim();
-            if (referenceNumber) {
-                const modal = document.getElementById('qrModal');
-                const modalContent = document.getElementById('qrModalContent');
-
-                modal.classList.remove('opacity-100');
-                modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
-                modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
-
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }, 300);
-            } else {
-                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
-            }
-        }
-
-        function handleModalClick(event) {
+            const modal = document.getElementById('qrModal');
             const modalContent = document.getElementById('qrModalContent');
-            const referenceNumber = document.getElementById('referenceNumber').value.trim();
 
-            if (!modalContent.contains(event.target) && referenceNumber) {
-                closeQrModal();
-            } else if (!modalContent.contains(event.target)) {
-                showModal('Please complete the payment and enter the reference number before closing.', undefined, "black_ico.png");
-            }
+            modal.classList.remove('opacity-100');
+            modalContent.classList.remove('scale-100', 'opacity-100', 'translate-y-0');
+            modalContent.classList.add('scale-95', 'opacity-0', 'translate-y-4');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
         }
 
         function openQrModal() {
