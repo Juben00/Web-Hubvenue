@@ -97,7 +97,7 @@ $Total = $computedTotal * $venueDownpayment;
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
-            <form id="paymentForm" method="POST" action="PaymentProcess.api.php">
+            <form id="paymentForm" method="POST">
                 <!-- Step 1:  -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
