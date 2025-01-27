@@ -963,17 +963,17 @@ $reviews = $venueObj->getReview($_GET['id']);
                     guestsInput.value = maxGuests;
                 }
 
-                const discountRate = <?php
-                if ($discountStatus) {
-                    if ($discountStatus['status'] == 'Active') {
-                        echo $discountStatus['discount_value'] / 100; // Convert percentage to decimal
-                    } else {
-                        echo 0;
-                    }
-                } else {
-                    echo 0;
-                }
-                ?>;
+                // const discountRate = <?php
+                // if ($discountStatus) {
+                //     if ($discountStatus['status'] == 'Active') {
+                //         echo $discountStatus['discount_value'] / 100; // Convert percentage to decimal
+                //     } else {
+                //         echo 0;
+                //     }
+                // } else {
+                //     echo 0;
+                // }
+                // ?>;
 
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
@@ -981,10 +981,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                     const serviceFee = totalPriceForNights * serviceFeeRate;
                     let grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
 
-                    // Apply discount if applicable
-                    if (discountRate > 0) {
-                        grandTotal = grandTotal * (1 - discountRate);
-                    }
+                    // // Apply discount if applicable
+                    // if (discountRate > 0) {
+                    //     grandTotal = grandTotal * (1 - discountRate);
+                    // }
 
                     console.log('Calculations:', { // Debug log
                         totalPriceForNights,

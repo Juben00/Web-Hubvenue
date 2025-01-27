@@ -25,6 +25,13 @@ if (isset($_SESSION['user'])) {
 
 $venueObj = new Venue();
 
+$discounts = $venueObj->getAllDiscounts();
+
+$discountApplied = false;
+
+$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+
+
 // $venueId = $_GET['venueId'];
 $venueId = $reservationData['venueId'];
 $checkIn = new DateTime($reservationData['checkin']);
@@ -36,46 +43,18 @@ $totalPriceForNights = $reservationData['totalPriceForNights'];
 $totalEntranceFee = $reservationData['entranceFee'];
 $cleaningFee = $reservationData['cleaningFee'];
 $serviceFee = $reservationData['serviceFee'];
-$totalPrice = $reservationData['grandTotal'];
+$subTotal = $reservationData['grandTotal'];
+$isSpecial = $discountStatus['discount_value'];
+$computedTotal = $subTotal * (isset($isSpecial) ? (1 - $discountStatus['discount_value'] / 100) : 0);
 
 
 $venueDetails = $venueObj->getSingleVenue($venueId);
 $venueName = htmlspecialchars($venueDetails["venue_name"]);
+$venueDownpayment = $venueObj->getDownpayment($venueId);
 
 
-$discounts = $venueObj->getAllDiscounts();
 
-$discountApplied = false;
-$discountCode = isset($_GET['discountCode']) ? htmlspecialchars($_GET['discountCode']) : 'none';
-if ($discountCode !== 'none') {
-    $totalPrice = applyDiscount($discounts, $discountCode, $totalPrice);
-    $discountApplied = true;
-}
-// -----------------------------
-// // Calculate grand total if no discount is applied
-// if (!$discountApplied) {
-//     $totalPrice = $totalPriceForNights;
-// }
-
-$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
-// Apply discount from discountStatus
-// if ($discountStatus) {
-//     $totalPrice = $totalPrice * (1 - $discountStatus['discount_value'] / 100);
-// }
-
-function applyDiscount($discounts, $discountCode, $totalPrice)
-{
-    foreach ($discounts as $discount) {
-        if ($discount['discount_code'] === $discountCode && new DateTime() <= new DateTime($discount['expiration_date'])) {
-            if ($discount['discount_type'] === 'flat') {
-                return max(0, $totalPrice - $discount['discount_value']);
-            } elseif ($discount['discount_type'] === 'percentage') {
-                return max(0, $totalPrice * (1 - $discount['discount_value'] / 100));
-            }
-        }
-    }
-    return $totalPrice;
-}
+$Total = $computedTotal * $venueDownpayment;
 
 ?>
 <!DOCTYPE html>
@@ -118,7 +97,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                 <p id="stepDescription" class="text-gray-600 mb-8">Review the details of your selected venue.</p>
             </div>
 
-            <form id="paymentForm" method="POST" action="PaymentProcess.api.php">
+            <form id="paymentForm" method="POST">
                 <!-- Step 1:  -->
                 <div id="step1" class="step">
                     <div class="space-y-6">
@@ -130,10 +109,9 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                                     value=""
                                     class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10"
                                     <?php echo $discountApplied ? 'disabled' : ''; ?>>
-                                <?php if (!$discountApplied): ?>
-                                    <button type="button" id="applyCouponBtn" onclick="applyCoupon()"
-                                        class="px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">Apply</button>
-                                <?php endif; ?>
+                                <button type="button" id="applyCouponBtn" onclick="applyCoupon()"
+                                    class="<?php echo $discountApplied ? 'hidden' : ''; ?> px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">Apply</button>
+
                             </div>
                             <p id="couponMessage"
                                 class="text-sm mt-2 <?php echo $discountApplied ? '' : 'hidden'; ?> text-green-600">
@@ -182,17 +160,23 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                                         }
                                         ?></span>
                                     </div>
-                                </div>
-                                <div class="mt-4 pt-4 border-t border-gray-300 ">
                                     <div class="flex justify-between">
                                         <span>Coupon</span>
                                         <span id="discountValue">0%</span>
-
                                     </div>
+
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
+                                    <span>SubTotal</span>
+                                    <span id="subTotal">₱ <?php echo $computedTotal ?></span>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
+                                    <span>Host's Down Payment Requirement</span>
+                                    <span id="downPayment"><?php echo $venueDownpayment * 100 ?>%</span>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Total</span>
-                                    <span id="totalPrice">₱ <?php echo $totalPrice ?></span>
+                                    <span id="grandTotal">₱ <?php echo number_format($Total, 2) ?></span>
                                 </div>
                             </div>
                         </div>
@@ -292,6 +276,9 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
     </div>
 
     <script>
+
+        let totalToPay = <?php echo $Total; ?>;
+
         document.addEventListener('DOMContentLoaded', function () {
 
             document.getElementById('submitref').addEventListener('click', () => {
@@ -300,6 +287,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
 
                 closeQrModal();
             })
+
             const steps = document.querySelectorAll('.step');
             const totalSteps = steps.length;
             let currentStep = 0;
@@ -349,23 +337,26 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
                 .then(response => response.json())
                 .then(data => {
                     if (data.valid) {
-                        const discountValue = data.discountValue;
+                        // Update discount and total price dynamically
+                        const couponDiscount = data.discountValue;
+                        const discountValue = <?php echo isset($isSpecial) ? $discountStatus['discount_value'] / 100 : 0; ?> + data.discountValue;
+                        // Assume percentage
+                        console.log(discountValue);
+                        <?php $discountApplied = true; ?>
 
-                        <?php
-                        if (is_array($discountStatus) && isset($discountStatus['discount_value'])) {
-                            $totalPrice = $totalPrice - $totalPrice * $discountStatus['discount_value'] / 100;
-                        }
-                        ?>
+                        const gt = parseFloat((1 - discountValue) * <?php echo $subTotal ?>); // New subtotal after discount
+                        const downPaymentPercentage = <?php echo $venueDownpayment ?>; // Down payment (e.g., 0.5 for 50%)
+                        totalToPay = gt * downPaymentPercentage; // Total amount to be paid
 
-                        document.getElementById('totalPrice').textContent = `₱ ${<?php echo $totalPrice ?>.toFixed(2)}`;
-                        document.getElementById('discountValue').textContent = `${discountValue * 100}%`;
+                        document.getElementById('subTotal').textContent = `₱ ${gt.toFixed(2)}`;
+                        document.getElementById('discountValue').textContent = `${couponDiscount * 100}%`;
                         document.getElementById('couponMessage').classList.remove('hidden');
                         document.getElementById('couponCode').disabled = true;
                         document.getElementById('applyCouponBtn').style.display = '';
-                        document.getElementById('couponsub').value = couponCode;
+                        document.getElementById('grandTotal').textContent = `₱ ${totalToPay.toFixed(2)}`;
                     } else {
                         showModal("Invalid Coupon Code", function () {
-                            document.getElementById('couponCode').value = 'none';
+                            document.getElementById('couponCode').value = '';
                         }, "black_ico.png");
                     }
                 });
@@ -374,7 +365,7 @@ function applyDiscount($discounts, $discountCode, $totalPrice)
         function selectPaymentMethod(method) {
             document.querySelector(`input[value="${method}"]`).checked = true;
 
-            const totalAmount = <?php echo $totalPrice ?>;
+            const totalAmount = totalToPay.toFixed(2);
 
             document.getElementById('nextBtn').disabled = true;
 

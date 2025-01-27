@@ -616,6 +616,7 @@ $(document).ready(function () {
                     showModal(res.message, undefined, "black_ico.png");
                 }
             }
+            
         });
     }
     // setting default view for profile

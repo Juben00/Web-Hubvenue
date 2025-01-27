@@ -850,6 +850,24 @@ LEFT JOIN
         }
     }
 
+    function getDownpayment($venueId)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "SELECT value FROM venues
+            JOIN downpayment_sub ON downpayment_sub.id = venues.down_payment_id
+             WHERE venues.id = :venue_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId);
+            $stmt->execute();
+            $downpayment = $stmt->fetchColumn();
+            return $downpayment;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 $venueObj = new Venue();
