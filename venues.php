@@ -709,6 +709,15 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             class="w-full bg-transparent focus:outline-none text-gray-800"
                                             placeholder="Enter number of guests">
                                     </div>
+                                    <div class="p-3">
+                                        <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                            SPECIAL REQUEST
+                                        </label>
+                                        <textarea name="specialRequest" id="specialRequest"
+                                            placeholder="Enter your request if any"
+                                            class="w-full bg-transparent focus:outline-none text-gray-800"
+                                            rows="3"></textarea>
+                                    </div>
                                 </div>
                                 <!-- Price Breakdown -->
                                 <div class="space-y-4 mb-6">
@@ -867,7 +876,6 @@ $reviews = $venueObj->getReview($_GET['id']);
         });
     </script>
 
-    computations
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -963,17 +971,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                     guestsInput.value = maxGuests;
                 }
 
-                // const discountRate = <?php
-                // if ($discountStatus) {
-                //     if ($discountStatus['status'] == 'Active') {
-                //         echo $discountStatus['discount_value'] / 100; // Convert percentage to decimal
-                //     } else {
-                //         echo 0;
-                //     }
-                // } else {
-                //     echo 0;
-                // }
-                // ?>;
 
                 if (days > 0) {
                     const totalPriceForNights = pricePerNight * days;
@@ -981,10 +978,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                     const serviceFee = totalPriceForNights * serviceFeeRate;
                     let grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
 
-                    // // Apply discount if applicable
-                    // if (discountRate > 0) {
-                    //     grandTotal = grandTotal * (1 - discountRate);
-                    // }
 
                     console.log('Calculations:', { // Debug log
                         totalPriceForNights,

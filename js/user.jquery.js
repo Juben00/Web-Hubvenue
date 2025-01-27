@@ -63,6 +63,9 @@ $(document).ready(function () {
         e.preventDefault();
         const formElement = $(this);
         book(formElement);
+        //log the form data to the console
+        // console.log(formElement.serialize());
+        
     });
 
     //logout button
@@ -189,9 +192,7 @@ $(document).ready(function () {
         e.preventDefault(); // Prevent form submission
         showModal('Check-in date must be before the check-out date.', undefined, "black_ico.png");
         return;
-    }
-    // Populate a hidden form with the calculated data
-                   
+    } 
 });
 
     // Update user info form submission
@@ -499,8 +500,11 @@ $(document).ready(function () {
                         formElement[0].reset();
                         window.location.href = "./index.php";
                     }, "black_ico.png");
+                    console.log(response);
+                    
                 } else {
                     showModal(response.message, undefined, "black_ico.png");
+                    console.log(response);
                 }
             },
         });

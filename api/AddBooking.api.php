@@ -27,18 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $booking_duration = $interval->days;
     $booking_status_id = 1;
     $booking_participants = clean_input($reservationData['numberOfGuest']);
-
+    $booking_request = clean_input($reservationData['specialRequest']);
     $booking_original_price = clean_input($reservationData['totalPriceForNights']);
-    $booking_grand_total = clean_input($reservationData['grandTotal']);
+    $booking_grand_total = clean_input($reservationData['Total']);
+    $booking_balance = clean_input($reservationData['Balance']);
     $booking_guest_id = clean_input($_SESSION['user']['id']);
     $booking_venue_id = clean_input($reservationData['venueId']);
-    $booking_service_fee = clean_input($reservationData['serviceFee']);
-
+    $booking_down_payment = clean_input($reservationData['Downpayment']);
     $booking_discount = clean_input(isset($_POST['couponCode']) && !empty($_POST['couponCode']) ? $_POST['couponCode'] : 'none');
     $booking_payment_method = clean_input($_POST['paymentMethod']);
     $booking_payment_reference = clean_input($_POST['finalRef']);
     $booking_payment_status_id = 1;
-    $booking_cancellation_reason = clean_input(isset($_POST['cancellationReason']) ? $_POST['cancellationReason'] : '');
+    $booking_service_fee = clean_input($reservationData['serviceFee']);
+
 
     if (empty($booking_start_date)) {
         $booking_start_dateErr = "Start date is required";
@@ -81,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $booking_payment_referenceErr = "Payment reference is required";
     }
 
+
     if (
         empty($booking_start_dateErr) && empty($booking_end_dateErr) && empty($booking_participantsErr) &&
         empty($booking_durationErr) && empty($booking_original_priceErr) && empty($booking_grand_totalErr) &&
@@ -88,7 +90,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         empty($booking_payment_referenceErr)
     ) {
 
-        $result = $venueObj->bookVenue($booking_start_date, $booking_end_date, $booking_duration, $booking_status_id, $booking_participants, $booking_original_price, $booking_grand_total, $booking_guest_id, $booking_venue_id, $booking_discount, $bpm, $booking_payment_reference, $booking_payment_status_id, $booking_cancellation_reason, $booking_service_fee);
+        $result = $venueObj->bookVenue(
+            $booking_start_date,
+            $booking_end_date,
+            $booking_duration,
+            $booking_status_id,
+            $booking_request,
+            $booking_participants,
+            $booking_original_price,
+            $booking_grand_total,
+            $booking_balance,
+            $booking_guest_id,
+            $booking_venue_id,
+            $booking_down_payment,
+            $booking_discount,
+            $bpm,
+            $booking_payment_reference,
+            $booking_payment_status_id,
+            $booking_service_fee
+        );
 
         echo json_encode($result);
         unset($_SESSION['reservationFormData']);

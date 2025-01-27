@@ -5,58 +5,74 @@ require_once './classes/venue.class.php';
 require_once './classes/account.class.php';
 
 session_start();
+
 $accountObj = new Account();
-$reservationData = $_SESSION['reservationFormData'];
+$venueObj = new Venue();
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['user_type_id'] == 3) {
         header('Location: admin/');
         exit;
     }
-    if (!$reservationData) {
-        header('Location: index.php');
-    }
 } else {
     header('Location: index.php');
-    unset($_SESSION['reservationFormData']);
     exit;
 }
 
-
-$venueObj = new Venue();
-
-$discounts = $venueObj->getAllDiscounts();
+if (!isset($_SESSION['reservationFormData'])) {
+    header('Location: index.php');
+    exit;
+}
 
 $discountApplied = false;
 
-$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+$reservationData = $_SESSION['reservationFormData'];
 
-
-// $venueId = $_GET['venueId'];
 $venueId = $reservationData['venueId'];
 $checkIn = new DateTime($reservationData['checkin']);
 $checkOut = new DateTime($reservationData['checkout']);
 $interval = $checkIn->diff($checkOut);
 $bookingDuration = $interval->days;
+
+$request = $reservationData['specialRequest'];
 $numberOfGuest = $reservationData['numberOfGuest'];
 $totalPriceForNights = $reservationData['totalPriceForNights'];
 $totalEntranceFee = $reservationData['entranceFee'];
 $cleaningFee = $reservationData['cleaningFee'];
 $serviceFee = $reservationData['serviceFee'];
 $subTotal = $reservationData['grandTotal'];
-$isSpecial = $discountStatus['discount_value'];
-$computedTotal = $subTotal * (isset($isSpecial) ? (1 - $discountStatus['discount_value'] / 100) : 0);
 
+// Ensure all monetary values are strings
+$totalPriceForNights = number_format((float) $totalPriceForNights, 2, '.', '');
+$totalEntranceFee = number_format((float) $totalEntranceFee, 2, '.', '');
+$cleaningFee = number_format((float) $cleaningFee, 2, '.', '');
+$serviceFee = number_format((float) $serviceFee, 2, '.', '');
+$subTotal = number_format((float) $subTotal, 2, '.', '');
+
+// Get discount value
+$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+$isSpecial = $discountStatus['discount_value'] ?? '0';
+
+// Use BCMath for precise calculations
+$computedTotal = bcmul($subTotal, bcsub('1', bcdiv($isSpecial, '100', 2), 2), 2);
 
 $venueDetails = $venueObj->getSingleVenue($venueId);
 $venueName = htmlspecialchars($venueDetails["venue_name"]);
 $venueDownpayment = $venueObj->getDownpayment($venueId);
 
+$Total = bcmul($computedTotal, (string) $venueDownpayment, 2);
+$Balance = bcsub($computedTotal, $Total, 2);
 
+// Update reservation data with exact values
+$reservationData['Total'] = $Total;
+$reservationData['Balance'] = $Balance;
+$reservationData['Downpayment'] = number_format($venueDownpayment, 2, '.', '');
 
-$Total = $computedTotal * $venueDownpayment;
+// Update the session
+$_SESSION['reservationFormData'] = $reservationData;
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -102,6 +118,7 @@ $Total = $computedTotal * $venueDownpayment;
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
+
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 p-4 rounded-lg mb-4">
                             <div class="flex gap-2">
@@ -129,6 +146,7 @@ $Total = $computedTotal * $venueDownpayment;
                                     ?>
                                 </p>
                                 <p><strong>Guests:</strong> <?php echo $numberOfGuest ?></p>
+                                <p><strong>Special Request:</strong> <?php echo $request ?></p>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-300">
                                 <h5 class="font-semibold mb-2">Price Breakdown</h5>
@@ -168,7 +186,7 @@ $Total = $computedTotal * $venueDownpayment;
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>SubTotal</span>
-                                    <span id="subTotal">₱ <?php echo $computedTotal ?></span>
+                                    <span id="subTotal">₱ <?php echo number_format($computedTotal, 2) ?></span>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Host's Down Payment Requirement</span>
@@ -178,6 +196,12 @@ $Total = $computedTotal * $venueDownpayment;
                                     <span>Total</span>
                                     <span id="grandTotal">₱ <?php echo number_format($Total, 2) ?></span>
                                 </div>
+                                <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
+                                    <span>Remaining balance: <span class="text-xs">(to be paid during the
+                                            event)</span></span>
+                                    <span id="balance">₱ <?php echo number_format($Balance, 2) ?></span>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -278,6 +302,7 @@ $Total = $computedTotal * $venueDownpayment;
     <script>
 
         let totalToPay = <?php echo $Total; ?>;
+        let leftToPay = <?php echo $Balance; ?>;
 
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -347,6 +372,12 @@ $Total = $computedTotal * $venueDownpayment;
                         const gt = parseFloat((1 - discountValue) * <?php echo $subTotal ?>); // New subtotal after discount
                         const downPaymentPercentage = <?php echo $venueDownpayment ?>; // Down payment (e.g., 0.5 for 50%)
                         totalToPay = gt * downPaymentPercentage; // Total amount to be paid
+                        leftToPay = gt - totalToPay; // Remaining balance
+
+                        <?php
+                        $reservationData['Total'] = $Total;
+                        $reservationData['Balance'] = $Balance;
+                        ?>
 
                         document.getElementById('subTotal').textContent = `₱ ${gt.toFixed(2)}`;
                         document.getElementById('discountValue').textContent = `${couponDiscount * 100}%`;
@@ -354,6 +385,7 @@ $Total = $computedTotal * $venueDownpayment;
                         document.getElementById('couponCode').disabled = true;
                         document.getElementById('applyCouponBtn').style.display = '';
                         document.getElementById('grandTotal').textContent = `₱ ${totalToPay.toFixed(2)}`;
+                        document.getElementById('balance').textContent = `₱ ${leftToPay.toFixed(2)}`;
                     } else {
                         showModal("Invalid Coupon Code", function () {
                             document.getElementById('couponCode').value = '';
