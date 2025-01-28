@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $booking_status_id = 1;
     $booking_participants = clean_input($reservationData['numberOfGuest']);
     $booking_request = clean_input($reservationData['specialRequest']);
-    $booking_original_price = clean_input($reservationData['totalPriceForNights']);
+    $booking_original_price = clean_input($reservationData['RawPrice']);
     $booking_grand_total = clean_input($reservationData['Total']);
     $booking_balance = clean_input($reservationData['Balance']);
     $booking_guest_id = clean_input($_SESSION['user']['id']);

@@ -61,7 +61,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($pendingBookings)) {
-                        echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
                     } else {
                         foreach ($pendingBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
@@ -116,14 +116,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     <?php endif; ?>
                                     <div class="flex-1">
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['location']) ?></p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
                                         </p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1">
                                             <?php
                                             $startDate = new DateTime($booking['booking_start_date']);
                                             $endDate = new DateTime($booking['booking_end_date']);
@@ -146,7 +146,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
@@ -161,7 +161,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -182,7 +182,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($confirmedBookings)) {
-                        echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
                     } else {
                         foreach ($confirmedBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
@@ -237,14 +237,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     <?php endif; ?>
                                     <div class="flex-1">
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['location']) ?></p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
                                         </p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1">
                                             <?php
                                             $startDate = new DateTime($booking['booking_start_date']);
                                             $endDate = new DateTime($booking['booking_end_date']);
@@ -267,7 +267,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
@@ -282,7 +282,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -303,7 +303,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($cancelledBookings)) {
-                        echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
                     } else {
                         foreach ($cancelledBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
@@ -349,14 +349,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     <?php endif; ?>
                                     <div class="flex-1">
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['location']) ?></p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
                                         </p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1">
                                             <?php
                                             $startDate = new DateTime($booking['booking_start_date']);
                                             $endDate = new DateTime($booking['booking_end_date']);
@@ -379,7 +379,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
@@ -394,7 +394,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -415,7 +415,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($completedBookings)) {
-                        echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
                     } else {
                         foreach ($completedBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
@@ -470,14 +470,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     <?php endif; ?>
                                     <div class="flex-1">
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['location']) ?></p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
                                         </p>
-                                        <p class="text-gray-600 mt-1">
+                                        <p class="text-gray-700 mt-1">
                                             <?php
                                             $startDate = new DateTime($booking['booking_start_date']);
                                             $endDate = new DateTime($booking['booking_end_date']);
@@ -500,7 +500,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
@@ -515,7 +515,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['location']
+                                                    'venue_location' => $booking['address']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -541,7 +541,12 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
         <!-- Modal Header -->
         <div class="flex justify-between items-center pb-4 border-b">
-            <h3 class="text-xl font-bold" id="modal-title"></h3>
+            <span class="flex items-center space-x-2">
+                <h3 class="text-xl font-bold" id="modal-title"></h3>
+                <div class="flex items-center gap-2">
+                    <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                </div>
+            </span>
             <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -555,88 +560,162 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             <!-- Main image and details container -->
             <div class="flex flex-col items-center">
                 <!-- Images Section -->
-                <div class="w-full max-w-md mb-6">
+                <div class="w-full mb-6">
                     <!-- Main Image -->
-                    <div class="relative h-64 rounded-lg overflow-hidden mb-2">
+                    <div class="relative h-80 rounded-lg overflow-hidden mb-4">
                         <img id="modal-main-image" src="" alt="Venue Main Image"
                             class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
                     </div>
 
                     <!-- Horizontal Thumbnail Strip -->
-                    <div class="flex gap-2 overflow-x-auto" id="image-gallery">
+                    <div class="flex gap-2 overflow-x-auto py-2" id="image-gallery">
                         <!-- Thumbnail images will be inserted here -->
                     </div>
                 </div>
 
                 <!-- Details Section -->
-                <div class="w-full space-y-4">
-                    <!-- Move Booking Status to left -->
-                    <div class="flex items-center gap-2">
-                        <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
-                        <span id="booking-type" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
-                    </div>
-
-                    <!-- Rest of the content -->
-                    <div class="bg-gray-50 p-3 rounded-lg">
-                        <h4 class="font-semibold text-base mb-2">Price Details</h4>
-                        <div class="space-y-1">
-                            <p id="price-per-night" class="text-xl font-bold"></p>
-                            <p id="booking-duration" class="text-gray-600 text-sm"></p>
-                            <p id="cleaning-fee" class="text-gray-600 text-sm"></p>
-                        </div>
-                    </div>
-
-                    <!-- Two Column Layout for Other Details -->
-                    <div class="grid grid-cols-2 gap-6">
+                <div class="w-full space-y-6">
+                    <!-- Two Column Layout for Venue Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column -->
                         <div class="space-y-4">
                             <!-- Location Section -->
                             <div>
-                                <h4 class="font-semibold text-base mb-1">Location</h4>
-                                <div class="space-y-0.5 text-gray-600 text-sm" id="location-details">
-                                </div>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Location</h4>
+                                <div class="space-y-1 text-gray-700 text-sm" id="location-details"></div>
                             </div>
 
                             <!-- Capacity -->
                             <div>
-                                <h4 class="font-semibold text-base mb-1">Capacity</h4>
-                                <p id="venue-capacity" class="text-gray-600 text-sm"></p>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Capacity</h4>
+                                <p id="venue-capacity" class="text-gray-700 text-sm"></p>
+                            </div>
+
+                            <!-- Rules -->
+                            <div>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Rules</h4>
+                                <p id="venue-rules" class="text-gray-700 text-sm"></p>
                             </div>
                         </div>
 
+                        <!-- Right Column -->
                         <div class="space-y-4">
                             <!-- Amenities -->
                             <div>
-                                <h4 class="font-semibold text-base mb-1">Amenities</h4>
-                                <ul id="amenities-list" class="text-gray-600 text-sm space-y-0.5">
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Amenities</h4>
+                                <ul id="amenities-list"
+                                    class="text-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                                 </ul>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Contact Information -->
-                            <div>
-                                <h4 class="font-semibold text-base mb-1">Contact Information</h4>
-                                <div class="space-y-0.5 text-gray-600 text-sm" id="contact-details">
+                    <!-- Booking and Guest Details Section -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <!-- Booking Details Section -->
+                        <div class="p-6">
+                            <h4 class="font-bold text-xl text-gray-900 mb-6">Booking Details</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Booking Duration</h5>
+                                    <p id="booking-duration" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Start Date</h5>
+                                    <p id="start-date" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">End Date</h5>
+                                    <p id="end-date" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Request</h5>
+                                    <p id="request" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Attendees</h5>
+                                    <p id="attendees" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Mode of Payment</h5>
+                                    <p id="mode-of-payment" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Raw Cost</h5>
+                                    <p id="raw-cost" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Total Cost</h5>
+                                    <p id="total-cost" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Payment</h5>
+                                    <p id="payment" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Balance</h5>
+                                    <p id="balance" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Discount</h5>
+                                    <p id="discount" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Reservation Date</h5>
+                                    <p id="reservation-date" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guest Details Section -->
+                        <div class="p-6 border-t border-gray-100">
+                            <h4 class="font-bold text-xl text-gray-900 mb-6">Guest Details</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Name</h5>
+                                    <p id="name" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Email</h5>
+                                    <p id="maile" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Address</h5>
+                                    <p id="address" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Sex</h5>
+                                    <p id="xes" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Age</h5>
+                                    <p id="age" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div
+                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Date Joined</h5>
+                                    <p id="date-joined" class="text-gray-900 font-medium text-sm"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex justify-center gap-3 pt-2">
-                        <div id="book-again-container" class="hidden">
-                            <button
-                                class="px-4 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm">
-                                Book Again
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reviews Section -->
-            <div id="reviews-section" class="mt-6 pt-4 border-t">
-                <h4 class="font-semibold text-base mb-3">Reviews</h4>
-                <div id="reviews-container" class="space-y-3">
-                    <!-- Reviews will be dynamically loaded here -->
                 </div>
             </div>
         </div>
@@ -646,7 +725,17 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 <script>
     function showDetails(booking) {
         const modal = document.getElementById('details-modal');
-        const bookAgainContainer = document.getElementById('book-again-container');
+
+        // Set maile with fallback
+        document.getElementById('maile').innerHTML = booking.guest_email && booking.guest_email.trim() !== ""
+            ? booking.guest_email
+            : 'No email provided';
+
+        // Set xes with fallback
+        document.getElementById('xes').innerHTML = booking.guest_sex_id === 1
+            ? 'Male'
+            : (booking.guest_sex_id === 2 ? 'Female' : 'Not specified');
+
 
         // Show modal with fade-in effect
         modal.classList.remove('hidden');
@@ -661,7 +750,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
         // Setup main image and gallery
         const mainImage = document.getElementById('modal-main-image');
-        mainImage.src = './' + booking.image_urls.split(',')[0];
+        mainImage.src = './' + booking.image_urls.split(',')[booking.thumbnail];
 
         // Setup image gallery with horizontal thumbnails
         const imageGallery = document.getElementById('image-gallery');
@@ -681,35 +770,90 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         bookingStatus.textContent = statusText;
         bookingStatus.className = `px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.booking_status_id)}`;
 
-        // Set price details
-        document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
-        document.getElementById('booking-duration').textContent = `${booking.booking_duration} days`;
-        document.getElementById('cleaning-fee').textContent = `Cleaning fee: ₱500`;
-
         // Set location details
         const locationDetails = document.getElementById('location-details');
-        locationDetails.innerHTML = `
-            <p>${booking.location}</p>
-        `;
+        locationDetails.innerHTML = `<p>${booking.address}</p>`;
 
         // Set capacity and amenities
         document.getElementById('venue-capacity').textContent = `${booking.capacity || 3} guests`;
         const amenitiesList = document.getElementById('amenities-list');
-        amenitiesList.innerHTML = booking.amenities.map(amenity => `<li>${amenity}</li>`).join('');
+        const amenities = JSON.parse(booking.amenities); // Parse the JSON string first
+        amenitiesList.innerHTML = amenities.map(amenity => `<li>${amenity}</li>`).join('');
 
-        // Set rules (use original rules)
-        const rulesList = document.getElementById('rules-list');
-        rulesList.innerHTML = booking.rules.map(rule => `<li>${rule}</li>`).join('');
+        // Set rules
+        const rulesList = document.getElementById('venue-rules');
+        const rules = JSON.parse(booking.rules); // Parse the JSON string first
+        rulesList.innerHTML = rules.map(rule => `<li>${rule}</li>`).join('');
 
-        // Set contact details (using original contact info)
-        const contactDetails = document.getElementById('contact-details');
-        contactDetails.innerHTML = `
-            <p>Email: joevinansoc870@gmail.com</p>
-            <p>Phone: 09053258512</p>
-        `;
+        // Set booking details
+        document.getElementById('booking-duration').textContent = `${booking.booking_duration} day/s`;
+        document.getElementById('start-date').textContent = new Date(booking.booking_start_date).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        document.getElementById('end-date').textContent = new Date(booking.booking_end_date).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        document.getElementById('request').textContent = booking.booking_request;
+        document.getElementById('attendees').textContent = booking.booking_participants;
+        document.getElementById('mode-of-payment').textContent = booking.booking_payment_method;
+        document.getElementById('raw-cost').textContent = `₱${numberWithCommas(booking.booking_original_price)}`;
+        document.getElementById('total-cost').textContent = `₱${numberWithCommas(parseFloat(booking.booking_grand_total) + parseFloat(booking.booking_balance))}`;
+        document.getElementById('payment').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
+        document.getElementById('balance').textContent = `₱${numberWithCommas(booking.booking_balance)}`;
+        document.getElementById('reservation-date').textContent = new Date(booking.created_at).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
 
-        // Toggle book again button
-        bookAgainContainer.classList.toggle('hidden', booking.booking_status_id === '2');
+        // Set discount details
+        const discount = document.getElementById('discount');
+        let discountText = booking.is_discounted == 0 ? '' : 'PWD/Senior Citizen Discount';
+        let platformDiscount = '';
+        switch (booking.booking_discount) {
+            case 'SAVE30':
+                platformDiscount = '30% Platform Discount';
+                break;
+            case 'SAVE20':
+                platformDiscount = '20% Platform Discount';
+                break;
+            case 'SAVE10':
+                platformDiscount = '10% Platform Discount';
+                break;
+            default:
+                platformDiscount = '';
+                break;
+        }
+        discount.textContent = `${discountText} ${platformDiscount}`;
+        document.getElementById('name').textContent = `${booking.guest_firstname} ${booking.guest_lastname}`;
+
+
+        // Calculate and set age
+        const birthDate = new Date(booking.birthdate);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        document.getElementById('age').textContent = isNaN(age) ? 'Unknown' : age;
+
+        // Set address with fallback
+        document.getElementById('address').textContent = booking.guest_address && booking.guest_address.trim() !== ""
+            ? booking.guest_address
+            : 'No address provided';
+
+        // Set date joined with formatted date
+        document.getElementById('date-joined').textContent = new Date(booking.guest_created_at).toLocaleDateString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        });
+
     }
 
     function getBookingStatusText(statusId) {

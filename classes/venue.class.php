@@ -661,15 +661,38 @@ LEFT JOIN
     {
         try {
             $conn = $this->db->connect();
-            $sql = "SELECT v.*, b.*, b.id AS booking_id, 
+            $sql = "SELECT 
+                u.firstname AS guest_firstname,
+                u.lastname AS guest_lastname, 
+                u.address AS guest_address,
+                u.created_at AS guest_created_at,
+                u.email AS guest_email,
+                u.sex_id AS guest_sex_id,
+                v.*, 
+                b.*, 
+                b.id AS booking_id, 
+                IF(md.userId IS NOT NULL, 1, 0) AS is_discounted, 
                 GROUP_CONCAT(vi.image_url) AS image_urls
-                FROM venues AS v
-                JOIN bookings AS b 
+            FROM 
+                venues AS v
+            JOIN 
+                users AS u
+            JOIN 
+                bookings AS b 
                 ON v.id = b.booking_venue_id 
-                LEFT JOIN venue_images AS vi
+            LEFT JOIN 
+                venue_images AS vi
                 ON v.id = vi.venue_id
-                WHERE v.host_id = :host_id AND b.booking_status_id = :booking_status
-                GROUP BY b.id";
+            LEFT JOIN 
+                mandatory_discount AS md
+                ON b.booking_guest_id = md.userId
+            WHERE 
+                v.host_id = :host_id 
+                AND b.booking_status_id = :booking_status 
+                AND b.booking_guest_id = u.id
+            GROUP BY 
+                b.id;
+            ";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':host_id', $host_id, PDO::PARAM_INT);
             $stmt->bindParam(':booking_status', $booking_status, PDO::PARAM_INT);
