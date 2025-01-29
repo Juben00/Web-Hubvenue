@@ -715,16 +715,123 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                 </div>
                             </div>
                         </div>
+                        <div class="p-6 border-t border-gray-100 flex space-x-4 justify-around">
+                            <!-- Check-In QR Code Button -->
+                            <button id="checkInBtn"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-2xl shadow-md">
+                                Check-In QR Code
+                            </button>
+
+                            <!-- Check-Out QR Code Button -->
+                            <button id="checkOutBtn"
+                                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-2xl shadow-md">
+                                Check-Out QR Code
+                            </button>
+
+                            <!-- Guest No Show Button -->
+                            <button id="noShowBtn"
+                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-2xl shadow-md">
+                                Guest No Show
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<div id="qrModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96 text-center relative">
+        <span onclick="closeQr()" class="absolute right-4 top-4 text-gray-500 cursor-pointer hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </span>
+
+        <h2 class="text-xl font-semibold mb-4">Scan to check-in</h2>
+
+        <!-- QR Code Image -->
+        <div class="flex items-center justify-center mb-4" id="qrCodeContainer">
+            <!-- QR code will be generated here -->
+        </div>
+
+        <a id="qrLink" href="#" target="_blank" class="text-blue-500 hover:underline">Open Link</a>
+    </div>
+</div>
 
 <script>
+    function closeQr() {
+        const qrModal = document.getElementById('qrModal');
+        qrModal.classList.remove('flex');
+        qrModal.classList.add('hidden');
+    }
+
     function showDetails(booking) {
         const modal = document.getElementById('details-modal');
+
+        console.log(booking);
+
+
+        const checkInBtn = document.getElementById('checkInBtn');
+        checkInBtn.onclick = () => {
+            const qrModal = document.getElementById('qrModal');
+            qrModal.classList.remove('hidden');
+            qrModal.classList.add('flex');
+            qrModal.classList.add('z-50');
+
+            // Set the check-in link for the QR code
+            const checkLink = booking.check_in_link;
+            document.getElementById('qrLink').href = checkLink;
+
+            // Generate the QR code
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+            qrCodeContainer.innerHTML = '';
+            new QRCode(qrCodeContainer, checkLink);
+        };
+
+        const checkOutBtn = document.getElementById('checkOutBtn');
+        checkOutBtn.onclick = () => {
+            const qrModal = document.getElementById('qrModal');
+            qrModal.classList.remove('hidden');
+            qrModal.classList.add('flex');
+            qrModal.classList.add('z-50');
+
+            // Set the check-out link for the QR code
+            const checkLink = booking.check_out_link;
+            document.getElementById('qrLink').href = checkLink;
+
+            // Generate the QR code
+            const qrCodeContainer = document.getElementById('qrCodeContainer');
+            qrCodeContainer.innerHTML = '';
+            new QRCode(qrCodeContainer, checkLink);
+        };
+
+        const noShowBtn = document.getElementById('noShowBtn');
+        noShowBtn.onclick = () => {
+            confirmshowModal('Are you sure you want to mark this booking as a no-show?', () => {
+                fetch('./api/noShowBooking.api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_id: booking.booking_id })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            showModal('Booking marked as no-show.', undefined, "../images/black_ico.png");
+                            closeModal();
+                        } else {
+                            showModal(data.message, undefined, "../images/black_ico.png");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showModal('An error occurred. Please try again.', undefined, "../images/black_ico.png");
+                    });
+            }, "../images/black_ico.png");
+        };
+
+
 
         // Set maile with fallback
         document.getElementById('maile').innerHTML = booking.guest_email && booking.guest_email.trim() !== ""
@@ -735,7 +842,6 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         document.getElementById('xes').innerHTML = booking.guest_sex_id === 1
             ? 'Male'
             : (booking.guest_sex_id === 2 ? 'Female' : 'Not specified');
-
 
         // Show modal with fade-in effect
         modal.classList.remove('hidden');
@@ -831,16 +937,18 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         discount.textContent = `${discountText} ${platformDiscount}`;
         document.getElementById('name').textContent = `${booking.guest_firstname} ${booking.guest_lastname}`;
 
-
-        // Calculate and set age
-        const birthDate = new Date(booking.birthdate);
+        const birthDate = new Date(booking.guest_birthdate); // Assuming 'booking.birthdate' is in a valid date format
         const today = new Date();
+
         let age = today.getFullYear() - birthDate.getFullYear();
         const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        // Adjust age if the birth month and day haven't passed yet
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-        document.getElementById('age').textContent = isNaN(age) ? 'Unknown' : age;
+
+        document.getElementById('age').textContent = age;
 
         // Set address with fallback
         document.getElementById('address').textContent = booking.guest_address && booking.guest_address.trim() !== ""

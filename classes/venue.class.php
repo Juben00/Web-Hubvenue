@@ -361,6 +361,7 @@ class Venue
         try {
             $conn = $this->db->connect();
 
+            // Insert new booking
             $sql = "INSERT INTO bookings (booking_start_date, booking_end_date, booking_duration, booking_status_id, booking_request, booking_participants, booking_original_price, booking_grand_total, booking_balance, booking_guest_id, booking_venue_id, booking_down_payment, booking_discount, booking_payment_method, booking_payment_reference, booking_payment_status_id, booking_service_fee) 
                 VALUES (:booking_start_date, :booking_end_date, :booking_duration, :booking_status_id, :booking_request, :booking_participants, :booking_original_price, :booking_grand_total, :booking_balance, :booking_guest_id, :booking_venue_id, :booking_down_payment, :booking_discount, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id, :booking_service_fee)";
             $stmt = $conn->prepare($sql);
@@ -385,6 +386,23 @@ class Venue
             $stmt->bindParam(':booking_service_fee', $booking_service_fee);
 
             if ($stmt->execute()) {
+                $bookingId = $conn->lastInsertId();
+
+                $checkInLink = "http://localhost/hubvenue/api/checkInBooking.api.php?booking_id=" . $bookingId;
+                $checkOutLink = "http://localhost/hubvenue/api/checkOutBooking.api.php?booking_id=" . $bookingId;
+
+                // Update the check_in_link column with the generated link
+                $updateSql = "UPDATE bookings 
+              SET check_in_link = :checkInLink, 
+                  check_out_link = :checkOutLink 
+              WHERE id = :booking_id";
+                $updateStmt = $conn->prepare($updateSql);
+                $updateStmt->bindParam(':checkInLink', $checkInLink);
+                $updateStmt->bindParam(':checkOutLink', $checkOutLink);
+                $updateStmt->bindParam(':booking_id', $bookingId);
+                $updateStmt->execute();
+
+
                 return ['status' => 'success', 'message' => 'Booking added successfully'];
             } else {
                 return ['status' => 'error', 'message' => 'Failed to add booking'];
@@ -663,6 +681,7 @@ LEFT JOIN
             $conn = $this->db->connect();
             $sql = "SELECT 
                 u.firstname AS guest_firstname,
+                u.birthdate AS guest_birthdate,
                 u.lastname AS guest_lastname, 
                 u.address AS guest_address,
                 u.created_at AS guest_created_at,
@@ -894,6 +913,80 @@ LEFT JOIN
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+
+    function markBookingAsCheckedIn($bookingId, $guestId)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "UPDATE bookings SET check_in_status = 'Checked-in', check_in_date = NOW()
+                WHERE id = :booking_id AND booking_guest_id = :guest_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $bookingId, PDO::PARAM_INT);
+            $stmt->bindParam(':guest_id', $guestId, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                return ['status' => 'success', 'message' => 'Booking marked as attended successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'No matching booking found or already checked-in'];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function markBookingAsCheckedOut($bookingId, $guestId)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "UPDATE bookings SET check_out_status = 'Checked-Out', check_out_date = NOW(), booking_status_id = 4, booking_cancellation_reason = NULL
+                WHERE id = :booking_id AND booking_guest_id = :guest_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $bookingId, PDO::PARAM_INT);
+            $stmt->bindParam(':guest_id', $guestId, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                return ['status' => 'success', 'message' => 'Booking marked as checked-out successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'No matching booking found or already checked-out'];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    function markNoShow($bookingId)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "UPDATE bookings SET check_in_status = 'No-Show', check_in_date = NOW(), check_out_status = NULL, check_out_date = NULL, booking_status_id = 3, booking_cancellation_reason = 'Guest did not show up for the booking -host' WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $bookingId, PDO::PARAM_INT);
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+
+
 
 }
 

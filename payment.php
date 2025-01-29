@@ -212,6 +212,9 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <div id="step2" class="step hidden">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+                        <?php
+                        var_dump($reservationData);
+                        ?>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
                                 onclick="selectPaymentMethod('gcash')">
