@@ -118,7 +118,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -239,7 +239,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -351,7 +351,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -472,7 +472,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -772,66 +772,69 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
         console.log(booking);
 
+        if (booking.booking_status_id == 2) {
+            const checkInBtn = document.getElementById('checkInBtn');
+            checkInBtn.onclick = () => {
+                const qrModal = document.getElementById('qrModal');
+                qrModal.classList.remove('hidden');
+                qrModal.classList.add('flex');
+                qrModal.classList.add('z-50');
 
-        const checkInBtn = document.getElementById('checkInBtn');
-        checkInBtn.onclick = () => {
-            const qrModal = document.getElementById('qrModal');
-            qrModal.classList.remove('hidden');
-            qrModal.classList.add('flex');
-            qrModal.classList.add('z-50');
+                // Set the check-in link for the QR code
+                const checkLink = booking.check_in_link;
+                document.getElementById('qrLink').href = checkLink;
 
-            // Set the check-in link for the QR code
-            const checkLink = booking.check_in_link;
-            document.getElementById('qrLink').href = checkLink;
+                // Generate the QR code
+                const qrCodeContainer = document.getElementById('qrCodeContainer');
+                qrCodeContainer.innerHTML = '';
+                new QRCode(qrCodeContainer, checkLink);
+            };
 
-            // Generate the QR code
-            const qrCodeContainer = document.getElementById('qrCodeContainer');
-            qrCodeContainer.innerHTML = '';
-            new QRCode(qrCodeContainer, checkLink);
-        };
+            const checkOutBtn = document.getElementById('checkOutBtn');
+            checkOutBtn.onclick = () => {
+                const qrModal = document.getElementById('qrModal');
+                qrModal.classList.remove('hidden');
+                qrModal.classList.add('flex');
+                qrModal.classList.add('z-50');
 
-        const checkOutBtn = document.getElementById('checkOutBtn');
-        checkOutBtn.onclick = () => {
-            const qrModal = document.getElementById('qrModal');
-            qrModal.classList.remove('hidden');
-            qrModal.classList.add('flex');
-            qrModal.classList.add('z-50');
+                // Set the check-out link for the QR code
+                const checkLink = booking.check_out_link;
+                document.getElementById('qrLink').href = checkLink;
 
-            // Set the check-out link for the QR code
-            const checkLink = booking.check_out_link;
-            document.getElementById('qrLink').href = checkLink;
+                // Generate the QR code
+                const qrCodeContainer = document.getElementById('qrCodeContainer');
+                qrCodeContainer.innerHTML = '';
+                new QRCode(qrCodeContainer, checkLink);
+            };
 
-            // Generate the QR code
-            const qrCodeContainer = document.getElementById('qrCodeContainer');
-            qrCodeContainer.innerHTML = '';
-            new QRCode(qrCodeContainer, checkLink);
-        };
-
-        const noShowBtn = document.getElementById('noShowBtn');
-        noShowBtn.onclick = () => {
-            confirmshowModal('Are you sure you want to mark this booking as a no-show?', () => {
-                fetch('./api/noShowBooking.api.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ booking_id: booking.booking_id })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            showModal('Booking marked as no-show.', undefined, "../images/black_ico.png");
-                            closeModal();
-                        } else {
-                            showModal(data.message, undefined, "../images/black_ico.png");
-                        }
+            const noShowBtn = document.getElementById('noShowBtn');
+            noShowBtn.onclick = () => {
+                confirmshowModal('Are you sure you want to mark this booking as a no-show?', () => {
+                    fetch('./api/noShowBooking.api.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ booking_id: booking.booking_id })
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showModal('An error occurred. Please try again.', undefined, "../images/black_ico.png");
-                    });
-            }, "../images/black_ico.png");
-        };
-
-
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                showModal('Booking marked as no-show.', undefined, "../images/black_ico.png");
+                                closeModal();
+                            } else {
+                                showModal(data.message, undefined, "../images/black_ico.png");
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showModal('An error occurred. Please try again.', undefined, "../images/black_ico.png");
+                        });
+                }, "../images/black_ico.png");
+            };
+        } else {
+            document.getElementById('checkInBtn').style.display = 'none';
+            document.getElementById('checkOutBtn').style.display = 'none';
+            document.getElementById('noShowBtn').style.display = 'none';
+        }
 
         // Set maile with fallback
         document.getElementById('maile').innerHTML = booking.guest_email && booking.guest_email.trim() !== ""
