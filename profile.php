@@ -157,7 +157,42 @@ if (!isset($_SESSION['user'])) {
         });
     </script>
     <script>
+        // Tab switching functionality
+        function showCont(tabName) {
+            // Hide all tab contents
+            var tabContents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add('hidden');
+            }
+            
+            // Show selected tab content
+            var selectedTab = document.getElementById(tabName + '-content');
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+            }
 
+            // Update tab button styles
+            var tabButtons = document.getElementsByClassName('tab-links');
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('border-black', 'text-gray-900');
+                tabButtons[i].classList.add('border-transparent', 'text-gray-500');
+            }
+
+            // Add active styles to clicked tab
+            var clickedTab = event.currentTarget;
+            clickedTab.classList.remove('border-transparent', 'text-gray-500');
+            clickedTab.classList.add('border-black', 'text-gray-900');
+        }
+
+        // Set default tab when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            var firstTab = document.querySelector('.tab-links');
+            if (firstTab) {
+                firstTab.click();
+            }
+        });
+    </script>
+    <script>
         // Temporary arrays to track changes
         let imagesToDelete = [];
         let newImages = [];
