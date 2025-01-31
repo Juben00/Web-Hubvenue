@@ -5,6 +5,17 @@ $(document).ready(function () {
     // signup terms and conditions checker
     const signupAgreeTerms = $("#agreeTerms");
     const signupButton = $("#signupSubmit");
+    const spinner = $("#spinner");
+
+    function spinnerOn() {
+        spinner.removeClass("hidden");
+        spinner.addClass("flex");
+    }
+
+    function spinnerOff() {
+        spinner.removeClass("flex");
+        spinner.addClass("hidden");
+    }
 
     if (signupAgreeTerms.length) {
         // Initial check on page load
@@ -238,6 +249,7 @@ $(document).ready(function () {
 
     function login(formElement) {
         let form = new FormData(formElement[0]);
+        spinnerOn();
         $.ajax({
             type: "POST",
             url: "./api/Login.api.php",
@@ -247,12 +259,14 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
+                    spinnerOff();
                     showModal(response.message, function () {
                         formElement[0].reset();
                         $('#authModal').addClass("hidden");
                         window.location.reload();
                     }, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
             },
@@ -261,6 +275,7 @@ $(document).ready(function () {
 
     function signup(formElement) {
         let form = new FormData(formElement[0]);
+        spinnerOn();
         $.ajax({
             type: "POST",
             url: "./api/Signup.api.php",
@@ -270,22 +285,21 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 console.log(response);
-                
                 if (response.status === "success") {
+                    spinnerOff();
                     showModal(response.message, function () {
                         formElement[0].reset();
                         $('#authModal').addClass("hidden");
                         $('#loginTab').click();
                     }, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
             },
             });
     }
-
     
-
     function viewVenue(url) {
         window.location.href = url;
     }
@@ -296,6 +310,7 @@ $(document).ready(function () {
 
     function hostApplication(formElement) {
         let form = new FormData(formElement[0]);
+        spinnerOn();
         $.ajax({
             type: "POST",
             url: "./api/HostApplication.api.php",
@@ -305,11 +320,13 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
+                    spinnerOff();
                     formElement[0].reset();
                     showModal(response.message, function () {
                         $("#hostAccountBtn").click();
                     }, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
             }
@@ -334,6 +351,7 @@ $(document).ready(function () {
                     $('.venue-card').on('click', function (e) {
                         e.preventDefault();
                         const url = $(this).data("id");
+                        spinnerOn();
 
                         //set the url to the id of the venue
                         $.ajax({
@@ -343,6 +361,7 @@ $(document).ready(function () {
                                 id: url
                             },
                             success: function (response) {
+                                spinnerOff();
                                 $('#profileDisplay').html(response);
                             }
                         });
@@ -355,9 +374,12 @@ $(document).ready(function () {
                         let isLogged = $(this).data("isloggedin"); 
                         let venueUrl = $(this).data("id");
                         
+                        spinnerOn();
                         if (isLogged === true) {  
+                            spinnerOff();
                             viewVenue(venueUrl);
                         } else {
+                            spinnerOff();
                             showModal("Please login to view the venue", undefined, "black_ico.png");
                         }
                     });
@@ -391,21 +413,11 @@ $(document).ready(function () {
         )
     }
     
-    // function viewListing(url) {
-    //     $.ajax({
-    //         type: "GET",
-    //         url: "./profile/view-listing.php?id=" + url,
-    //         data: {
-    //             id: url
-    //         },
-    //         success: function (response) {
-    //             $('#profileDisplay').html(response);
-    //         }
-    //     });
-    // }
 
     function addReview(formElement) {
         let form = new FormData(formElement[0]);
+        
+    spinnerOn();
         $.ajax({
             type: "POST",
             url: "./api/AddReview.api.php",
@@ -415,9 +427,11 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                     openProfileNav('rent-history');
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
                 },
@@ -427,6 +441,7 @@ $(document).ready(function () {
 
     function addVenue(){
     let form = new FormData($("#add-venue-form")[0]);
+    spinnerOn();
     $.ajax({
         type: "POST",
         url: "./api/hostAddVenue.api.php",
@@ -436,6 +451,7 @@ $(document).ready(function () {
         processData: false,
         success: function (response) {
             if (response.status === "success") {
+                spinnerOff();
                 showModal(
                     response.message,
                     function () {
@@ -445,6 +461,7 @@ $(document).ready(function () {
                     "black_ico.png"
                 );
             } else {
+                spinnerOff();
                 showModal(
                     response.errors,
                     undefined,
@@ -456,6 +473,7 @@ $(document).ready(function () {
     }
 
     function bookmarkVenue(venueId, userId, buttonElement) {
+        spinnerOn();
         console.log(`Venue ID: ${venueId}, User ID: ${userId}`); // Debugging
         $.ajax({
             type: "POST",
@@ -469,6 +487,7 @@ $(document).ready(function () {
                 response = JSON.parse(response);
 
                 if (response.status === "success") {
+                    spinnerOff();
                     if (response.action === "bookmarked") {
                         $(buttonElement).removeClass("text-white").addClass("text-red-500");
                     } else if (response.action === "unbookmarked") {
@@ -476,6 +495,7 @@ $(document).ready(function () {
                     }
                     // showModal(response.message, undefined, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
             },
@@ -486,6 +506,7 @@ $(document).ready(function () {
     }
 
     function book(formElement){
+        spinnerOn();
         let form = new FormData(formElement[0]);
         $.ajax({
             type: "POST",
@@ -496,6 +517,7 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
+                    spinnerOff();
                     showModal(response.message, function () {
                         formElement[0].reset();
                         window.location.href = "./index.php";
@@ -503,6 +525,7 @@ $(document).ready(function () {
                     console.log(response);
                     
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                     console.log(response);
                 }
@@ -511,6 +534,7 @@ $(document).ready(function () {
     } 
 
     function updateUserInfo(formElement) {
+        spinnerOn();
         let form = new FormData(formElement[0]);
         $.ajax({
             type: "POST",
@@ -521,8 +545,10 @@ $(document).ready(function () {
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
             },
@@ -530,6 +556,7 @@ $(document).ready(function () {
     }
 
    function updatePassword(formElement) {
+    spinnerOn();
     let form = new FormData(formElement[0]);
     $.ajax({
         type: "POST",
@@ -540,10 +567,12 @@ $(document).ready(function () {
         success: function (response) {
             let res = JSON.parse(response); // Parse the response if it's not automatically parsed
             if (res.status === "success") {
+                spinnerOff();
                 showModal(res.message, function(){
                     formElement[0].reset();
                 }, "black_ico.png");
             } else {
+                spinnerOff();
                 showModal(res.message, undefined, "black_ico.png");
             }
         }
@@ -551,6 +580,7 @@ $(document).ready(function () {
 }
 
     function mandatoryDiscount(formElement) {
+        spinnerOn();
         let form = new FormData(formElement[0]);
         $.ajax({
             type: "POST",
@@ -561,11 +591,13 @@ $(document).ready(function () {
             success: function (response) {
                 let res = JSON.parse(response); // Parse the response if it's not automatically parsed
                 if (res.status === "success") {
+                    spinnerOff();
                     showModal(res.message, function(){
                         formElement[0].reset();
                         menuRedirection("./settings.php");
                     }, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(res.message, undefined, "black_ico.png");
                 }
             },
@@ -579,6 +611,7 @@ $(document).ready(function () {
 }
 
     function cancelBooking(formElement){
+        spinnerOn();
         let form = new FormData(formElement[0]);
         $.ajax({
             type: "POST",
@@ -589,11 +622,13 @@ $(document).ready(function () {
             success: function (response) {
                 let res = JSON.parse(response); // Parse the response if it's not automatically parsed
                 if (res.status === "success") {
+                    spinnerOff();
                     showModal(res.message, function(){
                         formElement[0].reset();
                         window.location.reload();
                     }, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(res.message, undefined, "black_ico.png");
                 }
             }
@@ -602,6 +637,7 @@ $(document).ready(function () {
     }
 
     function addHostReview(formElement){
+        spinnerOn();
         let form = new FormData(formElement[0]);
         $.ajax({
             type: "POST",
@@ -612,11 +648,13 @@ $(document).ready(function () {
             success: function (response) {
                 let res = JSON.parse(response); // Parse the response if it's not automatically parsed
                 if (res.status === "success") {
+                    spinnerOff();
                     showModal(res.message, function(){
                         formElement[0].reset();
                         window.location.reload();
                     }, "black_ico.png");
                 } else {
+                    spinnerOff();
                     showModal(res.message, undefined, "black_ico.png");
                 }
             }

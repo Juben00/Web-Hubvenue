@@ -106,6 +106,7 @@ $_SESSION['reservationFormData'] = $reservationData;
     ?>
 
     <main class="pt-20 flex-grow flex flex-col justify-between p-6 pb-24">
+        <?php require_once './spinner.php'; ?>
         <div class="max-w-3xl mx-auto w-full">
             <div class="mb-8">
                 <h2 class="text-sm font-medium text-gray-500 mb-2">Step <span id="currentStep">1</span> of <span
@@ -427,29 +428,31 @@ $_SESSION['reservationFormData'] = $reservationData;
 
         function applyCoupon() {
             const couponCode = document.getElementById('couponCode').value;
+
             fetch(`applyDiscount.php?discountCode=${couponCode}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.valid) {
-                        // Update discount and total price dynamically
                         const couponDiscount = data.discountValue;
-                        const discountValue = <?php echo isset($isSpecial) ? $discountStatus['discount_value'] / 100 : 0; ?> + data.discountValue;
-                        // Assume percentage
+                        const discountValue = <?php echo ($isSpecial && isset($discountStatus['discount_value']))
+                            ? ($discountStatus['discount_value'] / 100) : 0; ?> + (data.discountValue || 0);
+
                         console.log(discountValue);
+
                         <?php $discountApplied = true; ?>
 
-                        const gt = parseFloat((1 - discountValue) * <?php echo $subTotal ?>); // New subtotal after discount
-                        const downPaymentPercentage = <?php echo $venueDownpayment ?>; // Down payment (e.g., 0.5 for 50%)
-                        totalToPay = gt * downPaymentPercentage; // Total amount to be paid
-                        leftToPay = gt - totalToPay; // Remaining balance
+                        const gt = parseFloat((1 - discountValue) * <?php echo $subTotal ?? 0; ?>);
+                        const downPaymentPercentage = <?php echo $venueDownpayment ?? 0; ?>;
+                        const totalToPay = gt * downPaymentPercentage;
+                        const leftToPay = gt - totalToPay;
 
                         <?php
-                        $reservationData['Total'] = $Total;
-                        $reservationData['Balance'] = $Balance;
+                        $reservationData['Total'] = $Total ?? 0;
+                        $reservationData['Balance'] = $Balance ?? 0;
                         ?>
 
                         document.getElementById('subTotal').textContent = `₱ ${gt.toFixed(2)}`;
-                        document.getElementById('discountValue').textContent = `${couponDiscount * 100}%`;
+                        document.getElementById('discountValue').textContent = `${(couponDiscount * 100).toFixed(2)}%`;
                         document.getElementById('couponMessage').classList.remove('hidden');
                         document.getElementById('couponCode').disabled = true;
                         document.getElementById('applyCouponBtn').style.display = '';

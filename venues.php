@@ -319,6 +319,7 @@ $reviews = $venueObj->getReview($_GET['id']);
     ?>
 
     <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
+        <?php require_once './spinner.php'; ?>
         <div class="main-content">
             <div id="venueDetails">
                 <div class="mb-6">
@@ -768,16 +769,18 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             Citizen)
                                         </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
+
                                             <?php
-                                            if ($discountStatus) {
-                                                if ($discountStatus['status'] == 'Active') {
-                                                    echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
-                                                } else {
-                                                    echo "0%";
-                                                }
-                                            } else {
-                                                echo "0%"; // No discount found
-                                            }
+                                            var_dump($discountStatus);
+                                            // if ($discountStatus) {
+                                            //     if ($discountStatus['status'] == 'Active') {
+                                            //         echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                            //     } else {
+                                            //         echo "0%";
+                                            //     }
+                                            // } else {
+                                            //     echo "0%"; // No discount found
+                                            // }
                                             ?>
                                         </span>
                                     </div>

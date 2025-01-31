@@ -991,5 +991,3 @@ LEFT JOIN
 }
 
 $venueObj = new Venue();
-
-// var_dump($venueObj->getAllBookings(53));
