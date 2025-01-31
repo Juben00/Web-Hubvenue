@@ -93,6 +93,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
     <!-- Main Content -->
     <main class="container mx-auto">
+        <?php require_once './spinner.php'; ?>
         <!-- Welcome Section -->
         <section class="text-center mb-8 mt-28">
             <h2 class="text-4xl font-semibold mb-8">

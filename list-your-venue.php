@@ -168,6 +168,7 @@ session_start();
 
     ?>
     <div class="mb-12 mx-auto px-4 py-8 max-w-3xl pt-28 pb-16">
+        <?php require_once './spinner.php'; ?>
 
         <form id="add-venue-form" class="" enctype="multipart/form-data" multiple> <!-- Adjusted max-width -->
             <div id="step1" class="step active">
@@ -1004,7 +1005,6 @@ session_start();
                 nextButton.classList.add('bg-green-600', 'hover:bg-green-700');
                 nextButton.addEventListener('click', function () {
                     document.getElementById('VenuePostButton').click();
-                    // console.log('Venue posted');
                 });
             } else {
                 nextButton.textContent = 'Next';

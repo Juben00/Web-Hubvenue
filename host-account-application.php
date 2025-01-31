@@ -195,6 +195,7 @@ $address = getAddressByCoordinates($user['address']);
     } else {
         ?>
             <main class="flex-1 mt-20 container mx-auto px-4 py-8 relative ">
+            <?php require_once './spinner.php'; ?>
 
                 <h1 class="text-2xl md:text-4xl font-bold mb-4 text-center">Host Account Application</h1>
                 <form id="hostApplicationForm" method="POST" class="max-w-2xl mx-auto">
