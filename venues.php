@@ -1000,7 +1000,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                 }
             }
 
-            // Add event listeners
             checkinInput.addEventListener('change', calculateTotal);
             checkoutInput.addEventListener('change', calculateTotal);
             guestsInput.addEventListener('input', calculateTotal);
