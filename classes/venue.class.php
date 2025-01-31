@@ -985,8 +985,237 @@ LEFT JOIN
         }
     }
 
+    private function getVenueRevenueData($venueId) {
+        try {
+            $sql = "SELECT 
+                    DATE_FORMAT(booking_start_date, '%Y-%m') as month,
+                    SUM(booking_grand_total) as revenue
+                    FROM bookings
+                    WHERE booking_venue_id = ?
+                    AND booking_status_id IN (2,4)
+                    GROUP BY DATE_FORMAT(booking_start_date, '%Y-%m')
+                    ORDER BY month DESC
+                    LIMIT 12";
 
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$venueId]);
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            $labels = [];
+            $values = [];
+            foreach ($data as $row) {
+                $labels[] = date('M Y', strtotime($row['month'] . '-01'));
+                $values[] = floatval($row['revenue']);
+            }
+
+            return [
+                'labels' => array_reverse($labels),
+                'values' => array_reverse($values)
+            ];
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return ['labels' => [], 'values' => []];
+        }
+    }
+
+    private function getTimeBasedStats($venueId) {
+        try {
+            $conn = $this->db->connect();
+            
+            // Today's stats
+            $todayStats = $conn->prepare("
+                SELECT 
+                    COUNT(*) as bookings,
+                    COALESCE(SUM(booking_grand_total), 0) as revenue,
+                    COALESCE(AVG(booking_participants), 0) as avg_guests
+                FROM bookings 
+                WHERE booking_venue_id = ? 
+                AND DATE(booking_created_at) = CURDATE()
+                AND booking_status_id IN (2,4)
+            ");
+            $todayStats->execute([$venueId]);
+            $today = $todayStats->fetch(PDO::FETCH_ASSOC);
+
+            // This week's stats
+            $weekStats = $conn->prepare("
+                SELECT 
+                    COUNT(*) as bookings,
+                    COALESCE(SUM(booking_grand_total), 0) as revenue,
+                    COALESCE(AVG(booking_participants), 0) as avg_guests
+                FROM bookings 
+                WHERE booking_venue_id = ? 
+                AND YEARWEEK(booking_created_at) = YEARWEEK(CURDATE())
+                AND booking_status_id IN (2,4)
+            ");
+            $weekStats->execute([$venueId]);
+            $week = $weekStats->fetch(PDO::FETCH_ASSOC);
+
+            // This month's stats
+            $monthStats = $conn->prepare("
+                SELECT 
+                    COUNT(*) as bookings,
+                    COALESCE(SUM(booking_grand_total), 0) as revenue,
+                    COALESCE(AVG(booking_participants), 0) as avg_guests
+                FROM bookings 
+                WHERE booking_venue_id = ? 
+                AND MONTH(booking_created_at) = MONTH(CURDATE())
+                AND YEAR(booking_created_at) = YEAR(CURDATE())
+                AND booking_status_id IN (2,4)
+            ");
+            $monthStats->execute([$venueId]);
+            $month = $monthStats->fetch(PDO::FETCH_ASSOC);
+
+            // This year's stats
+            $yearStats = $conn->prepare("
+                SELECT 
+                    COUNT(*) as bookings,
+                    COALESCE(SUM(booking_grand_total), 0) as revenue,
+                    COALESCE(AVG(booking_participants), 0) as avg_guests
+                FROM bookings 
+                WHERE booking_venue_id = ? 
+                AND YEAR(booking_created_at) = YEAR(CURDATE())
+                AND booking_status_id IN (2,4)
+            ");
+            $yearStats->execute([$venueId]);
+            $year = $yearStats->fetch(PDO::FETCH_ASSOC);
+
+            return [
+                'today' => [
+                    'bookings' => (int)$today['bookings'],
+                    'revenue' => (float)$today['revenue'],
+                    'avg_guests' => round($today['avg_guests'], 1)
+                ],
+                'week' => [
+                    'bookings' => (int)$week['bookings'],
+                    'revenue' => (float)$week['revenue'],
+                    'avg_guests' => round($week['avg_guests'], 1)
+                ],
+                'month' => [
+                    'bookings' => (int)$month['bookings'],
+                    'revenue' => (float)$month['revenue'],
+                    'avg_guests' => round($month['avg_guests'], 1)
+                ],
+                'year' => [
+                    'bookings' => (int)$year['bookings'],
+                    'revenue' => (float)$year['revenue'],
+                    'avg_guests' => round($year['avg_guests'], 1)
+                ]
+            ];
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [
+                'today' => ['bookings' => 0, 'revenue' => 0, 'avg_guests' => 0],
+                'week' => ['bookings' => 0, 'revenue' => 0, 'avg_guests' => 0],
+                'month' => ['bookings' => 0, 'revenue' => 0, 'avg_guests' => 0],
+                'year' => ['bookings' => 0, 'revenue' => 0, 'avg_guests' => 0]
+            ];
+        }
+    }
+
+    public function getAllVenuesWithStats($hostId) {
+        try {
+            $sql = "SELECT 
+                    v.*,
+                    vt.tag_name as venue_tag_name,
+                    GROUP_CONCAT(vi.image_url) as image_urls,
+                    
+                    -- Booking counts
+                    COUNT(DISTINCT b.id) as total_bookings,
+                    SUM(CASE WHEN b.booking_status_id = 1 THEN 1 ELSE 0 END) as pending_bookings,
+                    SUM(CASE WHEN b.booking_status_id = 2 THEN 1 ELSE 0 END) as confirmed_bookings,
+                    SUM(CASE WHEN b.booking_status_id = 3 THEN 1 ELSE 0 END) as cancelled_bookings,
+                    SUM(CASE WHEN b.booking_status_id = 4 THEN 1 ELSE 0 END) as completed_bookings,
+                    
+                    -- Revenue
+                    COALESCE(SUM(b.booking_grand_total), 0) as total_revenue,
+                    
+                    -- Average rating
+                    COALESCE(AVG(r.rating), 0) as average_rating,
+                    
+                    -- Average duration
+                    COALESCE(AVG(b.booking_duration), 0) as average_duration,
+                    
+                    -- Total guests
+                    COALESCE(SUM(b.booking_participants), 0) as total_guests,
+                    
+                    -- Occupancy rate (completed + confirmed bookings / total days since venue creation * 100)
+                    (COUNT(CASE WHEN b.booking_status_id IN (2,4) THEN 1 END) * 100.0 / 
+                        GREATEST(DATEDIFF(CURRENT_DATE, v.created_at), 1)) as occupancy_rate
+                    
+                    FROM venues v
+                    LEFT JOIN venue_tag_sub vt ON v.venue_tag = vt.id
+                    LEFT JOIN venue_images vi ON v.id = vi.venue_id
+                    LEFT JOIN bookings b ON v.id = b.booking_venue_id
+                    LEFT JOIN reviews r ON v.id = r.venue_id
+                    WHERE v.host_id = ?
+                    GROUP BY v.id";
+
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$hostId]);
+            $venues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($venues as &$venue) {
+                $venue['image_urls'] = $venue['image_urls'] ? explode(',', $venue['image_urls']) : [];
+                $venue['revenue_data'] = $this->getVenueRevenueData($venue['id']);
+                $venue['recent_reviews'] = $this->getVenueRecentReviews($venue['id']);
+                $venue['popular_month'] = $this->getVenuePopularMonth($venue['id']);
+                $venue['time_based_stats'] = $this->getTimeBasedStats($venue['id']);
+            }
+
+            return $venues;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
+    private function getVenueRecentReviews($venueId) {
+        try {
+            $sql = "SELECT 
+                    r.*,
+                    CONCAT(u.firstname, ' ', u.lastname) as guest_name,
+                    DATE_FORMAT(r.created_at, '%M %d, %Y') as date
+                    FROM reviews r
+                    JOIN users u ON r.user_id = u.id
+                    WHERE r.venue_id = ?
+                    ORDER BY r.created_at DESC
+                    LIMIT 5";
+
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$venueId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
+    private function getVenuePopularMonth($venueId) {
+        try {
+            $sql = "SELECT 
+                    DATE_FORMAT(booking_start_date, '%M') as month,
+                    COUNT(*) as booking_count
+                    FROM bookings
+                    WHERE booking_venue_id = ?
+                    AND booking_status_id IN (2,4)
+                    GROUP BY DATE_FORMAT(booking_start_date, '%M')
+                    ORDER BY booking_count DESC
+                    LIMIT 1";
+
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute([$venueId]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $result ? $result['month'] : 'N/A';
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return 'N/A';
+        }
+    }
 
 }
 

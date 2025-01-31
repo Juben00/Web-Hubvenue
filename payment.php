@@ -432,8 +432,8 @@ $_SESSION['reservationFormData'] = $reservationData;
                 .then(data => {
                     if (data.valid) {
                         // Update discount and total price dynamically
-                        const couponDiscount = data.discountValue;
-                        const discountValue = <?php echo isset($isSpecial) ? $discountStatus['discount_value'] / 100 : 0; ?> + data.discountValue;
+                        const discountValue = <?php echo ($isSpecial && isset($discountStatus['discount_value'])) 
+                    ? ($discountStatus['discount_value'] / 100) : 0; ?> + (data.discountValue || 0);
                         // Assume percentage
                         console.log(discountValue);
                         <?php $discountApplied = true; ?>

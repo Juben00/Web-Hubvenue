@@ -52,6 +52,10 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Completed (<?php echo $completedCount; ?>)
                     </button>
+                    <button onclick="showCont('statistics')"
+                        class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                        Statistics
+                    </button>
                 </nav>
             </div>
 
@@ -532,6 +536,105 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 </div>
             </div>
 
+            <!-- Add Statistics Tab Content -->
+            <div id="statistics-content" class="mt-8 hidden tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <?php 
+                    $venueStats = $venueObj->getAllVenuesWithStats($hostId);
+                    foreach ($venueStats as $venue): ?>
+                        <div class="bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition duration-300">
+                            <!-- Venue Image -->
+                            <div class="relative h-48">
+                                <img src="./<?php echo !empty($venue['image_urls']) ? $venue['image_urls'][$venue['thumbnail']] : '../images/black_ico.png'; ?>"
+                                    alt="<?php echo htmlspecialchars($venue['name']); ?>"
+                                    class="w-full h-full object-cover">
+                                <div class="absolute top-2 right-2">
+                                    <span class="px-2 py-1 bg-black text-white rounded-full text-xs">
+                                        <?php echo htmlspecialchars($venue['venue_tag_name']); ?>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Venue Details -->
+                            <div class="p-4">
+                                <h3 class="font-medium text-lg mb-2"><?php echo htmlspecialchars($venue['name']); ?></h3>
+                                
+                                <!-- Quick Stats Grid -->
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <!-- Total Bookings -->
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm text-gray-600">Total Bookings</p>
+                                        <p class="text-lg font-semibold"><?php echo $venue['total_bookings']; ?></p>
+                                    </div>
+                                    
+                                    <!-- Average Rating -->
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm text-gray-600">Average Rating</p>
+                                        <p class="text-lg font-semibold">
+                                            <?php echo number_format($venue['average_rating'], 1); ?> ⭐
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Total Revenue -->
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm text-gray-600">Total Revenue</p>
+                                        <p class="text-lg font-semibold">₱<?php echo number_format($venue['total_revenue']); ?></p>
+                                    </div>
+                                    
+                                    <!-- Occupancy Rate -->
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm text-gray-600">Occupancy Rate</p>
+                                        <p class="text-lg font-semibold"><?php echo number_format($venue['occupancy_rate'], 1); ?>%</p>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Stats -->
+                                <div class="mb-4">
+                                    <div class="bg-gray-50 p-3 rounded-lg mb-2">
+                                        <p class="text-sm text-gray-600">Average Duration</p>
+                                        <p class="text-md font-semibold"><?php echo number_format($venue['average_duration'], 1); ?> days</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded-lg">
+                                        <p class="text-sm text-gray-600">Total Guests</p>
+                                        <p class="text-md font-semibold"><?php echo number_format($venue['total_guests']); ?> guests</p>
+                                    </div>
+                                </div>
+
+                                <!-- Booking Status Distribution -->
+                                <div class="space-y-2">
+                                    <!-- Pending -->
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Pending</span>
+                                        <span class="font-medium"><?php echo $venue['pending_bookings']; ?></span>
+                                    </div>
+                                    <!-- Confirmed -->
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Confirmed</span>
+                                        <span class="font-medium"><?php echo $venue['confirmed_bookings']; ?></span>
+                                    </div>
+                                    <!-- Completed -->
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Completed</span>
+                                        <span class="font-medium"><?php echo $venue['completed_bookings']; ?></span>
+                                    </div>
+                                    <!-- Cancelled -->
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-gray-600">Cancelled</span>
+                                        <span class="font-medium"><?php echo $venue['cancelled_bookings']; ?></span>
+                                    </div>
+                                </div>
+
+                                <!-- View Details Button -->
+                                <button onclick="showVenueDetailStats(<?php echo htmlspecialchars(json_encode($venue)); ?>)" 
+                                        class="w-full mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition duration-300">
+                                    View Detailed Statistics
+                                </button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
         </div>
     </div>
 </main>
@@ -760,6 +863,170 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
     </div>
 </div>
 
+<!-- Add Statistics Modal -->
+<div id="statsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+    <div class="min-h-screen px-4 py-8">
+        <div class="w-full max-w-7xl mx-auto bg-white shadow-xl rounded-2xl">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-6 border-b bg-gray-50 rounded-t-2xl">
+                <div>
+                    <h3 class="text-2xl font-bold" id="modalVenueName"></h3>
+                    <p class="text-gray-600 mt-1">Detailed Statistics Overview</p>
+                </div>
+                <button onclick="closeStatsModal()" class="text-gray-500 hover:text-gray-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <!-- Time-based Stats -->
+                <div class="mb-8">
+                    <h4 class="text-lg font-semibold mb-4">Performance Overview</h4>
+                    
+                    <!-- Time Period Tabs -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <nav class="-mb-px flex space-x-8">
+                            <button onclick="switchTimePeriod('today')"
+                                class="time-period-tab border-black text-gray-900 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                                Today
+                            </button>
+                            <button onclick="switchTimePeriod('week')"
+                                class="time-period-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                                This Week
+                            </button>
+                            <button onclick="switchTimePeriod('month')"
+                                class="time-period-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                                This Month
+                            </button>
+                            <button onclick="switchTimePeriod('year')"
+                                class="time-period-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                                This Year
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Stats Content -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Revenue -->
+                        <div class="bg-white p-4 rounded-xl border">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="font-medium text-gray-600">Revenue</h5>
+                                <span id="time-period-badge" class="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs">Last 24h</span>
+                            </div>
+                            <p class="text-2xl font-bold" id="period-revenue"></p>
+                            <p class="text-sm text-gray-500 mt-1">Total earnings for the period</p>
+                        </div>
+
+                        <!-- Bookings -->
+                        <div class="bg-white p-4 rounded-xl border">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="font-medium text-gray-600">Bookings</h5>
+                            </div>
+                            <p class="text-2xl font-bold" id="period-bookings"></p>
+                            <p class="text-sm text-gray-500 mt-1">Total bookings for the period</p>
+                        </div>
+
+                        <!-- Average Guests -->
+                        <div class="bg-white p-4 rounded-xl border">
+                            <div class="flex items-center justify-between mb-2">
+                                <h5 class="font-medium text-gray-600">Average Guests</h5>
+                            </div>
+                            <p class="text-2xl font-bold" id="period-guests"></p>
+                            <p class="text-sm text-gray-500 mt-1">Average guests per booking</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <p class="text-sm text-gray-600">Total Revenue</p>
+                        <p class="text-2xl font-bold mt-1" id="totalRevenue"></p>
+                        <p class="text-sm text-gray-500 mt-1">Lifetime earnings</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <p class="text-sm text-gray-600">Average Rating</p>
+                        <p class="text-2xl font-bold mt-1" id="avgRating"></p>
+                        <p class="text-sm text-gray-500 mt-1">Based on all reviews</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <p class="text-sm text-gray-600">Total Bookings</p>
+                        <p class="text-2xl font-bold mt-1" id="totalBookings"></p>
+                        <p class="text-sm text-gray-500 mt-1">All-time bookings</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <p class="text-sm text-gray-600">Occupancy Rate</p>
+                        <p class="text-2xl font-bold mt-1" id="occupancyRate"></p>
+                        <p class="text-sm text-gray-500 mt-1">Average occupancy</p>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Revenue Chart -->
+                    <div class="bg-white p-4 rounded-xl border">
+                        <h4 class="text-lg font-semibold mb-4">Revenue Over Time</h4>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Bookings Distribution -->
+                    <div class="bg-white p-4 rounded-xl border">
+                        <h4 class="text-lg font-semibold mb-4">Bookings Distribution</h4>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="bookingsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <h5 class="text-sm text-gray-600 mb-2">Average Booking Duration</h5>
+                        <div id="avgDuration"></div>
+                        <p class="text-xs text-gray-500 mt-2">Average length of stay per booking</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <h5 class="text-sm text-gray-600 mb-2">Most Popular Month</h5>
+                        <div id="popularMonth"></div>
+                        <p class="text-xs text-gray-500 mt-2">Month with highest booking frequency</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl">
+                        <h5 class="text-sm text-gray-600 mb-2">Total Guest Count</h5>
+                        <div id="totalGuests"></div>
+                        <p class="text-xs text-gray-500 mt-2">Total number of guests hosted</p>
+                    </div>
+                </div>
+
+                <!-- Booking Status Breakdown -->
+                <div class="bg-white p-6 rounded-xl border mb-8">
+                    <h4 class="text-lg font-semibold mb-4">Booking Status Breakdown</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="bookingStatusGrid">
+                        <!-- Status cards will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="bg-white p-6 rounded-xl border">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-lg font-semibold">Recent Reviews</h4>
+                        <div class="text-sm text-gray-500" id="reviewCount"></div>
+                    </div>
+                    <div id="reviewsList" class="space-y-4">
+                        <!-- Reviews will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Chart.js and Statistics Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     function closeQr() {
         const qrModal = document.getElementById('qrModal');
@@ -994,22 +1261,261 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
     }
 
     function showCont(tabName) {
-        document.querySelectorAll('.tab-content').forEach(tab => {
-            tab.classList.add('hidden');
-        });
-        document.getElementById(tabName + '-content').classList.remove('hidden');
+        // Hide all tab contents
+        var tabContents = document.getElementsByClassName('tab-content');
+        for (var i = 0; i < tabContents.length; i++) {
+            tabContents[i].classList.add('hidden');
+        }
+        
+        // Show selected tab content
+        var selectedTab = document.getElementById(tabName + '-content');
+        if (selectedTab) {
+            selectedTab.classList.remove('hidden');
+        }
 
-        document.querySelectorAll('.tab-links').forEach(btn => {
-            btn.classList.remove('border-black', 'text-gray-900');
-            btn.classList.add('border-transparent', 'text-gray-500');
-        });
+        // Update tab button styles
+        var tabButtons = document.getElementsByClassName('tab-links');
+        for (var i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove('border-black', 'text-gray-900');
+            tabButtons[i].classList.add('border-transparent', 'text-gray-500');
+        }
 
+        // Add active styles to clicked tab
         event.currentTarget.classList.remove('border-transparent', 'text-gray-500');
         event.currentTarget.classList.add('border-black', 'text-gray-900');
     }
 
-    // Set default tab to 'pending'
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('.tab-links').click();
+    // Set default tab to 'pending' when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        var firstTab = document.querySelector('.tab-links');
+        if (firstTab) {
+            firstTab.click();
+        }
     });
+
+    let revenueChart = null;
+    let bookingsChart = null;
+    let currentStats = null;
+
+    function switchTimePeriod(period) {
+        // Update tab styles
+        const tabs = document.querySelectorAll('.time-period-tab');
+        tabs.forEach(tab => {
+            tab.classList.remove('border-black', 'text-gray-900');
+            tab.classList.add('border-transparent', 'text-gray-500');
+        });
+        event.currentTarget.classList.remove('border-transparent', 'text-gray-500');
+        event.currentTarget.classList.add('border-black', 'text-gray-900');
+
+        // Update badge text
+        const badgeText = {
+            'today': 'Last 24h',
+            'week': 'Last 7d',
+            'month': 'Last 30d',
+            'year': 'Year to Date'
+        };
+        document.getElementById('time-period-badge').textContent = badgeText[period];
+
+        // Update stats
+        if (currentStats) {
+            document.getElementById('period-revenue').textContent = '₱' + numberWithCommas(currentStats[period].revenue);
+            document.getElementById('period-bookings').textContent = currentStats[period].bookings;
+            document.getElementById('period-guests').textContent = currentStats[period].avg_guests;
+        }
+    }
+
+    function showVenueDetailStats(venue) {
+        const modal = document.getElementById('statsModal');
+        modal.classList.remove('hidden');
+        document.getElementById('modalVenueName').textContent = venue.name;
+
+        // Store stats for use in tab switching
+        currentStats = venue.time_based_stats;
+        
+        // Initialize with 'today' period
+        switchTimePeriod('today');
+
+        // Update Key Metrics
+        document.getElementById('totalRevenue').textContent = '₱' + numberWithCommas(venue.total_revenue);
+        document.getElementById('avgRating').textContent = venue.average_rating.toFixed(1) + ' ⭐';
+        document.getElementById('totalBookings').textContent = venue.total_bookings;
+        document.getElementById('occupancyRate').textContent = venue.occupancy_rate.toFixed(1) + '%';
+
+        // Update Booking Status Grid
+        const statusColors = {
+            pending: 'bg-yellow-100 text-yellow-800',
+            confirmed: 'bg-green-100 text-green-800',
+            completed: 'bg-blue-100 text-blue-800',
+            cancelled: 'bg-red-100 text-red-800'
+        };
+
+        document.getElementById('bookingStatusGrid').innerHTML = `
+            <div class="p-4 rounded-lg ${statusColors.pending}">
+                <p class="text-sm font-medium">Pending</p>
+                <p class="text-2xl font-bold">${venue.pending_bookings}</p>
+            </div>
+            <div class="p-4 rounded-lg ${statusColors.confirmed}">
+                <p class="text-sm font-medium">Confirmed</p>
+                <p class="text-2xl font-bold">${venue.confirmed_bookings}</p>
+            </div>
+            <div class="p-4 rounded-lg ${statusColors.completed}">
+                <p class="text-sm font-medium">Completed</p>
+                <p class="text-2xl font-bold">${venue.completed_bookings}</p>
+            </div>
+            <div class="p-4 rounded-lg ${statusColors.cancelled}">
+                <p class="text-sm font-medium">Cancelled</p>
+                <p class="text-2xl font-bold">${venue.cancelled_bookings}</p>
+            </div>
+        `;
+
+        // Clean up and initialize charts
+        if (revenueChart) {
+            revenueChart.destroy();
+            revenueChart = null;
+        }
+        if (bookingsChart) {
+            bookingsChart.destroy();
+            bookingsChart = null;
+        }
+
+        // Create new canvas elements
+        const revenueCanvas = document.createElement('canvas');
+        revenueCanvas.id = 'revenueChart';
+        const bookingsCanvas = document.createElement('canvas');
+        bookingsCanvas.id = 'bookingsChart';
+
+        // Replace old canvases
+        document.querySelector('#revenueChart').replaceWith(revenueCanvas);
+        document.querySelector('#bookingsChart').replaceWith(bookingsCanvas);
+
+        // Initialize Revenue Chart
+        const revenueCtx = revenueCanvas.getContext('2d');
+        revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: venue.revenue_data.labels,
+                datasets: [{
+                    label: 'Monthly Revenue',
+                    data: venue.revenue_data.values,
+                    borderColor: '#000000',
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: value => '₱' + numberWithCommas(value)
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: context => '₱' + numberWithCommas(context.raw)
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize Bookings Chart
+        const bookingsCtx = bookingsCanvas.getContext('2d');
+        bookingsChart = new Chart(bookingsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Confirmed', 'Completed', 'Cancelled'],
+                datasets: [{
+                    data: [
+                        venue.pending_bookings,
+                        venue.confirmed_bookings,
+                        venue.completed_bookings,
+                        venue.cancelled_bookings
+                    ],
+                    backgroundColor: [
+                        '#FCD34D',
+                        '#34D399',
+                        '#60A5FA',
+                        '#F87171'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update additional stats
+        document.getElementById('avgDuration').innerHTML = `
+            <p class="text-2xl font-bold">${venue.average_duration.toFixed(1)}</p>
+            <p class="text-sm text-gray-600">days average</p>
+        `;
+        document.getElementById('popularMonth').innerHTML = `
+            <p class="text-2xl font-bold">${venue.popular_month}</p>
+            <p class="text-sm text-gray-600">peak season</p>
+        `;
+        document.getElementById('totalGuests').innerHTML = `
+            <p class="text-2xl font-bold">${numberWithCommas(venue.total_guests)}</p>
+            <p class="text-sm text-gray-600">guests served</p>
+        `;
+
+        // Update review count
+        document.getElementById('reviewCount').textContent = 
+            `${venue.recent_reviews.length} most recent reviews`;
+
+        // Populate reviews
+        const reviewsList = document.getElementById('reviewsList');
+        reviewsList.innerHTML = venue.recent_reviews.map(review => `
+            <div class="bg-gray-50 p-4 rounded-xl hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <p class="font-medium text-lg">${review.guest_name}</p>
+                        <p class="text-sm text-gray-600">${review.date}</p>
+                    </div>
+                    <div class="text-yellow-400 text-lg">${'⭐'.repeat(review.rating)}</div>
+                </div>
+                <p class="text-gray-700 leading-relaxed">${review.review}</p>
+            </div>
+        `).join('');
+    }
+
+    function closeStatsModal() {
+        document.getElementById('statsModal').classList.add('hidden');
+        currentStats = null;
+        // Clean up charts when modal is closed
+        if (revenueChart) {
+            revenueChart.destroy();
+            revenueChart = null;
+        }
+        if (bookingsChart) {
+            bookingsChart.destroy();
+            bookingsChart = null;
+        }
+    }
 </script>

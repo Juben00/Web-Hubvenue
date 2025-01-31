@@ -139,18 +139,36 @@ $reviews = $venueObj->getReview($_GET['id']);
             overflow-y: auto;
             padding: 120px 4rem 2rem;
             border-left: 1px solid #e5e7eb;
-            background: #f9fafb;
+            background: #ffffff;
             position: fixed;
             right: -50%;
             top: 0;
             width: 50%;
             transition: all 0.3s ease;
             z-index: 40;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
         }
 
         .venue-comparison.active {
             right: 0;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .venue-comparison::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .venue-comparison::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .venue-comparison::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .venue-comparison::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
         }
 
         .comparison-close {
@@ -161,7 +179,13 @@ $reviews = $venueObj->getReview($_GET['id']);
             background: white;
             border-radius: 50%;
             padding: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .comparison-close:hover {
+            transform: rotate(90deg);
+            background: #f3f4f6;
         }
 
         .venue-comparison .comparison-content {
@@ -298,6 +322,16 @@ $reviews = $venueObj->getReview($_GET['id']);
         .main-content.shifted .reviews-section {
             width: 100%;
             overflow-x: hidden;
+        }
+
+        /* Add new styles for the highlights */
+        .venue-comparison .highlight-card {
+            transition: all 0.2s ease;
+        }
+
+        .venue-comparison .highlight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
     </style>
 </head>
@@ -1330,97 +1364,282 @@ $reviews = $venueObj->getReview($_GET['id']);
                         return;
                     }
 
-                    comparisonVenues.innerHTML = venues.map(venue => `
-    <div class="bg-slate-50 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
-        <div class="relative">
-            <div class="relative w-full h-48 overflow-hidden">
-                <img src="./${venue.image_urls[0]}" alt="${venue.name}" class="w-full h-full object-cover">
-            </div>
-            <div class="p-4">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-lg font-semibold text-gray-900">${venue.name}</h3>
-                    <div class="flex items-center">
-                        <p class="font-bold text-sm">${parseFloat(venue.rating).toFixed(1)}</p>
-                        <i class="fas fa-star text-yellow-500 ml-1"></i>
-                    </div>
-                </div>
-                <p class="text-sm text-gray-500 line-clamp-2 mb-3">${venue.description}</p>
-                <div class="flex justify-between items-center">
-                    <p class="text-gray-900">
-                        <span class="font-semibold">₱${parseFloat(venue.price).toLocaleString()}</span>
-                        <span class="text-sm"> / night</span>
-                    </p>
-                    <div class="flex gap-2">
-                        <button onclick="toggleVenueDetails(${venue.id}, this)"
-                            class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors">
-                            View Details
-                        </button>
-                        <a href="venues.php?id=${venue.id}"
-                            class="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors">
-                            View Venue
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="venue-details-${venue.id}" class="hidden p-4 border-t">
-            <div class="space-y-4">
-                <div>
-                    <h4 class="font-semibold mb-2">Place Description</h4>
-                    <p class="text-sm text-gray-600">${venue.description}</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-2">Venue Capacity</h4>
-                    <p class="text-sm text-gray-600">${venue.capacity} guests</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-2">Location</h4>
-                    <p class="text-sm text-gray-600">${venue.location}</p>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-2">Amenities</h4>
-                    <ul class="text-sm text-gray-600 space-y-1">
-                        ${JSON.parse(venue.amenities).map(amenity => `
-                        <li>• ${amenity}</li>
-                        `).join('')}
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-semibold mb-2">House Rules</h4>
-                    <ul class="text-sm text-gray-600 space-y-1">
-                        ${venue.rules ? JSON.parse(venue.rules).map(rule => `
-                        <li>• ${rule}</li>
-                        `).join('') : '<li>No specific rules listed</li>'}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    `).join('');
+                    // Get current venue's amenities for comparison
+                    const currentVenueAmenities = new Set(<?php echo json_encode(json_decode($venue['amenities'])); ?>);
+                    const currentVenuePrice = <?php echo $venue['price']; ?>;
+
+                    let comparisonHTML = '';
+                    
+                    for (const venue of venues) {
+                        const [lat, lon] = venue.location.split(',');
+                        const nearbyHighlights = await getNearbyHighlights(lat, lon);
+                        const venueAmenities = new Set(JSON.parse(venue.amenities));
+                        
+                        // Calculate unique and shared amenities
+                        const uniqueAmenities = [...venueAmenities].filter(x => !currentVenueAmenities.has(x));
+                        const sharedAmenities = [...venueAmenities].filter(x => currentVenueAmenities.has(x));
+                        
+                        // Calculate price difference
+                        const priceDiff = venue.price - currentVenuePrice;
+                        const priceDiffText = priceDiff === 0 ? 'Same price' : 
+                                            priceDiff > 0 ? `₱${priceDiff.toLocaleString()} more expensive` : 
+                                            `₱${Math.abs(priceDiff).toLocaleString()} cheaper`;
+
+                        comparisonHTML += `
+                            <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
+                                <div class="relative">
+                                    <div class="relative w-full h-48 overflow-hidden group">
+                                        <img src="./${venue.image_urls[0]}" alt="${venue.name}" 
+                                            class="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                                        <div class="absolute bottom-4 left-4 right-4">
+                                            <h3 class="text-xl font-semibold text-white">${venue.name}</h3>
+                                            <div class="flex items-center text-white text-sm mt-1">
+                                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                                <span class="opacity-90">${venue.address}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-6">
+                                    <!-- Price Comparison -->
+                                    <div class="mb-6">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-2xl font-bold text-gray-900">₱${parseFloat(venue.price).toLocaleString()}</span>
+                                            <span class="text-sm px-3 py-1 rounded-full ${priceDiff > 0 ? 'bg-red-100 text-red-700' : priceDiff < 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
+                                                ${priceDiffText}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Nearby Highlights -->
+                                    <div class="mb-6">
+                                        <h4 class="font-semibold text-gray-900 mb-3">
+                                            <i class="fas fa-location-arrow mr-1"></i>
+                                            Special Nearby Highlights
+                                        </h4>
+                                        <div class="space-y-2">
+                                            ${nearbyHighlights.length > 0 
+                                                ? nearbyHighlights.map(highlight => formatHighlight(highlight)).join('')
+                                                : '<p class="text-gray-500 text-sm">No special highlights found nearby</p>'
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Amenities Comparison -->
+                                    <div class="mb-6">
+                                        <h4 class="font-semibold text-gray-900 mb-3">Unique Amenities</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            ${uniqueAmenities.map(amenity => `
+                                                <span class="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm">
+                                                    ${amenity}
+                                                </span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-6">
+                                        <h4 class="font-semibold text-gray-900 mb-3">Shared Amenities</h4>
+                                        <div class="flex flex-wrap gap-2">
+                                            ${sharedAmenities.map(amenity => `
+                                                <span class="px-3 py-1 bg-gray-50 text-gray-600 rounded-full text-sm">
+                                                    ${amenity}
+                                                </span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="flex gap-2 mt-4">
+                                        <a href="venues.php?id=${venue.id}" 
+                                           class="flex-1 px-4 py-2 bg-red-500 text-white text-center font-medium rounded-lg hover:bg-red-600 transition-colors">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    comparisonVenues.innerHTML = comparisonHTML;
+
                 } catch (error) {
                     console.error('Error loading comparison venues:', error);
                     comparisonVenues.innerHTML = '<div class="text-center py-4 text-red-500">Error loading venues</div>';
                 }
             }
 
-            // Function to toggle venue details
-            window.toggleVenueDetails = function (venueId, button) {
-                const detailsSection = document.getElementById(`venue-details-${venueId}`);
-                if (detailsSection.classList.contains('hidden')) {
-                    detailsSection.classList.remove('hidden');
-                    button.textContent = 'Hide Details';
-                    // Allow time for the hidden class to be removed before setting max-height
-                    requestAnimationFrame(() => {
-                        detailsSection.style.maxHeight = detailsSection.scrollHeight + 'px';
+            // Add this function to fetch nearby amenities from OpenStreetMap
+            async function getNearbyHighlights(lat, lon) {
+                try {
+                    const radius = 1500; // 1.5km radius for wider coverage
+                    const query = `
+                    [out:json][timeout:25];
+                    (
+                        way(around:${radius},${lat},${lon})[leisure=park];
+                        way(around:${radius},${lat},${lon})[tourism=hotel];
+                        way(around:${radius},${lat},${lon})[amenity=cafe];
+                        way(around:${radius},${lat},${lon})[tourism=museum];
+                        way(around:${radius},${lat},${lon})[natural=beach];
+                        way(around:${radius},${lat},${lon})[leisure=garden];
+                        way(around:${radius},${lat},${lon})[tourism=viewpoint];
+                        way(around:${radius},${lat},${lon})[tourism=attraction];
+                        way(around:${radius},${lat},${lon})[leisure=sports_centre];
+                        way(around:${radius},${lat},${lon})[amenity=marketplace];
+                        way(around:${radius},${lat},${lon})[amenity=theatre];
+                        way(around:${radius},${lat},${lon})[amenity=arts_centre];
+                    );
+                    out body center;
+                    >;
+                    out skel qt;`;
+
+                    const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    
+                    const highlights = [];
+                    const seenTypes = new Set(); // To track unique highlight types
+
+                    data.elements.forEach(element => {
+                        if (element.tags) {
+                            const distance = calculateDistance(lat, lon, element.center.lat, element.center.lon);
+                            const walkingTime = calculateWalkingTime(distance);
+                            const drivingTime = calculateDrivingTime(distance);
+
+                            // Create a highlight object with specific categorization
+                            let highlight = null;
+
+                            if (element.tags.leisure === 'park' && element.tags.name) {
+                                highlight = {
+                                    type: 'Park',
+                                    name: element.tags.name,
+                                    category: 'Nature',
+                                    icon: 'tree'
+                                };
+                            } else if (element.tags.tourism === 'hotel' && element.tags.name) {
+                                highlight = {
+                                    type: 'Hotel',
+                                    name: element.tags.name,
+                                    category: 'Accommodation',
+                                    icon: 'hotel'
+                                };
+                            } else if (element.tags.amenity === 'cafe' && element.tags.name) {
+                                highlight = {
+                                    type: 'Cafe',
+                                    name: element.tags.name,
+                                    category: 'Dining',
+                                    icon: 'coffee'
+                                };
+                            } else if (element.tags.tourism === 'museum' && element.tags.name) {
+                                highlight = {
+                                    type: 'Museum',
+                                    name: element.tags.name,
+                                    category: 'Culture',
+                                    icon: 'landmark'
+                                };
+                            } else if (element.tags.natural === 'beach' && element.tags.name) {
+                                highlight = {
+                                    type: 'Beach',
+                                    name: element.tags.name,
+                                    category: 'Nature',
+                                    icon: 'umbrella-beach'
+                                };
+                            } else if (element.tags.tourism === 'viewpoint' && element.tags.name) {
+                                highlight = {
+                                    type: 'Viewpoint',
+                                    name: element.tags.name,
+                                    category: 'Attraction',
+                                    icon: 'mountain'
+                                };
+                            } else if (element.tags.tourism === 'attraction' && element.tags.name) {
+                                highlight = {
+                                    type: 'Tourist Attraction',
+                                    name: element.tags.name,
+                                    category: 'Attraction',
+                                    icon: 'star'
+                                };
+                            }
+
+                            if (highlight && !seenTypes.has(highlight.type)) {
+                                seenTypes.add(highlight.type);
+                                highlights.push({
+                                    ...highlight,
+                                    distance,
+                                    walkingTime,
+                                    drivingTime
+                                });
+                            }
+                        }
                     });
-                } else {
-                    detailsSection.style.maxHeight = '0';
-                    button.textContent = 'View Details';
-                    // Wait for transition to complete before hiding
-                    setTimeout(() => {
-                        detailsSection.classList.add('hidden');
-                    }, 300);
+                    
+                    // Sort by distance and limit to top 5 unique highlights
+                    return highlights
+                        .sort((a, b) => a.distance - b.distance)
+                        .slice(0, 5);
+                } catch (error) {
+                    console.error('Error fetching nearby highlights:', error);
+                    return [];
                 }
+            }
+
+            // Helper functions for distance and time calculations
+            function calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Earth's radius in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                return R * c;
+            }
+
+            function calculateWalkingTime(distance) {
+                const walkingSpeed = 5; // km/h
+                return Math.round(distance / walkingSpeed * 60); // minutes
+            }
+
+            function calculateDrivingTime(distance) {
+                const drivingSpeed = 30; // km/h (urban average)
+                return Math.round(distance / drivingSpeed * 60); // minutes
+            }
+
+            // Update the venue card HTML in loadComparisonVenues
+            function formatHighlight(highlight) {
+                const distanceText = highlight.distance < 1 ? 
+                    `${Math.round(highlight.distance * 1000)}m` : 
+                    `${highlight.distance.toFixed(1)}km`;
+                
+                let timeText = '';
+                if (highlight.walkingTime < 60) {
+                    timeText = `${highlight.walkingTime}min walk`;
+                } else {
+                    timeText = `${highlight.drivingTime}min drive`;
+                }
+                
+                return `
+                    <div class="flex flex-col bg-blue-50 rounded-lg p-3 mb-2 hover:bg-blue-100 transition-colors">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-${highlight.icon} text-blue-600"></i>
+                            <span class="text-blue-700 font-medium">${highlight.name}</span>
+                        </div>
+                        <div class="text-sm text-blue-600">
+                            <span class="inline-block px-2 py-0.5 bg-blue-100 rounded-full text-xs mb-1">
+                                ${highlight.type}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs text-blue-600 mt-1">
+                            <span class="flex items-center">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                ${distanceText}
+                            </span>
+                            <span class="flex items-center">
+                                <i class="fas ${highlight.walkingTime < 60 ? 'fa-walking' : 'fa-car'} mr-1"></i>
+                                ${timeText}
+                            </span>
+                        </div>
+                    </div>
+                `;
             }
 
             // Make loadComparisonVenues available globally
