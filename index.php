@@ -208,6 +208,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 
         <!-- Main content -->
         <main class="flex-1 mt-28">
+            <?php require_once './spinner.php'; ?>
+
             <!-- First section with blue background -->
             <div class="bg-blue-500/20 relative">
                 <?php require_once './components/coverPage.html' ?>

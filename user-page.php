@@ -33,6 +33,7 @@
     ?>
 
     <div class="container mx-auto px-4 py-8 pt-24">
+        <?php require_once './spinner.php'; ?>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- User Profile Card -->
             <div class="bg-slate-50 rounded-xl shadow-xl p-6 md:col-span-1">

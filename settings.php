@@ -55,6 +55,7 @@ $address = getAddressByCoordinates($user['address']);
     ?>
 
     <main class="w-full px-4 py-8 min-h-screen">
+        <?php require_once './spinner.php'; ?>
         <div class="max-w-7xl mt-16 mx-auto">
             <h1 class="text-3xl font-bold mb-8 text-gray-800">Settings</h1>
 

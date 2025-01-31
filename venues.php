@@ -353,6 +353,7 @@ $reviews = $venueObj->getReview($_GET['id']);
     ?>
 
     <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
+        <?php require_once './spinner.php'; ?>
         <div class="main-content">
             <div id="venueDetails">
                 <div class="mb-6">
@@ -802,16 +803,18 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             Citizen)
                                         </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
+
                                             <?php
-                                            if ($discountStatus) {
-                                                if ($discountStatus['status'] == 'Active') {
-                                                    echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
-                                                } else {
-                                                    echo "0%";
-                                                }
-                                            } else {
-                                                echo "0%"; // No discount found
-                                            }
+                                            var_dump($discountStatus);
+                                            // if ($discountStatus) {
+                                            //     if ($discountStatus['status'] == 'Active') {
+                                            //         echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                            //     } else {
+                                            //         echo "0%";
+                                            //     }
+                                            // } else {
+                                            //     echo "0%"; // No discount found
+                                            // }
                                             ?>
                                         </span>
                                     </div>
@@ -944,7 +947,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         validateDateRange();
                         calculateTotal();
                         if (input.name === 'checkin') {
-                            checkoutInput._flatpickr.set('minDate', dateStr); // Set minDate for checkout based on checkin
+                            checkoutInput._flatpickr.set('minDate', dateStr);
                         }
                     }
                 });
@@ -969,19 +972,16 @@ $reviews = $venueObj->getReview($_GET['id']);
             disableDates(checkinInput);
             disableDates(checkoutInput);
 
-            // Get today's date in YYYY-MM-DD format
             const today = new Date();
             const todayFormatted = today.toISOString().split('T')[0];
 
-            // Set 'min' attributes to today for both checkin and checkout inputs
             checkinInput.setAttribute('min', todayFormatted);
             checkoutInput.setAttribute('min', todayFormatted);
 
-            // Validate and correct selected date inputs
             function validateDate(input) {
                 const selectedDate = new Date(input.value);
                 if (selectedDate < today) {
-                    input.value = todayFormatted; // Reset to today's date if past date is selected
+                    input.value = todayFormatted;
                 }
             }
 
@@ -1037,7 +1037,6 @@ $reviews = $venueObj->getReview($_GET['id']);
                 }
             }
 
-            // Add event listeners
             checkinInput.addEventListener('change', calculateTotal);
             checkoutInput.addEventListener('change', calculateTotal);
             guestsInput.addEventListener('input', calculateTotal);
@@ -1048,10 +1047,10 @@ $reviews = $venueObj->getReview($_GET['id']);
 
         function appendHiddenInput(form, name, value) {
             const input = document.createElement('input');
-            input.type = 'hidden'; // Set input type to hidden
-            input.name = name; // Set the name attribute
-            input.value = value; // Set the value attribute
-            form.appendChild(input); // Append the input to the form
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
         }
     </script>
 

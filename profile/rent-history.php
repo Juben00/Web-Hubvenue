@@ -101,7 +101,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                     <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
                                     <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
                                     <p class="text-gray-600 mt-1">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                         for
                                         <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                         days
@@ -240,7 +240,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                     <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
                                     <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
                                     <p class="text-gray-600 mt-1">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                         for
                                         <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                         days
@@ -348,7 +348,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?></p>
                                         <p class="text-gray-600">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -456,7 +456,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?></p>
                                         <p class="text-gray-600">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
