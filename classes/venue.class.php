@@ -1217,6 +1217,65 @@ LEFT JOIN
         }
     }
 
+    public function getVenuesByHost($hostId) {
+        try {
+            $sql = "SELECT v.*, GROUP_CONCAT(vi.image_url) as image_urls 
+                    FROM venues v 
+                    LEFT JOIN venue_images vi ON v.id = vi.venue_id 
+                    WHERE v.host_id = :host_id
+                    GROUP BY v.id";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':host_id', $hostId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getVenueStatistics($venueId) {
+        try {
+            $sql = "SELECT 
+                    COUNT(*) as total_bookings,
+                    COALESCE(AVG(r.rating), 0) as average_rating,
+                    COALESCE(SUM(b.booking_grand_total), 0) as total_revenue,
+                    (COUNT(CASE WHEN b.booking_status_id IN (2,4) THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0)) as occupancy_rate
+                    FROM bookings b
+                    LEFT JOIN reviews r ON b.booking_venue_id = r.venue_id
+                    WHERE b.booking_venue_id = :venue_id";
+            
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return [
+                'total_bookings' => 0,
+                'average_rating' => 0,
+                'total_revenue' => 0,
+                'occupancy_rate' => 0
+            ];
+        }
+    }
+
+    public function getBookingCountByStatus($venueId, $statusId) {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM bookings 
+                    WHERE booking_venue_id = :venue_id AND booking_status_id = :status_id";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId, PDO::PARAM_INT);
+            $stmt->bindParam(':status_id', $statusId, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['count'];
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
 }
 
 $venueObj = new Venue();
