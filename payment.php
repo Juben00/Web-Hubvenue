@@ -433,7 +433,6 @@ $_SESSION['reservationFormData'] = $reservationData;
                 .then(response => response.json())
                 .then(data => {
                     if (data.valid) {
-
                         const couponDiscount = data.discountValue;
                         const discountValue = <?php echo ($isSpecial && isset($discountStatus['discount_value']))
                             ? ($discountStatus['discount_value'] / 100) : 0; ?> + (data.discountValue || 0);
