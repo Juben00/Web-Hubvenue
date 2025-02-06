@@ -1276,6 +1276,58 @@ LEFT JOIN
         }
     }
 
+    public function getBookingsByGuest($guestId) {
+        try {
+            $query = "
+                SELECT DISTINCT
+                    b.id as booking_id,
+                    b.booking_start_date,
+                    b.booking_end_date,
+                    b.booking_status_id,
+                    b.booking_participants,
+                    b.booking_original_price,
+                    b.booking_grand_total,
+                    b.booking_guest_id,
+                    v.id as venue_id,
+                    v.name,
+                    v.host_id,
+                    h.firstname as host_firstname,
+                    h.lastname as host_lastname,
+                    h.profile_pic as host_profile_pic,
+                    h.id as host_id,
+                    g.firstname as guest_firstname,
+                    g.lastname as guest_lastname,
+                    g.profile_pic as guest_profile_pic,
+                    g.id as guest_id
+                FROM bookings b
+                JOIN venues v ON b.booking_venue_id = v.id
+                JOIN users h ON v.host_id = h.id
+                JOIN users g ON b.booking_guest_id = g.id
+                WHERE b.booking_guest_id = :guest_id
+                AND b.booking_status_id IN (1, 2, 3, 4)
+                ORDER BY b.booking_created_at DESC
+            ";
+            
+            $stmt = $this->db->connect()->prepare($query);
+            $stmt->bindParam(':guest_id', $guestId, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Ensure host_id and guest_id are correctly set
+            foreach ($bookings as &$booking) {
+                $booking['host_id'] = $booking['host_id'];  // This is the venue owner
+                $booking['guest_id'] = $booking['booking_guest_id'];  // This is the person who made the booking
+            }
+            
+            return $bookings;
+            
+        } catch (PDOException $e) {
+            error_log("Error in getBookingsByGuest: " . $e->getMessage());
+            return [];
+        }
+    }
+
 }
 
 $venueObj = new Venue();
