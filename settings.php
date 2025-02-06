@@ -263,7 +263,7 @@ $address = getAddressByCoordinates($user['address']);
 
                             <div class="pt-6 flex justify-end">
                                 <button type="submit"
-                                    class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-black text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px] hover:bg-gray-800">
+                                    class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-green-600 text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px] hover:bg-white-800">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                         fill="currentColor">
                                         <path
@@ -298,7 +298,7 @@ $address = getAddressByCoordinates($user['address']);
                                 </div>
                                 <div class="flex justify-end">
                                     <button type="submit"
-                                        class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-black text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px] hover:bg-gray-800">
+                                        class="inline-flex items-center justify-center gap-2 px-8 py-3 bg-green-600 text-white font-semibold rounded-lg transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg min-w-[200px] hover:bg-white-800">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                             fill="currentColor">
                                             <path fill-rule="evenodd"

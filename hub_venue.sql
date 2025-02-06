@@ -128,6 +128,7 @@ CREATE TABLE `discounts` (
   `discount_code` varchar(255) DEFAULT NULL,
   `discount_type` enum('flat','percentage') DEFAULT NULL,
   `discount_value` decimal(10,2) DEFAULT NULL,
+  `min_days` int(11) DEFAULT 1,
   `expiration_date` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -137,11 +138,11 @@ CREATE TABLE `discounts` (
 -- Dumping data for table `discounts`
 --
 
-INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `expiration_date`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'SAVE10', 'percentage', 10.00, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
-(2, NULL, 'SAVE20', 'percentage', 20.00, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
-(3, NULL, 'SAVE30', 'percentage', 30.00, '2025-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
-(4, NULL, 'none', 'percentage', 0.00, NULL, '2025-01-24 02:07:46', '2025-01-24 02:07:46');
+INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `min_days`, `expiration_date`, `created_at`, `updated_at`) VALUES
+(1, NULL, 'SAVE10', 'percentage', 10.00, 1, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
+(2, NULL, 'SAVE20', 'percentage', 20.00, 2, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
+(3, NULL, 'SAVE30', 'percentage', 30.00, 3, '2025-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
+(4, NULL, 'none', 'percentage', 0.00, 1, NULL, '2025-01-24 02:07:46', '2025-01-24 02:07:46');
 
 -- --------------------------------------------------------
 

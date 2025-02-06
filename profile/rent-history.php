@@ -54,7 +54,25 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                 <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
                                 </h2>
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                    <span class="px-2 py-1 rounded-full text-sm font-medium <?php
+                                        switch ($booking['booking_status_id']) {
+                                            case '1': // Pending
+                                                echo 'bg-yellow-100 text-yellow-800';
+                                                break;
+                                            case '2': // Approved
+                                                echo 'bg-green-100 text-green-800';
+                                                break;
+                                            case '3': // Cancelled
+                                                echo 'bg-red-100 text-red-800';
+                                                break;
+                                            case '4': // Completed
+                                                echo 'bg-blue-100 text-blue-800';
+                                                break;
+                                            default:
+                                                echo 'bg-gray-100 text-gray-800';
+                                                break;
+                                        }
+                                    ?>">
                                         <?php
                                         switch ($booking['booking_status_id']) {
                                             case '1':
@@ -78,10 +96,10 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                     <?php
                                     if ($bookingStartDate > $currentDateTime): ?>
                                         <span
-                                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                            class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
                                             Booking</span> <!-- Tag for future booking -->
                                     <?php else: ?>
-                                        <span class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
                                             Booking</span> <!-- Tag for started booking -->
                                     <?php endif; ?>
                                 </div>
@@ -193,7 +211,25 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                 <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
                                 </h2>
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                    <span class="px-2 py-1 rounded-full text-sm font-medium <?php
+                                        switch ($booking['booking_status_id']) {
+                                            case '1': // Pending
+                                                echo 'bg-yellow-100 text-yellow-800';
+                                                break;
+                                            case '2': // Approved
+                                                echo 'bg-green-100 text-green-800';
+                                                break;
+                                            case '3': // Cancelled
+                                                echo 'bg-red-100 text-red-800';
+                                                break;
+                                            case '4': // Completed
+                                                echo 'bg-blue-100 text-blue-800';
+                                                break;
+                                            default:
+                                                echo 'bg-gray-100 text-gray-800';
+                                                break;
+                                        }
+                                    ?>">
                                         <?php
                                         switch ($booking['booking_status_id']) {
                                             case '1':
@@ -217,10 +253,10 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                     <?php
                                     if ($bookingStartDate > $currentDateTime): ?>
                                         <span
-                                            class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                            class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
                                             Booking</span> <!-- Tag for future booking -->
                                     <?php else: ?>
-                                        <span class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
                                             Booking</span> <!-- Tag for started booking -->
                                     <?php endif; ?>
                                 </div>
@@ -486,97 +522,93 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             </div>
         </div>
         <!-- Details Modal -->
-        <div id="details-modal"
-            class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-            <div
-                class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+        <div id="details-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
                 <!-- Modal Header -->
-                <div class="flex justify-between items-center pb-4 border-b">
-                    <h3 class="text-xl font-bold" id="modal-title"></h3>
-                    <button onclick="closeModal()"
-                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
+                <div class="flex justify-between items-center pb-6 border-b">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
+                        <p class="text-sm text-gray-500 mt-1">Booking Details</p>
+                    </div>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
 
                 <!-- Modal Content -->
-                <div id="modal-content" class="mt-4">
+                <div id="modal-content" class="mt-8">
                     <!-- Main image and details container -->
-                    <div class="flex flex-col items-center">
-                        <!-- Images Section -->
-                        <div class="w-full max-w-md mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Left Column - Images -->
+                        <div class="space-y-4">
                             <!-- Main Image -->
-                            <div class="relative h-64 rounded-lg overflow-hidden mb-2">
-                                <img id="modal-main-image" src="" alt="Venue Main Image"
-                                    class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
+                            <div class="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3]">
+                                <img id="modal-main-image" src="" alt="Venue Main Image" class="w-full h-full object-cover transition-all duration-300">
                             </div>
 
-                            <!-- Horizontal Thumbnail Strip -->
-                            <div class="flex gap-2 overflow-x-auto" id="image-gallery">
-                                <!-- Thumbnail images will be inserted here -->
+                            <!-- Image Gallery -->
+                            <div class="grid grid-cols-4 gap-2" id="image-gallery">
+                                <!-- Thumbnails will be inserted here -->
                             </div>
                         </div>
 
-                        <!-- Details Section -->
-                        <div class="w-full space-y-4">
-                            <!-- Move Booking Status to left -->
-                            <div class="flex items-center gap-2">
-                                <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
-                                <span id="booking-type" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                        <!-- Right Column - Details -->
+                        <div class="space-y-6">
+                            <!-- Status Tags -->
+                            <div class="flex items-center gap-3">
+                                <span id="booking-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                                <span id="booking-type" class="px-3 py-1 rounded-full text-sm font-medium"></span>
                             </div>
 
-                            <!-- Rest of the content -->
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <h4 class="font-semibold text-base mb-2">Price Details</h4>
-                                <div class="space-y-1">
-                                    <p id="price-per-night" class="text-xl font-bold"></p>
-                                    <p id="booking-duration" class="text-gray-600 text-sm"></p>
-                                    <p id="cleaning-fee" class="text-gray-600 text-sm"></p>
+                            <!-- Price Details -->
+                            <div class="bg-gray-50 p-6 rounded-xl space-y-3">
+                                <h4 class="font-semibold text-gray-900">Price Details</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-gray-600">Total Amount</span>
+                                        <span id="price-per-night" class="text-xl font-bold text-gray-900"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm text-gray-600">
+                                        <span>Duration</span>
+                                        <span id="booking-duration"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm text-gray-600">
+                                        <span>Cleaning Fee</span>
+                                        <span id="cleaning-fee"></span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Two Column Layout for Other Details -->
+                            <!-- Location Details -->
+                            <div class="space-y-2">
+                                <h4 class="font-semibold text-gray-900">Location</h4>
+                                <div id="location-details" class="text-gray-600 text-sm space-y-1"></div>
+                            </div>
+
+                            <!-- Capacity & Amenities -->
                             <div class="grid grid-cols-2 gap-6">
-                                <div class="space-y-4">
-                                    <!-- Location Section -->
-                                    <div>
-                                        <h4 class="font-semibold text-base mb-1">Location</h4>
-                                        <div class="space-y-0.5 text-gray-600 text-sm" id="location-details">
-                                        </div>
-                                    </div>
-
-                                    <!-- Capacity -->
-                                    <div>
-                                        <h4 class="font-semibold text-base mb-1">Capacity</h4>
-                                        <p id="venue-capacity" class="text-gray-600 text-sm"></p>
-                                    </div>
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-900">Capacity</h4>
+                                    <p id="venue-capacity" class="text-gray-600 text-sm"></p>
                                 </div>
-
-                                <div class="space-y-4">
-                                    <!-- Amenities -->
-                                    <div>
-                                        <h4 class="font-semibold text-base mb-1">Amenities</h4>
-                                        <ul id="amenities-list" class="text-gray-600 text-sm space-y-0.5">
-                                        </ul>
-                                    </div>
-
-                                    <!-- Contact Information -->
-                                    <div>
-                                        <h4 class="font-semibold text-base mb-1">Contact Information</h4>
-                                        <div class="space-y-0.5 text-gray-600 text-sm" id="contact-details">
-                                        </div>
-                                    </div>
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-900">Amenities</h4>
+                                    <ul id="amenities-list" class="text-gray-600 text-sm space-y-1"></ul>
                                 </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="space-y-2">
+                                <h4 class="font-semibold text-gray-900">Contact Information</h4>
+                                <div id="contact-details" class="text-gray-600 text-sm space-y-1"></div>
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="flex justify-center gap-3 pt-2">
+                            <div class="flex gap-3 pt-4">
                                 <div id="book-again-container" class="hidden">
-                                    <button
-                                        class="px-4 py-1.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm">
+                                    <button class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
                                         Book Again
                                     </button>
                                 </div>
@@ -585,9 +617,9 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     </div>
 
                     <!-- Reviews Section -->
-                    <div id="reviews-section" class="mt-6 pt-4 border-t">
-                        <h4 class="font-semibold text-base mb-3">Reviews</h4>
-                        <div id="reviews-container" class="space-y-3">
+                    <div id="reviews-section" class="mt-8 pt-6 border-t">
+                        <h4 class="font-semibold text-gray-900 mb-4">Reviews</h4>
+                        <div id="reviews-container" class="space-y-4">
                             <!-- Reviews will be dynamically loaded here -->
                         </div>
                     </div>
@@ -704,14 +736,14 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         const mainImage = document.getElementById('modal-main-image');
         mainImage.src = './' + booking.image_urls.split(',')[0];
 
-        // Setup image gallery with horizontal thumbnails
+        // Setup image gallery with thumbnails
         const imageGallery = document.getElementById('image-gallery');
         const imageUrls = booking.image_urls.split(',');
         imageGallery.innerHTML = imageUrls.map(url => `
-            <div class="flex-shrink-0 h-16 w-16 rounded-lg overflow-hidden">
+            <div class="aspect-square rounded-lg overflow-hidden bg-gray-100">
                 <img src="./${url}" 
                     alt="Venue Image" 
-                    class="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity duration-200" 
+                    class="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-all duration-200" 
                     onclick="changeMainImage(this.src)">
             </div>
         `).join('');
@@ -725,32 +757,68 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         // Set price details
         document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
         document.getElementById('booking-duration').textContent = `${booking.booking_duration} days`;
-        document.getElementById('cleaning-fee').textContent = `Cleaning fee: ₱500`;
+        document.getElementById('cleaning-fee').textContent = `₱500`;
 
         // Set location details
         const locationDetails = document.getElementById('location-details');
         locationDetails.innerHTML = `
-            <p>${booking.venue_location}</p>
-            <p>Governor Camins Avenue, Zone II</p>
-            <p>Baliwasan, Zamboanga City</p>
-            <p>Zamboanga Peninsula, 7000</p>
+            <p class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                ${booking.venue_location}
+            </p>
+            <p class="ml-6">Governor Camins Avenue, Zone II</p>
+            <p class="ml-6">Baliwasan, Zamboanga City</p>
+            <p class="ml-6">Zamboanga Peninsula, 7000</p>
         `;
 
-        // Set capacity and amenities (using the original amenities)
+        // Set capacity and amenities
         document.getElementById('venue-capacity').textContent = `${booking.venue_capacity || 3} guests`;
         const amenitiesList = document.getElementById('amenities-list');
         amenitiesList.innerHTML = `
-            <li>• Pool</li>
-            <li>• WiFi</li>
-            <li>• Air-conditioned Room</li>
-            <li>Smart TV</li>
+            <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Pool
+            </li>
+            <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                WiFi
+            </li>
+            <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Air-conditioned Room
+            </li>
+            <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Smart TV
+            </li>
         `;
 
-        // Set contact details (using the original contact info)
+        // Set contact details
         const contactDetails = document.getElementById('contact-details');
         contactDetails.innerHTML = `
-            <p>Email: joevinansoc870@gmail.com</p>
-            <p>Phone: 09053258512</p>
+            <p class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                joevinansoc870@gmail.com
+            </p>
+            <p class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                </svg>
+                09053258512
+            </p>
         `;
 
         // Toggle book again button
@@ -1216,206 +1284,40 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 </script>
 
 <style>
+    /* Add these styles for smooth transitions */
+    .modal-transition {
+        transition: all 0.3s ease-out;
+    }
+
+    .modal-content-transition {
+        transition: transform 0.3s ease-out;
+    }
+
     #modal-main-image {
         transition: opacity 0.2s ease-in-out;
     }
 
-    #image-gallery {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-    }
-
-    #image-gallery::-webkit-scrollbar {
-        height: 4px;
-    }
-
-    #image-gallery::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    #image-gallery::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.2);
-        border-radius: 2px;
-    }
-
+    /* Image gallery hover effects */
     #image-gallery img {
-        aspect-ratio: 1/1;
+        transition: transform 0.2s ease-in-out;
     }
 
-    .flatpickr-calendar {
-        z-index: 100 !important;
+    #image-gallery img:hover {
+        transform: scale(1.05);
     }
 
-    .flatpickr-calendar.static {
-        position: absolute;
-        top: 100% !important;
+    /* Status badge styles */
+    .status-badge {
+        transition: background-color 0.2s ease-in-out;
     }
 
-    /* Modal transition styles */
-    #reschedule-modal {
-        transition: opacity 0.3s ease-out;
+    /* Button hover effects */
+    button {
+        transition: all 0.2s ease-in-out;
     }
 
-    #reschedule-modal .relative {
-        transition: transform 0.3s ease-out;
-    }
-
-    /* Date picker styles */
-    .flatpickr-calendar {
-        background: #fff !important;
-        border-radius: 8px !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-        width: 308px !important;
-        font-family: inherit !important;
-        margin-top: 4px !important;
-    }
-
-    .flatpickr-months {
-        padding: 0.5rem 0 !important;
-    }
-
-    .flatpickr-month {
-        height: 36px !important;
-    }
-
-    .flatpickr-current-month {
-        padding-top: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    .flatpickr-monthDropdown-months {
-        font-weight: 600 !important;
-    }
-
-    .flatpickr-weekdays {
-        background: transparent !important;
-        padding-bottom: 0.5rem !important;
-    }
-
-    .flatpickr-weekday {
-        font-size: 0.875rem !important;
-        color: #6B7280 !important;
-        font-weight: 500 !important;
-    }
-
-    .flatpickr-day {
-        border-radius: 6px !important;
-        margin: 2px !important;
-        height: 36px !important;
-        line-height: 36px !important;
-        color: #374151 !important;
-        font-weight: 500 !important;
-    }
-
-    .flatpickr-day.selected {
-        background: #000 !important;
-        border-color: #000 !important;
-        color: #fff !important;
-    }
-
-    .flatpickr-day.disabled {
-        background-color: #FEE2E2 !important;
-        border-color: transparent !important;
-        color: #EF4444 !important;
-        text-decoration: line-through !important;
-        cursor: not-allowed !important;
-    }
-
-    .flatpickr-day:hover:not(.disabled):not(.selected) {
-        background: #F3F4F6 !important;
-    }
-
-    .flatpickr-months .flatpickr-prev-month,
-    .flatpickr-months .flatpickr-next-month {
-        top: 8px !important;
-        padding: 0 0.8rem !important;
-    }
-
-    .flatpickr-months .flatpickr-prev-month svg,
-    .flatpickr-months .flatpickr-next-month svg {
-        fill: #374151 !important;
-        width: 7px !important;
-        height: 11px !important;
-    }
-
-    /* Input styles */
-    input[type="date"],
-    input[type="number"] {
-        appearance: none;
-        background: transparent;
-    }
-
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        appearance: none;
-        margin: 0;
-    }
-
-    /* Additional date picker styles */
-    .flatpickr-input[readonly] {
-        cursor: pointer;
-        background-color: transparent;
-    }
-
-    .flatpickr-calendar.open {
-        display: inline-block;
-        z-index: 100;
-    }
-
-    .flatpickr-calendar.arrowTop:before,
-    .flatpickr-calendar.arrowTop:after {
-        display: none;
-    }
-
-    .flatpickr-calendar .flatpickr-months {
-        padding-top: 0.5rem;
-    }
-
-    .flatpickr-current-month .flatpickr-monthDropdown-months {
-        appearance: none;
-        -moz-appearance: none;
-        -webkit-appearance: none;
-        background-color: transparent;
-        border: none;
-        border-radius: 0;
-        padding: 0 1rem 0 0.5rem;
-        cursor: pointer;
-    }
-
-    /* Date picker container styles */
-    .flatpickr-calendar-container {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 100;
-        width: 100%;
-    }
-
-    .flatpickr-calendar {
-        margin: 0 !important;
-        width: 100% !important;
-        max-width: none !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-    }
-
-    .flatpickr-calendar.open {
-        z-index: 1000;
-    }
-
-    .flatpickr-day.selected {
-        background: #000 !important;
-        border-color: #000 !important;
-    }
-
-    .flatpickr-day.disabled {
-        background-color: #FEE2E2 !important;
-        color: #EF4444 !important;
-        text-decoration: line-through !important;
-    }
-
-    .flatpickr-day:hover:not(.disabled):not(.selected) {
-        background: #F3F4F6 !important;
+    /* Add smooth scrolling */
+    html {
+        scroll-behavior: smooth;
     }
 </style>

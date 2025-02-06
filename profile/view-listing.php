@@ -533,17 +533,25 @@ window.venueState = {
                             <div class="space-y-4">
                                 <?php
                                 $discounts = $venueObj->getAllDiscounts();
-                                foreach ($discounts as $discount) {
-                                    echo '<div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">';
-                                    echo '<div>';
-                                    echo '<p class="font-medium">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                                    echo '<p class="text-sm text-gray-600">' . htmlspecialchars($discount['discount_type']) . ' - ' . 
-                                         ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . $discount['discount_value']) . '</p>';
-                                    echo '</div>';
-                                    if ($discount['expiration_date']) {
-                                        echo '<p class="text-sm text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
+                                if (!empty($discounts)) {
+                                    foreach ($discounts as $discount) {
+                                        echo '<div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-2">';
+                                        echo '<div>';
+                                        echo '<p class="font-medium text-sm">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                                        echo '<p class="text-xs text-gray-600">' . 
+                                             ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) . 
+                                             ' off</p>';
+                                        if (isset($discount['min_days']) && $discount['min_days'] > 0) {
+                                            echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
+                                        }
+                                        echo '</div>';
+                                        if ($discount['expiration_date']) {
+                                            echo '<p class="text-xs text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
+                                        }
+                                        echo '</div>';
                                     }
-                                    echo '</div>';
+                                } else {
+                                    echo '<p class="text-sm text-gray-500">No active discounts</p>';
                                 }
                                 ?>
                     </div>
@@ -693,6 +701,9 @@ window.venueState = {
                                             echo '<p class="text-xs text-gray-600">' . 
                                                  ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) . 
                                                  ' off</p>';
+                                            if (isset($discount['min_days']) && $discount['min_days'] > 0) {
+                                                echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
+                                            }
                                             echo '</div>';
                                             if ($discount['expiration_date']) {
                                                 echo '<p class="text-xs text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
@@ -710,19 +721,44 @@ window.venueState = {
                 <?php
                                         if (!empty($discounts)) {
                                             foreach ($discounts as $index => $discount) {
-                                                echo '<div class="flex gap-2 items-start discount-entry">';
-                                                echo '<div class="flex-grow space-y-2">';
-                                                echo '<input type="text" name="discount_code[]" placeholder="Discount code" class="w-full text-sm" value="' . htmlspecialchars($discount['discount_code']) . '">';
-                                                echo '<div class="flex gap-2">';
-                                                echo '<select name="discount_type[]" class="text-sm">';
+                                                echo '<div class="flex gap-4 items-start discount-entry bg-gray-50 p-4 rounded-lg">';
+                                                echo '<div class="flex-grow space-y-4">';
+                                                
+                                                // Discount Code
+                                                echo '<div class="flex flex-col">';
+                                                echo '<label class="text-xs text-gray-600 mb-1">Discount Code</label>';
+                                                echo '<input type="text" name="discount_code[]" placeholder="Enter discount code" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_code']) . '">';
+                                                echo '</div>';
+                                                
+                                                // Type and Value
+                                                echo '<div class="grid grid-cols-2 gap-4">';
+                                                echo '<div class="flex flex-col">';
+                                                echo '<label class="text-xs text-gray-600 mb-1">Type</label>';
+                                                echo '<select name="discount_type[]" class="text-sm rounded-md border-gray-300">';
                                                 echo '<option value="percentage"' . ($discount['discount_type'] === 'percentage' ? ' selected' : '') . '>Percentage</option>';
                                                 echo '<option value="fixed"' . ($discount['discount_type'] === 'fixed' ? ' selected' : '') . '>Fixed Amount</option>';
                                                 echo '</select>';
-                                                echo '<input type="number" name="discount_value[]" placeholder="Value" class="w-24 text-sm" value="' . htmlspecialchars($discount['discount_value']) . '">';
                                                 echo '</div>';
-                                                echo '<input type="date" name="discount_expiry[]" class="w-full text-sm" value="' . htmlspecialchars($discount['expiration_date']) . '">';
+                                                echo '<div class="flex flex-col">';
+                                                echo '<label class="text-xs text-gray-600 mb-1">Value</label>';
+                                                echo '<input type="number" name="discount_value[]" placeholder="Enter value" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_value']) . '">';
                                                 echo '</div>';
-                                                echo '<button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-1">';
+                                                echo '</div>';
+                                                
+                                                // Minimum Days and Expiry Date
+                                                echo '<div class="grid grid-cols-2 gap-4">';
+                                                echo '<div class="flex flex-col">';
+                                                echo '<label class="text-xs text-gray-600 mb-1">Minimum Days</label>';
+                                                echo '<input type="number" name="min_days[]" placeholder="Minimum days required" class="w-full text-sm rounded-md border-gray-300" min="1" value="' . htmlspecialchars($discount['min_days']) . '">';
+                                                echo '</div>';
+                                                echo '<div class="flex flex-col">';
+                                                echo '<label class="text-xs text-gray-600 mb-1">Expiry Date</label>';
+                                                echo '<input type="date" name="discount_expiry[]" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['expiration_date']) . '">';
+                                                echo '</div>';
+                                                echo '</div>';
+                                                
+                                                echo '</div>';
+                                                echo '<button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all duration-200">';
                                                 echo '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
                                                 echo '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
                                                 echo '</svg>';
@@ -732,7 +768,7 @@ window.venueState = {
                                         }
                                         ?>
                         </div>
-                                    <button type="button" onclick="addNewDiscount()" class="mt-3 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                    <button type="button" onclick="addNewDiscount()" class="mt-4 text-sm bg-white border border-blue-500 text-blue-500 px-4 py-2 rounded-lg hover:bg-blue-50 transition-all duration-200 flex items-center justify-center gap-2 w-full">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                         </svg>
@@ -1075,19 +1111,37 @@ function removeDiscount(button) {
 
 function addNewDiscount() {
     const newDiscountHtml = `
-        <div class="flex gap-2 items-start discount-entry">
-            <div class="flex-grow space-y-2">
-                <input type="text" name="discount_code[]" placeholder="Discount code" class="w-full text-sm">
-                <div class="flex gap-2">
-                    <select name="discount_type[]" class="text-sm">
-                        <option value="percentage">Percentage</option>
-                        <option value="fixed">Fixed Amount</option>
-                    </select>
-                    <input type="number" name="discount_value[]" placeholder="Value" class="w-24 text-sm">
+        <div class="flex gap-4 items-start discount-entry bg-gray-50 p-4 rounded-lg">
+            <div class="flex-grow space-y-4">
+                <div class="flex flex-col">
+                    <label class="text-xs text-gray-600 mb-1">Discount Code</label>
+                    <input type="text" name="discount_code[]" placeholder="Enter discount code" class="w-full text-sm rounded-md border-gray-300">
                 </div>
-                <input type="date" name="discount_expiry[]" class="w-full text-sm">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-600 mb-1">Type</label>
+                        <select name="discount_type[]" class="text-sm rounded-md border-gray-300">
+                            <option value="percentage">Percentage</option>
+                            <option value="fixed">Fixed Amount</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-600 mb-1">Value</label>
+                        <input type="number" name="discount_value[]" placeholder="Enter value" class="w-full text-sm rounded-md border-gray-300">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-600 mb-1">Minimum Days</label>
+                        <input type="number" name="min_days[]" placeholder="Minimum days required" class="w-full text-sm rounded-md border-gray-300" min="1">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-600 mb-1">Expiry Date</label>
+                        <input type="date" name="discount_expiry[]" class="w-full text-sm rounded-md border-gray-300">
+                    </div>
+                </div>
             </div>
-            <button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-1">
+            <button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all duration-200">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -1116,6 +1170,7 @@ function addNewDiscount() {
             code: $(this).find('input[name="discount_code[]"]').val(),
             type: $(this).find('select[name="discount_type[]"]').val(),
             value: $(this).find('input[name="discount_value[]"]').val(),
+            min_days: $(this).find('input[name="min_days[]"]').val(),
             expiry: $(this).find('input[name="discount_expiry[]"]').val()
         };
         discounts.push(discount);
