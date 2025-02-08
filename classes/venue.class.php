@@ -1020,7 +1020,7 @@ LEFT JOIN
         }
     }
 
-    private function getTimeBasedStats($venueId)
+    public function getTimeBasedStats($venueId)
     {
         try {
             $conn = $this->db->connect();
@@ -1222,25 +1222,117 @@ LEFT JOIN
         }
     }
 
-    function getBookedDatesByVenue($month, $year, $venueID)
+    public function getVenuesByHost($hostId)
     {
         try {
-            $sql = "SELECT b.booking_start_date, b.booking_end_date FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE (MONTH(booking_start_date) = :month OR MONTH(b.booking_end_date) = :month) AND (YEAR(b.booking_start_date) = :year OR YEAR(b.booking_end_date) = :year) AND v.id = venueID;";
-            $conn = $this->db->connect();
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':month', $month);
-            $stmt->bindParam(':year', $year);
-            $stmt->bindParam(':venueID', $venueID);
-
+            $sql = "SELECT v.*, GROUP_CONCAT(vi.image_url) as image_urls 
+                    FROM venues v 
+                    LEFT JOIN venue_images vi ON v.id = vi.venue_id 
+                    WHERE v.host_id = :host_id
+                    GROUP BY v.id";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':host_id', $hostId, PDO::PARAM_INT);
             $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getVenueStatistics($venueId)
+    {
+        try {
+            $sql = "SELECT 
+                    COUNT(*) as total_bookings,
+                    COALESCE(AVG(r.rating), 0) as average_rating,
+                    COALESCE(SUM(b.booking_grand_total), 0) as total_revenue,
+                    (COUNT(CASE WHEN b.booking_status_id IN (2,4) THEN 1 END) * 100.0 / NULLIF(COUNT(*), 0)) as occupancy_rate
+                    FROM bookings b
+                    LEFT JOIN reviews r ON b.booking_venue_id = r.venue_id
+                    WHERE b.booking_venue_id = :venue_id";
+
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return [
+                'total_bookings' => 0,
+                'average_rating' => 0,
+                'total_revenue' => 0,
+                'occupancy_rate' => 0
+            ];
+        }
+    }
+
+    public function getBookingCountByStatus($venueId, $statusId)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM bookings 
+                    WHERE booking_venue_id = :venue_id AND booking_status_id = :status_id";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId, PDO::PARAM_INT);
+            $stmt->bindParam(':status_id', $statusId, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['count'];
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    public function getBookingsByGuest($guestId)
+    {
+        try {
+            $query = "
+                SELECT DISTINCT
+                    b.id as booking_id,
+                    b.booking_start_date,
+                    b.booking_end_date,
+                    b.booking_status_id,
+                    b.booking_participants,
+                    b.booking_original_price,
+                    b.booking_grand_total,
+                    b.booking_guest_id,
+                    v.id as venue_id,
+                    v.name,
+                    v.host_id,
+                    h.firstname as host_firstname,
+                    h.lastname as host_lastname,
+                    h.profile_pic as host_profile_pic,
+                    h.id as host_id,
+                    g.firstname as guest_firstname,
+                    g.lastname as guest_lastname,
+                    g.profile_pic as guest_profile_pic,
+                    g.id as guest_id
+                FROM bookings b
+                JOIN venues v ON b.booking_venue_id = v.id
+                JOIN users h ON v.host_id = h.id
+                JOIN users g ON b.booking_guest_id = g.id
+                WHERE b.booking_guest_id = :guest_id
+                AND b.booking_status_id IN (1, 2, 3, 4)
+                ORDER BY b.booking_created_at DESC
+            ";
+
+            $stmt = $this->db->connect()->prepare($query);
+            $stmt->bindParam(':guest_id', $guestId, PDO::PARAM_INT);
+            $stmt->execute();
+
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if (count($bookings) > 0) {
-                return $bookings;
-            } else {
-                return [];
+
+            // Ensure host_id and guest_id are correctly set
+            foreach ($bookings as &$booking) {
+                $booking['host_id'];  // This is the venue owner
+                $booking['guest_id'] = $booking['booking_guest_id'];  // This is the person who made the booking
             }
-        } catch (Exception $e) {
-            error_log($e->getMessage());
+
+            return $bookings;
+
+        } catch (PDOException $e) {
+            error_log("Error in getBookingsByGuest: " . $e->getMessage());
             return [];
         }
     }

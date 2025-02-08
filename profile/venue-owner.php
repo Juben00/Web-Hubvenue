@@ -22,6 +22,9 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 ?>
 
 <main class="max-w-7xl pt-20 mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Welcome Section -->
     <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900">Welcome back, <?php echo htmlspecialchars($fullname); ?></h1>
@@ -51,6 +54,10 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                     <button onclick="showCont('completed')"
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Completed (<?php echo $completedCount; ?>)
+                    </button>
+                    <button onclick="showCont('statistics')"
+                        class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                        Statistics
                     </button>
                 </nav>
             </div>
@@ -532,6 +539,103 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 </div>
             </div>
 
+            <!-- Add Statistics Content -->
+            <div id="statistics-content" class="mt-8 hidden tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <?php
+                    // Fetch venues for this host
+                    $hostVenues = $venueObj->getVenuesByHost($hostId);
+                    
+                    foreach ($hostVenues as $venue) {
+                        // Get statistics for each venue
+                        $venueStats = $venueObj->getVenueStatistics($venue['id']);
+                        $totalBookings = $venueStats['total_bookings'] ?? 0;
+                        $averageRating = $venueStats['average_rating'] ?? 0;
+                        $totalRevenue = $venueStats['total_revenue'] ?? 0;
+                        $occupancyRate = $venueStats['occupancy_rate'] ?? 0;
+                        
+                        // Get pending, confirmed, completed, cancelled counts for this venue
+                        $venuePending = $venueObj->getBookingCountByStatus($venue['id'], 1);
+                        $venueConfirmed = $venueObj->getBookingCountByStatus($venue['id'], 2);
+                        $venueCompleted = $venueObj->getBookingCountByStatus($venue['id'], 4);
+                        $venueCancelled = $venueObj->getBookingCountByStatus($venue['id'], 3);
+                    ?>
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <div class="relative h-48">
+                                <?php 
+                                $imageUrls = !empty($venue['image_urls']) ? explode(',', $venue['image_urls']) : [];
+                                if (!empty($imageUrls)): 
+                                ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[$venue['thumbnail']]) ?>" 
+                                         alt="<?= htmlspecialchars($venue['name']) ?>" 
+                                         class="w-full h-full object-cover">
+                                <?php endif; ?>
+                                <div class="absolute top-4 right-4 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
+                                    Intimate Gatherings
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold mb-4"><?= htmlspecialchars($venue['name']) ?></h3>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Total Bookings</p>
+                                        <p class="text-xl font-semibold"><?= $totalBookings ?></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">Average Rating</p>
+                                        <p class="text-xl font-semibold flex items-center">
+                                            <?= number_format($averageRating, 1) ?> 
+                                            <span class="text-yellow-400 ml-1">★</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Total Revenue</p>
+                                        <p class="text-xl font-semibold">₱<?= number_format($totalRevenue, 2) ?></p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-600">Occupancy Rate</p>
+                                        <p class="text-xl font-semibold"><?= number_format($occupancyRate, 1) ?>%</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Pending</span>
+                                        <span class="text-sm font-medium"><?= $venuePending ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Confirmed</span>
+                                        <span class="text-sm font-medium"><?= $venueConfirmed ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Completed</span>
+                                        <span class="text-sm font-medium"><?= $venueCompleted ?></span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-gray-600">Cancelled</span>
+                                        <span class="text-sm font-medium"><?= $venueCancelled ?></span>
+                                    </div>
+                                </div>
+                                
+                                <button onclick="showDetailedStats(<?= htmlspecialchars(json_encode([
+                                    'name' => $venue['name'],
+                                    'id' => $venue['id'],
+                                    'time_based_stats' => $venue['time_based_stats'] ?? null
+                                ])); ?>)"
+                                    class="mt-6 w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors">
+                                    View Detailed Statistics
+                                </button>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+
         </div>
     </div>
 </main>
@@ -759,6 +863,126 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         <a id="qrLink" href="#" target="_blank" class="text-blue-500 hover:underline">Open Link</a>
     </div>
 </div>
+
+<div id="stats-modal" class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-8 border w-full max-w-7xl shadow-lg rounded-xl bg-white">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 id="modal-venue-name" class="text-2xl font-bold"></h2>
+                <p class="text-gray-600">Detailed Statistics Overview</p>
+            </div>
+            <button onclick="closeStatsModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Performance Overview -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold mb-4">Performance Overview</h3>
+            <div class="flex space-x-4 mb-4">
+                <button onclick="switchPeriod('today')" class="period-btn selected">Today</button>
+                <button onclick="switchPeriod('week')" class="period-btn">This Week</button>
+                <button onclick="switchPeriod('month')" class="period-btn">This Month</button>
+                <button onclick="switchPeriod('year')" class="period-btn">This Year</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Revenue Card -->
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-gray-600">Revenue</h4>
+                        <span class="text-xs text-blue-600">Last 24h</span>
+                    </div>
+                    <p id="stats-revenue" class="text-2xl font-bold">₱0</p>
+                    <p class="text-sm text-gray-500">Total earnings for the period</p>
+                </div>
+
+                <!-- Bookings Card -->
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-gray-600">Bookings</h4>
+                    </div>
+                    <p id="stats-bookings" class="text-2xl font-bold">0</p>
+                    <p class="text-sm text-gray-500">Total bookings for the period</p>
+                </div>
+
+                <!-- Average Guests Card -->
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-gray-600">Average Guests</h4>
+                    </div>
+                    <p id="stats-avg-guests" class="text-2xl font-bold">0</p>
+                    <p class="text-sm text-gray-500">Average guests per booking</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Statistics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Total Revenue</h4>
+                <p id="stats-total-revenue" class="text-xl font-bold">₱0.00</p>
+                <p class="text-xs text-gray-500">Lifetime earnings</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Average Rating</h4>
+                <p id="stats-avg-rating" class="text-xl font-bold flex items-center">0.0 <span class="text-yellow-400 ml-1">★</span></p>
+                <p class="text-xs text-gray-500">Based on all reviews</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Total Bookings</h4>
+                <p id="stats-total-bookings" class="text-xl font-bold">0</p>
+                <p class="text-xs text-gray-500">All-time bookings</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Occupancy Rate</h4>
+                <p id="stats-occupancy" class="text-xl font-bold">0%</p>
+                <p class="text-xs text-gray-500">Average occupancy</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-4 rounded-lg border" style="height: 400px;">
+                <h4 class="text-gray-600 font-semibold mb-4">Revenue Over Time</h4>
+                <div style="height: 300px;">
+                    <canvas id="revenue-chart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border" style="height: 400px;">
+                <h4 class="text-gray-600 font-semibold mb-4">Bookings Distribution</h4>
+                <div style="height: 300px;">
+                    <canvas id="bookings-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.period-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6B7280;
+    border-bottom: 2px solid transparent;
+    background: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.period-btn:hover {
+    color: #000;
+}
+
+.period-btn.selected {
+    color: #000;
+    border-bottom-color: #000;
+}
+</style>
 
 <script>
     function closeQr() {
@@ -1014,5 +1238,197 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
     // Set default tab to 'pending'
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.tab-links').click();
+    });
+
+    let currentStats = null;
+    let revenueChart = null;
+    let bookingsChart = null;
+
+    function showDetailedStats(venueData) {
+        currentStats = venueData;
+        const modal = document.getElementById('stats-modal');
+        document.getElementById('modal-venue-name').textContent = venueData.name;
+        
+        // Show modal
+        modal.classList.remove('hidden');
+        
+        // Initialize charts if they haven't been created yet
+        if (!revenueChart) {
+            initializeCharts();
+        }
+        
+        // Get all stats at once
+        fetchVenueStats(venueData.id).then(stats => {
+            currentStats.stats = stats;
+            // Set initial period to 'today'
+            switchPeriod('today');
+            
+            // Update overall statistics
+            updateOverallStats(stats);
+            
+            // Update charts with new data
+            updateCharts(stats);
+        });
+    }
+
+    function initializeCharts() {
+        // Initialize Revenue Chart
+        const revenueCtx = document.getElementById('revenue-chart').getContext('2d');
+        revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₱' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        });
+
+        // Initialize Bookings Chart
+        const bookingsCtx = document.getElementById('bookings-chart').getContext('2d');
+        bookingsChart = new Chart(bookingsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Confirmed', 'Cancelled', 'Completed'],
+                datasets: [{
+                    data: [0, 0, 0, 0],
+                    backgroundColor: [
+                        'rgb(251, 191, 36)',
+                        'rgb(34, 197, 94)',
+                        'rgb(239, 68, 68)',
+                        'rgb(59, 130, 246)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+
+    function updateCharts(stats) {
+        if (!stats || !stats.revenue_over_time || !stats.booking_distribution) return;
+
+        // Update Revenue Chart
+        revenueChart.data.labels = stats.revenue_over_time.map(item => item.date);
+        revenueChart.data.datasets[0].data = stats.revenue_over_time.map(item => item.revenue);
+        revenueChart.update();
+
+        // Update Bookings Chart
+        bookingsChart.data.datasets[0].data = [
+            stats.booking_distribution.pending,
+            stats.booking_distribution.confirmed,
+            stats.booking_distribution.cancelled,
+            stats.booking_distribution.completed
+        ];
+        bookingsChart.update();
+    }
+
+    function fetchVenueStats(venueId) {
+        return fetch(`./api/getVenueStats.php?venue_id=${venueId}`)
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error fetching stats:', error);
+                return null;
+            });
+    }
+
+    function updateOverallStats(stats) {
+        if (!stats) return;
+        
+        document.getElementById('stats-total-revenue').textContent = `₱${numberWithCommas(stats.total_revenue.toFixed(2))}`;
+        document.getElementById('stats-avg-rating').textContent = `${stats.average_rating.toFixed(1)} `;
+        document.getElementById('stats-total-bookings').textContent = stats.total_bookings;
+        document.getElementById('stats-occupancy').textContent = `${stats.occupancy_rate.toFixed(1)}%`;
+    }
+
+    function switchPeriod(period) {
+        if (!currentStats || !currentStats.stats) return;
+        
+        // Update button styles
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            if (btn.textContent.toLowerCase().includes(period.toLowerCase())) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.remove('selected');
+            }
+        });
+        
+        const stats = currentStats.stats[period];
+        if (!stats) return;
+        
+        // Update period statistics
+        document.getElementById('stats-revenue').textContent = `₱${numberWithCommas(stats.revenue.toFixed(2))}`;
+        document.getElementById('stats-bookings').textContent = stats.bookings;
+        document.getElementById('stats-avg-guests').textContent = stats.avg_guests.toFixed(1);
+        
+        // Update the "Last 24h" text based on period
+        const periodText = document.querySelector('.text-xs.text-blue-600');
+        switch(period) {
+            case 'today':
+                periodText.textContent = 'Last 24h';
+                break;
+            case 'week':
+                periodText.textContent = 'This Week';
+                break;
+            case 'month':
+                periodText.textContent = 'This Month';
+                break;
+            case 'year':
+                periodText.textContent = 'This Year';
+                break;
+        }
+    }
+
+    function closeStatsModal() {
+        const modal = document.getElementById('stats-modal');
+        modal.classList.add('hidden');
+        
+        // Reset charts when closing modal
+        if (revenueChart) {
+            revenueChart.destroy();
+            revenueChart = null;
+        }
+        if (bookingsChart) {
+            bookingsChart.destroy();
+            bookingsChart = null;
+        }
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('stats-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeStatsModal();
+        }
     });
 </script>

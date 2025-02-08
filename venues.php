@@ -14,7 +14,6 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
 
 // Retrieve venue information based on 'id' parameter
 $venue = $venueObj->getSingleVenue($_GET['id']);
-$isVenueAvailable = $venue['availability_id'] == 1 ? true : false;
 
 // If no venue is found, redirect to index.php
 if (empty($venue['name'])) {
@@ -354,7 +353,6 @@ $reviews = $venueObj->getReview($_GET['id']);
     ?>
 
     <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
-        <?php require_once './spinner.php'; ?>
         <div class="main-content">
             <div id="venueDetails">
                 <div class="mb-6">
@@ -695,108 +693,124 @@ $reviews = $venueObj->getReview($_GET['id']);
                                 </a>
                             </div>
                         </div>
-                        <div
-                            class="<?php echo $isVenueAvailable ? 'sticky border' : 'relative border-2 border-red-500'; ?> top-32 rounded-xl p-6 shadow-lg bg-slate-50 <?php echo $isVenueAvailable ? '' : 'opacity-50 pointer-events-none'; ?>">
-                            <?php if (!$isVenueAvailable): ?>
-                                <div class="absolute inset-0 bg-gray-100 bg-opacity-75 flex flex-col justify-center items-center z-10 rounded-xl">
-                                    <div class="flex items-center gap-2 text-red-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                                            stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                        <span class="text-xl font-bold">Reservation Unavailable</span>
-                                    </div>
-                                    <p class="text-gray-600 mt-2 text-sm">This venue cannot be booked at the moment.</p>
-                                </div>
-                            <?php endif; ?>
+
+
+
+
+                        <div class="sticky top-32 border rounded-xl p-6 shadow-lg bg-slate-50">
 
                             <form id="reservationForm" method="POST">
                                 <!-- Price Header -->
                                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
                                     <div class="flex items-baseline">
-                                        <span class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
+                                        <span
+                                            class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
                                         <span class="text-gray-600 ml-2">/ night</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-sm">
                                         <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
-                                        <span class="text-gray-500 text-xs"> <?php echo $venue['total_reviews'] ?> review/s</span>
+                                        <span
+                                            class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
+                                        <span class="text-gray-500 text-xs"> <?php echo $venue['total_reviews'] ?>
+                                            review/s</span>
                                     </div>
                                 </div>
-
-                                <!-- Form Structure -->
+                                <!-- Date and Guest Selection -->
                                 <div class="border rounded-xl mb-6 shadow-sm bg-gray-50 relative">
                                     <div class="flex border-b">
-                                        <input type="hidden" name="venueId" value="<?php echo htmlspecialchars($venue['id']); ?>">
+                                        <input type="hidden" name="venueId"
+                                            value="<?php echo htmlspecialchars($venue['id']); ?>">
                                         <div class="w-1/2 p-3 border-r">
-                                            <label class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
+                                            <label
+                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
                                             <input type="date" name="checkin" id="checkin" placeholder="Set Date"
-                                                class="w-full bg-transparent text-gray-800 focus:outline-none"
-                                                <?php echo !$isVenueAvailable ? 'disabled' : ''; ?>>
+                                                class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
                                         <div class="w-1/2 p-3">
-                                            <label class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
+                                            <label
+                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
                                             <input type="date" name="checkout" id="checkout" placeholder="Set Date"
-                                                class="w-full bg-transparent text-gray-800 focus:outline-none"
-                                                <?php echo !$isVenueAvailable ? 'disabled' : ''; ?>>
+                                                class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
                                     </div>
                                     <div class="p-3">
                                         <label class="block text-xs font-semibold text-gray-700 mb-1">
-                                            GUESTS (Maximum <span class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
+                                            GUESTS (Maximum <span
+                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
                                         </label>
-                                        <input type="number" name="numberOfGuest" id="numberOfGuest" min="1"
+                                        <input type="number" name="numberOfGuest" id="numberOFGuest" min="1"
                                             max="<?php echo htmlspecialchars($venue['capacity']); ?>"
-                                            class="w-full bg-transparent text-gray-800 focus:outline-none"
-                                            placeholder="Enter number of guests" <?php echo !$isVenueAvailable ? 'disabled' : ''; ?>>
+                                            class="w-full bg-transparent focus:outline-none text-gray-800"
+                                            placeholder="Enter number of guests">
                                     </div>
-
                                     <div class="p-3">
-                                        <label class="block text-xs font-semibold text-gray-700 mb-1">SPECIAL REQUEST</label>
-                                        <textarea name="specialRequest" id="specialRequest" placeholder="Enter your request if any"
-                                            class="w-full bg-transparent focus:outline-none text-gray-800" rows="3"
-                                            <?php echo !$isVenueAvailable ? 'disabled' : ''; ?>></textarea>
+                                        <label class="block text-xs font-semibold text-gray-700 mb-1">
+                                            SPECIAL REQUEST
+                                        </label>
+                                        <textarea name="specialRequest" id="specialRequest"
+                                            placeholder="Enter your request if any"
+                                            class="w-full bg-transparent focus:outline-none text-gray-800"
+                                            rows="3"></textarea>
                                     </div>
                                 </div>
-
                                 <!-- Price Breakdown -->
                                 <div class="space-y-4 mb-6">
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">
-                                            ₱<?php echo htmlspecialchars($venue['price']); ?> × <span total-nights>0</span> nights
+                                            ₱<?php echo htmlspecialchars($venue['price']); ?> × <span
+                                                total-nights>0</span>
+                                            nights
                                         </span>
                                         <span class="font-medium flex items-center">
-                                            ₱ <p class="text-right bg-transparent w-24" name="totalPriceForNights" readonly>0</p>
+                                            ₱ <p class="text-right bg-transparent w-24 " name="totalPriceForNights"
+                                                value="0" readonly>0</p>
                                         </span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">Entrance fee × <span total-entrance-guests>0</span> guest</span>
+                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">
+                                            Entrance fee × <span total-entrance-guests>0</span> guest
+                                        </span>
                                         <span class="font-medium flex items-center">
-                                            ₱ <p class="text-right bg-transparent w-24" name="totalEntranceFee"
-                                                readonly><?php echo htmlspecialchars($venue['entrance']) ?? 0; ?></p>
+                                            ₱<p class="text-right bg-transparent w-24 " name="totalEntranceFee"
+                                                value="<?php echo htmlspecialchars($venue['entrance']) ?? 0; ?>"
+                                                readonly>0
+                                            </p>
                                         </span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">Cleaning fee</span>
-                                        <span class="font-medium flex items-center">
-                                            ₱ <p class="text-right bg-transparent w-24" name="cleaningFee"
-                                                readonly><?php echo htmlspecialchars($venue['cleaning']) ?? 0; ?></p>
+                                        <span class="font-medium flex items-center">₱
+                                            <p class="text-right bg-transparent w-24" name="cleaningFee" readonly>
+                                                <?php echo htmlspecialchars($venue['cleaning']) ?? 0; ?>
+                                            </p>
                                         </span>
                                     </div>
                                     <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service fee</span>
-                                        <span class="font-medium flex items-center">
-                                            ₱ <p class="text-right bg-transparent w-24" name="serviceFee" readonly>0</p>
+                                        <span class="text-gray-600 hover:text-gray-900 cursor-help">HubVenue service
+                                            fee</span>
+                                        <span class="font-medium flex items-center">₱
+                                            <p class="text-right bg-transparent w-24" name="serviceFee" value="0"
+                                                readonly>
+                                                0
+                                            </p>
                                         </span>
                                     </div>
+
                                     <div class="flex justify-between items-center">
-                                        <span class="text-gray-600 hover:text-gray-900 cursor-help text-xs">Discounts (PWD/Senior Citizen)</span>
+                                        <span
+                                            class="text-gray-600 hover:text-gray-900 cursor-help text-xs">Discounts(PWD/Senior
+                                            Citizen)
+                                        </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
                                             <?php
                                             if ($discountStatus) {
-                                                echo ($discountStatus['status'] === 'Active') ? htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%" : "0%";
+                                                if ($discountStatus['status'] == 'Active') {
+                                                    echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                                } else {
+                                                    echo "0%";
+                                                }
                                             } else {
-                                                echo "0%";
+                                                echo "0%"; // No discount found
                                             }
                                             ?>
                                         </span>
@@ -808,18 +822,19 @@ $reviews = $venueObj->getReview($_GET['id']);
                                     <div class="flex justify-between items-center">
                                         <span class="text-lg font-bold">Total</span>
                                         <span class="font-bold flex text-lg">
-                                            ₱ <p class="text-right bg-transparent w-24 font-bold" name="totalPrice" readonly>0</p>
+                                            ₱
+                                            <p class="text-right bg-transparent w-24 font-bold" name="totalPrice"
+                                                value="0" readonly></p>
                                         </span>
                                     </div>
                                 </div>
 
                                 <p class="text-center text-gray-600 my-4">You won't be charged yet</p>
-                                <button type="submit" class="w-full bg-red-500 text-white rounded-lg py-3 font-semibold mb-4"
-                                    <?php echo !$isVenueAvailable ? 'disabled' : ''; ?>>Reserve</button>
+                                <button type="submit"
+                                    class="w-full bg-green-500 text-white rounded-lg py-3 font-semibold mb-4 hover:bg-green-600 transition duration-300">Reserve</button>
                             </form>
                         </div>
-
-                    </div>
+                    </div>  
                 </div>
             </div>
         </div>
@@ -928,7 +943,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         validateDateRange();
                         calculateTotal();
                         if (input.name === 'checkin') {
-                            checkoutInput._flatpickr.set('minDate', dateStr);
+                            checkoutInput._flatpickr.set('minDate', dateStr); // Set minDate for checkout based on checkin
                         }
                     }
                 });
@@ -953,16 +968,19 @@ $reviews = $venueObj->getReview($_GET['id']);
             disableDates(checkinInput);
             disableDates(checkoutInput);
 
+            // Get today's date in YYYY-MM-DD format
             const today = new Date();
             const todayFormatted = today.toISOString().split('T')[0];
 
+            // Set 'min' attributes to today for both checkin and checkout inputs
             checkinInput.setAttribute('min', todayFormatted);
             checkoutInput.setAttribute('min', todayFormatted);
 
+            // Validate and correct selected date inputs
             function validateDate(input) {
                 const selectedDate = new Date(input.value);
                 if (selectedDate < today) {
-                    input.value = todayFormatted;
+                    input.value = todayFormatted; // Reset to today's date if past date is selected
                 }
             }
 
@@ -1018,6 +1036,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                 }
             }
 
+            // Add event listeners
             checkinInput.addEventListener('change', calculateTotal);
             checkoutInput.addEventListener('change', calculateTotal);
             guestsInput.addEventListener('input', calculateTotal);
@@ -1028,10 +1047,10 @@ $reviews = $venueObj->getReview($_GET['id']);
 
         function appendHiddenInput(form, name, value) {
             const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
+            input.type = 'hidden'; // Set input type to hidden
+            input.name = name; // Set the name attribute
+            input.value = value; // Set the value attribute
+            form.appendChild(input); // Append the input to the form
         }
     </script>
 
@@ -1346,24 +1365,24 @@ $reviews = $venueObj->getReview($_GET['id']);
 
                     // Get current venue's amenities for comparison
                     const currentVenueAmenities = new Set(<?php echo json_encode(json_decode($venue['amenities'])); ?>);
-
+                    const currentVenuePrice = <?php echo $venue['price']; ?>;
 
                     let comparisonHTML = '';
-
+                    
                     for (const venue of venues) {
-
+                        const [lat, lon] = venue.location.split(',');
                         const nearbyHighlights = await getNearbyHighlights(lat, lon);
                         const venueAmenities = new Set(JSON.parse(venue.amenities));
-
-
+                        
+                        // Calculate unique and shared amenities
                         const uniqueAmenities = [...venueAmenities].filter(x => !currentVenueAmenities.has(x));
                         const sharedAmenities = [...venueAmenities].filter(x => currentVenueAmenities.has(x));
-                        const priceDiffText = priceDiff === 0 ? 'Same price' :
-                            priceDiff > 0 ? `₱${priceDiff.toLocaleString()} more expensive` :
-                                `₱${Math.abs(priceDiff).toLocaleString()} cheaper`;
-                        const priceDiffText = priceDiff === 0 ? 'Same price' :
-                            priceDiff > 0 ? `₱${priceDiff.toLocaleString()} more expensive` :
-                                `₱${Math.abs(priceDiff).toLocaleString()} cheaper`;
+                        
+                        // Calculate price difference
+                        const priceDiff = venue.price - currentVenuePrice;
+                        const priceDiffText = priceDiff === 0 ? 'Same price' : 
+                                            priceDiff > 0 ? `₱${priceDiff.toLocaleString()} more expensive` : 
+                                            `₱${Math.abs(priceDiff).toLocaleString()} cheaper`;
 
                         comparisonHTML += `
                             <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
@@ -1397,10 +1416,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                                     <div class="mb-6">
                                         <h4 class="font-semibold text-gray-900 mb-3">
                                             <i class="fas fa-location-arrow mr-1"></i>
-                                            ${nearbyHighlights.length > 0
-                                ? nearbyHighlights.map(highlight => formatHighlight(highlight)).join('')
-                                : '<p class="text-gray-500 text-sm">No special highlights found nearby</p>'
-                            }
+                                            Special Nearby Highlights
+                                        </h4>
+                                        <div class="space-y-2">
+                                            ${nearbyHighlights.length > 0 
                                                 ? nearbyHighlights.map(highlight => formatHighlight(highlight)).join('')
                                                 : '<p class="text-gray-500 text-sm">No special highlights found nearby</p>'
                                             }
@@ -1476,7 +1495,7 @@ $reviews = $venueObj->getReview($_GET['id']);
 
                     const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
                     const data = await response.json();
-
+                    
                     const highlights = [];
                     const seenTypes = new Set(); // To track unique highlight types
 
@@ -1548,10 +1567,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                                     walkingTime,
                                     drivingTime
                                 });
-
                             }
-                        });
-
+                        }
+                    });
+                    
                     // Sort by distance and limit to top 5 unique highlights
                     return highlights
                         .sort((a, b) => a.distance - b.distance)
@@ -1564,13 +1583,13 @@ $reviews = $venueObj->getReview($_GET['id']);
 
             // Helper functions for distance and time calculations
             function calculateDistance(lat1, lon1, lat2, lon2) {
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                const R = 6371; // Earth's radius in km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
                 return R * c;
             }
 
@@ -1583,21 +1602,21 @@ $reviews = $venueObj->getReview($_GET['id']);
                 const drivingSpeed = 30; // km/h (urban average)
                 return Math.round(distance / drivingSpeed * 60); // minutes
             }
-            const distanceText = highlight.distance < 1 ?
-                `${Math.round(highlight.distance * 1000)}m` :
-                function formatHighlight(highlight) {
 
-                    `${Math.round(highlight.distance * 1000)}m` :
+            // Update the venue card HTML in loadComparisonVenues
+            function formatHighlight(highlight) {
+                const distanceText = highlight.distance < 1 ? 
+                    `${Math.round(highlight.distance * 1000)}m` : 
                     `${highlight.distance.toFixed(1)}km`;
-
-                    let timeText = '';
-                    if (highlight.walkingTime < 60) {
-                        timeText = `${highlight.walkingTime}min walk`;
-
-                        timeText = `${highlight.drivingTime}min drive`;
-                    }
-
-                    return `
+                
+                let timeText = '';
+                if (highlight.walkingTime < 60) {
+                    timeText = `${highlight.walkingTime}min walk`;
+                } else {
+                    timeText = `${highlight.drivingTime}min drive`;
+                }
+                
+                return `
                     <div class="flex flex-col bg-blue-50 rounded-lg p-3 mb-2 hover:bg-blue-100 transition-colors">
                         <div class="flex items-center gap-2 mb-1">
                             <i class="fas fa-${highlight.icon} text-blue-600"></i>
@@ -1620,7 +1639,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         </div>
                     </div>
                 `;
-                }
+            }
 
             // Make loadComparisonVenues available globally
             window.loadComparisonVenues = loadComparisonVenues;
