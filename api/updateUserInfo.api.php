@@ -25,11 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sex = clean_input($_POST['sex']);
     $birthdate = clean_input($_POST['birthdate']);
     $address = clean_input($_POST['address']);
-    $coor = clean_input($_POST['addressCoor']);
+    $coor = clean_input($_POST['addressCoor']) ? clean_input($_POST['addressCoor']) : $_SESSION['user']['address'];
     $email = clean_input($_POST['email']);
     $contact = clean_input($_POST['contact']);
 
-    // Verify the address
+    // // Verify the address
     $addressData = coorAddressVerify($address, $coor);
     if (!$addressData) {
         $addressErr = 'Invalid address and coordinates. Please try again.';

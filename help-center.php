@@ -253,6 +253,9 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             });
         });
     </script>
+
+    <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
+    <script src="./js/user.jquery.js"></script>
 </body>
 
 </html>

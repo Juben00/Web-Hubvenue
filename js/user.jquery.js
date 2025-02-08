@@ -156,7 +156,7 @@ $(document).ready(function () {
     $(document).on('click', '#settingsBtn', function (e) {
         e.preventDefault();
         const url = $(this).data("url");
-        menuRedirection(url);
+        menuRedirection(url);     
     });
 
     //help-center

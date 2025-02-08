@@ -120,12 +120,12 @@ $address = getAddressByCoordinates($user['address']);
                                             echo htmlspecialchars($user["firstname"][0]);
                                             echo '</div>';
                                         } else {
-                                            echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($user["profile_pic"]) . '" alt="Profile Picture" class="w-full h-full object-cover">';
+                                            echo '<img id="settingsProfileImage" name="profile_image" src="./' . htmlspecialchars($user["profile_pic"]) . '" alt="Profile Picture" class="w-full h-full object-cover">';
                                         }
                                         ?>
                                     </div>
                                     <label for="profilePicture"
-                                        class="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
+                                        class="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-full z-50 opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200">
                                         <span class="text-sm">Change Photo</span>
                                     </label>
                                     <input type="file" id="profilePicture" name="profilePicture" class="hidden"
@@ -528,7 +528,7 @@ $address = getAddressByCoordinates($user['address']);
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    const profileImage = document.getElementById('profileImage');
+                    const profileImage = document.getElementById('settingsProfileImage');
                     const profilePlaceholder = document.getElementById('profilePlaceholder');
                     if (profileImage) {
                         profileImage.src = e.target.result;

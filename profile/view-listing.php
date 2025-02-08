@@ -389,119 +389,149 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                 </div>
             </div>
 
-            <!-- After the Ratings & Reviews section, add this new Calendar Pricing section -->
-            <div class="bg-white rounded-lg shadow-sm mt-6 p-6">
-                <h3 class="text-2xl font-bold mb-6">Calendar & Pricing</h3>
+  <!-- Calendar Pricing Section -->
+<?php
+// Handle month/year navigation logic with sanitization
+$month = filter_input(INPUT_GET, 'month', FILTER_VALIDATE_INT) ?: (int) date('m');
+$year = filter_input(INPUT_GET, 'year', FILTER_VALIDATE_INT) ?: (int) date('Y');
 
-                <!-- Calendar Header -->
-                <div class="flex justify-between items-center mb-4 calendar-header">
-                    <div class="flex items-center space-x-4">
-                        <button class="p-2 hover:bg-gray-100 rounded-lg calendar-prev">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
-                        <h4 class="text-lg font-semibold">October 2024</h4>
-                        <button class="p-2 hover:bg-gray-100 rounded-lg calendar-next">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
+// Ensure month and year are within valid ranges
+// $month = max(2, min(12, $month));
+// $year = max(2000, $year); // Example constraint for year range
 
-                    <div class="flex items-center space-x-2">
-                        <button class="px-3 py-1 text-sm border rounded-lg hover:bg-gray-50">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                        </button>
-                        <button class="px-3 py-1 text-sm border rounded-lg hover:bg-gray-50">View</button>
-                    </div>
-                </div>
+// Fetch booked dates for the specific venue ID
+$venueId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$bookedDates = [];
+$bookedDatesData = $venueObj->getBookedDatesByVenue($month, $year, $venueId);
 
-                <!-- Calendar Grid -->
-                <div class="border rounded-lg">
-                    <!-- Calendar Header -->
-                    <div class="grid grid-cols-7 text-sm font-medium text-gray-500 border-b">
-                        <div class="p-2 text-center">Su</div>
-                        <div class="p-2 text-center">Mo</div>
-                        <div class="p-2 text-center">Tu</div>
-                        <div class="p-2 text-center">We</div>
-                        <div class="p-2 text-center">Th</div>
-                        <div class="p-2 text-center">Fr</div>
-                        <div class="p-2 text-center">Sa</div>
-                    </div>
+if ($venueId && isset($venueObj) && method_exists($venueObj, 'getBookedDatesByVenue')) {
+    // Fetch booked dates from the database
 
-                    <!-- Calendar Days -->
-                    <div class="grid grid-cols-7 calendar-days">
-                        <?php
-                        // Previous month days (greyed out)
-                        for ($i = 0; $i < 0; $i++) {
-                            echo '<div class="p-2 border-b border-r text-gray-400"></div>';
-                        }
+    // Debug: Check the raw data from the database
+    // var_dump($bookedDatesData);
 
-                        // Current month days
-                        for ($day = 1; $day <= 31; $day++) {
-                            $isToday = $day === 5; // Example: 5th is today
-                            $hasPrice = true; // Example: All days have prices
-                        
-                            echo '<div class="relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer">';
-                            echo '<div class="text-sm ' . ($isToday ? 'font-bold' : '') . '">' . $day . '</div>';
-                            if ($hasPrice) {
-                                echo '<div class="text-xs text-gray-600"> ₱' . $venueView['price'] . '</div>';
-                            }
-                            echo '</div>';
-                        }
-                        ?>
-                    </div>
-                </div>
+    // Collect dates in a range between start and end dates
+    foreach ($bookedDatesData as $booking) {
+        $start = new DateTime($booking['booking_start_date']);
+        $end = new DateTime($booking['booking_end_date']);
 
-                <!-- Settings Panel -->
-                <!-- <div class="mt-6 border rounded-lg p-4">
-                    <h4 class="text-lg font-semibold mb-4">Settings</h4>
-                    <p class="text-sm text-gray-600 mb-4">These apply to all nights, unless you customize them
-                        by date.</p>
+        // Ensure the end date is included
+        $end->modify('+1 day');
 
-                    <!-- Pricing Tab -->
-                <!-- <div class="border-b pb-4 mb-4">
-                    <div class="flex justify-between items-center">
-                        <span class="font-medium">Base price</span>
-                        <span class="text-sm text-gray-500">PHP</span>
-                    </div>
-                    <div class="mt-2">
-                        <label class="block text-sm text-gray-600 mb-1">Per night</label>
-                        <p>₱ <?php echo htmlspecialchars($venueView['price']) ?></p>
-                    </div>
-                </div> -->
+        // Debug: Check the start and end dates
+        // echo "Start: " . $start->format('Y-m-d') . " | End: " . $end->format('Y-m-d') . "<br>";
 
-                <!-- Custom Weekend Price -
-                    <div class="border-b pb-4 mb-4">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Custom weekend price</span>
-                            <button class="text-sm text-blue-600 hover:text-blue-800">Add</button>
-                        </div>
-                    </div>
+        while ($start < $end) {
+            // Only include dates within the current month and year
+            if ((int) $start->format('m') === $month && (int) $start->format('Y') === $year) {
+                $bookedDates[] = (int) $start->format('j'); // Add the day of the month
+            }
+            $start->modify('+1 day'); // Move to the next day
+        }
+    }
+}
 
-                    <!-- Smart Pricing Toggle -
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="font-medium block">Smart Pricing</span>
-                            <span class="text-sm text-gray-600">Adjust your pricing to attract more
-                                guests.</span>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer">
-                            <div
-                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600">
-                            </div>
-                        </label>
-                    </div>
-                </div> -->
-            </div>
+// Debug: Check the final $bookedDates array
+// var_dump($bookedDates);
+
+// Get the first day of the month and total days
+$firstDayOfMonth = (int) date('w', strtotime("$year-$month-01"));
+$totalDays = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+// Previous and next month navigation
+$prevMonth = $month - 1;
+$nextMonth = $month + 1;
+$prevYear = $year;
+$nextYear = $year;
+
+if ($prevMonth < 1) {
+    $prevMonth = 12;
+    $prevYear--;
+}
+if ($nextMonth > 12) {
+    $nextMonth = 1;
+    $nextYear++;
+}
+?>
+
+<div class="bg-white rounded-lg shadow-sm mt-6 p-6">
+    <h3 class="text-2xl font-bold mb-6">Calendar & Pricing</h3>
+    <?php
+
+    var_dump($bookedDatesData);
+    var_dump($bookedDates);
+    var_dump( $venueId);
+    var_dump( $month);
+    var_dump( $year);
+
+    ?>
+
+    <!-- Calendar Header -->
+    <div class="flex justify-between items-center mb-4 calendar-header">
+        <div class="flex items-center space-x-4">
+            <a href="?month=<?= htmlspecialchars($prevMonth) ?>&year=<?= htmlspecialchars($prevYear) ?>&id=<?= htmlspecialchars($venueId) ?>"
+                class="p-2 hover:bg-gray-100 rounded-lg calendar-prev">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+            <h4 class="text-lg font-semibold"><?= htmlspecialchars(date('F Y', strtotime("$year-$month-01"))) ?></h4>
+            <a href="?month=<?= htmlspecialchars($nextMonth) ?>&year=<?= htmlspecialchars($nextYear) ?>&id=<?= htmlspecialchars($venueId) ?>"
+                class="p-2 hover:bg-gray-100 rounded-lg calendar-next">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Calendar Grid -->
+    <div class="border rounded-lg">
+        <!-- Calendar Header -->
+        <div class="grid grid-cols-7 text-sm font-medium text-gray-500 border-b">
+            <div class="p-2 text-center">Su</div>
+            <div class="p-2 text-center">Mo</div>
+            <div class="p-2 text-center">Tu</div>
+            <div class="p-2 text-center">We</div>
+            <div class="p-2 text-center">Th</div>
+            <div class="p-2 text-center">Fr</div>
+            <div class="p-2 text-center">Sa</div>
+        </div>
+
+        <!-- Calendar Days -->
+        <div class="grid grid-cols-7 calendar-days">
+    <?php
+            // Render empty cells for days before the first day of the month
+            for ($i = 0; $i < $firstDayOfMonth; $i++) {
+                echo '<div class="p-2 border-b border-r text-gray-400"></div>';
+            }
+
+            // Render calendar days
+            for ($day = 1; $day <= $totalDays; $day++) {
+                // Check if the current day is booked
+                $isBooked = in_array($day, $bookedDates);
+
+                // Apply CSS classes based on booking status
+                $dayClasses = $isBooked ? 'bg-red-200 text-red-800' : 'hover:bg-gray-50';
+
+                echo '<div class="relative p-2 border-b border-r cursor-pointer ' . htmlspecialchars($dayClasses) . '">';
+                echo '<div class="text-sm">' . htmlspecialchars($day) . '</div>';
+
+                // Display price only if the day is not booked
+                if (!$isBooked) {
+                    $price = $venueView['price'] ?? 'N/A';
+                    echo '<div class="text-xs text-gray-600">₱' . htmlspecialchars($price) . '</div>';
+                }
+
+                echo '</div>';
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+
+
         </div>
 
         <!-- Right Sidebar -->
@@ -787,42 +817,6 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         endforeach;
                         ?>
                     </div>
-
-
-
-                    <!-- <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <p class="font-medium">Birthday Party</p>
-                                    <p class="text-sm text-gray-600">John Cruz</p>
-                                </div>
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                    Pending
-                                </span>
-                            </div>
-                            <div class="flex justify-between text-sm text-gray-600">
-                                <p>Dec 20, 2024</p>
-                                <p>₱12,000</p>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="flex justify-between items-start mb-2">
-                                <div>
-                                    <p class="font-medium">Corporate Event</p>
-                                    <p class="text-sm text-gray-600">Tech Corp.</p>
-                                </div>
-                                <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    Completed
-                                </span>
-                            </div>
-                            <div class="flex justify-between text-sm text-gray-600">
-                                <p>Nov 30, 2024</p>
-                                <p>₱20,000</p>
-                            </div>
-                        </div> -->
 
                     <!-- View All Reservations Link -->
                     <div class="mt-4 text-center">
