@@ -109,7 +109,7 @@ if (!isset($_SESSION['user'])) {
 <body class="bg-gray-50 relative">
     <?php
     require_once './components/profile.nav.php';
-
+    require_once './spinner.php';
     include_once './components/SignupForm.html';
     include_once './components/feedback.modal.html';
     include_once './components/confirm.feedback.modal.html';
@@ -164,7 +164,7 @@ if (!isset($_SESSION['user'])) {
             for (var i = 0; i < tabContents.length; i++) {
                 tabContents[i].classList.add('hidden');
             }
-            
+
             // Show selected tab content
             var selectedTab = document.getElementById(tabName + '-content');
             if (selectedTab) {
@@ -185,7 +185,7 @@ if (!isset($_SESSION['user'])) {
         }
 
         // Set default tab when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var firstTab = document.querySelector('.tab-links');
             if (firstTab) {
                 firstTab.click();

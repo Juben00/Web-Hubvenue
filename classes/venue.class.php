@@ -985,7 +985,8 @@ LEFT JOIN
         }
     }
 
-    private function getVenueRevenueData($venueId) {
+    private function getVenueRevenueData($venueId)
+    {
         try {
             $sql = "SELECT 
                     DATE_FORMAT(booking_start_date, '%Y-%m') as month,
@@ -1019,10 +1020,11 @@ LEFT JOIN
         }
     }
 
-    private function getTimeBasedStats($venueId) {
+    public function getTimeBasedStats($venueId)
+    {
         try {
             $conn = $this->db->connect();
-            
+
             // Today's stats
             $todayStats = $conn->prepare("
                 SELECT 
@@ -1082,23 +1084,23 @@ LEFT JOIN
 
             return [
                 'today' => [
-                    'bookings' => (int)$today['bookings'],
-                    'revenue' => (float)$today['revenue'],
+                    'bookings' => (int) $today['bookings'],
+                    'revenue' => (float) $today['revenue'],
                     'avg_guests' => round($today['avg_guests'], 1)
                 ],
                 'week' => [
-                    'bookings' => (int)$week['bookings'],
-                    'revenue' => (float)$week['revenue'],
+                    'bookings' => (int) $week['bookings'],
+                    'revenue' => (float) $week['revenue'],
                     'avg_guests' => round($week['avg_guests'], 1)
                 ],
                 'month' => [
-                    'bookings' => (int)$month['bookings'],
-                    'revenue' => (float)$month['revenue'],
+                    'bookings' => (int) $month['bookings'],
+                    'revenue' => (float) $month['revenue'],
                     'avg_guests' => round($month['avg_guests'], 1)
                 ],
                 'year' => [
-                    'bookings' => (int)$year['bookings'],
-                    'revenue' => (float)$year['revenue'],
+                    'bookings' => (int) $year['bookings'],
+                    'revenue' => (float) $year['revenue'],
                     'avg_guests' => round($year['avg_guests'], 1)
                 ]
             ];
@@ -1113,7 +1115,8 @@ LEFT JOIN
         }
     }
 
-    public function getAllVenuesWithStats($hostId) {
+    public function getAllVenuesWithStats($hostId)
+    {
         try {
             $sql = "SELECT 
                     v.*,
@@ -1171,7 +1174,8 @@ LEFT JOIN
         }
     }
 
-    private function getVenueRecentReviews($venueId) {
+    private function getVenueRecentReviews($venueId)
+    {
         try {
             $sql = "SELECT 
                     r.*,
@@ -1193,7 +1197,8 @@ LEFT JOIN
         }
     }
 
-    private function getVenuePopularMonth($venueId) {
+    private function getVenuePopularMonth($venueId)
+    {
         try {
             $sql = "SELECT 
                     DATE_FORMAT(booking_start_date, '%M') as month,
@@ -1209,7 +1214,7 @@ LEFT JOIN
             $stmt = $conn->prepare($sql);
             $stmt->execute([$venueId]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             return $result ? $result['month'] : 'N/A';
         } catch (Exception $e) {
             error_log($e->getMessage());
@@ -1217,7 +1222,8 @@ LEFT JOIN
         }
     }
 
-    public function getVenuesByHost($hostId) {
+    public function getVenuesByHost($hostId)
+    {
         try {
             $sql = "SELECT v.*, GROUP_CONCAT(vi.image_url) as image_urls 
                     FROM venues v 
@@ -1234,7 +1240,8 @@ LEFT JOIN
         }
     }
 
-    public function getVenueStatistics($venueId) {
+    public function getVenueStatistics($venueId)
+    {
         try {
             $sql = "SELECT 
                     COUNT(*) as total_bookings,
@@ -1244,7 +1251,7 @@ LEFT JOIN
                     FROM bookings b
                     LEFT JOIN reviews r ON b.booking_venue_id = r.venue_id
                     WHERE b.booking_venue_id = :venue_id";
-            
+
             $stmt = $this->db->connect()->prepare($sql);
             $stmt->bindParam(':venue_id', $venueId, PDO::PARAM_INT);
             $stmt->execute();
@@ -1260,7 +1267,8 @@ LEFT JOIN
         }
     }
 
-    public function getBookingCountByStatus($venueId, $statusId) {
+    public function getBookingCountByStatus($venueId, $statusId)
+    {
         try {
             $sql = "SELECT COUNT(*) as count FROM bookings 
                     WHERE booking_venue_id = :venue_id AND booking_status_id = :status_id";
@@ -1276,7 +1284,8 @@ LEFT JOIN
         }
     }
 
-    public function getBookingsByGuest($guestId) {
+    public function getBookingsByGuest($guestId)
+    {
         try {
             $query = "
                 SELECT DISTINCT
@@ -1307,21 +1316,21 @@ LEFT JOIN
                 AND b.booking_status_id IN (1, 2, 3, 4)
                 ORDER BY b.booking_created_at DESC
             ";
-            
+
             $stmt = $this->db->connect()->prepare($query);
             $stmt->bindParam(':guest_id', $guestId, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             // Ensure host_id and guest_id are correctly set
             foreach ($bookings as &$booking) {
-                $booking['host_id'] = $booking['host_id'];  // This is the venue owner
+                $booking['host_id'];  // This is the venue owner
                 $booking['guest_id'] = $booking['booking_guest_id'];  // This is the person who made the booking
             }
-            
+
             return $bookings;
-            
+
         } catch (PDOException $e) {
             error_log("Error in getBookingsByGuest: " . $e->getMessage());
             return [];

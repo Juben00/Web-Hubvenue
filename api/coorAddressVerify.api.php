@@ -39,6 +39,7 @@ function coorAddressVerify($address, $coor)
 
     // Normalize country name in the API response
     $normalizedAddressData = str_replace('Pilipinas', 'Philippines', $addressData);
+    $address = str_replace('Pilipinas', 'Philippines', $address);
 
     // Normalize and compare
     if (strtolower(trim($normalizedAddressData)) === strtolower(trim($address))) {

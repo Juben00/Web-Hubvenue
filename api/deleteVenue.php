@@ -1,5 +1,6 @@
 <?php
 require_once '../classes/venue.class.php';
+$venueObj = new Venue();
 session_start();
 
 // Check if user is logged in
@@ -36,4 +37,4 @@ if ($result) {
 } else {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Failed to delete venue']);
-} 
+}

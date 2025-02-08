@@ -81,42 +81,42 @@ window.venueState = {
                     <div class="mb-6 grid grid-cols-2 gap-2 relative viewMode">
                         <div class="col-span-2 ">
                             <?php if (!empty($venueView['image_urls'])): ?>
-                                <img src="./<?= htmlspecialchars($thumbnail) ?>" alt="Venue Image"
-                                    class="w-full h-96 object-cover rounded-lg">
+                                    <img src="./<?= htmlspecialchars($thumbnail) ?>" alt="Venue Image"
+                                        class="w-full h-96 object-cover rounded-lg">
                             <?php else: ?>
-                                <img src="default-image.jpg" alt="Default Venue Image"
-                                    class="bg-slate-50 w-full h-96 object-cover rounded-lg">
+                                    <img src="default-image.jpg" alt="Default Venue Image"
+                                        class="bg-slate-50 w-full h-96 object-cover rounded-lg">
                             <?php endif; ?>
                         </div>
                         <div class="grid grid-cols-3 col-span-2 gap-2 ">
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 1): ?>
-                                <img src="./<?= htmlspecialchars($venueView['image_urls'][1]) ?>" alt="Venue Image"
-                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                    <img src="./<?= htmlspecialchars($venueView['image_urls'][1]) ?>" alt="Venue Image"
+                                        class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
                             <?php else: ?>
-                                <div
-                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
-                                    <p class="text-center">No more image to show</p>
-                                </div>
+                                    <div
+                                        class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                        <p class="text-center">No more image to show</p>
+                                    </div>
                             <?php endif; ?>
 
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 2): ?>
-                                <img src="./<?= htmlspecialchars($venueView['image_urls'][2]) ?>" alt="Venue Image"
-                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                    <img src="./<?= htmlspecialchars($venueView['image_urls'][2]) ?>" alt="Venue Image"
+                                        class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
                             <?php else: ?>
-                                <div
-                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
-                                    <p class="text-center">No more image to show</p>
-                                </div>
+                                    <div
+                                        class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                        <p class="text-center">No more image to show</p>
+                                    </div>
                             <?php endif; ?>
 
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 3): ?>
-                                <img src="./<?= htmlspecialchars($venueView['image_urls'][3]) ?>" alt="Venue Image"
-                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                    <img src="./<?= htmlspecialchars($venueView['image_urls'][3]) ?>" alt="Venue Image"
+                                        class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
                             <?php else: ?>
-                                <div
-                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
-                                    <p class="text-center">No more image to show</p>
-                                </div>
+                                    <div
+                                        class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                        <p class="text-center">No more image to show</p>
+                                    </div>
                             <?php endif; ?>
                         </div>
                         <button
@@ -229,22 +229,22 @@ window.venueState = {
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">What this place offers</h3>
                                 <?php if (!empty($venueView['amenities'])): ?>
-                                    <?php
-                                    $amenities = json_decode($venueView['amenities'], true);
-                                    if ($amenities):
-                                        ?>
-                                        <ul class="list-disc pl-5 space-y-1 viewMode">
-                                            <?php foreach ($amenities as $amenity): ?>
-                                                <li class="text-sm text-gray-800 leading-tight">
-                                                    <?= htmlspecialchars($amenity) ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php else: ?>
-                                        <p class="text-sm text-gray-500">No amenities available</p>
-                                    <?php endif; ?>
+                                        <?php
+                                        $amenities = json_decode($venueView['amenities'], true);
+                                        if ($amenities):
+                                            ?>
+                                                <ul class="list-disc pl-5 space-y-1 viewMode">
+                                                    <?php foreach ($amenities as $amenity): ?>
+                                                            <li class="text-sm text-gray-800 leading-tight">
+                                                                <?= htmlspecialchars($amenity) ?>
+                                                            </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                        <?php else: ?>
+                                                <p class="text-sm text-gray-500">No amenities available</p>
+                                        <?php endif; ?>
                                 <?php else: ?>
-                                    <p class="text-sm text-gray-500">No amenities available</p>
+                                        <p class="text-sm text-gray-500">No amenities available</p>
                                 <?php endif; ?>
                                 <textarea type="text" id="editVenueAmenities" name="editVenueAmenities"
                                     class="editMode hidden space-y-2  w-full" rows="4"><?php
@@ -259,22 +259,22 @@ window.venueState = {
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">Venue Rules</h3>
                                 <?php if (!empty($venueView['rules'])): ?>
-                                    <?php
-                                    $rules = json_decode($venueView['rules'], true);
-                                    if ($rules):
-                                        ?>
-                                        <ul class="list-disc pl-5 space-y-1 viewMode">
-                                            <?php foreach ($rules as $rule): ?>
-                                                <li class="text-sm text-gray-800 leading-tight">
-                                                    <?= htmlspecialchars($rule) ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php else: ?>
-                                        <p class="text-sm text-gray-500">No Rules Stated</p>
-                                    <?php endif; ?>
+                                        <?php
+                                        $rules = json_decode($venueView['rules'], true);
+                                        if ($rules):
+                                            ?>
+                                                <ul class="list-disc pl-5 space-y-1 viewMode">
+                                                    <?php foreach ($rules as $rule): ?>
+                                                            <li class="text-sm text-gray-800 leading-tight">
+                                                                <?= htmlspecialchars($rule) ?>
+                                                            </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                        <?php else: ?>
+                                                <p class="text-sm text-gray-500">No Rules Stated</p>
+                                        <?php endif; ?>
                                 <?php else: ?>
-                                    <p class="text-sm text-gray-500">No Rules Stated</p>
+                                        <p class="text-sm text-gray-500">No Rules Stated</p>
                                 <?php endif; ?>
                                 <textarea type="text" id="editVenueRules" name="editVenueRules"
                                     class="editMode hidden space-y-2  w-full" rows="4"><?php
@@ -354,16 +354,16 @@ window.venueState = {
                                     // Normalize percentage based on $maxReviewCount
                                     $normalizedPercentage = $maxReviewCount > 0 ? (($count) / $ratings['total']) * 100 : 0;
                                     ?>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm w-16"><?php echo $i; ?> stars</span>
-                                        <!-- Set explicit max width -->
-                                        <div class="flex-grow h-2 bg-gray-200 rounded max-w-[500px]">
-                                            <!-- Dynamically set the width based on normalized percentage -->
-                                            <div class="h-full bg-yellow-400 rounded"
-                                                style="width: <?php echo $normalizedPercentage; ?>%;"></div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm w-16"><?php echo $i; ?> stars</span>
+                                            <!-- Set explicit max width -->
+                                            <div class="flex-grow h-2 bg-gray-200 rounded max-w-[500px]">
+                                                <!-- Dynamically set the width based on normalized percentage -->
+                                                <div class="h-full bg-yellow-400 rounded"
+                                                    style="width: <?php echo $normalizedPercentage; ?>%;"></div>
+                                            </div>
+                                            <span class="text-sm w-8"><?php echo $count; ?></span>
                                         </div>
-                                        <span class="text-sm w-8"><?php echo $count; ?></span>
-                                    </div>
                                 <?php endfor; ?>
 
                             </div>
@@ -374,40 +374,40 @@ window.venueState = {
                 <!-- Individual Reviews -->
                 <div class="mt-8 space-y-6">
                     <?php foreach ($reviews as $index => $review): ?>
-                        <div class="border-b pb-6 review" data-index="<?php echo $index; ?>"
-                            style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
-                            <div class="flex items-center gap-4 mb-4">
-                                <?php if ($review['profile_pic'] == null): ?>
-                                    <div
-                                        class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">
-                                        <?php echo htmlspecialchars($review['user_name'][0]); ?>
+                            <div class="border-b pb-6 review" data-index="<?php echo $index; ?>"
+                                style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <?php if ($review['profile_pic'] == null): ?>
+                                            <div
+                                                class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">
+                                                <?php echo htmlspecialchars($review['user_name'][0]); ?>
+                                            </div>
+                                    <?php else: ?>
+                                            <img class="w-12 h-12 bg-gray-200 rounded-full"
+                                                src="./<?php echo htmlspecialchars($review['profile_pic']); ?>" alt="Profile Picture">
+                                    <?php endif; ?>
+                                    <div>
+                                        <a href="user-page.php"
+                                            class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
+                                        <p class="text-sm text-gray-500">
+                                            <?php
+                                            $originalDate = $review['date'];
+                                            $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate));
+                                            echo htmlspecialchars($formattedDate);
+                                            ?>
+                                        </p>
                                     </div>
-                                <?php else: ?>
-                                    <img class="w-12 h-12 bg-gray-200 rounded-full"
-                                        src="./<?php echo htmlspecialchars($review['profile_pic']); ?>" alt="Profile Picture">
-                                <?php endif; ?>
-                                <div>
-                                    <a href="user-page.php"
-                                        class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
-                                    <p class="text-sm text-gray-500">
-                                        <?php
-                                        $originalDate = $review['date'];
-                                        $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate));
-                                        echo htmlspecialchars($formattedDate);
-                                        ?>
-                                    </p>
                                 </div>
+                                <div class="flex text-yellow-400 mb-2">
+                                    <?php for ($i = 0; $i < $review['rating']; $i++): ?>
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                    <?php endfor; ?>
+                                </div>
+                                <p class="text-gray-700"><?php echo htmlspecialchars($review['review']); ?></p>
                             </div>
-                            <div class="flex text-yellow-400 mb-2">
-                                <?php for ($i = 0; $i < $review['rating']; $i++): ?>
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                <?php endfor; ?>
-                            </div>
-                            <p class="text-gray-700"><?php echo htmlspecialchars($review['review']); ?></p>
-                        </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -456,70 +456,70 @@ window.venueState = {
                     </div>
                 </div>
 
-                <!-- Calendar Grid -->
-                <div class="border rounded-lg">
-                    <!-- Calendar Header -->
-                    <div class="grid grid-cols-7 text-sm font-medium text-gray-500 border-b">
-                        <div class="p-2 text-center">Su</div>
-                        <div class="p-2 text-center">Mo</div>
-                        <div class="p-2 text-center">Tu</div>
-                        <div class="p-2 text-center">We</div>
-                        <div class="p-2 text-center">Th</div>
-                        <div class="p-2 text-center">Fr</div>
-                        <div class="p-2 text-center">Sa</div>
-                    </div>
+    <!-- Calendar Grid -->
+    <div class="border rounded-lg">
+        <!-- Calendar Header -->
+        <div class="grid grid-cols-7 text-sm font-medium text-gray-500 border-b">
+            <div class="p-2 text-center">Su</div>
+            <div class="p-2 text-center">Mo</div>
+            <div class="p-2 text-center">Tu</div>
+            <div class="p-2 text-center">We</div>
+            <div class="p-2 text-center">Th</div>
+            <div class="p-2 text-center">Fr</div>
+            <div class="p-2 text-center">Sa</div>
+        </div>
 
                     <!-- Calendar Days -->
                     <div class="grid grid-cols-7 calendar-days">
                         <?php
-                                // Get booked dates for this venue
-                                $bookedDates = $venueObj->getBookedDates($getParams);
-                                $bookedDatesArray = [];
-                                
-                                // Convert booked dates to array for easy checking
-                                foreach ($bookedDates as $booking) {
-                                    $start = new DateTime($booking['startdate']);
-                                    $end = new DateTime($booking['enddate']);
-                                    $interval = new DateInterval('P1D');
-                                    $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
-                                    
-                                    foreach ($dateRange as $date) {
-                                        $bookedDatesArray[] = $date->format('Y-m-d');
-                                    }
-                                }
+                        // Get booked dates for this venue
+                        $bookedDates = $venueObj->getBookedDates($getParams);
+                        $bookedDatesArray = [];
 
-                                $today = new DateTime();
-                                $currentMonth = $today->format('n');
-                                $currentYear = $today->format('Y');
-                                $firstDay = new DateTime("$currentYear-$currentMonth-01");
-                                $lastDay = new DateTime("$currentYear-$currentMonth-" . $firstDay->format('t'));
-                                
-                                // Fill in empty days at start
-                                $firstDayOfWeek = $firstDay->format('w');
-                                for ($i = 0; $i < $firstDayOfWeek; $i++) {
+                        // Convert booked dates to array for easy checking
+                        foreach ($bookedDates as $booking) {
+                            $start = new DateTime($booking['startdate']);
+                            $end = new DateTime($booking['enddate']);
+                            $interval = new DateInterval('P1D');
+                            $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
+
+                            foreach ($dateRange as $date) {
+                                $bookedDatesArray[] = $date->format('Y-m-d');
+                            }
+                        }
+
+                        $today = new DateTime();
+                        $currentMonth = $today->format('n');
+                        $currentYear = $today->format('Y');
+                        $firstDay = new DateTime("$currentYear-$currentMonth-01");
+                        $lastDay = new DateTime("$currentYear-$currentMonth-" . $firstDay->format('t'));
+
+                        // Fill in empty days at start
+                        $firstDayOfWeek = $firstDay->format('w');
+                        for ($i = 0; $i < $firstDayOfWeek; $i++) {
                             echo '<div class="p-2 border-b border-r text-gray-400"></div>';
                         }
 
-                                // Fill in days of month
-                                for ($day = 1; $day <= $lastDay->format('d'); $day++) {
-                                    $currentDate = new DateTime("$currentYear-$currentMonth-$day");
-                                    $dateString = $currentDate->format('Y-m-d');
-                                    $isBooked = in_array($dateString, $bookedDatesArray);
-                                    $isToday = $currentDate->format('Y-m-d') === $today->format('Y-m-d');
-                                    
-                                    $cellClass = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
-                                    if ($isBooked) {
-                                        $cellClass .= ' bg-red-100';
-                                    }
-                                    if ($isToday) {
-                                        $cellClass .= ' font-bold';
-                                    }
+                        // Fill in days of month
+                        for ($day = 1; $day <= $lastDay->format('d'); $day++) {
+                            $currentDate = new DateTime("$currentYear-$currentMonth-$day");
+                            $dateString = $currentDate->format('Y-m-d');
+                            $isBooked = in_array($dateString, $bookedDatesArray);
+                            $isToday = $currentDate->format('Y-m-d') === $today->format('Y-m-d');
 
-                                    echo '<div class="' . $cellClass . '">';
-                                    echo '<div class="text-sm">' . $day . '</div>';
-                                    echo '<div class="text-xs text-gray-600">₱' . number_format($venueView['price'], 2) . '</div>';
-                                    if ($isBooked) {
-                                        echo '<div class="text-xs text-red-600">Booked</div>';
+                            $cellClass = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
+                            if ($isBooked) {
+                                $cellClass .= ' bg-red-100';
+                            }
+                            if ($isToday) {
+                                $cellClass .= ' font-bold';
+                            }
+
+                            echo '<div class="' . $cellClass . '">';
+                            echo '<div class="text-sm">' . $day . '</div>';
+                            echo '<div class="text-xs text-gray-600">₱' . number_format($venueView['price'], 2) . '</div>';
+                            if ($isBooked) {
+                                echo '<div class="text-xs text-red-600">Booked</div>';
                             }
                             echo '</div>';
                         }
@@ -538,9 +538,9 @@ window.venueState = {
                                         echo '<div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-2">';
                                         echo '<div>';
                                         echo '<p class="font-medium text-sm">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                                        echo '<p class="text-xs text-gray-600">' . 
-                                             ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) . 
-                                             ' off</p>';
+                                        echo '<p class="text-xs text-gray-600">' .
+                                            ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) .
+                                            ' off</p>';
                                         if (isset($discount['min_days']) && $discount['min_days'] > 0) {
                                             echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
                                         }
@@ -600,16 +600,26 @@ window.venueState = {
                             <div class="setting-group">
                                 <h4 class="text-sm font-medium text-gray-700 mb-2">Venue Type</h4>
                                 <div class="viewMode">
-                                    <p class="text-gray-900"><?php 
-                            $venueType = $venueView['venue_tag'];
-                            switch ($venueType) {
-                                        case 1: echo "Corporate Events"; break;
-                                        case 2: echo "Reception Hall"; break;
-                                        case 3: echo "Intimate Gatherings"; break;
-                                        case 4: echo "Outdoor"; break;
-                                        default: echo "Unknown"; break;
-                            }
-                            ?></p>
+                                    <p class="text-gray-900"><?php
+                                    $venueType = $venueView['venue_tag'];
+                                    switch ($venueType) {
+                                        case 1:
+                                            echo "Corporate Events";
+                                            break;
+                                        case 2:
+                                            echo "Reception Hall";
+                                            break;
+                                        case 3:
+                                            echo "Intimate Gatherings";
+                                            break;
+                                        case 4:
+                                            echo "Outdoor";
+                                            break;
+                                        default:
+                                            echo "Unknown";
+                                            break;
+                                    }
+                                    ?></p>
                         </div>
                                 <div class="editMode hidden">
                                     <select name="editVenueType" class="w-full rounded-lg border-gray-300 shadow-sm">
@@ -692,81 +702,81 @@ window.venueState = {
                                 <h4 class="text-sm font-medium text-gray-700 mb-2">Discounts</h4>
                                 <div class="viewMode">
                 <?php
-                                    $discounts = $venueObj->getAllDiscounts();
-                                    if (!empty($discounts)) {
-                                        foreach ($discounts as $discount) {
-                                            echo '<div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-2">';
-                                            echo '<div>';
-                                            echo '<p class="font-medium text-sm">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                                            echo '<p class="text-xs text-gray-600">' . 
-                                                 ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) . 
-                                                 ' off</p>';
-                                            if (isset($discount['min_days']) && $discount['min_days'] > 0) {
-                                                echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
-                                            }
-                                            echo '</div>';
-                                            if ($discount['expiration_date']) {
-                                                echo '<p class="text-xs text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
-                                            }
-                                            echo '</div>';
-                                        }
-                                    } else {
-                                        echo '<p class="text-sm text-gray-500">No active discounts</p>';
-                                    }
-                                    ?>
+                $discounts = $venueObj->getAllDiscounts();
+                if (!empty($discounts)) {
+                    foreach ($discounts as $discount) {
+                        echo '<div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-2">';
+                        echo '<div>';
+                        echo '<p class="font-medium text-sm">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                        echo '<p class="text-xs text-gray-600">' .
+                            ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) .
+                            ' off</p>';
+                        if (isset($discount['min_days']) && $discount['min_days'] > 0) {
+                            echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
+                        }
+                        echo '</div>';
+                        if ($discount['expiration_date']) {
+                            echo '<p class="text-xs text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
+                        }
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p class="text-sm text-gray-500">No active discounts</p>';
+                }
+                ?>
                                 </div>
                                 <div class="editMode hidden">
                                     <div class="space-y-3" id="discountFields">
                                         <!-- Existing discounts will be listed here -->
                 <?php
-                                        if (!empty($discounts)) {
-                                            foreach ($discounts as $index => $discount) {
-                                                echo '<div class="flex gap-4 items-start discount-entry bg-gray-50 p-4 rounded-lg">';
-                                                echo '<div class="flex-grow space-y-4">';
-                                                
-                                                // Discount Code
-                                                echo '<div class="flex flex-col">';
-                                                echo '<label class="text-xs text-gray-600 mb-1">Discount Code</label>';
-                                                echo '<input type="text" name="discount_code[]" placeholder="Enter discount code" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_code']) . '">';
-                                                echo '</div>';
-                                                
-                                                // Type and Value
-                                                echo '<div class="grid grid-cols-2 gap-4">';
-                                                echo '<div class="flex flex-col">';
-                                                echo '<label class="text-xs text-gray-600 mb-1">Type</label>';
-                                                echo '<select name="discount_type[]" class="text-sm rounded-md border-gray-300">';
-                                                echo '<option value="percentage"' . ($discount['discount_type'] === 'percentage' ? ' selected' : '') . '>Percentage</option>';
-                                                echo '<option value="fixed"' . ($discount['discount_type'] === 'fixed' ? ' selected' : '') . '>Fixed Amount</option>';
-                                                echo '</select>';
-                                                echo '</div>';
-                                                echo '<div class="flex flex-col">';
-                                                echo '<label class="text-xs text-gray-600 mb-1">Value</label>';
-                                                echo '<input type="number" name="discount_value[]" placeholder="Enter value" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_value']) . '">';
-                                                echo '</div>';
-                                                echo '</div>';
-                                                
-                                                // Minimum Days and Expiry Date
-                                                echo '<div class="grid grid-cols-2 gap-4">';
-                                                echo '<div class="flex flex-col">';
-                                                echo '<label class="text-xs text-gray-600 mb-1">Minimum Days</label>';
-                                                echo '<input type="number" name="min_days[]" placeholder="Minimum days required" class="w-full text-sm rounded-md border-gray-300" min="1" value="' . htmlspecialchars($discount['min_days']) . '">';
-                                                echo '</div>';
-                                                echo '<div class="flex flex-col">';
-                                                echo '<label class="text-xs text-gray-600 mb-1">Expiry Date</label>';
-                                                echo '<input type="date" name="discount_expiry[]" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['expiration_date']) . '">';
-                                                echo '</div>';
-                                                echo '</div>';
-                                                
-                                                echo '</div>';
-                                                echo '<button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all duration-200">';
-                                                echo '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
-                                                echo '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-                                                echo '</svg>';
-                                                echo '</button>';
-                                                echo '</div>';
-                                            }
-                                        }
-                                        ?>
+                if (!empty($discounts)) {
+                    foreach ($discounts as $index => $discount) {
+                        echo '<div class="flex gap-4 items-start discount-entry bg-gray-50 p-4 rounded-lg">';
+                        echo '<div class="flex-grow space-y-4">';
+
+                        // Discount Code
+                        echo '<div class="flex flex-col">';
+                        echo '<label class="text-xs text-gray-600 mb-1">Discount Code</label>';
+                        echo '<input type="text" name="discount_code[]" placeholder="Enter discount code" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_code']) . '">';
+                        echo '</div>';
+
+                        // Type and Value
+                        echo '<div class="grid grid-cols-2 gap-4">';
+                        echo '<div class="flex flex-col">';
+                        echo '<label class="text-xs text-gray-600 mb-1">Type</label>';
+                        echo '<select name="discount_type[]" class="text-sm rounded-md border-gray-300">';
+                        echo '<option value="percentage"' . ($discount['discount_type'] === 'percentage' ? ' selected' : '') . '>Percentage</option>';
+                        echo '<option value="fixed"' . ($discount['discount_type'] === 'fixed' ? ' selected' : '') . '>Fixed Amount</option>';
+                        echo '</select>';
+                        echo '</div>';
+                        echo '<div class="flex flex-col">';
+                        echo '<label class="text-xs text-gray-600 mb-1">Value</label>';
+                        echo '<input type="number" name="discount_value[]" placeholder="Enter value" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_value']) . '">';
+                        echo '</div>';
+                        echo '</div>';
+
+                        // Minimum Days and Expiry Date
+                        echo '<div class="grid grid-cols-2 gap-4">';
+                        echo '<div class="flex flex-col">';
+                        echo '<label class="text-xs text-gray-600 mb-1">Minimum Days</label>';
+                        echo '<input type="number" name="min_days[]" placeholder="Minimum days required" class="w-full text-sm rounded-md border-gray-300" min="1" value="' . htmlspecialchars($discount['min_days']) . '">';
+                        echo '</div>';
+                        echo '<div class="flex flex-col">';
+                        echo '<label class="text-xs text-gray-600 mb-1">Expiry Date</label>';
+                        echo '<input type="date" name="discount_expiry[]" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['expiration_date']) . '">';
+                        echo '</div>';
+                        echo '</div>';
+
+                        echo '</div>';
+                        echo '<button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all duration-200">';
+                        echo '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
+                        echo '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
+                        echo '</svg>';
+                        echo '</button>';
+                        echo '</div>';
+                    }
+                }
+                ?>
                         </div>
                                     <button type="button" onclick="addNewDiscount()" class="mt-4 text-sm bg-white border border-blue-500 text-blue-500 px-4 py-2 rounded-lg hover:bg-blue-50 transition-all duration-200 flex items-center justify-center gap-2 w-full">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1161,7 +1171,7 @@ function addNewDiscount() {
     formData.append('imagesToDelete', JSON.stringify(window.venueState.imagesToDelete));
         formData.append('defaultImages', JSON.stringify(defaultImages));
     formData.append('thumbnailIndex', window.venueState.thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
-    formData.append('venueID', <?php echo $getParams?>);
+    formData.append('venueID', <?php echo $getParams ?>);
 
     // Add discount data
     const discounts = [];
