@@ -779,6 +779,32 @@ class Account
         }
     }
 
+    public function isRemembered($token)
+    {
+        try {
+            $sql = "SELECT id FROM users WHERE remember_token = :token AND token_expiry > NOW()";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':token', $token);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Set user session
+                $_SESSION['user'] = $user['id'];
+                return true;
+            } else {
+                // Clear invalid token cookie
+                setcookie('remember_token', '', time() - 3600, "/");
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("Error in isRemembered: " . $e->getMessage());
+            return false;
+        }
+    }
+
+
 }
 
 

@@ -8,13 +8,24 @@ session_start();
 
 $venueObj = new Venue();
 $accountObj = new Account();
-$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
-$userRole = $accountObj->getUserRole($USER_ID);
+
+if (!isset($_SESSION['user']) && isset($_COOKIE['remember_token'])) {
+    $rememberToken = $_COOKIE['remember_token'];
+    $user = $accountObj->isRemembered($rememberToken);
+    if ($user) {
+        $_SESSION['user'] = $user;
+        $USER_ID = $user;
+    }
+}
 
 if (isset($userRole) && $userRole == "Admin") {
     header('Location: admin/');
     exit();
 }
+
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
+
 
 // Get all venues
 $venues = $venueObj->getAllVenues('2');
