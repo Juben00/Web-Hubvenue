@@ -22,9 +22,12 @@ if (empty($venue['name'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $_SESSION['reservationFormData'] = $_POST;
-    header("Location: payment.php");
-    exit();
+    // Check if the user is logged in
+    if (isset($_SESSION['user'])) {
+        $_SESSION['reservationFormData'] = $_POST;
+        header("Location: payment.php");
+        exit();
+    }
 }
 
 // Retrieve the owner's information
@@ -44,7 +47,7 @@ foreach ($bookedDate as $booking) {
     }
 }
 
-$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+// $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
 ?>
@@ -676,12 +679,13 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             class="size-24 text-2xl rounded-full bg-black text-white flex items-center justify-center mx-auto mb-4">
                                             <?php
 
-                                            $profilePic = $account->getProfilePic($owner['id']);
+                                            $profilePic = $owner['profile_pic'];
                                             if (isset($owner) && empty($profilePic)) {
                                                 echo $owner['firstname'][0];
                                             } else {
                                                 echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
                                             }
+
                                             ?>
                                         </div>
                                         <h2 class="text-xl font-semibold text-gray-800">
@@ -700,7 +704,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <div class="sticky top-32 border rounded-xl p-6 shadow-lg bg-slate-50">
 
                             <form id="reservationForm" method="POST">
-                                <!-- Price Header -->
+                                <!-- Pr ice Header -->
                                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
                                     <div class="flex items-baseline">
                                         <span
@@ -803,14 +807,14 @@ $reviews = $venueObj->getReview($_GET['id']);
                                         </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
                                             <?php
-                                            if ($discountStatus) {
+                                            if (isset($discountStatus)) {
                                                 if ($discountStatus['status'] == 'Active') {
                                                     echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
                                                 } else {
                                                     echo "0%";
                                                 }
                                             } else {
-                                                echo "0%"; // No discount found
+                                                echo "0%";
                                             }
                                             ?>
                                         </span>
@@ -834,7 +838,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                                     class="w-full bg-green-500 text-white rounded-lg py-3 font-semibold mb-4 hover:bg-green-600 transition duration-300">Reserve</button>
                             </form>
                         </div>
-                    </div>  
+                    </div>
                 </div>
             </div>
         </div>
@@ -1368,21 +1372,21 @@ $reviews = $venueObj->getReview($_GET['id']);
                     const currentVenuePrice = <?php echo $venue['price']; ?>;
 
                     let comparisonHTML = '';
-                    
+
                     for (const venue of venues) {
                         const [lat, lon] = venue.location.split(',');
                         const nearbyHighlights = await getNearbyHighlights(lat, lon);
                         const venueAmenities = new Set(JSON.parse(venue.amenities));
-                        
+
                         // Calculate unique and shared amenities
                         const uniqueAmenities = [...venueAmenities].filter(x => !currentVenueAmenities.has(x));
                         const sharedAmenities = [...venueAmenities].filter(x => currentVenueAmenities.has(x));
-                        
+
                         // Calculate price difference
                         const priceDiff = venue.price - currentVenuePrice;
-                        const priceDiffText = priceDiff === 0 ? 'Same price' : 
-                                            priceDiff > 0 ? `₱${priceDiff.toLocaleString()} more expensive` : 
-                                            `₱${Math.abs(priceDiff).toLocaleString()} cheaper`;
+                        const priceDiffText = priceDiff === 0 ? 'Same price' :
+                            priceDiff > 0 ? `₱${priceDiff.toLocaleString()} more expensive` :
+                                `₱${Math.abs(priceDiff).toLocaleString()} cheaper`;
 
                         comparisonHTML += `
                             <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
@@ -1419,10 +1423,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                                             Special Nearby Highlights
                                         </h4>
                                         <div class="space-y-2">
-                                            ${nearbyHighlights.length > 0 
-                                                ? nearbyHighlights.map(highlight => formatHighlight(highlight)).join('')
-                                                : '<p class="text-gray-500 text-sm">No special highlights found nearby</p>'
-                                            }
+                                            ${nearbyHighlights.length > 0
+                                ? nearbyHighlights.map(highlight => formatHighlight(highlight)).join('')
+                                : '<p class="text-gray-500 text-sm">No special highlights found nearby</p>'
+                            }
                                         </div>
                                     </div>
 
@@ -1495,7 +1499,7 @@ $reviews = $venueObj->getReview($_GET['id']);
 
                     const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
                     const data = await response.json();
-                    
+
                     const highlights = [];
                     const seenTypes = new Set(); // To track unique highlight types
 
@@ -1570,7 +1574,7 @@ $reviews = $venueObj->getReview($_GET['id']);
                             }
                         }
                     });
-                    
+
                     // Sort by distance and limit to top 5 unique highlights
                     return highlights
                         .sort((a, b) => a.distance - b.distance)
@@ -1586,10 +1590,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                 const R = 6371; // Earth's radius in km
                 const dLat = (lat2 - lat1) * Math.PI / 180;
                 const dLon = (lon2 - lon1) * Math.PI / 180;
-                const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                    Math.sin(dLon/2) * Math.sin(dLon/2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 return R * c;
             }
 
@@ -1605,17 +1609,17 @@ $reviews = $venueObj->getReview($_GET['id']);
 
             // Update the venue card HTML in loadComparisonVenues
             function formatHighlight(highlight) {
-                const distanceText = highlight.distance < 1 ? 
-                    `${Math.round(highlight.distance * 1000)}m` : 
+                const distanceText = highlight.distance < 1 ?
+                    `${Math.round(highlight.distance * 1000)}m` :
                     `${highlight.distance.toFixed(1)}km`;
-                
+
                 let timeText = '';
                 if (highlight.walkingTime < 60) {
                     timeText = `${highlight.walkingTime}min walk`;
                 } else {
                     timeText = `${highlight.drivingTime}min drive`;
                 }
-                
+
                 return `
                     <div class="flex flex-col bg-blue-50 rounded-lg p-3 mb-2 hover:bg-blue-100 transition-colors">
                         <div class="flex items-center gap-2 mb-1">
@@ -1646,6 +1650,41 @@ $reviews = $venueObj->getReview($_GET['id']);
         });
     </script>
 
+    <script>
+        $('#reservationForm').on('submit', function (e) {
+            let isLogged = <?php echo isset($_SESSION['user']) ? "true" : "false" ?>;
+
+            if (!isLogged) {
+                e.preventDefault();
+                showModal("Please login to continue booking.", undefined, "black_ico.png");
+            } else {
+
+                const numberOfGuests = $('#numberOFGuest').val(); // Get the value of the input
+                const checkInDate = $('#checkin').val(); // Get the value of the input
+                const checkOutDate = $('#checkout').val(); // Get the value of the input
+                if (numberOfGuests < 1) { // Check if the value is less than 1
+                    e.preventDefault(); // Prevent form submission
+                    showModal('Please enter a valid number of guests', undefined, "black_ico.png");
+                }
+                if (!checkInDate || !checkOutDate) { // Check if either date is empty
+                    e.preventDefault(); // Prevent form submission        
+                    showModal('Please select both check-in and check-out dates.', undefined, "black_ico.png");
+                    return;
+                }
+
+                // Convert to Date objects for comparison
+                const checkIn = new Date(checkInDate);
+                const checkOut = new Date(checkOutDate);
+
+                if (checkIn >= checkOut) { // Check if the check-in date is not before the check-out date
+                    e.preventDefault(); // Prevent form submission
+                    showModal('Check-in date must be before the check-out date.', undefined, "black_ico.png");
+                    return;
+                }
+            }
+        });
+    </script>
+
     <!-- Photo Gallery Functionality -->
     <script>
         // Photo Gallery Functionality
@@ -1665,6 +1704,7 @@ $reviews = $venueObj->getReview($_GET['id']);
         });
     </script>
 
+    <script src="./js/signinup.trigger.js"></script>
 </body>
 
 </html>

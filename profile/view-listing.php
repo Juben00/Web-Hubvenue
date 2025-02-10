@@ -789,7 +789,7 @@ window.venueState = {
 
                             <!-- Save Changes Button -->
                             <div class="editMode hidden pt-4">
-                                <button type="button" onclick="saveChanges(event)" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-transparent text-green-600 transition-colors">
+                                <button type="button" onclick="saveChanges(event)" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-transparent  transition-colors">
                                     Save Changes
                                 </button>
                         </div>
