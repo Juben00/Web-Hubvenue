@@ -760,25 +760,6 @@ class Account
         }
     }
 
-
-    public function updateDiscountApplicationStatus($applicationId, $status)
-    {
-        try {
-            $sql = "UPDATE mandatory_discount SET status = ? WHERE id = ?";
-            $stmt = $this->db->connect()->prepare($sql);
-            $newStatus = ($status === 'Approved') ? 'Active' : 'Inactive';
-            $result = $stmt->execute([$newStatus, $applicationId]);
-            if ($result) {
-                return ['status' => 'success', 'message' => 'Action Successful'];
-            } else {
-                return ['status' => 'error', 'message' => 'Action Failed'];
-            }
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-            return false;
-        }
-    }
-
     public function isRemembered($token)
     {
         try {
@@ -804,6 +785,24 @@ class Account
         }
     }
 
+
+    public function updateDiscountApplicationStatus($applicationId, $status)
+    {
+        try {
+            $sql = "UPDATE mandatory_discount SET status = ? WHERE id = ?";
+            $stmt = $this->db->connect()->prepare($sql);
+            $newStatus = ($status === 'Approved') ? 'Active' : 'Inactive';
+            $result = $stmt->execute(params: [$newStatus, $applicationId]);
+            if ($result) {
+                return ['status' => 'success', 'message' => 'Action Successful'];
+            } else {
+                return ['status' => 'error', 'message' => 'Action Failed'];
+            }
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 
 }
 

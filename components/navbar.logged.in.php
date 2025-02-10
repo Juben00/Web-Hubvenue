@@ -1,15 +1,10 @@
 <?php
 require_once './classes/account.class.php';
-require_once './classes/notification.class.php';
 
 $account = new Account();
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 
 $profileTemplate = $account->getProfileTemplate($USER_ID);
-$notification = new Notification();
-
-$profilePic = $account->getProfilePic($_SESSION['user']['id']);
-$unreadCount = $notification->getUnreadCount($_SESSION['user']['id']);
 ?>
 
 <nav id="main-nav" class="bg-transparent backdrop-blur-xl z-40 fixed w-full px-2 lg:px-8">
@@ -135,43 +130,10 @@ $unreadCount = $notification->getUnreadCount($_SESSION['user']['id']);
             }
             ?>
 
-=======
-    <div class="flex items-center space-x-4">
-      <!-- Notification Button -->
-      <div class="relative">
-        <button id="notificationButton" type="button" class="relative flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 p-2">
-          <span class="sr-only">Notifications</span>
-          <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-            </path>
-          </svg>
-          <?php if ($unreadCount > 0): ?>
-            <span id="notificationCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-              <?php echo $unreadCount; ?>
-            </span>
-          <?php endif; ?>
-        </button>
-        <?php include './components/notifications.dropdown.php'; ?>
-      </div>
-
-      <button class="flex items-center space-x-4" id="menutabtrigger">
-        <div class="relative flex items-center space-x-2 bg-slate-50 shadow-md rounded-full ps-4 p-1">
-          <i class="fas fa-bars text-gray-600"> </i>
-          <div class="relative">
-            <div class="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center">
-              <?php
-              if (isset($_SESSION['user']) && empty($profilePic)) {
-                echo $_SESSION['user']['firstname'][0];
-              } else {
-                echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
-              }
-              ?>
-            </div>
           </div>
         </div>
-      </button>
-    </div>
+      </div>
+    </button>
   </div>
 </nav>
 

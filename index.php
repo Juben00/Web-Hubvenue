@@ -17,14 +17,14 @@ if (!isset($_SESSION['user']) && isset($_COOKIE['remember_token'])) {
         $USER_ID = $user;
     }
 }
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
 
 if (isset($userRole) && $userRole == "Admin") {
     header('Location: admin/');
     exit();
 }
 
-$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
-$userRole = $accountObj->getUserRole($USER_ID);
 
 
 // Get all venues
