@@ -4,12 +4,13 @@ require_once '../sanitize.php';
 
 $accountObj = new Account();
 
-$email = $password = '';
+$email = $password = $isRemember = '';
 $emailErr = $passwordErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = clean_input($_POST['email']);
     $password = clean_input($_POST['password']);
+    $isRemember = clean_input(isset($_POST['remember_me']) ? 'true' : 'false');
 
     if (empty($email)) {
         $emailErr = 'Email is required';
@@ -26,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($emailErr) && empty($passwordErr)) {
         $accountObj->email = $email;
         $accountObj->password = $password;
+        $accountObj->isRemember = $isRemember;
 
         $result = $accountObj->login();
         echo json_encode($result);

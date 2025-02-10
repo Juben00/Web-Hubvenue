@@ -3,6 +3,9 @@ require_once './classes/account.class.php';
 require_once './classes/notification.class.php';
 
 $account = new Account();
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+
+$profileTemplate = $account->getProfileTemplate($USER_ID);
 $notification = new Notification();
 
 $profilePic = $account->getProfilePic($_SESSION['user']['id']);
@@ -117,6 +120,22 @@ $unreadCount = $notification->getUnreadCount($_SESSION['user']['id']);
       </div>
     </div>
     <!-- Right Section -->
+    <button class="flex items-center space-x-4" id="menutabtrigger">
+      <div class="relative flex items-center space-x-2 bg-slate-50 shadow-md rounded-full ps-4 p-1">
+        <i class="fas fa-bars text-gray-600"> </i>
+        <div class="relative">
+          <div class="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center">
+            <?php
+
+
+            if (!isset($profileTemplate['profile_pic'])) {
+              echo '<p classname="uppercase">' . $profileTemplate['initial'] . '</p>';
+            } else {
+              echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profileTemplate['profile_pic']) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
+            }
+            ?>
+
+=======
     <div class="flex items-center space-x-4">
       <!-- Notification Button -->
       <div class="relative">

@@ -5,18 +5,17 @@ require_once __DIR__ . '/classes/account.class.php';
 
 $venueObj = new Venue();
 $accountObj = new Account();
-
-$userID = $_SESSION['user']['id'] ?? null;
-$ownerID = $_GET['id'] ?? null;
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$OWNER_ID = $_GET['id'] ?? null;
 $owner = $accountObj->getOwner($_GET['id']);
-$venues = $venueObj->getAllVenues(2, $ownerID);
+$venues = $venueObj->getAllVenues(2, $OWNER_ID);
 $profilePic = $owner['profile_pic'] ?? null;
 
-$rating = $venueObj->getHostRatings($ownerID);
+$rating = $venueObj->getHostRatings($OWNER_ID);
 
-$reviews = $venueObj->getHostReviews($ownerID);
+$reviews = $venueObj->getHostReviews($OWNER_ID);
 
-if (!isset($ownerID) || empty($ownerID) || !is_numeric($ownerID)) {
+if (!isset($OWNER_ID) || empty($OWNER_ID) || !is_numeric($OWNER_ID)) {
     header("Location: index.php");
     exit();
 } else if (!$owner) {
@@ -264,9 +263,9 @@ if (!isset($ownerID) || empty($ownerID) || !is_numeric($ownerID)) {
                     <div class="flex items-center mb-3 gap-4">
                         <div class="flex items-center space-x-1">
                             <input type="number" class="hidden" name="user_id"
-                                value="<?php echo htmlspecialchars($userID) ?>">
+                                value="<?php echo htmlspecialchars($USER_ID) ?>">
                             <input type="number" class="hidden" name="host_id"
-                                value="<?php echo htmlspecialchars($ownerID) ?>">
+                                value="<?php echo htmlspecialchars($OWNER_ID) ?>">
 
                             <label onclick="rate(1)" for="one" class="text-5xl text-gray-300 hover:text-yellow-400 star"
                                 data-rating="1">

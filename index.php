@@ -6,19 +6,19 @@ require_once './classes/account.class.php';
 
 session_start();
 
-if (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['user_type_id'] == 3) {
-        header('Location: admin/');
-    }
-
-}
-
 $venueObj = new Venue();
 $accountObj = new Account();
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
+
+if (isset($userRole) && $userRole == "Admin") {
+    header('Location: admin/');
+    exit();
+}
 
 // Get all venues
 $venues = $venueObj->getAllVenues('2');
-$bookmarks = $accountObj->getBookmarks(isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0);
+$bookmarks = $accountObj->getBookmarks($USER_ID);
 $bookmarkIds = array_column($bookmarks, 'venue_id');
 ?>
 
@@ -35,23 +35,6 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!-- .slideshow-container .slide {
-            display: none;
-            opacity: 0;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .slideshow-container .slide.active {
-            display: block;
-            opacity: 1;
-            z-index: 1;
-        } -->
-
     <style>
         body {
             background: #3490dc;

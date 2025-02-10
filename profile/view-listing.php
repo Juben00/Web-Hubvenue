@@ -6,13 +6,16 @@ session_start();
 $venueObj = new Venue();
 $venuePost = null;
 
-$getParams = $_GET['id'];
-$venueView = $venueObj->getSingleVenue($getParams);
 
-$ratings = $venueObj->getRatings($_GET['id']);
-$reviews = $venueObj->getReview($_GET['id']);
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$VENUE_ID = $_GET['id'];
+$CONFIRMED_BOOKING_STATUS = 2;
+$venueView = $venueObj->getSingleVenue($VENUE_ID);
 
-$bookings = $venueObj->getBookingByVenue($_GET['id'], 2);
+$ratings = $venueObj->getRatings($VENUE_ID);
+$reviews = $venueObj->getReview($VENUE_ID);
+
+$bookings = $venueObj->getBookingByVenue($VENUE_ID, $CONFIRMED_BOOKING_STATUS);
 
 $bookingCount = 0;
 $bookingRevenue = 0;
@@ -473,7 +476,7 @@ window.venueState = {
                     <div class="grid grid-cols-7 calendar-days">
                         <?php
                         // Get booked dates for this venue
-                        $bookedDates = $venueObj->getBookedDates($getParams);
+                        $bookedDates = $venueObj->getBookedDates($VENUE_ID);
                         $bookedDatesArray = [];
 
                         // Convert booked dates to array for easy checking
@@ -1171,7 +1174,7 @@ function addNewDiscount() {
     formData.append('imagesToDelete', JSON.stringify(window.venueState.imagesToDelete));
         formData.append('defaultImages', JSON.stringify(defaultImages));
     formData.append('thumbnailIndex', window.venueState.thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
-    formData.append('venueID', <?php echo $getParams ?>);
+    formData.append('venueID', <?php echo $VENUE_ID ?>);
 
     // Add discount data
     const discounts = [];

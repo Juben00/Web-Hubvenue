@@ -3,18 +3,19 @@ require_once './classes/account.class.php';
 require_once './api/coorAddressVerify.api.php';
 session_start();
 
+$accountObj = new Account();
 if (!isset($_SESSION['user'])) {
     header("Location: user.php");
     exit();
 }
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
+$PENDING = 1;
+$APPROVED = 2;
 
-
-$accountObj = new Account();
-
-$user = $accountObj->getUser($_SESSION['user']['id']);
-
-$appliedHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 1);
-$isHost = $accountObj->HostApplicationStats($_SESSION['user']['id'], 2);
+$user = $accountObj->getUser($USER_ID);
+$appliedHost = $accountObj->HostApplicationStats($USER_ID, $PENDING);
+$isHost = $accountObj->HostApplicationStats($USER_ID, $APPROVED);
 
 $address = getAddressByCoordinates($user['address']);
 

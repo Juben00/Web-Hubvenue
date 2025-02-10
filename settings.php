@@ -8,14 +8,20 @@ require_once './api/coorAddressVerify.api.php';
 session_start();
 $accountObj = new Account();
 
-if (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['user_type_id'] == 3) {
-        header('Location: admin/');
-    }
-    $user = $accountObj->getUser($_SESSION['user']['id']);
+$venueObj = new Venue();
+$accountObj = new Account();
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
+
+if (isset($userRole) && $userRole == "Admin") {
+    header('Location: admin/');
+    exit();
 }
 
-$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+$user = $accountObj->getUser($USER_ID);
+
+
+$discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
 $address = getAddressByCoordinates($user['address']);
 
@@ -42,15 +48,15 @@ $address = getAddressByCoordinates($user['address']);
     <?php
     // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
-        include_once './components/navbar.logged.in.php';
+        require_once './components/navbar.logged.in.php';
     } else {
-        include_once './components/navbar.html';
+        require_once './components/navbar.html';
     }
 
-    include_once './components/SignupForm.html';
-    include_once './components/feedback.modal.html';
-    include_once './components/confirm.feedback.modal.html';
-    include_once './components/Menu.html';
+    require_once './components/SignupForm.html';
+    require_once './components/feedback.modal.html';
+    require_once './components/confirm.feedback.modal.html';
+    require_once './components/Menu.html';
 
     ?>
 

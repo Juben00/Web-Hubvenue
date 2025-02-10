@@ -20,15 +20,15 @@
     <?php
     // Check if the 'user' key exists in the session
     if (isset($_SESSION['user'])) {
-        include_once './components/navbar.logged.in.php';
+        require_once './components/navbar.logged.in.php';
     } else {
-        include_once './components/navbar.html';
+        require_once './components/navbar.html';
     }
 
-    include_once './components/SignupForm.html';
-    include_once './components/feedback.modal.html';
-    include_once './components/confirm.feedback.modal.html';
-    include_once './components/Menu.html';
+    require_once './components/SignupForm.html';
+    require_once './components/feedback.modal.html';
+    require_once './components/confirm.feedback.modal.html';
+    require_once './components/Menu.html';
 
     ?>
 
