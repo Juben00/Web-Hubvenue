@@ -413,6 +413,10 @@ switch ($method) {
                         $messageId = $conn->lastInsertId();
                         error_log("Message inserted with ID: $messageId");
 
+                        // Create notification for the recipient
+                        require_once '../classes/notification.class.php';
+                        $notification = new Notification();
+
                         // Get all participants except sender
                         $stmt = $conn->prepare("
                             SELECT user_id 
@@ -420,15 +424,25 @@ switch ($method) {
                             WHERE conversation_id = ? AND user_id != ?
                         ");
                         $stmt->execute([$conversationId, $senderId]);
-                        $participants = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                        $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+                        // Create notification for each recipient
+                        foreach ($recipients as $recipientId) {
+                            $notification->createMessageNotification(
+                                $recipientId,
+                                $messageId,
+                                $senderId,
+                                $content
+                            );
+                        }
 
                         // Create message status records for all participants
-                        foreach ($participants as $participantId) {
+                        foreach ($recipients as $recipientId) {
                             $stmt = $conn->prepare("
                                 INSERT INTO message_status (message_id, user_id, is_read)
                                 VALUES (?, ?, 0)
                             ");
-                            $stmt->execute([$messageId, $participantId]);
+                            $stmt->execute([$messageId, $recipientId]);
                         }
 
                         // Create a read status for sender (marked as read)
@@ -583,6 +597,19 @@ switch ($method) {
                                         WHERE message_id = ? AND user_id = ?
                                     ");
                                     $stmt->execute([(int)$messageId, $userId]);
+
+                                    // Also update the corresponding notification
+                                    $stmt = $conn->prepare("
+                                        UPDATE notifications 
+                                        SET is_read = 1,
+                                            read_at = NOW(),
+                                            updated_at = NOW()
+                                        WHERE user_id = ? 
+                                        AND type = 'message' 
+                                        AND reference_id = ?
+                                    ");
+                                    $stmt->execute([$userId, (int)$messageId]);
+
                                 } catch (PDOException $e) {
                                     if ($e->getCode() == '42S22') { // Column not found error
                                         // Fallback to just updating is_read
@@ -592,11 +619,22 @@ switch ($method) {
                                             WHERE message_id = ? AND user_id = ?
                                         ");
                                         $stmt->execute([(int)$messageId, $userId]);
+
+                                        // Also update the corresponding notification
+                                        $stmt = $conn->prepare("
+                                            UPDATE notifications 
+                                            SET is_read = 1,
+                                                updated_at = NOW()
+                                            WHERE user_id = ? 
+                                            AND type = 'message' 
+                                            AND reference_id = ?
+                                        ");
+                                        $stmt->execute([$userId, (int)$messageId]);
                                     } else {
                                         throw $e; // Re-throw if it's a different error
                                     }
                                 }
-                                error_log("Updated existing message status for message ID: $messageId");
+                                error_log("Updated existing message status and notification for message ID: $messageId");
                             }
                         } else {
                             try {
@@ -606,6 +644,18 @@ switch ($method) {
                                     VALUES (?, ?, 1, NOW())
                                 ");
                                 $stmt->execute([(int)$messageId, $userId]);
+
+                                // Also update the corresponding notification
+                                $stmt = $conn->prepare("
+                                    UPDATE notifications 
+                                    SET is_read = 1,
+                                        updated_at = NOW()
+                                    WHERE user_id = ? 
+                                    AND type = 'message' 
+                                    AND reference_id = ?
+                                ");
+                                $stmt->execute([$userId, (int)$messageId]);
+
                             } catch (PDOException $e) {
                                 if ($e->getCode() == '42S22') { // Column not found error
                                     // Fallback to insert without read_at
@@ -614,17 +664,28 @@ switch ($method) {
                                         VALUES (?, ?, 1)
                                     ");
                                     $stmt->execute([(int)$messageId, $userId]);
+
+                                    // Also update the corresponding notification
+                                    $stmt = $conn->prepare("
+                                        UPDATE notifications 
+                                        SET is_read = 1,
+                                            updated_at = NOW()
+                                        WHERE user_id = ? 
+                                        AND type = 'message' 
+                                        AND reference_id = ?
+                                    ");
+                                    $stmt->execute([$userId, (int)$messageId]);
                                 } else {
                                     throw $e; // Re-throw if it's a different error
                                 }
                             }
-                            error_log("Inserted new message status for message ID: $messageId");
+                            error_log("Inserted new message status and updated notification for message ID: $messageId");
                         }
                     }
 
                     $conn->commit();
-                    error_log("Successfully marked messages as read");
-                    sendResponse(['success' => true, 'message' => 'Messages marked as read']);
+                    error_log("Successfully marked messages and notifications as read");
+                    sendResponse(['success' => true, 'message' => 'Messages and notifications marked as read']);
                 } catch (PDOException $e) {
                     $conn->rollBack();
                     error_log("Database error in mark_as_read: " . $e->getMessage());
