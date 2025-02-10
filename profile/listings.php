@@ -1,13 +1,19 @@
 <?php
 require_once '../classes/venue.class.php';
+require_once '../classes/account.class.php';
 require_once '../api/coorAddressVerify.api.php';
 
 session_start();
 
 $venueObj = new Venue();
+$accountObj = new Account();
 
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
 $venuePost = $venueObj->getAllVenues('', $USER_ID);
+
+$HOST_ROLE = 1;
+$GUEST_ROLE = 2;
 
 ?>
 <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">
@@ -15,8 +21,8 @@ $venuePost = $venueObj->getAllVenues('', $USER_ID);
         <!-- Main Listings View -->
         <div id="listingsView">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold">Your listings</h1>
-                <?php if ($_SESSION['user']['user_type_id'] == 1) { ?>
+                <h1 class="text-2xl font-medium">Your listings</h1>
+                <?php if ($userRole == $HOST_ROLE) { ?>
                     <div class="flex items-center space-x-4">
                         <button class="p-2 rounded-lg hover:bg-gray-100">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,7 +43,7 @@ $venuePost = $venueObj->getAllVenues('', $USER_ID);
             </div>
 
             <?php
-            if ($_SESSION['user']['user_type_id'] == 2) {
+            if ($userRole == $GUEST_ROLE) {
                 echo '<p class="text-gray-500 text-left">You need to apply for Host Account before you can list your venue.</p>';
             }
 
@@ -115,7 +121,7 @@ $venuePost = $venueObj->getAllVenues('', $USER_ID);
                             <img src="../images/black_ico.png" alt="Logo" class="w-auto h-28 object-contain drop-shadow-md">
                         </div>
                         <div class="text-center mb-8">
-                            <h2 class="text-2xl font-bold mb-3 text-gray-800">Delete Venue</h2>
+                            <h2 class="text-2xl font-medium mb-3 text-gray-800">Delete Venue</h2>
                             <p class="text-gray-600 leading-relaxed">
                                 Are you sure you want to delete "${venueName}"?<br><br>
                                 This action cannot be undone.
@@ -521,7 +527,7 @@ $venuePost = $venueObj->getAllVenues('', $USER_ID);
             calendarHTML += `
         <div class="relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer" 
              onclick="editDayPrice(${year}, ${month}, ${day})">
-            <div class="text-sm ${isToday ? 'font-bold' : ''}">${day}</div>
+            <div class="text-sm ${isToday ? 'font-medium' : ''}">${day}</div>
             <div class="text-xs text-gray-600">₱2,341</div>
         </div>
     `;
