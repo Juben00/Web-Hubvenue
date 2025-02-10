@@ -6,6 +6,8 @@ require_once __DIR__ . '/classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+
 // Check if 'id' parameter is present and valid
 if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: index.php");
@@ -23,7 +25,7 @@ if (empty($venue['name'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Check if the user is logged in
-    if (isset($_SESSION['user'])) {
+    if (isset($USER_ID)) {
         $_SESSION['reservationFormData'] = $_POST;
         header("Location: payment.php");
         exit();
@@ -47,7 +49,6 @@ foreach ($bookedDate as $booking) {
     }
 }
 
-// $discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
 ?>
@@ -342,7 +343,7 @@ $reviews = $venueObj->getReview($_GET['id']);
 <body class="bg-slate-50">
     <!-- Header -->
     <?php
-    if (isset($_SESSION['user'])) {
+    if (isset($USER_ID)) {
         include_once './components/navbar.logged.in.php';
     } else {
         include_once './components/navbar.html';
@@ -357,6 +358,8 @@ $reviews = $venueObj->getReview($_GET['id']);
 
     <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
         <div class="main-content">
+
+
             <div id="venueDetails">
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-4">
@@ -428,7 +431,8 @@ $reviews = $venueObj->getReview($_GET['id']);
                         <div class="flex justify-between items-center mb-6 gap-4">
                             <div>
                                 <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($venue['tag']) ?> at
-                                    <?php echo htmlspecialchars($venue['address']) ?>
+                                    <?php echo htmlspecialchars($venue['address']);
+                                    var_dump($USER_ID) ?>
                                 </h2>
                             </div>
                         </div>
@@ -1652,7 +1656,7 @@ $reviews = $venueObj->getReview($_GET['id']);
 
     <script>
         $('#reservationForm').on('submit', function (e) {
-            let isLogged = <?php echo isset($_SESSION['user']) ? "true" : "false" ?>;
+            let isLogged = <?php echo isset($USER_ID) ? "true" : "false" ?>;
 
             if (!isLogged) {
                 e.preventDefault();

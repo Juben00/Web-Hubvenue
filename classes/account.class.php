@@ -15,6 +15,8 @@ class Account
     public $email;
     public $password;
 
+    public $isRemember;
+
     //host account table variables
 
     public $userId;
@@ -84,10 +86,25 @@ class Account
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    public function getUserRole($userId)
+    {
+        try {
+            $sql = 'SELECT name FROM user_types_sub uts JOIN users u ON uts.id = u.user_type_id WHERE u.id = :userId';
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':userId', $userId);
+            $stmt->execute();
+            $role = $stmt->fetchColumn();
+            return $role;
+        } catch (PDOException $e) {
+            error_log("Error fetching user role: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function login()
     {
         try {
-
             $sql = 'SELECT * FROM users WHERE email = :email';
             $stmt = $this->db->connect()->prepare($sql);
             $stmt->bindParam(':email', $this->email);
@@ -96,10 +113,23 @@ class Account
             if ($stmt->rowCount() > 0) {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
                 if (password_verify($this->password, $user['password'])) {
-
                     session_start();
-                    session_regenerate_id(delete_old_session: true);
-                    $_SESSION['user'] = $user;
+                    session_regenerate_id(true);
+                    $_SESSION['user'] = $user['id'];
+
+                    if ($this->isRemember === 'true') {
+                        $token = bin2hex(random_bytes(32));
+                        $expiry = date('Y-m-d H:i:s', strtotime('+30 days'));
+
+                        $updateSql = 'UPDATE users SET remember_token = :token, token_expiry = :expiry WHERE id = :id';
+                        $updateStmt = $this->db->connect()->prepare($updateSql);
+                        $updateStmt->bindParam(':token', $token);
+                        $updateStmt->bindParam(':expiry', $expiry);
+                        $updateStmt->bindParam(':id', $user['id']);
+                        $updateStmt->execute();
+
+                        setcookie('remember_token', $token, time() + (86400 * 30), '/', '', false, true);
+                    }
 
                     return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
                 } else {
@@ -109,11 +139,30 @@ class Account
                 return ['status' => 'error', 'message' => 'Invalid email or password'];
             }
         } catch (PDOException $e) {
-            // Log error and return empty array
             error_log("Error fetching user data: " . $e->getMessage());
-            return ['status' => 'error', 'message' => $e->getMessage()];
+            return ['status' => 'error', 'message' => 'An error occurred. Please try again later.'];
         }
     }
+
+    public function getProfileTemplate($id)
+    {
+        try {
+            $sql = "SELECT profile_pic, LEFT(firstname, 1) AS initial FROM users WHERE id = :id";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $result; // Return the first letter of the first name
+            }
+            return null;
+        } catch (PDOException $e) {
+            error_log("Error fetching initial: " . $e->getMessage());
+            return null;
+        }
+    }
+
 
     public function getOwner($id)
     {
@@ -648,22 +697,6 @@ class Account
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
-
-    function getProfilePic($userId)
-    {
-        try {
-            $sql = "SELECT profile_pic FROM users WHERE id = :userId";
-            $stmt = $this->db->connect()->prepare($sql);
-            $stmt->bindParam(':userId', $userId);
-            $stmt->execute();
-            $profilePic = $stmt->fetchColumn();
-            return $profilePic;
-        } catch (PDOException $e) {
-            error_log("Error fetching profile picture: " . $e->getMessage());
-            return ['status' => 'error', 'message' => $e->getMessage()];
-        }
-    }
-
     public function getDiscountApplications($search = "", $filter = "")
     {
         $sql = "SELECT 
@@ -706,6 +739,27 @@ class Account
             return [];
         }
     }
+
+    public function getFullName($id)
+    {
+        try {
+            $sql = "SELECT CONCAT(firstname, ' ', lastname) AS fullname FROM users WHERE id = :id";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $result['fullname'];
+            }
+
+            return null; // Return null if no result found
+        } catch (PDOException $e) {
+            error_log("Error fetching full name: " . $e->getMessage());
+            return null;
+        }
+    }
+
 
     public function updateDiscountApplicationStatus($applicationId, $status)
     {

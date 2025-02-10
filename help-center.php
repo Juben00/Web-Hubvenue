@@ -6,10 +6,14 @@ require_once './classes/account.class.php';
 
 session_start();
 
-if (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['user_type_id'] == 3) {
-        header('Location: admin/');
-    }
+$venueObj = new Venue();
+$accountObj = new Account();
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
+
+if (isset($userRole) && $userRole == "Admin") {
+    header('Location: admin/');
+    exit();
 }
 
 $venueObj = new Venue();
@@ -17,7 +21,7 @@ $accountObj = new Account();
 
 // Get all venues
 $venues = $venueObj->getAllVenues('2');
-$bookmarks = $accountObj->getBookmarks(isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : 0);
+$bookmarks = $accountObj->getBookmarks(isset($USER_ID) ? $USER_ID : 0);
 $bookmarkIds = array_column($bookmarks, 'venue_id');
 ?>
 

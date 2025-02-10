@@ -4,7 +4,8 @@ require_once '../classes/account.class.php';
 session_start();
 
 $accountObj = new Account();
-$bookmarks = $accountObj->getBookmarks($_SESSION['user']['id']);
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$bookmarks = $accountObj->getBookmarks($USER_ID);
 $bookmarkIds = array_column($bookmarks, 'venue_id');
 ?>
 

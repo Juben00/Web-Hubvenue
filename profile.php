@@ -110,10 +110,10 @@ if (!isset($_SESSION['user'])) {
     <?php
     require_once './components/profile.nav.php';
     require_once './spinner.php';
-    include_once './components/SignupForm.html';
-    include_once './components/feedback.modal.html';
-    include_once './components/confirm.feedback.modal.html';
-    include_once './components/Menu.html';
+    require_once './components/SignupForm.html';
+    require_once './components/feedback.modal.html';
+    require_once './components/confirm.feedback.modal.html';
+    require_once './components/Menu.html';
 
     ?>
 

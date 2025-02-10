@@ -1,21 +1,24 @@
 <?php
 session_start();
 
-if (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['user_type_id'] == 3) {
-        $user = $_SESSION['user'];
-    } else {
-        header('Location: ../index.php');
-    }
+require_once '../classes/venue.class.php';
+require_once '../classes/account.class.php';
+
+$venueObj = new Venue();
+$accountObj = new Account();
+
+
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+
+$userRole = $accountObj->getUserRole($USER_ID);
+
+if (isset($USER_ID) && $userRole == 'Admin') {
+    $user = $USER_ID;
 } else {
     header('Location: ../index.php');
 }
 
 
-
-include_once '../classes/venue.class.php';
-
-$venueObj = new Venue();
 
 ?>
 

@@ -1,30 +1,36 @@
 <?php
 require_once '../classes/venue.class.php';
+require_once '../classes/account.class.php';
 
 // Check if user is logged in
 session_start();
 
 $venueObj = new Venue();
-$fullname = $_SESSION['user']['firstname'] . ' ' . $_SESSION['user']['lastname'];
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$fullname = $accountObj->getFullName($USER_ID);
 
 // Fetch booking counts by status
-$hostId = $_SESSION['user']['id'];
-$pendingBookings = $venueObj->getBookingsByHost($hostId, 1); // Pending
-$confirmedBookings = $venueObj->getBookingsByHost($hostId, 2); // Confirmed
-$cancelledBookings = $venueObj->getBookingsByHost($hostId, 3); // Cancelled
-$completedBookings = $venueObj->getBookingsByHost($hostId, 4); // Completed
+$PENDING_BOOKING = 1;
+$CONFIRMED_BOOKING = 2;
+$CANCELLED_BOOKING = 3;
+$PREVIOUS_BOOKING = 4;
 
-$pendingCount = count($pendingBookings);
-$confirmedCount = count($confirmedBookings);
-$cancelledCount = count($cancelledBookings);
-$completedCount = count($completedBookings);
+$pendingBooking = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
+$confirmedBooking = $venueObj->getAllBookings($USER_ID, $CONFIRMED_BOOKING);
+$cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
+$completedBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
+
+$pendingCount = count($pendingBooking);
+$confirmedCount = count($confirmedBooking);
+$cancelledCount = count($cancelledBooking);
+$completedCount = count($completedBooking);
 $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCount;
 ?>
 
 <main class="max-w-7xl pt-20 mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Welcome Section -->
     <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900">Welcome back, <?php echo htmlspecialchars($fullname); ?></h1>
@@ -545,7 +551,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                     <?php
                     // Fetch venues for this host
                     $hostVenues = $venueObj->getVenuesByHost($hostId);
-                    
+
                     foreach ($hostVenues as $venue) {
                         // Get statistics for each venue
                         $venueStats = $venueObj->getVenueStatistics($venue['id']);
@@ -553,31 +559,31 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         $averageRating = $venueStats['average_rating'] ?? 0;
                         $totalRevenue = $venueStats['total_revenue'] ?? 0;
                         $occupancyRate = $venueStats['occupancy_rate'] ?? 0;
-                        
+
                         // Get pending, confirmed, completed, cancelled counts for this venue
                         $venuePending = $venueObj->getBookingCountByStatus($venue['id'], 1);
                         $venueConfirmed = $venueObj->getBookingCountByStatus($venue['id'], 2);
                         $venueCompleted = $venueObj->getBookingCountByStatus($venue['id'], 4);
                         $venueCancelled = $venueObj->getBookingCountByStatus($venue['id'], 3);
-                    ?>
+                        ?>
                         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                             <div class="relative h-48">
-                                <?php 
+                                <?php
                                 $imageUrls = !empty($venue['image_urls']) ? explode(',', $venue['image_urls']) : [];
-                                if (!empty($imageUrls)): 
-                                ?>
-                                    <img src="./<?= htmlspecialchars($imageUrls[$venue['thumbnail']]) ?>" 
-                                         alt="<?= htmlspecialchars($venue['name']) ?>" 
-                                         class="w-full h-full object-cover">
+                                if (!empty($imageUrls)):
+                                    ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[$venue['thumbnail']]) ?>"
+                                        alt="<?= htmlspecialchars($venue['name']) ?>" class="w-full h-full object-cover">
                                 <?php endif; ?>
-                                <div class="absolute top-4 right-4 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
+                                <div
+                                    class="absolute top-4 right-4 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
                                     Intimate Gatherings
                                 </div>
                             </div>
-                            
+
                             <div class="p-6">
                                 <h3 class="text-xl font-semibold mb-4"><?= htmlspecialchars($venue['name']) ?></h3>
-                                
+
                                 <div class="grid grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <p class="text-sm text-gray-600">Total Bookings</p>
@@ -586,12 +592,12 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     <div>
                                         <p class="text-sm text-gray-600">Average Rating</p>
                                         <p class="text-xl font-semibold flex items-center">
-                                            <?= number_format($averageRating, 1) ?> 
+                                            <?= number_format($averageRating, 1) ?>
                                             <span class="text-yellow-400 ml-1">★</span>
                                         </p>
                                     </div>
                                 </div>
-                                
+
                                 <div class="grid grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <p class="text-sm text-gray-600">Total Revenue</p>
@@ -602,7 +608,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-xl font-semibold"><?= number_format($occupancyRate, 1) ?>%</p>
                                     </div>
                                 </div>
-                                
+
                                 <div class="space-y-2">
                                     <div class="flex justify-between">
                                         <span class="text-sm text-gray-600">Pending</span>
@@ -621,7 +627,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <span class="text-sm font-medium"><?= $venueCancelled ?></span>
                                     </div>
                                 </div>
-                                
+
                                 <button onclick="showDetailedStats(<?= htmlspecialchars(json_encode([
                                     'name' => $venue['name'],
                                     'id' => $venue['id'],
@@ -874,7 +880,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             </div>
             <button onclick="closeStatsModal()" class="text-gray-500 hover:text-gray-700">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
                 </svg>
             </button>
         </div>
@@ -929,7 +936,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             </div>
             <div class="bg-white p-4 rounded-lg border">
                 <h4 class="text-gray-600 text-sm mb-1">Average Rating</h4>
-                <p id="stats-avg-rating" class="text-xl font-bold flex items-center">0.0 <span class="text-yellow-400 ml-1">★</span></p>
+                <p id="stats-avg-rating" class="text-xl font-bold flex items-center">0.0 <span
+                        class="text-yellow-400 ml-1">★</span></p>
                 <p class="text-xs text-gray-500">Based on all reviews</p>
             </div>
             <div class="bg-white p-4 rounded-lg border">
@@ -963,25 +971,25 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 </div>
 
 <style>
-.period-btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #6B7280;
-    border-bottom: 2px solid transparent;
-    background: none;
-    cursor: pointer;
-    transition: all 0.2s;
-}
+    .period-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6B7280;
+        border-bottom: 2px solid transparent;
+        background: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
 
-.period-btn:hover {
-    color: #000;
-}
+    .period-btn:hover {
+        color: #000;
+    }
 
-.period-btn.selected {
-    color: #000;
-    border-bottom-color: #000;
-}
+    .period-btn.selected {
+        color: #000;
+        border-bottom-color: #000;
+    }
 </style>
 
 <script>
@@ -1248,24 +1256,24 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         currentStats = venueData;
         const modal = document.getElementById('stats-modal');
         document.getElementById('modal-venue-name').textContent = venueData.name;
-        
+
         // Show modal
         modal.classList.remove('hidden');
-        
+
         // Initialize charts if they haven't been created yet
         if (!revenueChart) {
             initializeCharts();
         }
-        
+
         // Get all stats at once
         fetchVenueStats(venueData.id).then(stats => {
             currentStats.stats = stats;
             // Set initial period to 'today'
             switchPeriod('today');
-            
+
             // Update overall statistics
             updateOverallStats(stats);
-            
+
             // Update charts with new data
             updateCharts(stats);
         });
@@ -1292,7 +1300,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 return '₱' + value.toLocaleString();
                             }
                         }
@@ -1365,7 +1373,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
     function updateOverallStats(stats) {
         if (!stats) return;
-        
+
         document.getElementById('stats-total-revenue').textContent = `₱${numberWithCommas(stats.total_revenue.toFixed(2))}`;
         document.getElementById('stats-avg-rating').textContent = `${stats.average_rating.toFixed(1)} `;
         document.getElementById('stats-total-bookings').textContent = stats.total_bookings;
@@ -1374,7 +1382,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
     function switchPeriod(period) {
         if (!currentStats || !currentStats.stats) return;
-        
+
         // Update button styles
         document.querySelectorAll('.period-btn').forEach(btn => {
             if (btn.textContent.toLowerCase().includes(period.toLowerCase())) {
@@ -1383,18 +1391,18 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 btn.classList.remove('selected');
             }
         });
-        
+
         const stats = currentStats.stats[period];
         if (!stats) return;
-        
+
         // Update period statistics
         document.getElementById('stats-revenue').textContent = `₱${numberWithCommas(stats.revenue.toFixed(2))}`;
         document.getElementById('stats-bookings').textContent = stats.bookings;
         document.getElementById('stats-avg-guests').textContent = stats.avg_guests.toFixed(1);
-        
+
         // Update the "Last 24h" text based on period
         const periodText = document.querySelector('.text-xs.text-blue-600');
-        switch(period) {
+        switch (period) {
             case 'today':
                 periodText.textContent = 'Last 24h';
                 break;
@@ -1413,7 +1421,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
     function closeStatsModal() {
         const modal = document.getElementById('stats-modal');
         modal.classList.add('hidden');
-        
+
         // Reset charts when closing modal
         if (revenueChart) {
             revenueChart.destroy();
@@ -1426,7 +1434,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
     }
 
     // Close modal when clicking outside
-    document.getElementById('stats-modal').addEventListener('click', function(e) {
+    document.getElementById('stats-modal').addEventListener('click', function (e) {
         if (e.target === this) {
             closeStatsModal();
         }

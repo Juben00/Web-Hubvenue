@@ -3,7 +3,16 @@ require_once './classes/account.class.php';
 
 $account = new Account();
 
-$profilePic = $account->getProfilePic($_SESSION['user']['id']);
+
+$account = new Account();
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+
+$profileTemplate = $account->getProfileTemplate($USER_ID);
+
+$userRole = $accountObj->getUserRole($USER_ID);
+
+$HOST_ROLE = "Host";
+
 ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -25,7 +34,7 @@ $profilePic = $account->getProfilePic($_SESSION['user']['id']);
         </li>
 
         <?php
-        if ($_SESSION['user']['user_type_id'] == 1) {
+        if ($userRole == $HOST_ROLE) {
           echo '
             <li>
               <a id="venue-owner" data-profileUrl="venue-owner"
@@ -43,7 +52,7 @@ $profilePic = $account->getProfilePic($_SESSION['user']['id']);
         </li>
 
         <?php
-        if ($_SESSION['user']['user_type_id'] == 1) {
+        if ($userRole == $HOST_ROLE) {
           echo '
         <li>
           <a id="listing" data-profileUrl="listings" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
@@ -79,10 +88,10 @@ $profilePic = $account->getProfilePic($_SESSION['user']['id']);
           <div class="relative">
             <div class="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center">
               <?php
-              if (isset($_SESSION['user']) && empty($profilePic)) {
-                echo $_SESSION['user']['firstname'][0];
+              if (!isset($profileTemplate['profile_pic'])) {
+                echo '<p classname="uppercase">' . $profileTemplate['initial'] . '</p>';
               } else {
-                echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profilePic) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
+                echo '<img id="profileImage" name="profile_image" src="./' . htmlspecialchars($profileTemplate['profile_pic']) . '" alt="Profile Picture" class="w-full h-full rounded-full object-cover">';
               }
               ?>
             </div>

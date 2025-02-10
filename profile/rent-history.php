@@ -3,10 +3,16 @@ require_once '../classes/venue.class.php';
 session_start();
 $venueObj = new Venue();
 
-$pendingBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 1);
-$currentBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 2);
-$cancelledBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 3);
-$previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$PENDING_BOOKING = 1;
+$CURRENT_BOOKING = 2;
+$CANCELLED_BOOKING = 3;
+$PREVIOUS_BOOKING = 4;
+
+$pendingBooking = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
+$currentBooking = $venueObj->getAllBookings($USER_ID, $CURRENT_BOOKING);
+$cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
+$previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
 ?>
 
@@ -55,23 +61,23 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                 </h2>
                                 <div class="flex items-center gap-2">
                                     <span class="px-2 py-1 rounded-full text-sm font-medium <?php
-                                        switch ($booking['booking_status_id']) {
-                                            case '1': // Pending
-                                                echo 'bg-yellow-100 text-yellow-800';
-                                                break;
-                                            case '2': // Approved
-                                                echo 'bg-green-100 text-green-800';
-                                                break;
-                                            case '3': // Cancelled
-                                                echo 'bg-red-100 text-red-800';
-                                                break;
-                                            case '4': // Completed
-                                                echo 'bg-blue-100 text-blue-800';
-                                                break;
-                                            default:
-                                                echo 'bg-gray-100 text-gray-800';
-                                                break;
-                                        }
+                                    switch ($booking['booking_status_id']) {
+                                        case '1': // Pending
+                                            echo 'bg-yellow-100 text-yellow-800';
+                                            break;
+                                        case '2': // Approved
+                                            echo 'bg-green-100 text-green-800';
+                                            break;
+                                        case '3': // Cancelled
+                                            echo 'bg-red-100 text-red-800';
+                                            break;
+                                        case '4': // Completed
+                                            echo 'bg-blue-100 text-blue-800';
+                                            break;
+                                        default:
+                                            echo 'bg-gray-100 text-gray-800';
+                                            break;
+                                    }
                                     ?>">
                                         <?php
                                         switch ($booking['booking_status_id']) {
@@ -99,7 +105,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                             class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
                                             Booking</span> <!-- Tag for future booking -->
                                     <?php else: ?>
-                                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
+                                        <span
+                                            class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
                                             Booking</span> <!-- Tag for started booking -->
                                     <?php endif; ?>
                                 </div>
@@ -212,23 +219,23 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                 </h2>
                                 <div class="flex items-center gap-2">
                                     <span class="px-2 py-1 rounded-full text-sm font-medium <?php
-                                        switch ($booking['booking_status_id']) {
-                                            case '1': // Pending
-                                                echo 'bg-yellow-100 text-yellow-800';
-                                                break;
-                                            case '2': // Approved
-                                                echo 'bg-green-100 text-green-800';
-                                                break;
-                                            case '3': // Cancelled
-                                                echo 'bg-red-100 text-red-800';
-                                                break;
-                                            case '4': // Completed
-                                                echo 'bg-blue-100 text-blue-800';
-                                                break;
-                                            default:
-                                                echo 'bg-gray-100 text-gray-800';
-                                                break;
-                                        }
+                                    switch ($booking['booking_status_id']) {
+                                        case '1': // Pending
+                                            echo 'bg-yellow-100 text-yellow-800';
+                                            break;
+                                        case '2': // Approved
+                                            echo 'bg-green-100 text-green-800';
+                                            break;
+                                        case '3': // Cancelled
+                                            echo 'bg-red-100 text-red-800';
+                                            break;
+                                        case '4': // Completed
+                                            echo 'bg-blue-100 text-blue-800';
+                                            break;
+                                        default:
+                                            echo 'bg-gray-100 text-gray-800';
+                                            break;
+                                    }
                                     ?>">
                                         <?php
                                         switch ($booking['booking_status_id']) {
@@ -256,7 +263,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                             class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
                                             Booking</span> <!-- Tag for future booking -->
                                     <?php else: ?>
-                                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
+                                        <span
+                                            class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
                                             Booking</span> <!-- Tag for started booking -->
                                     <?php endif; ?>
                                 </div>
@@ -522,17 +530,21 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             </div>
         </div>
         <!-- Details Modal -->
-        <div id="details-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-            <div class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
+        <div id="details-modal"
+            class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div
+                class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
                 <!-- Modal Header -->
                 <div class="flex justify-between items-center pb-6 border-b">
                     <div>
                         <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
                         <p class="text-sm text-gray-500 mt-1">Booking Details</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
+                    <button onclick="closeModal()"
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -545,7 +557,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                         <div class="space-y-4">
                             <!-- Main Image -->
                             <div class="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3]">
-                                <img id="modal-main-image" src="" alt="Venue Main Image" class="w-full h-full object-cover transition-all duration-300">
+                                <img id="modal-main-image" src="" alt="Venue Main Image"
+                                    class="w-full h-full object-cover transition-all duration-300">
                             </div>
 
                             <!-- Image Gallery -->
@@ -608,7 +621,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <!-- Action Buttons -->
                             <div class="flex gap-3 pt-4">
                                 <div id="book-again-container" class="hidden">
-                                    <button class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
+                                    <button
+                                        class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
                                         Book Again
                                     </button>
                                 </div>
