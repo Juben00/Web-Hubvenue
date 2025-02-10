@@ -1334,4 +1334,150 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
     html {
         scroll-behavior: smooth;
     }
+    /* Update review modal styles */
+    .review-step {
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+
+    .review-step.hidden {
+        display: none;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    .review-step.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Enhanced star rating styles */
+    .star-overall, .star-cleanliness, .star-accuracy, 
+    .star-communication, .star-location, .star-value {
+        transition: all 0.2s ease-out;
+        display: inline-block;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .star-overall:hover ~ .star-overall,
+    .star-cleanliness:hover ~ .star-cleanliness,
+    .star-accuracy:hover ~ .star-accuracy,
+    .star-communication:hover ~ .star-communication,
+    .star-location:hover ~ .star-location,
+    .star-value:hover ~ .star-value {
+        opacity: 0.5;
+    }
+
+    .star-overall:hover, .star-cleanliness:hover, .star-accuracy:hover, 
+    .star-communication:hover, .star-location:hover, .star-value:hover {
+        transform: scale(1.2);
+        text-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+    }
+
+    /* Checkbox styles */
+    input[type="checkbox"] {
+        transition: all 0.2s ease-out;
+    }
+
+    input[type="checkbox"]:checked + span {
+        color: black;
+        font-weight: 500;
+    }
+
+    /* Textarea styles */
+    textarea {
+        min-height: 120px;
+        transition: all 0.2s ease-out;
+    }
+
+    textarea:focus {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Photo upload area styles */
+    .border-dashed {
+        background-image: linear-gradient(to right, transparent 50%, rgba(0, 0, 0, 0.05) 50%),
+                          linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.05) 50%);
+        background-size: 30px 30px;
+        transition: all 0.3s ease-out;
+    }
+
+    .border-dashed:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    /* Modal animation */
+    @keyframes modalFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #review-modal .relative {
+        animation: modalFadeIn 0.3s ease-out;
+    }
+
+    /* Step transition animation */
+    @keyframes stepFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .review-step:not(.hidden) {
+        animation: stepFadeIn 0.3s ease-out;
+    }
+
+    /* Add these new styles for consistent step sizing */
+    .review-step {
+        height: 520px; /* Fixed height for all steps */
+        overflow: hidden; /* Hide overflow at the step level */
+    }
+
+    .review-step > div {
+        height: 100%;
+        max-height: 100%;
+    }
+
+    .review-step h3.sticky {
+        background: white;
+        z-index: 10;
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Custom scrollbar for better visual */
+    .overflow-y-auto {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
 </style>
