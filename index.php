@@ -251,8 +251,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             <div class="relative w-full h-96 overflow-hidden">
                                                 <!-- Image Slideshow for each venue -->
                                                 <div class="slideshow-container venueCard h-full w-full "
-                                                    data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
-                                                    data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
+                                                    data-id="venues.php?id=<?php echo $venue['venue_id']; ?>">
                                                     <div class="slide h-full w-full">
                                                         <img src="./<?= htmlspecialchars($venue['image_urls'][$venue['thumbnail']]) ?>"
                                                             alt="<?= htmlspecialchars($venue['name']) ?>"
@@ -574,159 +573,6 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         let map;
         let marker;
     </script>
-    <!-- venue slideshow -->
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const venueSlideshows = document.querySelectorAll('.slideshow-container');
-
-            venueSlideshows.forEach((slideshow) => {
-                let currentSlide = 0;
-                const slides = slideshow.querySelectorAll('.slide');
-
-                function showSlide(index) {
-                    // First set display:block on next slide before starting transition
-                    slides[index].style.display = 'block';
-
-                    // Small delay to ensure display:block is processed
-                    setTimeout(() => {
-                        // Hide all slides
-                        slides.forEach((slide) => {
-                            slide.classList.remove('active');
-                            slide.style.opacity = '0';
-                        });
-
-                        // Show and fade in the current slide
-                        slides[index].classList.add('active');
-                        slides[index].style.opacity = '1';
-
-                        // Clean up non-active slides after transition
-                        setTimeout(() => {
-                            slides.forEach((slide, i) => {
-                                if (i !== index) {
-                                    slide.style.display = 'none';
-                                }
-                            });
-                        }, 500); // Match this to transition duration
-                    }, 10);
-                }
-
-                // Show next slide every 4 seconds
-                setInterval(() => {
-                    currentSlide = (currentSlide + 1) % slides.length;
-                    showSlide(currentSlide);
-                }, 4000);
-
-                // Initialize the first slide
-                showSlide(currentSlide);
-            });
-        });
-
-    </script> -->
-
-    <!-- <script>
-        // Date picker functionality
-        const checkInBtn = document.getElementById('checkInBtn');
-        const checkOutBtn = document.getElementById('checkOutBtn');
-        const checkInText = document.getElementById('checkInText');
-        const checkOutText = document.getElementById('checkOutText');
-
-        checkInBtn.addEventListener('click', () => {
-            const date = luxon.DateTime.local().plus({ days: 1 }).toFormat('LLL dd, yyyy');
-            checkInText.textContent = date;
-        });
-
-        checkOutBtn.addEventListener('click', () => {
-            const date = luxon.DateTime.local().plus({ days: 6 }).toFormat('LLL dd, yyyy');
-            checkOutText.textContent = date;
-        });
-    </script> -->
-
-    <!-- login and signup form functionality || styling css  -->
-    <script>
-        // Get modal elements
-        const authModal = document.getElementById('authModal');
-        const closeModal = document.getElementById('closeModal');
-        const loginTab = document.getElementById('loginTab');
-        const signupTab = document.getElementById('signupTab');
-        const loginForm = document.getElementById('loginForm');
-        const signupForm = document.getElementById('signupForm');
-        const tabUnderline = document.getElementById('tabUnderline');
-
-        // Get all buttons that should open the modal
-        const signInButtons = document.querySelectorAll('button[onclick="openModal()"]');
-
-        // Function to open modal with smooth transition
-        function openModal() {
-            authModal.style.display = 'flex';
-            authModal.style.opacity = '0';
-            setTimeout(() => {
-                authModal.style.opacity = '1';
-            }, 10);
-        }
-
-        // Function to close modal with smooth transition
-        function closeModalFunc() {
-            authModal.style.opacity = '0';
-            setTimeout(() => {
-                authModal.style.display = 'none';
-            }, 300);
-        }
-
-        // Add click event listeners to all sign in buttons
-        signInButtons.forEach(button => {
-            button.addEventListener('click', openModal);
-        });
-
-        // Close modal when clicking close button
-        closeModal.addEventListener('click', closeModalFunc);
-
-        // Tab switching functionality
-        loginTab.addEventListener('click', () => {
-            switchTab(loginTab, signupTab, loginForm, signupForm);
-        });
-
-        signupTab.addEventListener('click', () => {
-            switchTab(signupTab, loginTab, signupForm, loginForm);
-        });
-
-        function switchTab(activeTab, inactiveTab, activeForm, inactiveForm) {
-            activeTab.classList.add('text-blue-500');
-            activeTab.classList.remove('text-gray-500');
-            inactiveTab.classList.remove('text-blue-500');
-            inactiveTab.classList.add('text-gray-500');
-
-            // Move the tab underline
-            if (activeTab === loginTab) {
-                tabUnderline.style.left = '0';
-            } else {
-                tabUnderline.style.left = '50%';
-            }
-
-            // Fade out the current form
-            activeForm.classList.add('opacity-0');
-            inactiveForm.classList.add('opacity-0');
-
-            setTimeout(() => {
-                activeForm.classList.add('hidden');
-                inactiveForm.classList.add('hidden');
-
-                // Show and fade in the new form
-                activeForm.classList.remove('hidden');
-                setTimeout(() => {
-                    activeForm.classList.remove('opacity-0');
-                }, 50);
-            }, 300);
-        }
-
-        // Ensure the DOM is fully loaded before attaching event listeners
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // Reattach event listeners to make sure they work
-            closeModal.addEventListener('click', closeModalFunc);
-            loginTab.addEventListener('click', () => switchTab(loginTab, signupTab, loginForm, signupForm));
-            signupTab.addEventListener('click', () => switchTab(signupTab, loginTab, signupForm, loginForm));
-        });
-    </script>
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const faqHeaders = document.querySelectorAll(".faq-header");
@@ -770,6 +616,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         });
     </script>
 
+    <script src="./js/signinup.trigger.js"></script>
 </body>
 
 </html>

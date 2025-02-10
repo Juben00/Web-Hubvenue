@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $review = clean_input($_POST['review-text']);
 
     if (empty($user_id)) {
-        $user_idErr = "User ID is required";
+        $user_idErr = "Please login to give review";
     }
     if (empty($host_id)) {
         $host_idErr = "Host ID is required";
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'An error occurred while rating host']);
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'All fields are required']);
+        echo json_encode(['status' => 'error', 'message' => implode('<br>', [$user_idErr, $host_idErr, $reviewErr, $ratingErr])]);
     }
 }
 

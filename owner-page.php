@@ -6,22 +6,20 @@ require_once __DIR__ . '/classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-$owner = $accountObj->getOwner($_GET['id']);
-$venues = $venueObj->getAllVenues(2, $_GET['id']);
 $userID = $_SESSION['user']['id'] ?? null;
+$ownerID = $_GET['id'] ?? null;
+$owner = $accountObj->getOwner($_GET['id']);
+$venues = $venueObj->getAllVenues(2, $ownerID);
 $profilePic = $owner['profile_pic'] ?? null;
 
-$rating = $venueObj->getHostRatings($userID);
+$rating = $venueObj->getHostRatings($ownerID);
 
-$reviews = $venueObj->getHostReviews($userID);
+$reviews = $venueObj->getHostReviews($ownerID);
 
-if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
+if (!isset($ownerID) || empty($ownerID) || !is_numeric($ownerID)) {
     header("Location: index.php");
     exit();
 } else if (!$owner) {
-    header("Location: index.php");
-    exit();
-} else if (!$userID) {
     header("Location: index.php");
     exit();
 }
@@ -219,7 +217,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                                         echo htmlspecialchars($review['user_name'][0] ?? 'U'); // Display the first letter of the user's name or 'U' if name is missing
                                         echo '</div>';
                                     } else {
-                                        echo '<img class="w-12 h-12 bg-gray-200 rounded-full" src="' . htmlspecialchars($review['profile_pic']) . '" alt="Profile Picture">';
+                                        echo '<img class="w-12 h-12 bg-gray-200 rounded-full" src="./' . htmlspecialchars($review['profile_pic']) . '" alt="Profile Picture">';
                                     }
                                     ?>
 
@@ -268,7 +266,7 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
                             <input type="number" class="hidden" name="user_id"
                                 value="<?php echo htmlspecialchars($userID) ?>">
                             <input type="number" class="hidden" name="host_id"
-                                value="<?php echo htmlspecialchars($owner['id']) ?>">
+                                value="<?php echo htmlspecialchars($ownerID) ?>">
 
                             <label onclick="rate(1)" for="one" class="text-5xl text-gray-300 hover:text-yellow-400 star"
                                 data-rating="1">
@@ -302,8 +300,24 @@ if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
             </form>
         </div>
     </div>
+
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
+
+    <script>
+        $("#hostReviewForm").submit(function (e) {
+            e.preventDefault();
+
+            let isLogged = <?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>;
+            if (!isLogged) {
+                showModal('Please login to leave a review.', undefined, 'black_ico.png');
+                return;
+            }
+        });
+
+
+    </script>
+
     <script>
         // Your existing JavaScript with improved event handling...
 

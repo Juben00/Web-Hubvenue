@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     console.log("User jQuery loaded");
     
-    // signup terms and conditions checker
+    // signup terms and conditions checkrer
     const signupAgreeTerms = $("#agreeTerms");
     const signupButton = $("#signupSubmit");
     const spinner = $("#spinner");
@@ -113,16 +113,6 @@ $(document).ready(function () {
         addVenue();
     });
 
-    $('.venueCard').on("click", function () {
-        let isLogged = $(this).data("isloggedin"); 
-        let venueUrl = $(this).data("id");
-        
-        if (isLogged === true) {  
-            viewVenue(venueUrl);
-        } else {
-            showModal("Please login to view the venue", undefined, "black_ico.png");
-        }
-    });
 
     //profile navigation
     $('.profileNav').on('click', function (e) {
@@ -181,30 +171,7 @@ $(document).ready(function () {
     });  
 
     //reservation form
-  $('#reservationForm').on('submit', function (e) {
-    const numberOfGuests = $('#numberOFGuest').val(); // Get the value of the input
-    const checkInDate = $('#checkin').val(); // Get the value of the input
-    const checkOutDate = $('#checkout').val(); // Get the value of the input
-    if (numberOfGuests < 1) { // Check if the value is less than 1
-        e.preventDefault(); // Prevent form submission
-        showModal('Please enter a valid number of guests', undefined, "black_ico.png");
-    }
-    if (!checkInDate || !checkOutDate) { // Check if either date is empty
-        e.preventDefault(); // Prevent form submission        
-        showModal('Please select both check-in and check-out dates.', undefined, "black_ico.png");
-        return;
-    }
-
-    // Convert to Date objects for comparison
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-
-    if (checkIn >= checkOut) { // Check if the check-in date is not before the check-out date
-        e.preventDefault(); // Prevent form submission
-        showModal('Check-in date must be before the check-out date.', undefined, "black_ico.png");
-        return;
-    } 
-});
+  
 
     // Update user info form submission
     $('#updateUserInfoForm').on('submit', function (e) {
@@ -371,17 +338,11 @@ $(document).ready(function () {
 
                     //view bookmarks
                     $('.venueCard').on("click", function () {
-                        let isLogged = $(this).data("isloggedin"); 
-                        let venueUrl = $(this).data("id");
                         
+                        let venueUrl = $(this).data("id");
                         spinnerOn();
-                        if (isLogged === true) {  
-                            spinnerOff();
-                            viewVenue(venueUrl);
-                        } else {
-                            spinnerOff();
-                            showModal("Please login to view the venue", undefined, "black_ico.png");
-                        }
+                        viewVenue(venueUrl);
+                        spinnerOff();
                     });
 
                     //add venue button

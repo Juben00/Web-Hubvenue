@@ -5,8 +5,8 @@ require_once '../sanitize.php';
 
 session_start();
 
-$venue_id = $review = $rating = '';
-$venue_idErr = $reviewErr = $ratingErr = '';
+$venue_id = $review = $rating = $userId = '';
+$venue_idErr = $reviewErr = $ratingErr = $userIdErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -15,6 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rating = clean_input($_POST['ratings']);
     $review = clean_input($_POST['review-text']);
 
+    if (empty($userId)) {
+        $userIdErr = 'Please login to give review';
+    }
     if (empty($venueId)) {
         $venue_idErr = 'Venue ID is required';
     }
@@ -25,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reviewErr = 'Review is required';
     }
 
-    if (empty($venue_idErr) && empty($ratingErr) && empty($reviewErr)) {
+    if (empty($userId) && empty($venue_idErr) && empty($ratingErr) && empty($reviewErr)) {
         $accountObj = new Account();
         $result = $accountObj->giveReview($userId, $venueId, $review, $rating);
 
