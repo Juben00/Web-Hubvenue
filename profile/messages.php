@@ -7,8 +7,7 @@ session_start();
 
 $venueObj = new Venue();
 $accountObj = new Account();
-$USER_ID = isset($_SESSION['user']) ? $_SESSION['user']['id'] : null;
-
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $userType = $accountObj->getUserRole($USER_ID); // 1 for Host, 2 for Guest
 
 try {
@@ -42,7 +41,7 @@ try {
         ORDER BY b.booking_created_at DESC";
 
         $stmt = $conn->prepare($query);
-        $stmt->execute(['host_id' => $userId]);
+        $stmt->execute(['host_id' => $USER_ID]);
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } else { // Guest
         $query = "SELECT 
@@ -70,12 +69,12 @@ try {
         ORDER BY b.booking_created_at DESC";
 
         $stmt = $conn->prepare($query);
-        $stmt->execute(['guest_id' => $userId]);
+        $stmt->execute(['guest_id' => $USER_ID]);
         $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     // Debug output
-    error_log("User ID: " . $userId . ", User Type: " . $userType);
+    error_log("User ID: " . $USER_ID . ", User Type: " . $userType);
     error_log("Bookings found: " . count($bookings));
     foreach ($bookings as $booking) {
         error_log("Booking ID: " . $booking['id'] . ", Unread Count: " . $booking['unread_count']);
@@ -88,13 +87,13 @@ try {
             $userKey = $booking['booking_guest_id'];
             $userName = $booking['guest_firstname'] . ' ' . $booking['guest_lastname'];
             $guestId = $booking['booking_guest_id'];
-            $hostId = $userId;
+            $hostId = $USER_ID;
             $venueId = $booking['venue_id'];
             $venueName = $booking['venue_name'];
         } else { // Guest view
             $userKey = $booking['host_id'];
             $userName = $booking['host_firstname'] . ' ' . $booking['host_lastname'];
-            $guestId = $userId;
+            $guestId = $USER_ID;
             $hostId = $booking['host_id'];
             $venueId = $booking['venue_id'];
             $venueName = $booking['venue_name'];

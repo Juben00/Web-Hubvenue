@@ -7,7 +7,7 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $bookingId = clean_input($_GET['booking_id']);
-    $guestId = clean_input($_SESSION['user']['id']);
+    $guestId = clean_input($_SESSION['user']);
 
     if (empty($bookingId) || empty($bookingId)) {
         $response = array(

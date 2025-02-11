@@ -11,7 +11,7 @@ if (!isset($_SESSION['user'])) {
 }
 
 $notification = new Notification();
-$userId = $_SESSION['user']['id'];
+$userId = $_SESSION['user'];
 
 try {
     // Get notifications
@@ -20,18 +20,18 @@ try {
 
     // Start output buffering to capture HTML
     ob_start();
-    
+
     if (empty($notifications)): ?>
         <div class="p-4 text-center text-gray-500">
             <p>No notifications yet</p>
         </div>
-    <?php else: 
+    <?php else:
         foreach ($notifications as $notif): ?>
             <div class="p-4 hover:bg-gray-50 <?php echo !$notif['is_read'] ? 'bg-blue-50' : ''; ?>">
                 <div class="flex items-start gap-4">
                     <?php
                     // Icon based on notification type
-                    switch($notif['type']) {
+                    switch ($notif['type']) {
                         case 'message':
                             echo '<div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">';
                             if (!empty($notif['profile_pic'])) {
@@ -43,7 +43,7 @@ try {
                             }
                             echo '</div>';
                             break;
-                            
+
                         case 'booking':
                         case 'booking_update':
                             $statusColors = [
@@ -63,7 +63,7 @@ try {
                             }
                             echo '</div>';
                             break;
-                            
+
                         case 'venue':
                             echo '<div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
                                     <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,7 +71,7 @@ try {
                                     </svg>
                                 </div>';
                             break;
-                            
+
                         case 'price_update':
                             echo '<div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                                     <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +79,7 @@ try {
                                     </svg>
                                 </div>';
                             break;
-                            
+
                         case 'account':
                             echo '<div class="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
                                     <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ try {
                                     </svg>
                                 </div>';
                             break;
-                            
+
                         default:
                             echo '<div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                                     <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,8 +100,8 @@ try {
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm font-medium text-gray-900">
-                                    <?php 
-                                    switch($notif['type']) {
+                                    <?php
+                                    switch ($notif['type']) {
                                         case 'message':
                                             echo htmlspecialchars($notif['reference_name']) . ' sent you a message';
                                             break;
@@ -127,8 +127,8 @@ try {
                                 </p>
                                 <?php if (!empty($notif['additional_info'])): ?>
                                     <p class="text-sm text-gray-600 mt-1">
-                                        <?php 
-                                        switch($notif['type']) {
+                                        <?php
+                                        switch ($notif['type']) {
                                             case 'message':
                                                 echo htmlspecialchars($notif['additional_info']);
                                                 break;
@@ -148,9 +148,9 @@ try {
                             <?php endif; ?>
                         </div>
                         <p class="text-xs text-gray-500 mt-1">
-                            <?php 
-                            $secondsAgo = (int)$notif['seconds_ago'];
-                            
+                            <?php
+                            $secondsAgo = (int) $notif['seconds_ago'];
+
                             if ($secondsAgo < 60) {
                                 echo "Just now";
                             } elseif ($secondsAgo < 3600) {
@@ -188,4 +188,4 @@ try {
         'success' => false,
         'error' => $e->getMessage()
     ]);
-} 
+}

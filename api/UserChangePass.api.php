@@ -11,7 +11,7 @@ $userId = $currentPass = $newPass = $confirmPass = "";
 $userIdErr = $currentPassErr = $newPassErr = $confirmPassErr = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_SESSION['user']['id'];
+    $userId = $_SESSION['user'];
     $currentPass = clean_input($_POST['current_password']);
     $newPass = clean_input($_POST['new_password']);
     $confirmPass = clean_input($_POST['confirm_password']);

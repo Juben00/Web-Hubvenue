@@ -9,15 +9,19 @@ session_start();
 $accountObj = new Account();
 $venueObj = new Venue();
 
-if (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['user_type_id'] == 3) {
-        header('Location: admin/');
-        exit;
-    }
-} else {
+$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userRole = $accountObj->getUserRole($USER_ID);
+$ADMIN = "Admin";
+
+
+if (isset($userRole) && $userRole == $ADMIN) {
+    header('Location: admin/');
+    exit();
+} else if (!isset($USER_ID)) {
     header('Location: index.php');
-    exit;
+    exit();
 }
+
 
 if (!isset($_SESSION['reservationFormData'])) {
     header('Location: index.php');
@@ -50,7 +54,7 @@ $serviceFee = number_format((float) $serviceFee, 2, '.', '');
 $subTotal = number_format((float) $subTotal, 2, '.', '');
 
 // Get discount value
-$discountStatus = $accountObj->getDiscountApplication($_SESSION['user']['id']);
+$discountStatus = $accountObj->getDiscountApplication($USER_ID);
 $isSpecial = $discountStatus['discount_value'] ?? '0';
 
 // Use BCMath for precise calculations

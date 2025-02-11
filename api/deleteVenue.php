@@ -23,7 +23,7 @@ $venueObj = new Venue();
 $venue = $venueObj->getVenue($data['venue_id']);
 
 // Check if venue exists and belongs to the current user
-if (!$venue || $venue['user_id'] !== $_SESSION['user']['id']) {
+if (!$venue || $venue['user_id'] !== $_SESSION['user']) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'You do not have permission to delete this venue']);
     exit;

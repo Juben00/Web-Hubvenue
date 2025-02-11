@@ -15,15 +15,15 @@ $CONFIRMED_BOOKING = 2;
 $CANCELLED_BOOKING = 3;
 $PREVIOUS_BOOKING = 4;
 
-$pendingBooking = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
-$confirmedBooking = $venueObj->getAllBookings($USER_ID, $CONFIRMED_BOOKING);
-$cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
-$completedBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
+$pendingBookings = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
+$confirmedBookings = $venueObj->getAllBookings($USER_ID, $CONFIRMED_BOOKING);
+$cancelledBookings = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
+$completedBookings = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
-$pendingCount = count($pendingBooking);
-$confirmedCount = count($confirmedBooking);
-$cancelledCount = count($cancelledBooking);
-$completedCount = count($completedBooking);
+$pendingCount = count($pendingBookings);
+$confirmedCount = count($confirmedBookings);
+$cancelledCount = count($cancelledBookings);
+$completedCount = count($completedBookings);
 $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCount;
 ?>
 
@@ -84,7 +84,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['name']) ?></h2>
+                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                    </h2>
                                     <div class="flex items-center gap-2">
                                         <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                                             <?php
@@ -124,12 +125,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     ?>
                                     <?php if (!empty($imageUrls)): ?>
                                         <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['name']) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
                                             class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
                                     <?php endif; ?>
                                     <div class="flex-1">
-                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
+                                        </p>
                                         <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
@@ -151,7 +154,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
                                                 <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -159,14 +162,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
                                                 <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -174,7 +177,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -205,7 +208,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['name']) ?></h2>
+                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                    </h2>
                                     <div class="flex items-center gap-2">
                                         <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                                             <?php
@@ -245,12 +249,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     ?>
                                     <?php if (!empty($imageUrls)): ?>
                                         <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['name']) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
                                             class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
                                     <?php endif; ?>
                                     <div class="flex-1">
-                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
+                                        </p>
                                         <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
@@ -272,7 +278,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
                                                 <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -280,14 +286,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
                                                 <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -295,7 +301,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -326,7 +332,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['name']) ?></h2>
+                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                    </h2>
                                     <div class="flex items-center gap-2">
                                         <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                                             <?php
@@ -357,12 +364,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     ?>
                                     <?php if (!empty($imageUrls)): ?>
                                         <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['name']) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
                                             class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
                                     <?php endif; ?>
                                     <div class="flex-1">
-                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
+                                        </p>
                                         <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
@@ -384,7 +393,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
                                                 <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -392,14 +401,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
                                                 <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -407,7 +416,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
@@ -438,7 +447,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['name']) ?></h2>
+                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                    </h2>
                                     <div class="flex items-center gap-2">
                                         <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                                             <?php
@@ -478,12 +488,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                     ?>
                                     <?php if (!empty($imageUrls)): ?>
                                         <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['name']) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
                                             class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
                                     <?php endif; ?>
                                     <div class="flex-1">
-                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['name']) ?></p>
-                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['address']) ?></p>
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
+                                        </p>
                                         <p class="text-gray-700 mt-1">
                                             ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
                                             for
@@ -505,7 +517,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
                                                 <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -513,14 +525,14 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
                                                 <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
                                                     'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['name'],
+                                                    'venue_name' => $booking['venue_name'],
                                                     'booking_start_date' => $booking['booking_start_date'],
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
@@ -528,7 +540,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_payment_method' => $booking['booking_payment_method'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['address']
+                                                    'venue_location' => $booking['venue_location']
                                                 ])); ?>)" type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt

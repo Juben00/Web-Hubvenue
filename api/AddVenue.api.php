@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->capacity = $capacity;
         $venueObj->amenities = $amenitiesJson;
         $venueObj->tag = $tag;
-        $venueObj->host_id = $_SESSION['user']['id'];
+        $venueObj->host_id = $_SESSION['user'];
         $venueObj->entrance = $entrance;
         $venueObj->cleaning = $cleaning;
         $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON

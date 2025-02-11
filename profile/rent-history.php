@@ -15,7 +15,7 @@ $cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
 $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
 ?>
-
+pendingBooking
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
     <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Your Rent History</h1>
@@ -46,6 +46,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
             <div class="bg-white rounded-lg shadow overflow-hidden flex flex-col gap-2">
 
                 <?php
+
                 if (empty($pendingBooking)) {
                     // Skip rendering if all fields are NULL
                     echo '<p class="p-6 text-center text-gray-600">You do not have any pending bookings.</p>';
@@ -360,8 +361,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
         <div id="previous-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <?php
-                // var_dump($previousBooking);
-                
+
                 if (empty($previousBooking)) {
                     // Skip rendering if all fields are NULL
                     echo '<p class="p-6 text-center text-gray-600">You do not have any previous bookings.</p>';
@@ -935,6 +935,15 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
     function printReceipt(bookingData) {
         const receiptWindow = window.open('', '_blank');
 
+        const imageExt = ['jpeg', 'jpg', 'png'];
+        let = paymentReferenceTemplate = null;
+        if (imageExt.some(ext => bookingData.booking_payment_reference.endsWith(ext))) {
+            paymentReferenceTemplate = `<img src="./${bookingData.booking_payment_reference}" alt="Payment Reference" class="w-full h-auto">`;
+        } else {
+            paymentReferenceTemplate = `<p>${bookingData.booking_payment_reference}</p>`;
+        }
+
+
         // Add error handling for the window opening
         if (!receiptWindow) {
             alert('Please allow popups to print the receipt');
@@ -1072,8 +1081,13 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                     <div class="section">
                         <div class="section-title">Payment Details</div>
                         <div class="info">
-                            <div><span class="label">Payment Method:</span> ${bookingData.booking_payment_method}</div>
-                            <div><span class="label">Reference Number:</span> ${bookingData.booking_payment_reference}</div>
+                            <div>
+                            <span class="label">Payment Method:</span> ${bookingData.booking_payment_method}
+                            </div>
+                            <div class="flex flex-col gap-2 items-start">
+                            <span class="label">Reference Number:</span> 
+                            <div>${paymentReferenceTemplate}</div>
+                            </div>
                         </div>
                     </div>
                 </div>

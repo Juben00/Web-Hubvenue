@@ -19,13 +19,12 @@ if (!isset($_SESSION['user']) && isset($_COOKIE['remember_token'])) {
 }
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $userRole = $accountObj->getUserRole($USER_ID);
+$ADMIN = "Admin";
 
-if (isset($userRole) && $userRole == "Admin") {
+if (isset($userRole) && $userRole == $ADMIN) {
     header('Location: admin/');
     exit();
 }
-
-
 
 // Get all venues
 $venues = $venueObj->getAllVenues('2');
@@ -238,6 +237,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                     echo '<p class="text-left text-gray-500">No venues available</p>';
                                 }
                                 foreach ($venues as $venue) {
+                                    $isBookmarked = in_array($venue['id'], $bookmarkIds);
                                     ?>
                                     <div class="bg-white rounded-2xl overflow-hidden  cursor-pointer">
                                         <div class="relative">
@@ -264,7 +264,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                                             if (isset($_SESSION['user'])) { ?>
                                                 <button id="bookmarkBtn"
                                                     data-venueId="<?php echo htmlspecialchars($venue['id']); ?>"
-                                                    data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']); ?>"
+                                                    data-userId="<?php echo htmlspecialchars($USER_ID); ?>"
                                                     class="bookmark-btn absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'bookmarked' : 'text-white'; ?>">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
                                                         fill="currentColor">

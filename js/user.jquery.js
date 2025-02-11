@@ -484,7 +484,6 @@ $(document).ready(function () {
                         window.location.href = "./index.php";
                     }, "black_ico.png");
                     console.log(response);
-                    
                 } else {
                     spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
