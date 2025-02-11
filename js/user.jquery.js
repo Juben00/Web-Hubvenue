@@ -113,6 +113,18 @@ $(document).ready(function () {
         addVenue();
     });
 
+    $('#passRecoveryForm').on("submit", function (e) {
+        e.preventDefault();
+        const formElement = $(this);
+        sendPassRecLink(formElement);
+    });
+
+    $('#passResetForm').on("submit", function (e) {
+        e.preventDefault();
+        const formElement = $(this);
+        resetPassword(formElement);
+    });
+
 
     //profile navigation
     $('.profileNav').on('click', function (e) {
@@ -621,6 +633,59 @@ $(document).ready(function () {
             
         });
     }
+
+    function sendPassRecLink(formElement){
+        spinnerOn();
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/password-recovery.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                let res = JSON.parse(response); // Parse the response if it's not automatically parsed
+                if (res.status === "success") {
+                    spinnerOff();
+                    showModal(res.message, function(){
+                        formElement[0].reset();
+                        window.location.reload();
+                    }, "black_ico.png");
+                } else {
+                    spinnerOff();
+                    showModal(res.message, undefined, "black_ico.png");
+                }
+            }
+            
+        });
+    }
+
+    function resetPassword(formElement){
+        spinnerOn();
+        let form = new FormData(formElement[0]);
+        $.ajax({
+            type: "POST",
+            url: "./api/password-reset.api.php",
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                let res = JSON.parse(response); // Parse the response if it's not automatically parsed
+                if (res.status === "success") {
+                    spinnerOff();
+                    showModal(res.message, function(){
+                        formElement[0].reset();
+                        window.location.href = "./index.php";
+                    }, "black_ico.png");
+                } else {
+                    spinnerOff();
+                    showModal(res.message, undefined, "black_ico.png");
+                }
+            }
+            
+        });
+    }
+    
     // setting default view for profile
     openProfileNav('rent-history');
 
