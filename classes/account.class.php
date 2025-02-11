@@ -839,6 +839,77 @@ class Account
         }
     }
 
+    public function createPasswordRecoveryToken($email, $token, $expiry)
+    {
+        try {
+            $sql = "SELECT id, reset_token_expiry FROM users WHERE email = ?";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->execute([$email]);
+
+            if ($stmt->rowCount() > 0) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Check if an existing token is still valid
+                if ($user['reset_token_expiry'] && strtotime($user['reset_token_expiry']) > time()) {
+                    return ['status' => 'error', 'message' => 'A recovery token already exists. Please wait until it expires.'];
+                }
+
+                // Update the token and expiry
+                $sql = "UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?";
+                $stmt = $this->db->connect()->prepare($sql);
+                $result = $stmt->execute([$token, $expiry, $email]);
+
+                if ($result) {
+                    return ['status' => 'success', 'message' => 'Token created successfully'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Failed to create token'];
+                }
+            } else {
+                return ['status' => 'error', 'message' => 'Email not found'];
+            }
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
+    public function getUserByToken($token)
+    {
+        try {
+            $sql = "SELECT id, firstname FROM users WHERE reset_token = ?";
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->execute([$token]);
+
+            if ($stmt->rowCount() > 0) {
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                return $user;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function resetUserPassword($token, $password)
+    {
+        try {
+            $sql = "UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?";
+            $stmt = $this->db->connect()->prepare($sql);
+            $result = $stmt->execute([password_hash($password, PASSWORD_DEFAULT), $token]);
+
+            if ($result) {
+                return ['status' => 'success', 'message' => 'Password reset successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to reset password'];
+            }
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 

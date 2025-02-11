@@ -80,4 +80,24 @@
             closeModal.addEventListener('click', closeModalFunc);
             loginTab.addEventListener('click', () => switchTab(loginTab, signupTab, loginForm, signupForm));
             signupTab.addEventListener('click', () => switchTab(signupTab, loginTab, signupForm, loginForm));
+
+            // Get the password recovery form and back button
+            const passRecoveryForm = document.getElementById('passRecoveryForm');
+            const backToLogin = document.getElementById('backToLogin');
+            const forgotPasswordLink = document.querySelector('a[href="#forgotPassLink"]'); // Assuming only one "Forgot password?" link
+
+            // Show password recovery form and hide login tabs
+            forgotPasswordLink.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            loginTabs.classList.add('hidden'); // Hide login tabs
+            loginForm.classList.add('hidden'); // Hide login form
+            passRecoveryForm.classList.remove('hidden'); // Show password recovery form
+            });
+
+            // Back to login functionality
+            backToLogin.addEventListener('click', () => {
+            passRecoveryForm.classList.add('hidden'); // Hide password recovery form
+            loginTabs.classList.remove('hidden'); // Show login tabs
+            loginForm.classList.remove('hidden'); // Show login form
+            });
         });
