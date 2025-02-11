@@ -4,7 +4,7 @@ class Database
     private $host = 'localhost';
     private $username = 'root';
     private $password = '';
-    private $dbname = 'hub_venue';
+    private $dbname = 'hub_venue_1';
     protected $connection = "";
 
     function connect()

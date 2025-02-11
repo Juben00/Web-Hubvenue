@@ -1,4 +1,6 @@
 <?php
+require_once(__DIR__ . '/../vendor/autoload.php');
+require_once(__DIR__ . '/../api/SendVerification.api.php');
 require_once(__DIR__ . '/../dbconnection.php');
 
 class Account
@@ -37,7 +39,6 @@ class Account
     public function signup()
     {
         try {
-
             // Check if the email already exists
             $sql = 'SELECT * FROM users WHERE email = :email';
             $chkstmt = $this->db->connect()->prepare($sql);
@@ -47,8 +48,12 @@ class Account
             if ($chkstmt->rowCount() > 0) {
                 return ['status' => 'error', 'message' => 'Account already exists'];
             } else {
+                // Generate a unique token for email verification
+                $token = bin2hex(random_bytes(32));
+
                 // Insert new account if email does not exist
-                $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, address ,email, password) VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number,:address, :email, :password)';
+                $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, address, email, password, verification_Token) 
+                    VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number, :address, :email, :password, :verification_Token)';
                 $stmt = $this->db->connect()->prepare($sql);
 
                 $stmt->bindParam(':firstname', $this->firstname);
@@ -57,9 +62,9 @@ class Account
 
                 // Determine sex_id based on sex value
                 $sex_id = 3; // Default value for unspecified sex
-                if ($this->sex == "Male") {
+                if ($this->sex === "Male") {
                     $sex_id = 1;
-                } else if ($this->sex == "Female") {
+                } elseif ($this->sex === "Female") {
                     $sex_id = 2;
                 }
                 $stmt->bindParam(':sex_id', $sex_id);
@@ -71,17 +76,25 @@ class Account
 
                 // Hash the password before saving to the database
                 $this->password = password_hash($this->password, PASSWORD_DEFAULT);
-
                 $stmt->bindParam(':password', $this->password);
 
+                // Bind the token
+                $stmt->bindParam(':verification_Token', $token);
+
                 if ($stmt->execute()) {
-                    return ['status' => 'success', 'message' => 'Account created successfully'];
+                    try {
+                        // Send verification email
+                        sendVerificationEmail($this->email, $token);
+                        return ['status' => 'success', 'message' => 'Account created successfully. Please verify your email.'];
+                    } catch (Exception $e) {
+                        return ['status' => 'error', 'message' => 'Failed to send verification email: ' . $e->getMessage()];
+                    }
                 } else {
                     return ['status' => 'error', 'message' => 'Failed to create account'];
                 }
             }
         } catch (PDOException $e) {
-            // Log error and return empty array
+            // Log error and return error message
             error_log("Error creating account: " . $e->getMessage());
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
@@ -112,28 +125,33 @@ class Account
 
             if ($stmt->rowCount() > 0) {
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                if (password_verify($this->password, $user['password'])) {
-                    session_start();
-                    session_regenerate_id(true);
-                    $_SESSION['user'] = $user['id'];
 
-                    if ($this->isRemember === 'true') {
-                        $token = bin2hex(random_bytes(32));
-                        $expiry = date('Y-m-d H:i:s', strtotime('+30 days'));
-
-                        $updateSql = 'UPDATE users SET remember_token = :token, token_expiry = :expiry WHERE id = :id';
-                        $updateStmt = $this->db->connect()->prepare($updateSql);
-                        $updateStmt->bindParam(':token', $token);
-                        $updateStmt->bindParam(':expiry', $expiry);
-                        $updateStmt->bindParam(':id', $user['id']);
-                        $updateStmt->execute();
-
-                        setcookie('remember_token', $token, time() + (86400 * 30), '/', '', false, true);
-                    }
-
-                    return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
+                if ($user['is_Verified'] == "Not Verified") {
+                    return ['status' => 'error', 'message' => 'Account not verified. Please verify your email.'];
                 } else {
-                    return ['status' => 'error', 'message' => 'Invalid email or password'];
+                    if (password_verify($this->password, $user['password'])) {
+                        session_start();
+                        session_regenerate_id(true);
+                        $_SESSION['user'] = $user['id'];
+
+                        if ($this->isRemember === 'true') {
+                            $token = bin2hex(random_bytes(32));
+                            $expiry = date('Y-m-d H:i:s', strtotime('+30 days'));
+
+                            $updateSql = 'UPDATE users SET remember_token = :token, token_expiry = :expiry WHERE id = :id';
+                            $updateStmt = $this->db->connect()->prepare($updateSql);
+                            $updateStmt->bindParam(':token', $token);
+                            $updateStmt->bindParam(':expiry', $expiry);
+                            $updateStmt->bindParam(':id', $user['id']);
+                            $updateStmt->execute();
+
+                            setcookie('remember_token', $token, time() + (86400 * 30), '/', '', false, true);
+                        }
+
+                        return ['status' => 'success', 'message' => 'Login successful', 'user' => $user];
+                    } else {
+                        return ['status' => 'error', 'message' => 'Invalid email or password'];
+                    }
                 }
             } else {
                 return ['status' => 'error', 'message' => 'Invalid email or password'];
@@ -801,6 +819,23 @@ class Account
         } catch (PDOException $e) {
             error_log($e->getMessage());
             return false;
+        }
+    }
+
+    public function verifyEmail($token)
+    {
+        try {
+            $sql = "UPDATE users SET is_Verified = 'Verified' WHERE verification_Token = ?";
+            $stmt = $this->db->connect()->prepare($sql);
+            $result = $stmt->execute([$token]);
+            if ($result) {
+                return ['status' => 'success', 'message' => 'Email verified successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to verify email'];
+            }
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
 

@@ -7,7 +7,7 @@ session_start();
 
 $accountObj = new Account();
 
-$userId = $_SESSION['user']['id'];
+$userId = $_SESSION['user'];
 $firstname = $lastname = $middlename = $bio = $sex = $birthdate = $address = $email = $contact = $profile_img = "";
 $firstnameErr = $lastnameErr = $middlenameErr = $bioErr = $sexErr = $birthdateErr = $addressErr = $emailErr = $contactErr = $profile_imgErr = "";
 
@@ -16,7 +16,6 @@ $allowedType = ['jpg', 'jpeg', 'png'];
 
 $accountObj = new Account();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_SESSION['user']['id'];
 
     $firstname = clean_input($_POST['firstname']);
     $lastname = clean_input($_POST['lastname']);
@@ -25,11 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sex = clean_input($_POST['sex']);
     $birthdate = clean_input($_POST['birthdate']);
     $address = clean_input($_POST['address']);
-    $coor = clean_input($_POST['addressCoor']) ? clean_input($_POST['addressCoor']) : $_SESSION['user']['address'];
+    $coor = clean_input($_POST['addressCoor']);
     $email = clean_input($_POST['email']);
     $contact = clean_input($_POST['contact']);
 
-    // // Verify the address
+    // Verify the address
     $addressData = coorAddressVerify($address, $coor);
     if (!$addressData) {
         $addressErr = 'Invalid address and coordinates. Please try again.';
@@ -113,4 +112,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
     }
 }
-?>

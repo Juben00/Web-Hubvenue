@@ -12,7 +12,7 @@ $uploadDir = '/mandatory_discount_id/';
 $allowedType = ['jpg', 'jpeg', 'png'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = clean_input($_SESSION['user']['id']);
+    $userId = clean_input($_SESSION['user']);
     $discount_type = clean_input($_POST['discountType']);
     $fullname = clean_input($_POST['seniorPwdName']);
     $discount_id = clean_input($_POST['seniorPwdId']);

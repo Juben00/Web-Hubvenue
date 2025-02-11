@@ -1337,6 +1337,28 @@ LEFT JOIN
         }
     }
 
+    function getBookedDatesByVenue($month, $year, $venueID)
+    {
+        try {
+            $sql = "SELECT b.booking_start_date, b.booking_end_date FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE (MONTH(booking_start_date) = :month OR MONTH(b.booking_end_date) = :month) AND (YEAR(b.booking_start_date) = :year OR YEAR(b.booking_end_date) = :year) AND v.id = venueID;";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':month', $month);
+            $stmt->bindParam(':year', $year);
+            $stmt->bindParam(':venueID', $venueID);
+            $stmt->execute();
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (count($bookings) > 0) {
+                return $bookings;
+            } else {
+                return [];
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
 }
 
 $venueObj = new Venue();

@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Check for errors and proceed with upgrading user
     if (empty($fullnameErr) && empty($addressErr) && empty($birthdateErr) && empty($idOne_typeErr) && empty($idOne_urlErr) && empty($idTwo_typeErr) && empty($idTwo_urlErr)) {
-        $accountObj->userId = $_SESSION['user']['id'];
+        $accountObj->userId = $_SESSION['user'];
         $accountObj->fullname = $fullname;
         $accountObj->address = $address;
         $accountObj->birthdate = $birthdate;

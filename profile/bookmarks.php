@@ -7,6 +7,8 @@ $accountObj = new Account();
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $bookmarks = $accountObj->getBookmarks($USER_ID);
 $bookmarkIds = array_column($bookmarks, 'venue_id');
+
+
 ?>
 
 <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">
@@ -36,7 +38,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                             <div class="relative w-full h-96 overflow-hidden">
                                 <!-- Image Slideshow for each venue -->
                                 <div class="slideshow venueCard" data-id="venues.php?id=<?php echo $venue['venue_id']; ?>"
-                                    data-isloggedin="<?php echo isset($_SESSION['user']) ? 'true' : 'false'; ?>">
+                                    data-isloggedin="<?php echo isset($USER_ID) ? 'true' : 'false'; ?>">
                                     <?php if (!empty($venue['image_urls'])): ?>
                                         <?php foreach ($venue['image_urls'] as $index => $imageUrl): ?>
                                             <div class="slide <?= $index === 0 ? 'active' : '' ?>">
@@ -56,7 +58,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
                             </div>
                             <!-- Button (can be used for manual control) -->
                             <button id="bookmarkBtn" data-venueId="<?php echo htmlspecialchars($venue['id']); ?>"
-                                data-userId="<?php echo htmlspecialchars($_SESSION['user']['id']); ?>"
+                                data-userId="<?php echo htmlspecialchars($USER_ID); ?>"
                                 class="bookmark-btn absolute top-3 right-3 z-50 <?php echo $isBookmarked ? 'bookmarked' : 'text-white'; ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20"
                                     fill="currentColor">

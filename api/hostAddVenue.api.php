@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->amenities = $amenitiesJson;
         $venueObj->rules = $mergedRulesJson;
         $venueObj->tag = $tag;
-        $venueObj->host_id = $_SESSION['user']['id'];
+        $venueObj->host_id = $_SESSION['user'];
         $venueObj->entrance = $entrance;
         $venueObj->cleaning = $cleaning;
         $venueObj->check_inout = $check_inout;

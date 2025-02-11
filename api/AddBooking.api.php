@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $booking_original_price = clean_input($reservationData['RawPrice']);
     $booking_grand_total = clean_input($reservationData['Total']);
     $booking_balance = clean_input($reservationData['Balance']);
-    $booking_guest_id = clean_input($_SESSION['user']['id']);
+    $booking_guest_id = clean_input($_SESSION['user']);
     $booking_venue_id = clean_input($reservationData['venueId']);
     $booking_down_payment = clean_input($reservationData['Downpayment']);
     $booking_discount = clean_input(isset($_POST['couponCode']) && !empty($_POST['couponCode']) ? $_POST['couponCode'] : 'none');

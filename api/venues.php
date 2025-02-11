@@ -60,7 +60,8 @@ if ($stmt->execute()) {
 }
 
 // Helper function to get venue status name
-function getVenueStatusName($statusId) {
+function getVenueStatusName($statusId)
+{
     switch ($statusId) {
         case 1:
             return "Pending";
@@ -71,4 +72,4 @@ function getVenueStatusName($statusId) {
         default:
             return "Unknown";
     }
-} 
+}

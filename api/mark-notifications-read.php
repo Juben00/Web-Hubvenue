@@ -15,7 +15,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $userId = $data['user_id'] ?? null;
 
 // Validate user ID matches session user
-if ($userId != $_SESSION['user']['id']) {
+if ($userId != $_SESSION['user']) {
     echo json_encode(['success' => false, 'message' => 'Invalid user']);
     exit;
 }
@@ -23,4 +23,4 @@ if ($userId != $_SESSION['user']['id']) {
 $notification = new Notification();
 $success = $notification->markAllAsRead($userId);
 
-echo json_encode(['success' => $success]); 
+echo json_encode(['success' => $success]);

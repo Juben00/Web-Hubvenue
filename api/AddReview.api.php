@@ -10,7 +10,7 @@ $venue_idErr = $reviewErr = $ratingErr = $userIdErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $userId = $_SESSION['user']['id'];
+    $userId = $_SESSION['user'];
     $venueId = clean_input($_POST['venueId']);
     $rating = clean_input($_POST['ratings']);
     $review = clean_input($_POST['review-text']);
