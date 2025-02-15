@@ -26,7 +26,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 </head>
 <div id="openstreetmapplaceholder"></div>
 <!-- Venue Details View (Initially Hidden) -->
-<div id="venueDetailsView" class="container mx-auto pt-20">
+<div id="venueDetailsView" class="container mx-auto pt-24 mb-8">
    <form class="flex gap-6" id="editVenueForm" enctype="multipart/form-data">
         <!-- Main Content -->
         <div class="flex-grow">
@@ -485,7 +485,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
         <!-- Right Sidebar -->
         <div class="w-96">
-            <div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+            <div class="bg-white rounded-lg shadow-sm p-6 sticky top-0">
                 <div class="mb-6">
                     <h3 class="text-lg font-semibold mb-4">Venue Settings</h3>
                     <!-- Venue Status -->
@@ -684,8 +684,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                 <?php
                 $currentMonth = new DateTime(); // Defaults to the current date and time
                 foreach ($bookings as $booking) {
-                    $bookingCount += $booking['booking_count']; // Aggregate booking count
-                    $bookingRevenue += $booking['booking_grand_total']; // Aggregate revenue
+                    $bookingCount += 1; // Aggregate booking count
+                    $bookingRevenue += $booking['booking_grand_total'] - $booking['booking_service_fee']; // Aggregate revenue
                 
                     $bookingEndDate = new DateTime($booking['booking_end_date']);
 
@@ -740,8 +740,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                             <div class="bg-gray-50 p-4 rounded-lg">
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
-                                        <p class="font-medium">Wedding Reception</p>
-                                        <p class="text-sm text-gray-600">
+                                        <p class="font-medium">
                                             <?php echo htmlspecialchars($booking['firstname'] . " " . $booking['middlename'] . "." . " " . $booking['lastname']); ?>
                                         </p>
                                     </div>
@@ -759,7 +758,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                         ?>
                                     </p>
                                 </div>
-                                <p>₱<?php echo htmlspecialchars($booking['booking_grand_total']) ?></p>
+                                <p>Down Payment: <span class="text-gray-600 ">₱<?php echo $booking['booking_grand_total'] ?></span></p>
+                                <p>Platform Fee: <span class="text-gray-600 ">₱<?php echo $booking['booking_service_fee'] ?></span></p>
+                                <p>Balance: <span class="text-gray-600 ">₱<?php echo $booking['booking_balance'] ?></span></p>
                             </div>
                             <?php
                         endforeach;

@@ -29,6 +29,7 @@ if (!isset($_SESSION['reservationFormData'])) {
 }
 
 $discountApplied = false;
+$MANDATORY_DISCOUNT_VALUE = 20;
 
 $reservationData = $_SESSION['reservationFormData'];
 
@@ -178,7 +179,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                                             Citizen)</span>
                                         <span><?php
                                         if ($discountStatus) {
-                                            echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
+                                            echo $MANDATORY_DISCOUNT_VALUE . "%";
                                         } else {
                                             echo "0%";
                                         }

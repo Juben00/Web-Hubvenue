@@ -737,6 +737,7 @@ LEFT JOIN
             JOIN users u ON b.booking_guest_id = u.id
             JOIN venues v ON b.booking_venue_id = v.id
             WHERE b.booking_venue_id = :venue_id AND b.booking_status_id = :status;
+            GROUP BY b.booking_start_date;
         ";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);
@@ -1345,6 +1346,26 @@ LEFT JOIN
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':month', $month);
             $stmt->bindParam(':year', $year);
+            $stmt->bindParam(':venueID', $venueID);
+            $stmt->execute();
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (count($bookings) > 0) {
+                return $bookings;
+            } else {
+                return [];
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
+    function getbookingInfo($venueID)
+    {
+        try {
+            $sql = "SELECT * FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE v.id = :venueID;";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venueID', $venueID);
             $stmt->execute();
             $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);

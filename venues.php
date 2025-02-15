@@ -7,6 +7,7 @@ $venueObj = new Venue();
 $accountObj = new Account();
 
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$MANDATORY_DISCOUNT_VALUE = 20;
 
 // Check if 'id' parameter is present and valid
 if (!isset($_GET['id']) || empty($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -51,6 +52,8 @@ foreach ($bookedDate as $booking) {
 
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
+
+$discountStatus = $accountObj->getDiscountApplication($USER_ID);
 ?>
 
 
@@ -811,12 +814,10 @@ $reviews = $venueObj->getReview($_GET['id']);
                                         </span>
                                         <span class="font-medium text-right bg-transparent w-24" readonly>
                                             <?php
-                                            if (isset($discountStatus)) {
-                                                if ($discountStatus['status'] == 'Active') {
-                                                    echo htmlspecialchars(number_format($discountStatus['discount_value'], 0)) . "%";
-                                                } else {
-                                                    echo "0%";
-                                                }
+                                            // var_dump($discountStatus);
+                                            
+                                            if ($discountStatus) {
+                                                echo $MANDATORY_DISCOUNT_VALUE . "%";
                                             } else {
                                                 echo "0%";
                                             }
@@ -930,8 +931,8 @@ $reviews = $venueObj->getReview($_GET['id']);
             const cleaningFeeInput = document.querySelector('p[name="cleaningFee"]');
             const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
             const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
-            const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
-            const serviceFeeRate = 0.15;
+            let cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
+            const SERVICE_FEE_RATE = 0.15;
             const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
 
             const bookedDates = <?php echo json_encode($bookedDates); ?>;
@@ -1014,17 +1015,20 @@ $reviews = $venueObj->getReview($_GET['id']);
 
 
                 if (days > 0) {
-                    const totalPriceForNights = pricePerNight * days;
-                    const totalEntranceFee = entranceFee * guests;
-                    const serviceFee = totalPriceForNights * serviceFeeRate;
-                    let grandTotal = totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee;
+                    const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
+                    let totalEntranceFee = entranceFee * guests;
+                    let totalPriceForNights = pricePerNight * days;
+                    let serviceFee = totalPriceForNights * SERVICE_FEE_RATE;
+                    let grandTotal = (totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee) * discountMultiplier;
 
 
-                    console.log('Calculations:', { // Debug log
+                    console.log('Calculations:', {
                         totalPriceForNights,
                         totalEntranceFee,
+                        cleaningFee,
                         serviceFee,
-                        grandTotal
+                        grandTotal,
+                        discountMultiplier
                     });
 
                     document.querySelector('span[total-nights]').textContent = days;
@@ -1034,7 +1038,12 @@ $reviews = $venueObj->getReview($_GET['id']);
                     serviceFeeInput.innerHTML = serviceFee.toFixed(2);
                     totalPriceInput.innerHTML = grandTotal.toFixed(2);
 
-                    const reservationForm = document.getElementById('reservationForm');
+                    serviceFee = serviceFee * discountMultiplier;
+                    totalPriceForNights = totalPriceForNights * discountMultiplier;
+                    cleaningFee = cleaningFee * discountMultiplier;
+                    totalEntranceFee = totalEntranceFee * discountMultiplier;
+
+                    let reservationForm = document.getElementById('reservationForm');
                     appendHiddenInput(reservationForm, 'totalPriceForNights', totalPriceForNights.toFixed(2));
                     appendHiddenInput(reservationForm, 'entranceFee', totalEntranceFee.toFixed(2));
                     appendHiddenInput(reservationForm, 'cleaningFee', cleaningFee.toFixed(2));
