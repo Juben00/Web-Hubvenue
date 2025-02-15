@@ -525,7 +525,7 @@ class Account
             JOIN venue_availability_sub vas ON v.availability_id = vas.id 
             JOIN venue_images vi ON v.id = vi.venue_id
             JOIN bookmarks b ON b.venueId = v.id
-            WHERE b.userId = :userId
+            WHERE b.userId = :userId AND v.availability_id = 1
             GROUP BY v.id";
 
             $stmt = $conn->prepare($sql);
@@ -561,9 +561,13 @@ class Account
             $stmt->bindParam(':venue_id', $venueId);
             $stmt->bindParam(':rating', $rating);
             $stmt->bindParam(':review', $review);
-            $stmt->execute();
 
-            return ['status' => 'success', 'message' => 'Review added successfully'];
+
+            if ($stmt->execute()) {
+                return ['status' => 'success', 'message' => 'Review added successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to add review'];
+            }
         } catch (PDOException $e) {
             error_log("Error adding review: " . $e->getMessage());
             return ['status' => 'error', 'message' => $e->getMessage()];

@@ -107,7 +107,7 @@ class Venue
         }
 
     }
-    function getAllVenues($status = '', $host_id = '', $bookmarks = [])
+    function getAllVenues($status = '', $availability = '', $host_id = '', $bookmarks = [])
     {
         try {
             // Establish database connection
@@ -138,6 +138,11 @@ class Venue
             if ($status) {
                 $conditions[] = "v.status_id LIKE :status";
                 $params[':status'] = "%$status%";
+            }
+
+            if ($availability) {
+                $conditions[] = "v.availability_id LIKE :availability";
+                $params[':availability'] = "%$availability%";
             }
 
             if ($host_id) {
@@ -598,6 +603,7 @@ class Venue
     v.price AS venue_price,
     v.rules AS venue_rules,
     v.thumbnail,
+    v.availability_id AS venue_availability_id,
 
     d.discount_value AS discount_value,
 

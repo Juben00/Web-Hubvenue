@@ -562,7 +562,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <?php
                     // Fetch venues for this host
-                    $hostVenues = $venueObj->getVenuesByHost($hostId);
+                    $hostVenues = $venueObj->getVenuesByHost($USER_ID);
 
                     foreach ($hostVenues as $venue) {
                         // Get statistics for each venue

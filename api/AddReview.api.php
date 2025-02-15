@@ -10,7 +10,7 @@ $venue_idErr = $reviewErr = $ratingErr = $userIdErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $userId = $_SESSION['user'];
+    $userId = $_SESSION['user'] ?? null;
     $venueId = clean_input($_POST['venueId']);
     $rating = clean_input($_POST['ratings']);
     $review = clean_input($_POST['review-text']);
@@ -28,15 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $reviewErr = 'Review is required';
     }
 
-    if (empty($userId) && empty($venue_idErr) && empty($ratingErr) && empty($reviewErr)) {
+    if (empty($venue_idErr) && empty($ratingErr) && empty($reviewErr)) {
         $accountObj = new Account();
         $result = $accountObj->giveReview($userId, $venueId, $review, $rating);
-
-        echo json_encode($result);
-        exit();
-
     } else {
-        echo json_encode(['status' => 'error', 'message' => implode('<br>', [$venue_idErr, $ratingErr, $reviewErr])]);
+        $result = ['status' => 'error', 'message' => implode('<br>', [$venue_idErr, $ratingErr, $reviewErr])];
     }
+
+    echo json_encode($result);
+    exit;
 }
 ?>

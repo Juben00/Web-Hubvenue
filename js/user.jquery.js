@@ -398,16 +398,23 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                response = JSON.parse(response);
-                if (response.status === "success") {
-                    spinnerOff();
-                    showModal(response.message, undefined, "black_ico.png");
-                    openProfileNav('rent-history');
-                } else {
-                    spinnerOff();
-                    showModal(response.message, undefined, "black_ico.png");
-                }
-                },
+
+    try {
+        response = JSON.parse(response);
+        
+        if (response.status === "success") {
+            spinnerOff();
+            showModal(response.message, () => {
+                document.getElementById("reviewForm").reset();
+            }, "black_ico.png");
+        } else {
+            spinnerOff();
+            showModal(response.message, undefined, "black_ico.png");
+        }
+    } catch (error) {
+        showModal("Error processing response", undefined, "black_ico.png");
+    }
+}
             });
     }
 
