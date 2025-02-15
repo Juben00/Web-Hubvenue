@@ -748,7 +748,9 @@ pendingBooking
 
         // Setup main image and gallery
         const mainImage = document.getElementById('modal-main-image');
-        mainImage.src = './' + booking.image_urls.split(',')[0];
+        mainImage.src = './' + booking.image_urls.split(',')[booking.thumbnail];
+        console.log(mainImage.src);
+
 
         // Setup image gallery with thumbnails
         const imageGallery = document.getElementById('image-gallery');
