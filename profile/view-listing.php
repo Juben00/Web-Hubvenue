@@ -1094,4 +1094,38 @@ document.querySelector('.calendar-next').addEventListener('click', (e) => {
 
     // Initial calendar update
     updateCalendar();
+
+document.getElementById('prevReview').addEventListener('click', function (e) {
+    e.preventDefault();
+    navigateReview(-1);
+});
+
+document.getElementById('nextReview').addEventListener('click', function (e) {
+    e.preventDefault();
+    navigateReview(1);
+});
+
+function navigateReview(direction) {
+    const reviews = document.querySelectorAll('.review');
+    let currentIndex = -1;
+
+    reviews.forEach((review, index) => {
+        if (review.style.display !== 'none') {
+            currentIndex = index;
+        }
+    });
+
+    if (currentIndex !== -1) {
+        reviews[currentIndex].style.display = 'none';
+        let newIndex = currentIndex + direction;
+
+        if (newIndex < 0) {
+            newIndex = reviews.length - 1;
+        } else if (newIndex >= reviews.length) {
+            newIndex = 0;
+        }
+
+        reviews[newIndex].style.display = '';
+    }
+}
 </script>

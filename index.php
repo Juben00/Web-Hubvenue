@@ -26,8 +26,10 @@ if (isset($userRole) && $userRole == $ADMIN) {
     exit();
 }
 
+$VENUE_AVAILABLE = "1"; // 2 if not
+
 // Get all venues
-$venues = $venueObj->getAllVenues('2');
+$venues = $venueObj->getAllVenues('2', $VENUE_AVAILABLE);
 $bookmarks = $accountObj->getBookmarks($USER_ID);
 $bookmarkIds = array_column($bookmarks, 'venue_id');
 ?>

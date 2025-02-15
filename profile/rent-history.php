@@ -9,6 +9,8 @@ $CURRENT_BOOKING = 2;
 $CANCELLED_BOOKING = 3;
 $PREVIOUS_BOOKING = 4;
 
+$VENUE_AVAILABLE = 1;
+
 $pendingBooking = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
 $currentBooking = $venueObj->getAllBookings($USER_ID, $CURRENT_BOOKING);
 $cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
@@ -357,6 +359,7 @@ pendingBooking
                 ?>
             </div>
         </div>
+
         <!-- Previous Rentals Tab -->
         <div id="previous-tab" class="tab-content hidden">
             <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -370,6 +373,7 @@ pendingBooking
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
                         $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+
                         ?>
                         <div class="p-6">
                             <div class="space-y-6">
@@ -442,270 +446,279 @@ pendingBooking
                                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
                                                             Submit Review
                                                         </button>
-                                                        <button
-                                                            onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
-                                                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
-                                                            Details</button>
-                                                        <button id="bookAgainBtn"
-                                                            data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
-                                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                                                            Book Again
-                                                        </button>
-                                                    </div>
+
                                                 </form>
-
+                                                <button
+                                                    onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">View
+                                                    Details</button>
+                                                <?php
+                                                if ($booking['venue_availability_id'] == $VENUE_AVAILABLE) {
+                                                    echo '<button id="bookAgainBtn"
+                                                                data-bvid="' . htmlspecialchars($booking['venue_id']) . '"
+                                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                                Book Again
+                                                            </button>';
+                                                }
+                                                ?>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <?php
-                    }
-                }
-                ?>
-            </div>
-        </div>
-        <!-- Cancelled Rentals Tab -->
-        <div id="cancelled-tab" class="tab-content hidden">
-            <div class="bg-white rounded-lg shadow overflow-hidden">
-                <?php
-                if (empty($cancelledBooking)) {
-                    echo '<p class="p-6 text-center text-gray-600">You do not have any cancelled bookings.</p>';
-                } else {
-                    foreach ($cancelledBooking as $booking) {
-                        $timezone = new DateTimeZone('Asia/Manila');
-                        $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
-                        ?>
-                        <div class="p-6">
-                            <div class="space-y-6">
-                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
-                                    <?php
-                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
-                                    ?>
-
-                                    <?php if (!empty($imageUrls)): ?>
-                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                            class="w-28 h-28 object-cover rounded-lg">
-                                    <?php endif; ?>
-                                    <div>
-                                        <p class="text-lg font-medium">
-                                            <?php echo htmlspecialchars($booking['venue_name']) ?>
-                                        </p>
-                                        <p class="text-gray-600 mt-2"><?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
-                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
-                                        ?></p>
-                                        <p class="text-gray-600">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
-                                            for
-                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
-                                            days
-                                        </p>
-
-
-                                        <h4 class="text-gray-600">Reason:
-                                            <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
-                                        </h4>
-
-
-                                        <div class="mt-4">
-                                            <button id="bookAgainBtn"
-                                                data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
-                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                                                Book Again
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                }
-                ?>
-            </div>
-        </div>
-        <!-- Details Modal -->
-        <div id="details-modal"
-            class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-            <div
-                class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
-                <!-- Modal Header -->
-                <div class="flex justify-between items-center pb-6 border-b">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
-                        <p class="text-sm text-gray-500 mt-1">Booking Details</p>
                     </div>
-                    <button onclick="closeModal()"
-                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Modal Content -->
-                <div id="modal-content" class="mt-8">
-                    <!-- Main image and details container -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Left Column - Images -->
-                        <div class="space-y-4">
-                            <!-- Main Image -->
-                            <div class="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3]">
-                                <img id="modal-main-image" src="" alt="Venue Main Image"
-                                    class="w-full h-full object-cover transition-all duration-300">
-                            </div>
-
-                            <!-- Image Gallery -->
-                            <div class="grid grid-cols-4 gap-2" id="image-gallery">
-                                <!-- Thumbnails will be inserted here -->
-                            </div>
-                        </div>
-
-                        <!-- Right Column - Details -->
+                    <?php
+                    }
+                }
+                ?>
+        </div>
+    </div>
+    <!-- Cancelled Rentals Tab -->
+    <div id="cancelled-tab" class="tab-content hidden">
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <?php
+            if (empty($cancelledBooking)) {
+                echo '<p class="p-6 text-center text-gray-600">You do not have any cancelled bookings.</p>';
+            } else {
+                foreach ($cancelledBooking as $booking) {
+                    $timezone = new DateTimeZone('Asia/Manila');
+                    $currentDateTime = new DateTime('now', $timezone);
+                    $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                    ?>
+                    <div class="p-6">
                         <div class="space-y-6">
-                            <!-- Status Tags -->
-                            <div class="flex items-center gap-3">
-                                <span id="booking-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
-                                <span id="booking-type" class="px-3 py-1 rounded-full text-sm font-medium"></span>
-                            </div>
+                            <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                <?php
+                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                ?>
 
-                            <!-- Price Details -->
-                            <div class="bg-gray-50 p-6 rounded-xl space-y-3">
-                                <h4 class="font-semibold text-gray-900">Price Details</h4>
-                                <div class="space-y-2">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Total Amount</span>
-                                        <span id="price-per-night" class="text-xl font-bold text-gray-900"></span>
+                                <?php if (!empty($imageUrls)): ?>
+                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                        class="w-28 h-28 object-cover rounded-lg">
+                                <?php endif; ?>
+                                <div>
+                                    <p class="text-lg font-medium">
+                                        <?php echo htmlspecialchars($booking['venue_name']) ?>
+                                    </p>
+                                    <p class="text-gray-600 mt-2"><?php
+                                    $startDate = new DateTime($booking['booking_start_date']);
+                                    $endDate = new DateTime($booking['booking_end_date']);
+                                    echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                    ?></p>
+                                    <p class="text-gray-600">
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                        for
+                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                        days
+                                    </p>
+
+
+                                    <h4 class="text-gray-600">Reason:
+                                        <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
+                                    </h4>
+
+
+                                    <div class="mt-4">
+                                        <?php
+                                        if ($booking['venue_availability_id'] == $VENUE_AVAILABLE) {
+                                            echo '<button id="bookAgainBtn"
+                                                    data-bvid="' . htmlspecialchars($booking['venue_id']) . '"
+                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                    Book Again
+                                                </button>';
+                                        }
+                                        ?>
                                     </div>
-                                    <div class="flex justify-between items-center text-sm text-gray-600">
-                                        <span>Duration</span>
-                                        <span id="booking-duration"></span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-sm text-gray-600">
-                                        <span>Cleaning Fee</span>
-                                        <span id="cleaning-fee"></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Location Details -->
-                            <div class="space-y-2">
-                                <h4 class="font-semibold text-gray-900">Location</h4>
-                                <div id="location-details" class="text-gray-600 text-sm space-y-1"></div>
-                            </div>
-
-                            <!-- Capacity & Amenities -->
-                            <div class="grid grid-cols-2 gap-6">
-                                <div class="space-y-2">
-                                    <h4 class="font-semibold text-gray-900">Capacity</h4>
-                                    <p id="venue-capacity" class="text-gray-600 text-sm"></p>
-                                </div>
-                                <div class="space-y-2">
-                                    <h4 class="font-semibold text-gray-900">Amenities</h4>
-                                    <ul id="amenities-list" class="text-gray-600 text-sm space-y-1"></ul>
-                                </div>
-                            </div>
-
-                            <!-- Contact Information -->
-                            <div class="space-y-2">
-                                <h4 class="font-semibold text-gray-900">Contact Information</h4>
-                                <div id="contact-details" class="text-gray-600 text-sm space-y-1"></div>
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="flex gap-3 pt-4">
-                                <div id="book-again-container" class="hidden">
-                                    <button
-                                        class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
-                                        Book Again
-                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Reviews Section -->
-                    <div id="reviews-section" class="mt-8 pt-6 border-t">
-                        <h4 class="font-semibold text-gray-900 mb-4">Reviews</h4>
-                        <div id="reviews-container" class="space-y-4">
-                            <!-- Reviews will be dynamically loaded here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <?php
+                }
+            }
+            ?>
         </div>
-
-        <!-- Cancellation Modal -->
-        <div id="cancellation-modal"
-            class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-            <div
-                class="relative top-20 mx-auto p-6 border w-full max-w-lg shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
-                <!-- Modal Header -->
-                <div class="flex justify-between items-center pb-4 border-b">
-                    <h3 class="text-xl font-bold">Cancel Booking</h3>
-                    <button onclick="closeCancellationModal()"
-                        class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-
+    </div>
+    <!-- Details Modal -->
+    <div id="details-modal"
+        class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+        <div
+            class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center pb-6 border-b">
                 <div>
-                    <h4 class="font-semibold mt-3 mb-3">Cancellation Policy</h4>
-                    <div class="space-y-3">
-                        <p class="text-gray-700 text-xs">Free cancellation for 48 hours after booking.</p>
-                        <p class="text-gray-700 text-xs">Cancel before check-in and get a full refund, minus the
-                            service
-                            fee.</p>
-                        <div class="mt-4">
-                            <h5 class="font-medium mb-2">Refund Policy:</h5>
-                            <ul class="space-y-2 text-gray-700 text-xs">
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-check text-green-600"></i>
-                                    <span>100% refund: Cancel 7 days before check-in</span>
-                                </li>
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-check text-green-600"></i>
-                                    <span>50% refund: Cancel 3-7 days before check-in</span>
-                                </li>
-                                <li class="flex items-center gap-2">
-                                    <i class="fas fa-times text-red-600"></i>
-                                    <span>No refund: Cancel less than 3 days before check-in</span>
-                                </li>
-                            </ul>
+                    <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
+                    <p class="text-sm text-gray-500 mt-1">Booking Details</p>
+                </div>
+                <button onclick="closeModal()"
+                    class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div id="modal-content" class="mt-8">
+                <!-- Main image and details container -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Left Column - Images -->
+                    <div class="space-y-4">
+                        <!-- Main Image -->
+                        <div class="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3]">
+                            <img id="modal-main-image" src="" alt="Venue Main Image"
+                                class="w-full h-full object-cover transition-all duration-300">
+                        </div>
+
+                        <!-- Image Gallery -->
+                        <div class="grid grid-cols-4 gap-2" id="image-gallery">
+                            <!-- Thumbnails will be inserted here -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Details -->
+                    <div class="space-y-6">
+                        <!-- Status Tags -->
+                        <div class="flex items-center gap-3">
+                            <span id="booking-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                            <span id="booking-type" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                        </div>
+
+                        <!-- Price Details -->
+                        <div class="bg-gray-50 p-6 rounded-xl space-y-3">
+                            <h4 class="font-semibold text-gray-900">Price Details</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Total Amount</span>
+                                    <span id="price-per-night" class="text-xl font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm text-gray-600">
+                                    <span>Duration</span>
+                                    <span id="booking-duration"></span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm text-gray-600">
+                                    <span>Cleaning Fee</span>
+                                    <span id="cleaning-fee"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location Details -->
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-gray-900">Location</h4>
+                            <div id="location-details" class="text-gray-600 text-sm space-y-1"></div>
+                        </div>
+
+                        <!-- Capacity & Amenities -->
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <h4 class="font-semibold text-gray-900">Capacity</h4>
+                                <p id="venue-capacity" class="text-gray-600 text-sm"></p>
+                            </div>
+                            <div class="space-y-2">
+                                <h4 class="font-semibold text-gray-900">Amenities</h4>
+                                <ul id="amenities-list" class="text-gray-600 text-sm space-y-1"></ul>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-gray-900">Contact Information</h4>
+                            <div id="contact-details" class="text-gray-600 text-sm space-y-1"></div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 pt-4">
+                            <div id="book-again-container" class="hidden">
+                                <button
+                                    class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
+                                    Book Again
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Modal Content -->
-                <div class="mt-4">
-                    <form id="cancellation-form">
-                        <input type="hidden" id="cancellation-booking-id" name="booking-id">
-                        <div class="mb-4">
-                            <label for="cancellation-reason" class="block font-medium text-gray-700">Reason for
-                                Cancellation</label>
-                            <textarea id="cancellation-reason" name="cancellation-reason"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                                rows="4" placeholder="Enter your reason for cancellation"></textarea>
-                        </div>
-                        <div class="flex justify-end space-x-4">
-                            <button type="button" onclick="closeCancellationModal()"
-                                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                            <button type="submit"
-                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Submit</button>
-                        </div>
-                    </form>
+                <!-- Reviews Section -->
+                <div id="reviews-section" class="mt-8 pt-6 border-t">
+                    <h4 class="font-semibold text-gray-900 mb-4">Reviews</h4>
+                    <div id="reviews-container" class="space-y-4">
+                        <!-- Reviews will be dynamically loaded here -->
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Cancellation Modal -->
+    <div id="cancellation-modal"
+        class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+        <div
+            class="relative top-20 mx-auto p-6 border w-full max-w-lg shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center pb-4 border-b">
+                <h3 class="text-xl font-bold">Cancel Booking</h3>
+                <button onclick="closeCancellationModal()"
+                    class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div>
+                <h4 class="font-semibold mt-3 mb-3">Cancellation Policy</h4>
+                <div class="space-y-3">
+                    <p class="text-gray-700 text-xs">Free cancellation for 48 hours after booking.</p>
+                    <p class="text-gray-700 text-xs">Cancel before check-in and get a full refund, minus the
+                        service
+                        fee.</p>
+                    <div class="mt-4">
+                        <h5 class="font-medium mb-2">Refund Policy:</h5>
+                        <ul class="space-y-2 text-gray-700 text-xs">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-600"></i>
+                                <span>100% refund: Cancel 7 days before check-in</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-green-600"></i>
+                                <span>50% refund: Cancel 3-7 days before check-in</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-times text-red-600"></i>
+                                <span>No refund: Cancel less than 3 days before check-in</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="mt-4">
+                <form id="cancellation-form">
+                    <input type="hidden" id="cancellation-booking-id" name="booking-id">
+                    <div class="mb-4">
+                        <label for="cancellation-reason" class="block font-medium text-gray-700">Reason for
+                            Cancellation</label>
+                        <textarea id="cancellation-reason" name="cancellation-reason"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                            rows="4" placeholder="Enter your reason for cancellation"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="closeCancellationModal()"
+                            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     </div>
 </main>

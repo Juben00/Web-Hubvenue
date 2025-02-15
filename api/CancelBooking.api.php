@@ -9,12 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj = new Venue();
         $result = $venueObj->cancelBooking($bookingId, $reason);
 
-        // if ($result) {
-        //     echo json_encode(['status' => 'success', 'message' => 'Booking cancelled successfully.']);
-        // } else {
-        //     echo json_encode(['status' => 'error', 'message' => 'Failed to cancel booking.']);
-        // }
-        echo json_encode($result);
+        if ($result) {
+            echo json_encode(['status' => 'success', 'message' => 'Booking cancelled successfully.']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to cancel booking.']);
+        }
         exit();
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid input.']);
