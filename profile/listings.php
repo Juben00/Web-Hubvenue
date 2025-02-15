@@ -12,8 +12,8 @@ $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $userRole = $accountObj->getUserRole($USER_ID);
 $venuePost = $venueObj->getAllVenues('', $USER_ID);
 
-$HOST_ROLE = 1;
-$GUEST_ROLE = 2;
+$HOST_ROLE = "Host";
+$GUEST_ROLE = "Guest";
 
 ?>
 <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">

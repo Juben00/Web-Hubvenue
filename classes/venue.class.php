@@ -598,6 +598,7 @@ class Venue
     v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,
+    v.thumbnail,
 
     d.discount_value AS discount_value,
 

@@ -776,6 +776,10 @@ video {
   margin: 0.25rem;
 }
 
+.m-9 {
+  margin: 2.25rem;
+}
+
 .m-auto {
   margin: auto;
 }
@@ -3519,6 +3523,11 @@ video {
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+  }
+
+  .sm\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 
