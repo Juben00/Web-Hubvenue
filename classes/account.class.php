@@ -701,20 +701,19 @@ class Account
     {
         try {
             $conn = $this->db->connect();
-            // $ACTIVE_STATUS = "Active";
-
-            $sql = "SELECT * FROM mandatory_discount WHERE userId = :userId";
+            $sql = "SELECT * FROM mandatory_discount WHERE userId = :userId AND status = 'Active'";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':userId', $userId);
-            // $stmt->bindParam(':status', $ACTIVE_STATUS);
             $stmt->execute();
             $discount = $stmt->fetch();
-            return $discount;
+
+            return $discount ? true : false;  // Only return `true` if discount exists and is active.
         } catch (PDOException $e) {
             error_log("Error fetching discount application: " . $e->getMessage());
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
     public function getDiscountApplications($search = "", $filter = "")
     {
         $sql = "SELECT 
