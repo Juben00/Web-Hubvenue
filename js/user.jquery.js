@@ -233,8 +233,8 @@ $(document).ready(function () {
             type: "POST",
             url: "./api/Login.api.php",
             data: form,
-            processData: false,  // prevent jQuery from processing the FormData
-            contentType: false,  // prevent jQuery from setting the content type
+            processData: false,  
+            contentType: false,  
             success: function (response) {
                 response = JSON.parse(response);
                 if (response.status === "success") {

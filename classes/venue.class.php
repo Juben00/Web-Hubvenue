@@ -1386,6 +1386,51 @@ LEFT JOIN
         }
     }
 
+    function getRemainingBookings($venueID)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as remaining_bookings FROM bookings WHERE booking_venue_id = :venueID AND booking_status_id = 2 AND booking_start_date > NOW();";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venueID', $venueID);
+            $stmt->execute();
+            $bookings = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $bookings['remaining_bookings'];
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return 0;
+        }
+    }
+
+    function deleteVenue($venueID, $user)
+    {
+        try {
+            $sql = "SELECT v.host_id FROM venues v WHERE v.id = :venueID;";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venueID', $venueID);
+            $stmt->execute();
+            $venue = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$venue) {
+                return ['status' => 'error', 'message' => 'Venue not found.'];
+            }
+
+            if ($venue['host_id'] == $user) {
+                $sql = "DELETE FROM venues WHERE id = :venueID;";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':venueID', $venueID);
+                $stmt->execute();
+                return ['status' => 'success', 'message' => 'Venue deleted successfully.'];
+            } else {
+                return ['status' => 'error', 'message' => 'You do not have permission to delete this venue.'];
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return ['status' => 'error', 'message' => 'An error occurred while deleting the venue.'];
+        }
+    }
+
 }
 
 $venueObj = new Venue();

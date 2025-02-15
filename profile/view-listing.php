@@ -8,11 +8,13 @@ $venuePost = null;
 
 $VENUE_ID = $_GET['id'];
 $venueView = $venueObj->getSingleVenue($VENUE_ID);
+$VENUE_NOT_AVAILABLE = 2;
 
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
 
 $bookings = $venueObj->getBookingByVenue($_GET['id'], 2);
+$remainingBookings = $venueObj->getRemainingBookings($_GET['id']);
 
 $bookingCount = 0;
 $bookingRevenue = 0;
@@ -679,6 +681,21 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 mt-4">
                         Save Changes
                     </button>
+                    
+                    <?php
+                    if ($venueView['availability_id'] == $VENUE_NOT_AVAILABLE && empty($remainingBookings)) {
+                        echo '<button id="venueDeleteBtn" class="w-full bg-slate-50 border-2 text-black py-2 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 mt-2" data-venue-id="' . htmlspecialchars($_GET['id']) . '">Delete Venue</button>';
+                    } else {
+                        echo '
+                        <div class="my-4 p-2 py-4 flex gap-2 flex-col items-center border shadow-md rounded-md">
+                            <span class="font-semibold">Note</span>
+                            <span class="text-sm text-gray-700 text-center">
+                                Deleting venue is only available when the status is on hold and there are no active bookings.
+                            </span>
+                        </div>';
+                    }
+                    ?>
+
                 </div>
 
                 <?php
@@ -696,10 +713,6 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                         $bookingThisMonth += 1; // Increment count for bookings this month
                     }
                 }
-                ?>
-
-                <?php
-                // var_dump($bookings);
                 ?>
 
                 <!-- Quick Stats -->
@@ -781,7 +794,50 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
 <script>
 
+    const spinner = $("#spinner");
 
+    function spinnerOn() {
+        spinner.removeClass("hidden");
+        spinner.addClass("flex");
+    }
+
+    function spinnerOff() {
+        spinner.removeClass("flex");
+        spinner.addClass("hidden");
+    }
+
+   $('#venueDeleteBtn').on('click', function (e) {
+        e.preventDefault();
+        
+        const venueId = $(this).data('venue-id'); 
+        
+        confirmshowModal("Are you sure you want to delete this venue?", () => {
+            deleteVenue(venueId);
+        }, "black_ico.png");
+    });
+
+    function deleteVenue(venueId) {
+    spinnerOn();
+    $.ajax({
+        type: "POST",
+        url: "./api/hostDeleteVenue.api.php",
+        data: JSON.stringify({ venueId: venueId }), // Convert object to JSON string
+        contentType: "application/json", // Set the correct content type
+        success: function (response) {
+            if (response.status === "success") {
+                spinnerOff();
+                showModal(response.message, () => {
+                    window.location.reload();
+                }, "black_ico.png");
+            } else {
+                spinnerOff();
+                showModal(response.message, undefined, "black_ico.png");
+            }
+        }
+    });
+}
+
+    
     // Initialize: Hide edit-mode elements
     document.querySelectorAll('.editMode').forEach(function (element) {
         element.classList.add('hidden');
