@@ -6,16 +6,13 @@ session_start();
 $venueObj = new Venue();
 $venuePost = null;
 
-
-$USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $VENUE_ID = $_GET['id'];
-$CONFIRMED_BOOKING_STATUS = 2;
 $venueView = $venueObj->getSingleVenue($VENUE_ID);
 
-$ratings = $venueObj->getRatings($VENUE_ID);
-$reviews = $venueObj->getReview($VENUE_ID);
+$ratings = $venueObj->getRatings($_GET['id']);
+$reviews = $venueObj->getReview($_GET['id']);
 
-$bookings = $venueObj->getBookingByVenue($VENUE_ID, $CONFIRMED_BOOKING_STATUS);
+$bookings = $venueObj->getBookingByVenue($_GET['id'], 2);
 
 $bookingCount = 0;
 $bookingRevenue = 0;
@@ -28,42 +25,12 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
     <link rel="stylesheet" href="./output.css">
 </head>
 <div id="openstreetmapplaceholder"></div>
-<!-- Initialize JavaScript variables -->
-<script>
-// Global variables
-window.venueState = {
-    isEditVenue: false,
-    imagesToDelete: [],
-    newImages: [],
-    thumbnailIndex: <?php echo $venueView['thumbnail'] ?>
-};
-</script>
-
-<!-- Tab Navigation -->
-<div class="container mx-auto pt-20 px-6">
-    <div class="flex border-b mb-6" id="tab-buttons">
-        <button type="button" class="px-8 py-3 text-sm font-medium border-b-2 tab-button" data-tab="venue-details">
-            Venue Details
-        </button>
-        <button type="button" class="px-8 py-3 text-sm font-medium border-b-2 tab-button" data-tab="venue-settings">
-            Venue Settings
-        </button>
-        <button type="button" class="px-8 py-3 text-sm font-medium border-b-2 tab-button" data-tab="ratings-reviews">
-            Ratings & Reviews
-        </button>
-        <button type="button" class="px-8 py-3 text-sm font-medium border-b-2 tab-button" data-tab="calendar-pricing">
-            Calendar & Pricing
-        </button>
-    </div>
-
-    <form id="editVenueForm" enctype="multipart/form-data">
-        <!-- Tab Content -->
-        <div class="tab-content flex gap-8">
-            <!-- Main Content Area -->
+<!-- Venue Details View (Initially Hidden) -->
+<div id="venueDetailsView" class="container mx-auto pt-20">
+   <form class="flex gap-6" id="editVenueForm" enctype="multipart/form-data">
+        <!-- Main Content -->
         <div class="flex-grow">
-                <!-- Venue Details Tab -->
-                <div id="venue-details" class="tab-pane">
-                    <div class="bg-white rounded-lg shadow-sm">
+            <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h1 id="detailVenueName" class="text-gray-600 text-2xl viewMode">
@@ -71,7 +38,8 @@ window.venueState = {
                         </h1>
                         <input id="VenueName" name="editVenueName" class="text-2xl font-bold w-full editMode hidden"
                             value="<?php echo htmlspecialchars(trim($venueView['venue_name'])); ?>">
-                                <button id="editVenueButton" class="text-xs px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2">
+                        <button id="editVenueButton" class=" text-xs px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center
+                            gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -84,42 +52,42 @@ window.venueState = {
                     <div class="mb-6 grid grid-cols-2 gap-2 relative viewMode">
                         <div class="col-span-2 ">
                             <?php if (!empty($venueView['image_urls'])): ?>
-                                    <img src="./<?= htmlspecialchars($thumbnail) ?>" alt="Venue Image"
-                                        class="w-full h-96 object-cover rounded-lg">
+                                <img src="./<?= htmlspecialchars($thumbnail) ?>" alt="Venue Image"
+                                    class="w-full h-96 object-cover rounded-lg">
                             <?php else: ?>
-                                    <img src="default-image.jpg" alt="Default Venue Image"
-                                        class="bg-slate-50 w-full h-96 object-cover rounded-lg">
+                                <img src="default-image.jpg" alt="Default Venue Image"
+                                    class="bg-slate-50 w-full h-96 object-cover rounded-lg">
                             <?php endif; ?>
                         </div>
                         <div class="grid grid-cols-3 col-span-2 gap-2 ">
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 1): ?>
-                                    <img src="./<?= htmlspecialchars($venueView['image_urls'][1]) ?>" alt="Venue Image"
-                                        class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][1]) ?>" alt="Venue Image"
+                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
                             <?php else: ?>
-                                    <div
-                                        class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
-                                        <p class="text-center">No more image to show</p>
-                                    </div>
+                                <div
+                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                    <p class="text-center">No more image to show</p>
+                                </div>
                             <?php endif; ?>
 
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 2): ?>
-                                    <img src="./<?= htmlspecialchars($venueView['image_urls'][2]) ?>" alt="Venue Image"
-                                        class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][2]) ?>" alt="Venue Image"
+                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
                             <?php else: ?>
-                                    <div
-                                        class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
-                                        <p class="text-center">No more image to show</p>
-                                    </div>
+                                <div
+                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                    <p class="text-center">No more image to show</p>
+                                </div>
                             <?php endif; ?>
 
                             <?php if (!empty($venueView['image_urls']) && count($venueView['image_urls']) > 3): ?>
-                                    <img src="./<?= htmlspecialchars($venueView['image_urls'][3]) ?>" alt="Venue Image"
-                                        class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
+                                <img src="./<?= htmlspecialchars($venueView['image_urls'][3]) ?>" alt="Venue Image"
+                                    class="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75">
                             <?php else: ?>
-                                    <div
-                                        class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
-                                        <p class="text-center">No more image to show</p>
-                                    </div>
+                                <div
+                                    class="bg-slate-50 w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-75 border flex items-center justify-center">
+                                    <p class="text-center">No more image to show</p>
+                                </div>
                             <?php endif; ?>
                         </div>
                         <button
@@ -232,22 +200,22 @@ window.venueState = {
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">What this place offers</h3>
                                 <?php if (!empty($venueView['amenities'])): ?>
-                                        <?php
-                                        $amenities = json_decode($venueView['amenities'], true);
-                                        if ($amenities):
-                                            ?>
-                                                <ul class="list-disc pl-5 space-y-1 viewMode">
-                                                    <?php foreach ($amenities as $amenity): ?>
-                                                            <li class="text-sm text-gray-800 leading-tight">
-                                                                <?= htmlspecialchars($amenity) ?>
-                                                            </li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                        <?php else: ?>
-                                                <p class="text-sm text-gray-500">No amenities available</p>
-                                        <?php endif; ?>
-                                <?php else: ?>
+                                    <?php
+                                    $amenities = json_decode($venueView['amenities'], true);
+                                    if ($amenities):
+                                        ?>
+                                        <ul class="list-disc pl-5 space-y-1 viewMode">
+                                            <?php foreach ($amenities as $amenity): ?>
+                                                <li class="text-sm text-gray-800 leading-tight">
+                                                    <?= htmlspecialchars($amenity) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php else: ?>
                                         <p class="text-sm text-gray-500">No amenities available</p>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <p class="text-sm text-gray-500">No amenities available</p>
                                 <?php endif; ?>
                                 <textarea type="text" id="editVenueAmenities" name="editVenueAmenities"
                                     class="editMode hidden space-y-2  w-full" rows="4"><?php
@@ -262,22 +230,22 @@ window.venueState = {
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold mb-2">Venue Rules</h3>
                                 <?php if (!empty($venueView['rules'])): ?>
-                                        <?php
-                                        $rules = json_decode($venueView['rules'], true);
-                                        if ($rules):
-                                            ?>
-                                                <ul class="list-disc pl-5 space-y-1 viewMode">
-                                                    <?php foreach ($rules as $rule): ?>
-                                                            <li class="text-sm text-gray-800 leading-tight">
-                                                                <?= htmlspecialchars($rule) ?>
-                                                            </li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                        <?php else: ?>
-                                                <p class="text-sm text-gray-500">No Rules Stated</p>
-                                        <?php endif; ?>
-                                <?php else: ?>
+                                    <?php
+                                    $rules = json_decode($venueView['rules'], true);
+                                    if ($rules):
+                                        ?>
+                                        <ul class="list-disc pl-5 space-y-1 viewMode">
+                                            <?php foreach ($rules as $rule): ?>
+                                                <li class="text-sm text-gray-800 leading-tight">
+                                                    <?= htmlspecialchars($rule) ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    <?php else: ?>
                                         <p class="text-sm text-gray-500">No Rules Stated</p>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <p class="text-sm text-gray-500">No Rules Stated</p>
                                 <?php endif; ?>
                                 <textarea type="text" id="editVenueRules" name="editVenueRules"
                                     class="editMode hidden space-y-2  w-full" rows="4"><?php
@@ -288,32 +256,14 @@ window.venueState = {
                                     ?></textarea>
                             </div>
 
-                            <!-- Cancellation Policy -->
-                            <!-- <div class="mb-6">
-                                <h3 class="text-lg font-semibold mb-2">Cancellation Policy</h3>
-                                <div class="viewMode">
-                                    <div id="detailCancellationPolicy" class="text-gray-600"></div>
-                                </div>
-                                <div class="editMode hidden">
-                                    <select id="editCancellationPolicy" class=" rounded-md w-full mb-2">
-                                        <option value="flexible">Flexible - Full refund 24 hours prior</option>
-                                        <option value="moderate">Moderate - Full refund 5 days prior</option>
-                                        <option value="strict">Strict - 50% refund 7 days prior</option>
-                                        <option value="custom">Custom Policy</option>
-                                    </select>
-                                    <textarea id="editCustomPolicy" class=" w-full rounded-md mt-2 hidden" rows="4"
-                                        placeholder="Enter your custom cancellation policy..."></textarea>
-                                </div>
-                            </div> -->
-                                </div>
+                          
                         </div>
                     </div>
                 </div>
             </div>
 
-                <!-- Ratings & Reviews Tab -->
-                <div id="ratings-reviews" class="tab-pane">
-                    <div class="bg-white rounded-lg shadow-sm p-8">
+            <!-- New Ratings & Reviews Section - Moved to bottom -->
+            <div class="bg-white rounded-lg shadow-sm mt-6 p-6">
                 <h3 class="text-2xl font-bold mb-6">Ratings & Reviews</h3>
 
                 <!-- Rating Summary -->
@@ -357,16 +307,16 @@ window.venueState = {
                                     // Normalize percentage based on $maxReviewCount
                                     $normalizedPercentage = $maxReviewCount > 0 ? (($count) / $ratings['total']) * 100 : 0;
                                     ?>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-sm w-16"><?php echo $i; ?> stars</span>
-                                            <!-- Set explicit max width -->
-                                            <div class="flex-grow h-2 bg-gray-200 rounded max-w-[500px]">
-                                                <!-- Dynamically set the width based on normalized percentage -->
-                                                <div class="h-full bg-yellow-400 rounded"
-                                                    style="width: <?php echo $normalizedPercentage; ?>%;"></div>
-                                            </div>
-                                            <span class="text-sm w-8"><?php echo $count; ?></span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm w-16"><?php echo $i; ?> stars</span>
+                                        <!-- Set explicit max width -->
+                                        <div class="flex-grow h-2 bg-gray-200 rounded max-w-[500px]">
+                                            <!-- Dynamically set the width based on normalized percentage -->
+                                            <div class="h-full bg-yellow-400 rounded"
+                                                style="width: <?php echo $normalizedPercentage; ?>%;"></div>
                                         </div>
+                                        <span class="text-sm w-8"><?php echo $count; ?></span>
+                                    </div>
                                 <?php endfor; ?>
 
                             </div>
@@ -377,40 +327,40 @@ window.venueState = {
                 <!-- Individual Reviews -->
                 <div class="mt-8 space-y-6">
                     <?php foreach ($reviews as $index => $review): ?>
-                            <div class="border-b pb-6 review" data-index="<?php echo $index; ?>"
-                                style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
-                                <div class="flex items-center gap-4 mb-4">
-                                    <?php if ($review['profile_pic'] == null): ?>
-                                            <div
-                                                class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">
-                                                <?php echo htmlspecialchars($review['user_name'][0]); ?>
-                                            </div>
-                                    <?php else: ?>
-                                            <img class="w-12 h-12 bg-gray-200 rounded-full"
-                                                src="./<?php echo htmlspecialchars($review['profile_pic']); ?>" alt="Profile Picture">
-                                    <?php endif; ?>
-                                    <div>
-                                        <a href="user-page.php"
-                                            class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
-                                        <p class="text-sm text-gray-500">
-                                            <?php
-                                            $originalDate = $review['date'];
-                                            $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate));
-                                            echo htmlspecialchars($formattedDate);
-                                            ?>
-                                        </p>
+                        <div class="border-b pb-6 review" data-index="<?php echo $index; ?>"
+                            style="<?php echo $index === 0 ? '' : 'display: none;'; ?>">
+                            <div class="flex items-center gap-4 mb-4">
+                                <?php if ($review['profile_pic'] == null): ?>
+                                    <div
+                                        class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold">
+                                        <?php echo htmlspecialchars($review['user_name'][0]); ?>
                                     </div>
+                                <?php else: ?>
+                                    <img class="w-12 h-12 bg-gray-200 rounded-full"
+                                        src="./<?php echo htmlspecialchars($review['profile_pic']); ?>" alt="Profile Picture">
+                                <?php endif; ?>
+                                <div>
+                                    <a href="user-page.php"
+                                        class="font-semibold hover:underline"><?php echo htmlspecialchars($review['user_name']); ?></a>
+                                    <p class="text-sm text-gray-500">
+                                        <?php
+                                        $originalDate = $review['date'];
+                                        $formattedDate = date('F j, Y \a\t g:i A', strtotime($originalDate));
+                                        echo htmlspecialchars($formattedDate);
+                                        ?>
+                                    </p>
                                 </div>
-                                <div class="flex text-yellow-400 mb-2">
-                                    <?php for ($i = 0; $i < $review['rating']; $i++): ?>
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                    <?php endfor; ?>
-                                </div>
-                                <p class="text-gray-700"><?php echo htmlspecialchars($review['review']); ?></p>
                             </div>
+                            <div class="flex text-yellow-400 mb-2">
+                                <?php for ($i = 0; $i < $review['rating']; $i++): ?>
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                <?php endfor; ?>
+                            </div>
+                            <p class="text-gray-700"><?php echo htmlspecialchars($review['review']); ?></p>
+                        </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -420,14 +370,12 @@ window.venueState = {
                         class="px-4 py-2 text-sm border w-24 bg-neutral-200 transition-all duration-150 text-gray-600 hover:bg-gray-100 rounded">Previous</button>
                     <button id="nextReview"
                         class="px-4 py-2 text-sm border w-24 bg-neutral-200 transition-all duration-150 text-gray-600 hover:bg-gray-100 rounded">Next</button>
-                        </div>
                 </div>
             </div>
 
-                <!-- Calendar & Pricing Tab -->
-                <div id="calendar-pricing" class="tab-pane">
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                <h3 class="text-2xl font-bold mb-6">Calendar & Pricing</h3>
+
+<div class="bg-white rounded-lg shadow-sm mt-6 p-6">
+    <h3 class="text-2xl font-bold mb-6">Calendar & Pricing</h3>
 
                 <!-- Calendar Header -->
                 <div class="flex justify-between items-center mb-4 calendar-header">
@@ -460,635 +408,519 @@ window.venueState = {
                 </div>
 
     <!-- Calendar Grid -->
-    <div class="border rounded-lg">
+            <div class="border rounded-lg">
         <!-- Calendar Header -->
-        <div class="grid grid-cols-7 text-sm font-medium text-gray-500 border-b">
-            <div class="p-2 text-center">Su</div>
-            <div class="p-2 text-center">Mo</div>
-            <div class="p-2 text-center">Tu</div>
-            <div class="p-2 text-center">We</div>
-            <div class="p-2 text-center">Th</div>
-            <div class="p-2 text-center">Fr</div>
-            <div class="p-2 text-center">Sa</div>
-        </div>
+            <div class="grid grid-cols-7 text-sm font-medium text-gray-500 border-b">
+                <div class="p-2 text-center">Su</div>
+                <div class="p-2 text-center">Mo</div>
+                <div class="p-2 text-center">Tu</div>
+                <div class="p-2 text-center">We</div>
+                <div class="p-2 text-center">Th</div>
+                <div class="p-2 text-center">Fr</div>
+                <div class="p-2 text-center">Sa</div>
+            </div>
 
                     <!-- Calendar Days -->
                     <div class="grid grid-cols-7 calendar-days">
-                        <?php
-                        // Get booked dates for this venue
-                        $bookedDates = $venueObj->getBookedDates($VENUE_ID);
-                        $bookedDatesArray = [];
+                       <?php
+                    // Get booked dates for this venue
+                    $bookedDates = $venueObj->getBookedDates($VENUE_ID);
+                    $bookedDatesArray = [];
 
-                        // Convert booked dates to array for easy checking
-                        foreach ($bookedDates as $booking) {
-                            $start = new DateTime($booking['startdate']);
-                            $end = new DateTime($booking['enddate']);
-                            $interval = new DateInterval('P1D');
-                            $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
+                    // Convert booked dates to array for easy checking
+                    foreach ($bookedDates as $booking) {
+                        $start = new DateTime($booking['startdate']);
+                        $end = new DateTime($booking['enddate']);
+                        $interval = new DateInterval('P1D');
+                        $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
 
-                            foreach ($dateRange as $date) {
-                                $bookedDatesArray[] = $date->format('Y-m-d');
-                            }
+                        foreach ($dateRange as $date) {
+                            $bookedDatesArray[] = $date->format('Y-m-d');
+                        }
+                    }
+
+                    $today = new DateTime();
+                    $currentMonth = $today->format('n');
+                    $currentYear = $today->format('Y');
+                    $firstDay = new DateTime("$currentYear-$currentMonth-01");
+                    $lastDay = new DateTime("$currentYear-$currentMonth-" . $firstDay->format('t'));
+
+                    // Fill in empty days at start
+                    $firstDayOfWeek = $firstDay->format('w');
+                    for ($i = 0; $i < $firstDayOfWeek; $i++) {
+                        echo '<div class="p-2 border-b border-r text-gray-400"></div>';
+                    }
+
+                    // Fill in days of month
+                    for ($day = 1; $day <= $lastDay->format('d'); $day++) {
+                        $currentDate = new DateTime("$currentYear-$currentMonth-$day");
+                        $dateString = $currentDate->format('Y-m-d');
+                        $isBooked = in_array($dateString, $bookedDatesArray);
+                        $isToday = $currentDate->format('Y-m-d') === $today->format('Y-m-d');
+
+                        $cellClass = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
+                        if ($isBooked) {
+                            $cellClass .= 'bg-red-100';
+                        }
+                        if ($isToday) {
+                            $cellClass .= 'font-bold text-blue-500';
                         }
 
-                        $today = new DateTime();
-                        $currentMonth = $today->format('n');
-                        $currentYear = $today->format('Y');
-                        $firstDay = new DateTime("$currentYear-$currentMonth-01");
-                        $lastDay = new DateTime("$currentYear-$currentMonth-" . $firstDay->format('t'));
-
-                        // Fill in empty days at start
-                        $firstDayOfWeek = $firstDay->format('w');
-                        for ($i = 0; $i < $firstDayOfWeek; $i++) {
-                            echo '<div class="p-2 border-b border-r text-gray-400"></div>';
+                        echo '<div class="' . $cellClass . '">';
+                        echo '<div class="text-sm">' . $day . '</div>';
+                        echo '<div class="text-xs text-gray-600">₱' . number_format($venueView['price'], 2) . '</div>';
+                        if ($isBooked) {
+                            echo '<div class="text-xs text-red-600">Booked</div>';
                         }
-
-                        // Fill in days of month
-                        for ($day = 1; $day <= $lastDay->format('d'); $day++) {
-                            $currentDate = new DateTime("$currentYear-$currentMonth-$day");
-                            $dateString = $currentDate->format('Y-m-d');
-                            $isBooked = in_array($dateString, $bookedDatesArray);
-                            $isToday = $currentDate->format('Y-m-d') === $today->format('Y-m-d');
-
-                            $cellClass = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
-                            if ($isBooked) {
-                                $cellClass .= ' bg-red-100';
-                            }
-                            if ($isToday) {
-                                $cellClass .= ' font-bold';
-                            }
-
-                            echo '<div class="' . $cellClass . '">';
-                            echo '<div class="text-sm">' . $day . '</div>';
-                            echo '<div class="text-xs text-gray-600">₱' . number_format($venueView['price'], 2) . '</div>';
-                            if ($isBooked) {
-                                echo '<div class="text-xs text-red-600">Booked</div>';
-                            }
-                            echo '</div>';
-                        }
-                        ?>
-                    </div>
+                        echo '</div>';
+                    }
+                    ?>
                 </div>
+            </div>
+</div>
 
-                        <!-- Discounts Section -->
-                        <div class="mt-8">
-                            <h4 class="text-lg font-semibold mb-4">Discounts</h4>
-                            <div class="space-y-4">
-                                <?php
-                                $discounts = $venueObj->getAllDiscounts();
-                                if (!empty($discounts)) {
-                                    foreach ($discounts as $discount) {
-                                        echo '<div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-2">';
-                                        echo '<div>';
-                                        echo '<p class="font-medium text-sm">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                                        echo '<p class="text-xs text-gray-600">' .
-                                            ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) .
-                                            ' off</p>';
-                                        if (isset($discount['min_days']) && $discount['min_days'] > 0) {
-                                            echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
-                                        }
-                                        echo '</div>';
-                                        if ($discount['expiration_date']) {
-                                            echo '<p class="text-xs text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
-                                        }
-                                        echo '</div>';
-                                    }
-                                } else {
-                                    echo '<p class="text-sm text-gray-500">No active discounts</p>';
-                                }
-                                ?>
-                    </div>
-                    </div>
-                    </div>
-                        </div>
-                    </div>
 
-            <!-- Right Sidebar - Settings -->
-            <div id="venue-settings" class="tab-pane w-[400px]">
-                <div class="bg-white rounded-lg shadow-sm p-8 sticky top-24">
-                    <div class="mb-8">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-xl font-bold">Venue Settings</h3>
-                            <button id="editSettingsButton" class="text-sm px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
-                                Edit Settings
-                            </button>
+
         </div>
 
-                        <!-- Settings Content -->
-                        <div class="space-y-6">
+        <!-- Right Sidebar -->
+        <div class="w-96">
+            <div class="bg-white rounded-lg shadow-sm p-6 sticky top-24">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Venue Settings</h3>
                     <!-- Venue Status -->
-                            <div class="setting-group">
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Venue Status</h4>
-                                <div class="viewMode">
-                                    <p class="text-gray-900"><?php echo htmlspecialchars($venueView['availability_id'] == 1 ? "Active" : "Onhold") ?></p>
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Venue Status</span>
+                            <p><?php echo htmlspecialchars($venueView['availability_id'] == 1 ? "Active" : "Onhold") ?></p>
                         </div>
-                                <div class="editMode hidden">
-                                    <div class="flex items-center gap-4">
-                                        <label class="inline-flex items-center">
-                                            <input type="radio" name="editVenueStatus" value="1" <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?> class="form-radio h-4 w-4 text-blue-600">
-                                            <span class="ml-2">Active</span>
+                     </div>
+                     <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Venue Status</label>
+                        <div class="flex items-center gap-2">
+                        <!-- Active Status -->
+                        <div class="flex items-center gap-2">
+                            <label class="switch">
+                                <input 
+                                    type="radio" 
+                                    name="editVenueStatus" 
+                                    id="editVenueStatusActive" 
+                                    value="1" 
+                                    <?php echo ($venueView['availability_id'] == 1) ? 'checked' : ''; ?>
+                                >
+                                <span class="slider round"></span>
                             </label>
-                                        <label class="inline-flex items-center">
-                                            <input type="radio" name="editVenueStatus" value="2" <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?> class="form-radio h-4 w-4 text-blue-600">
-                                            <span class="ml-2">Onhold</span>
+                            <span class="text-sm text-gray-600">Active</span>
+                        </div>
+    
+                        <!-- Onhold Status -->
+                        <div class="flex items-center gap-2">
+                            <label class="switch">
+                                <input 
+                                    type="radio" 
+                                    name="editVenueStatus" 
+                                    id="editVenueStatusOnhold" 
+                                    value="2" 
+                                    <?php echo ($venueView['availability_id'] == 2) ? 'checked' : ''; ?>
+                                >
+                                <span class="slider round"></span>
                             </label>
+                            <span class="text-sm text-gray-600">Onhold</span>
                         </div>
                     </div>
+
                      </div>
 
                     <!-- Venue Type -->
-                            <div class="setting-group">
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Venue Type</h4>
-                                <div class="viewMode">
-                                    <p class="text-gray-900"><?php
-                                    $venueType = $venueView['venue_tag'];
-                                    switch ($venueType) {
-                                        case 1:
-                                            echo "Corporate Events";
-                                            break;
-                                        case 2:
-                                            echo "Reception Hall";
-                                            break;
-                                        case 3:
-                                            echo "Intimate Gatherings";
-                                            break;
-                                        case 4:
-                                            echo "Outdoor";
-                                            break;
-                                        default:
-                                            echo "Unknown";
-                                            break;
-                                    }
-                                    ?></p>
+                      <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Venue Tag</span>
+                            <p><?php 
+                            $venueType = $venueView['venue_tag'];
+
+                            switch ($venueType) {
+                                case 1:
+                                    echo "Corporate Events";
+                                    break;
+                                case 2:
+                                    echo "Reception Hall";
+                                    break;
+                                case 3:
+                                    echo "Intimate Gatherings";
+                                    break;
+                                case 4:
+                                    echo "Outdoor";
+                                    break;
+                                default:
+                                    echo "Unknown";
+                                    break;
+                            }
+                            ?></p>
                         </div>
-                                <div class="editMode hidden">
-                                    <select name="editVenueType" class="w-full rounded-lg border-gray-300 shadow-sm">
+                    </div>
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Venue Type</label>
+                        <select class="block w-full p-2 pl-10 text-sm text-gray-700 rounded-md" name="editVenueType"
+                            id="">
                             <option value="1" <?php echo ($venueView['venue_tag'] == 1) ? 'selected' : ''; ?>>Corporate Events</option>
                             <option value="2" <?php echo ($venueView['venue_tag'] == 2) ? 'selected' : ''; ?>>Reception Hall</option>
                             <option value="3" <?php echo ($venueView['venue_tag'] == 3) ? 'selected' : ''; ?>>Intimate Gatherings</option>
                             <option value="4" <?php echo ($venueView['venue_tag'] == 4) ? 'selected' : ''; ?>>Outdoor</option>
                         </select>
+                    </div>
+
+
+                    <!-- Price Setting -->
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Price per day</span>
+                            <p>₱<?php echo htmlspecialchars($venueView['price']) ?></p>
                         </div>
                     </div>
 
-                            <!-- Price Settings -->
-                            <div class="setting-group">
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Price Settings</h4>
-                                <div class="space-y-4">
-                                    <!-- Price per day -->
-                                    <div>
-                                        <label class="text-sm text-gray-600">Price per day</label>
-                                        <div class="viewMode">
-                                            <p class="text-gray-900">₱<?php echo number_format($venueView['price'], 2) ?></p>
-                                        </div>
-                                        <div class="editMode hidden">
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Price per day</label>
                         <div class="flex items-center">
                             <span class="text-gray-500 mr-2">₱</span>
-                                                <input type="number" name="editVenuePrice" value="<?php echo htmlspecialchars($venueView['price']) ?>" class="w-full rounded-lg border-gray-300 shadow-sm">
-                        </div>
+                            <input type="number" id="venuePrice" name="editVenuePrice" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['price']) ?>">
                         </div>
                     </div>
 
-                                    <!-- Entrance Fee -->
-                                    <div>
-                                        <label class="text-sm text-gray-600">Entrance Fee (per person)</label>
-                                        <div class="viewMode">
-                                            <p class="text-gray-900">₱<?php echo number_format($venueView['entrance'], 2) ?></p>
+                    <!-- Down Payment Options -->
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Down Payment Options</span>
+                            <p><?php
+                            $downPayment = $venueView['down_payment_id'];
+                            $downPaymentName = $downPayment == 1 ? '30% Down Payment' : ($downPayment == 2 ? '50% Down Payment' : 'Full Payment Required');
+                            echo htmlspecialchars($downPaymentName);
+                            ?></p>
+                        </div>
                     </div>
-                                        <div class="editMode hidden">
+
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment
+                            Required</label>
+                        <select class=" rounded-md w-full" name="editDownPayment" id="editDownPayment">
+                            <option value="1" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
+                                of
+                                total amount
+                            </option>
+                            <option value="2" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50%
+                                of
+                                total amount
+                            </option>
+                            <option value="3" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full
+                                payment
+                                required</option>
+                        </select>
+                    </div>
+
+
+                    <!-- Entrance -->
+                     <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Entrance per person</span>
+                            <p>₱<?php echo htmlspecialchars($venueView['entrance']) ?></p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Entrance per person</label>
                         <div class="flex items-center">
                             <span class="text-gray-500 mr-2">₱</span>
-                                                <input type="number" name="editVenueEntrance" value="<?php echo htmlspecialchars($venueView['entrance']) ?>" class="w-full rounded-lg border-gray-300 shadow-sm">
-                                            </div>
+                            <input type="number" id="venueEntrance" name="editVenueEntrance" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['entrance']) ?>">
                         </div>
                     </div>
 
                     <!-- Cleaning Fee -->
-                                    <div>
-                                        <label class="text-sm text-gray-600">Cleaning Fee</label>
-                                        <div class="viewMode">
-                                            <p class="text-gray-900">₱<?php echo number_format($venueView['cleaning'], 2) ?></p>
+                      <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="">Cleaning Fee</span>
+                            <p>₱<?php echo htmlspecialchars($venueView['cleaning']) ?></p>
                         </div>
-                                        <div class="editMode hidden">
+                    </div>
+
+                    
+                    
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cleaning Fee</label>
                         <div class="flex items-center">
                             <span class="text-gray-500 mr-2">₱</span>
-                                                <input type="number" name="editVenueCleaning" value="<?php echo htmlspecialchars($venueView['cleaning']) ?>" class="w-full rounded-lg border-gray-300 shadow-sm">
+                            <input type="number" id="venueCleaning" name="editVenueCleaning" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['cleaning']) ?>">
                         </div>
                     </div>
-                            </div>
-                        </div>
-                    </div>
 
-                            <!-- Down Payment -->
-                            <div class="setting-group">
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Down Payment Required</h4>
-                                <div class="viewMode">
-                                    <p class="text-gray-900"><?php
-                                    $downPayment = $venueView['down_payment_id'];
-                                    echo $downPayment == 1 ? '30% Down Payment' : ($downPayment == 2 ? '50% Down Payment' : 'Full Payment Required');
-                                    ?></p>
-                                </div>
-                                <div class="editMode hidden">
-                                    <select name="editDownPayment" class="w-full rounded-lg border-gray-300 shadow-sm">
-                                        <option value="1" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30% of total amount</option>
-                                        <option value="2" <?php echo ($venueView['down_payment_id'] == 2) ? 'selected' : ''; ?>>50% of total amount</option>
-                                        <option value="3" <?php echo ($venueView['down_payment_id'] == 3) ? 'selected' : ''; ?>>Full payment required</option>
-                                    </select>
-                                </div>
-                </div>
 
-                            <!-- Discounts -->
-                            <div class="setting-group">
-                                <h4 class="text-sm font-medium text-gray-700 mb-2">Discounts</h4>
-                                <div class="viewMode">
-                <?php
-                $discounts = $venueObj->getAllDiscounts();
-                if (!empty($discounts)) {
-                    foreach ($discounts as $discount) {
-                        echo '<div class="flex justify-between items-center p-2 bg-gray-50 rounded-lg mb-2">';
-                        echo '<div>';
-                        echo '<p class="font-medium text-sm">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                        echo '<p class="text-xs text-gray-600">' .
-                            ($discount['discount_type'] === 'percentage' ? $discount['discount_value'] . '%' : '₱' . number_format($discount['discount_value'], 2)) .
-                            ' off</p>';
-                        if (isset($discount['min_days']) && $discount['min_days'] > 0) {
-                            echo '<p class="text-xs text-gray-500">Minimum ' . $discount['min_days'] . ' days required</p>';
-                        }
-                        echo '</div>';
-                        if ($discount['expiration_date']) {
-                            echo '<p class="text-xs text-gray-500">Expires: ' . date('M d, Y', strtotime($discount['expiration_date'])) . '</p>';
-                        }
-                        echo '</div>';
-                    }
-                } else {
-                    echo '<p class="text-sm text-gray-500">No active discounts</p>';
-                }
-                ?>
-                                </div>
-                                <div class="editMode hidden">
-                                    <div class="space-y-3" id="discountFields">
-                                        <!-- Existing discounts will be listed here -->
-                <?php
-                if (!empty($discounts)) {
-                    foreach ($discounts as $index => $discount) {
-                        echo '<div class="flex gap-4 items-start discount-entry bg-gray-50 p-4 rounded-lg">';
-                        echo '<div class="flex-grow space-y-4">';
-
-                        // Discount Code
-                        echo '<div class="flex flex-col">';
-                        echo '<label class="text-xs text-gray-600 mb-1">Discount Code</label>';
-                        echo '<input type="text" name="discount_code[]" placeholder="Enter discount code" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_code']) . '">';
-                        echo '</div>';
-
-                        // Type and Value
-                        echo '<div class="grid grid-cols-2 gap-4">';
-                        echo '<div class="flex flex-col">';
-                        echo '<label class="text-xs text-gray-600 mb-1">Type</label>';
-                        echo '<select name="discount_type[]" class="text-sm rounded-md border-gray-300">';
-                        echo '<option value="percentage"' . ($discount['discount_type'] === 'percentage' ? ' selected' : '') . '>Percentage</option>';
-                        echo '<option value="fixed"' . ($discount['discount_type'] === 'fixed' ? ' selected' : '') . '>Fixed Amount</option>';
-                        echo '</select>';
-                        echo '</div>';
-                        echo '<div class="flex flex-col">';
-                        echo '<label class="text-xs text-gray-600 mb-1">Value</label>';
-                        echo '<input type="number" name="discount_value[]" placeholder="Enter value" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['discount_value']) . '">';
-                        echo '</div>';
-                        echo '</div>';
-
-                        // Minimum Days and Expiry Date
-                        echo '<div class="grid grid-cols-2 gap-4">';
-                        echo '<div class="flex flex-col">';
-                        echo '<label class="text-xs text-gray-600 mb-1">Minimum Days</label>';
-                        echo '<input type="number" name="min_days[]" placeholder="Minimum days required" class="w-full text-sm rounded-md border-gray-300" min="1" value="' . htmlspecialchars($discount['min_days']) . '">';
-                        echo '</div>';
-                        echo '<div class="flex flex-col">';
-                        echo '<label class="text-xs text-gray-600 mb-1">Expiry Date</label>';
-                        echo '<input type="date" name="discount_expiry[]" class="w-full text-sm rounded-md border-gray-300" value="' . htmlspecialchars($discount['expiration_date']) . '">';
-                        echo '</div>';
-                        echo '</div>';
-
-                        echo '</div>';
-                        echo '<button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all duration-200">';
-                        echo '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
-                        echo '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-                        echo '</svg>';
-                        echo '</button>';
-                        echo '</div>';
-                    }
-                }
-                ?>
-                        </div>
-                                    <button type="button" onclick="addNewDiscount()" class="mt-4 text-sm bg-white border border-blue-500 text-blue-500 px-4 py-2 rounded-lg hover:bg-blue-50 transition-all duration-200 flex items-center justify-center gap-2 w-full">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                        </svg>
-                                        Add New Discount
-                                    </button>
-                        </div>
-                        </div>
-
-                            <!-- Save Changes Button -->
-                            <div class="editMode hidden pt-4">
-                                <button type="button" onclick="saveChanges(event)" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-transparent  transition-colors">
-                                    Save Changes
+                    <!-- Discounts -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Discounts</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2">
+                                <input type="number" placeholder="%" class=" rounded-md w-20">
+                                <input type="text" placeholder="Discount name" class=" rounded-md flex-grow">
+                                <button class="p-2 text-red-500 hover:bg-red-50 rounded-md">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
                                 </button>
+                            </div>
+                            <button class="text-sm text-blue-600 hover:text-blue-800">+ Add new
+                                discount</button>
+                        </div>
+                    </div>
+
+                    <!-- Save Changes Button -->
+                    <button onclick="saveChanges(event)"
+                        class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 mt-4">
+                        Save Changes
+                    </button>
+                </div>
+
+                <?php
+                $currentMonth = new DateTime(); // Defaults to the current date and time
+                foreach ($bookings as $booking) {
+                    $bookingCount += $booking['booking_count']; // Aggregate booking count
+                    $bookingRevenue += $booking['booking_grand_total']; // Aggregate revenue
+                
+                    $bookingEndDate = new DateTime($booking['booking_end_date']);
+
+                    if (
+                        $bookingEndDate->format('Y') === $currentMonth->format('Y') &&
+                        $bookingEndDate->format('m') === $currentMonth->format('m')
+                    ) {
+                        $bookingThisMonth += 1; // Increment count for bookings this month
+                    }
+                }
+                ?>
+
+                <?php
+                // var_dump($bookings);
+                ?>
+
+                <!-- Quick Stats -->
+                <div class="border-t pt-6">
+                    <h4 class="text-sm font-medium text-gray-700 mb-3">Booking Statistics</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Total Bookings</p>
+                            <p class="text-xl font-semibold"><?php echo htmlspecialchars($bookingCount) ?></p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">This Month</p>
+                            <p class="text-xl font-semibold"><?php echo htmlspecialchars($bookingThisMonth) ?></p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Revenue</p>
+                            <p class="text-xl font-semibold">₱<?php echo htmlspecialchars($bookingRevenue) ?></p>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Rating</p>
+                            <p class="text-xl font-semibold"><?php echo number_format($ratings['average'], 1) ?>/5</p>
                         </div>
                     </div>
                 </div>
+
+                <!-- New Reservation History Section -->
+                <div class="border-t pt-6 mt-6">
+                    <h4 class="text-lg font-semibold mb-4">Recent Reservations</h4>
+                    <div class="space-y-4">
+
+                        <?php
+                        if (empty($bookings)) {
+                            echo '<p class="text-gray-600 text-xs text-center">No bookings found.</p>';
+                        }
+                        foreach ($bookings as $booking):
+                            ?>
+                            <!-- Sample Reservation Items -->
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <p class="font-medium">Wedding Reception</p>
+                                        <p class="text-sm text-gray-600">
+                                            <?php echo htmlspecialchars($booking['firstname'] . " " . $booking['middlename'] . "." . " " . $booking['lastname']); ?>
+                                        </p>
                                     </div>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Confirmed
+                                    </span>
                                 </div>
+                                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                    <p class="text-gray-600 mt-1">
+                                        <?php
+                                        $startDate = new DateTime($booking['booking_start_date']);
+                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?>
+                                    </p>
                                 </div>
-    </form>
+                                <p>₱<?php echo htmlspecialchars($booking['booking_grand_total']) ?></p>
+                            </div>
+                            <?php
+                        endforeach;
+                        ?>
                     </div>
 
-<style>
-/* Update existing styles */
-.tab-button {
-    color: #6B7280;
-    border-color: transparent;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.tab-button:hover {
-    color: #111827;
-}
-
-.tab-button.active {
-    color: #111827;
-    border-color: #111827;
-    font-weight: 600;
-}
-
-.tab-button::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #111827;
-    transform: scaleX(0);
-    transition: transform 0.3s;
-}
-
-.tab-button:hover::after {
-    transform: scaleX(0.5);
-}
-
-.tab-button.active::after {
-    transform: scaleX(1);
-}
-
-.tab-content {
-    min-height: calc(100vh - 200px);
-}
-
-.tab-pane {
-    display: none;
-    width: 100%;
-}
-
-.tab-pane.active {
-    display: block !important;
-}
-
-/* Setting group styles */
-.setting-group {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #E5E7EB;
-}
-
-.setting-group:last-child {
-    border-bottom: none;
-}
-
-/* Form control styles */
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    border: 1px solid #D1D5DB;
-    transition: all 0.3s;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: #2563EB;
-    ring: 2px solid #2563EB;
-}
-
-/* Responsive styles */
-@media (max-width: 1280px) {
-    .tab-content {
-        flex-direction: column;
-    }
-    
-    #venue-settings {
-        width: 100% !important;
-        margin-top: 2rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    
-    .tab-button {
-        padding: 0.75rem 1rem;
-    }
-}
-</style>
+                    <!-- View All Reservations Link -->
+                    <div class="mt-4 text-center">
+                        <a href="calendar.php" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            View All Reservations →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 <script>
-$(document).ready(function() {
-    // Tab Functionality
-    function switchTab(tabId) {
-        console.log('Switching to tab:', tabId);
-        
-        // Hide all panes and deactivate all buttons
-        $('.tab-pane').removeClass('active').hide();
-        $('.tab-button').removeClass('active');
-        
-        // Show selected pane and activate selected button
-        $(`#${tabId}`).addClass('active').show();
-        $(`.tab-button[data-tab="${tabId}"]`).addClass('active');
 
-        // Handle special layout for settings tab
-        if (tabId === 'venue-settings') {
-            $('.tab-content').addClass('settings-active');
-        } else {
-            $('.tab-content').removeClass('settings-active');
-        }
-        
-        console.log('Tab switched successfully to:', tabId);
-    }
 
-    // Add click handlers to tab buttons
-    $('.tab-button').on('click', function(e) {
-        e.preventDefault();
-        const tabId = $(this).data('tab');
-        switchTab(tabId);
+    // Initialize: Hide edit-mode elements
+    document.querySelectorAll('.editMode').forEach(function (element) {
+        element.classList.add('hidden');
     });
 
-    // Initialize first tab as active
-    switchTab('venue-details');
 
-    // Calendar Functionality
-    const prevButton = $('.calendar-prev');
-    const nextButton = $('.calendar-next');
-    const monthDisplay = $('.calendar-month');
-    
-    if (prevButton.length && nextButton.length && monthDisplay.length) {
-        let currentDate = new Date();
-
-        function updateCalendar() {
-            monthDisplay.text(currentDate.toLocaleString('default', { month: 'long', year: 'numeric' }));
-        }
-
-        prevButton.on('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            updateCalendar();
-        });
-
-        nextButton.on('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            updateCalendar();
-        });
-
-        updateCalendar();
-    }
-
-    // Initialize edit mode elements
-    $('.editMode').addClass('hidden');
-
-    // Edit button functionality
-    const editButton = $('#editVenueButton');
-    if (editButton.length) {
-        editButton.on('click', function(e) {
+    document.getElementById('editVenueButton').addEventListener('click', function (e) {
         e.preventDefault();
 
-            if (window.venueState.isEditVenue) {
-                $(this).text('Edit Details');
-                $('#editImageGallery').html($('#editImageGallery').html());
+        if (isEditVenue) {
+            document.getElementById('editVenueButton').innerText = 'Edit Details';
 
-                // Show all the removed images before clearing the array
-                window.venueState.imagesToDelete.forEach(index => {
-                    const imageDiv = $(`#image-${index}`);
-                    if (imageDiv.length) {
-                        imageDiv.show();
-                    }
-                });
+            document.getElementById('editImageGallery').innerHTML = document.getElementById('editImageGallery').innerHTML;
 
-                // Clear arrays
-                window.venueState.imagesToDelete = [];
-                window.venueState.newImages = [];
-                $('#newImagesContainer').empty();
-                $('#imageUpload').val('');
-            } else {
-                $(this).text('Cancel Editing');
-            }
+            // Show all the removed images before clearing the array
+            imagesToDelete.forEach(index => {
+                const imageDiv = document.getElementById(`image-${index}`);
+                if (imageDiv) {
+                    imageDiv.style.display = ''; // Reset to its default display value
+                }
+            });
 
-            // Toggle visibility
-            $('.viewMode').toggleClass('hidden');
-            $('.editMode').toggleClass('hidden');
+            // Clear the removed images array and new images
+            imagesToDelete = [];
+            newImages = [];
+            document.getElementById('newImagesContainer').innerHTML = '';
+            document.getElementById('imageUpload').value = '';
 
-            // Toggle gallery grids
-            $('#editImageGallery, #newImagesContainer').toggleClass('grid');
-
-            window.venueState.isEditVenue = !window.venueState.isEditVenue;
-        });
-    }
-
-    // Image upload trigger
-    const addImageTrigger = $('#addImageTrigger');
-    if (addImageTrigger.length) {
-        addImageTrigger.on('click', function(e) {
-            e.preventDefault();
-            $('#imageUpload').click();
-        });
-    }
-
-    // Add settings edit functionality
-    $('#editSettingsButton').on('click', function(e) {
-        e.preventDefault();
-        const isEditing = $(this).hasClass('editing');
-        
-        if (isEditing) {
-            $(this).removeClass('editing').html(`
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-                Edit Settings
-            `);
         } else {
-            $(this).addClass('editing').html(`
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Cancel
-            `);
+            document.getElementById('editVenueButton').innerText = 'Cancel Editing';
         }
-        
-        $('#venue-settings .viewMode, #venue-settings .editMode').toggleClass('hidden');
+
+        // Toggle visibility of view/edit modes
+        document.querySelectorAll('.viewMode').forEach(function (element) {
+            element.classList.toggle('hidden');
+        });
+        document.querySelectorAll('.editMode').forEach(function (element) {
+            element.classList.toggle('hidden');
+        });
+
+        // Toggle gallery grids
+        document.getElementById('editImageGallery').classList.toggle('grid');
+        document.getElementById('newImagesContainer').classList.toggle('grid');
+
+        isEditVenue = !isEditVenue;
     });
-});
 
-// Keep these functions outside as they're called from HTML
-function setThumbnail(e) {
+    // Trigger file upload
+    document.getElementById('addImageTrigger').addEventListener('click', function (e) {
         e.preventDefault();
-    window.venueState.thumbnailIndex = $(e.target).data('index');
+        document.getElementById('imageUpload').click();
+    });
 
-    $('.image-container').removeClass('border-4 border-blue-500');
-    $(`#image-${window.venueState.thumbnailIndex}`).addClass('border-4 border-blue-500');
-}
+    function setThumbnail(e) {
+        e.preventDefault();
 
-function markForDeletion(e) {
-    e.preventDefault();
+        // Get the index from the button's data attribute
+        thumbnailIndex = e.target.getAttribute('data-index');
+
+        // Remove the blue border from all images
+        document.querySelectorAll('.image-container').forEach((container) => {
+            container.classList.remove('border-4', 'border-blue-500');
+        });
+
+        // Add the blue border to the selected image
+        const selectedImage = document.getElementById(`image-${thumbnailIndex}`);
+        if (selectedImage) {
+            selectedImage.classList.add('border-4', 'border-blue-500');
+        }
+
+        // Optionally update the thumbnail value in your backend via AJAX
+        console.log(`Thumbnail set to index: ${thumbnailIndex}`);
+
+        // // Toggle visibility of all thumbnail buttons
+        // document.querySelectorAll('.thumbnailButton').forEach((button) => {
+        //     if (button.getAttribute('data-index') === index) {
+        //         button.classList.remove('hidden');
+        //     } else {
+        //         button.classList.add('hidden');
+        //     }
+        // });
+    }
+
+
+
+    // Mark an image for deletion
+    function markForDeletion(e) {
+        e.preventDefault();
+
         const index = e.target.getAttribute('data-bs-marked');
 
-    if (!window.venueState.imagesToDelete.includes(index)) {
-        window.venueState.imagesToDelete.push(index);
+        // Add the index to the deletion list
+        if (!imagesToDelete.includes(index)) {
+            imagesToDelete.push(index);
         }
 
+        // Remove the corresponding image container
         const imageContainer = e.target.closest('.image-container');
         if (imageContainer) {
             imageContainer.remove();
         }
 
+        // Update the indices of remaining images
         const remainingImages = [];
-    $('.image-container').each((newIndex, container) => {
+        document.querySelectorAll('.image-container').forEach((container, newIndex) => {
+            // Update the container's id and relevant attributes
             container.id = `image-${newIndex}`;
             container.querySelector('img').setAttribute('data-bs-index', newIndex);
             container.querySelector('.thumbnailButton').setAttribute('data-index', newIndex);
+            // container.querySelector('[data-bs-marked]').setAttribute('data-bs-marked', newIndex);
 
+            // Collect remaining image data from data-bs-src
             const imgDataSrc = container.querySelector('img').getAttribute('data-bs-src');
             if (imgDataSrc) {
                 remainingImages.push(imgDataSrc);
             }
-    });
 
-    // Update thumbnail index
-    if (window.venueState.thumbnailIndex == index) {
-        window.venueState.thumbnailIndex = 0;
-    } else if (index < window.venueState.thumbnailIndex) {
-        window.venueState.thumbnailIndex--;
+        });
+        if (thumbnailIndex == index) {
+            thumbnailIndex = 0;
+        }
+
+        if (index < thumbnailIndex) {
+            thumbnailIndex--;
+        }
+
+        if (index > thumbnailIndex) {
+            thumbnailIndex = thumbnailIndex;
+        }
+        // Log the remaining images
+        console.log("Remaining Images:", remainingImages);
+        console.log("Thumbnail index: ", thumbnailIndex);
+        console.log("remaining length: ", remainingImages.length - 1);
+
+
     }
-}
 
+    // Preview newly added images
         function previewImage(event) {
-    const files = event.target.files;
+        const files = event.target.files; // Get all selected files
         if (files.length > 0) {
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
@@ -1102,15 +934,19 @@ function markForDeletion(e) {
                     document.getElementById('newImagesContainer').appendChild(container);
                 };
                 reader.readAsDataURL(file);
-            window.venueState.newImages.push(file);
+
+                // Add the file to the newImages array
+                newImages.push(file);
             });
         }
         }
 
+    // Remove a newly added image
     function removeNewImage(event) {
         event.preventDefault();
+
         const filename = event.target.getAttribute('data-bs-newImage');
-    window.venueState.newImages = window.venueState.newImages.filter(image => image.name !== filename);
+        newImages = newImages.filter(image => image.name !== filename);
 
         const container = event.target.parentElement;
         if (container) {
@@ -1118,82 +954,30 @@ function markForDeletion(e) {
         }
     }
 
-function removeDiscount(button) {
-    $(button).closest('.discount-entry').remove();
-}
-
-function addNewDiscount() {
-    const newDiscountHtml = `
-        <div class="flex gap-4 items-start discount-entry bg-gray-50 p-4 rounded-lg">
-            <div class="flex-grow space-y-4">
-                <div class="flex flex-col">
-                    <label class="text-xs text-gray-600 mb-1">Discount Code</label>
-                    <input type="text" name="discount_code[]" placeholder="Enter discount code" class="w-full text-sm rounded-md border-gray-300">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-600 mb-1">Type</label>
-                        <select name="discount_type[]" class="text-sm rounded-md border-gray-300">
-                            <option value="percentage">Percentage</option>
-                            <option value="fixed">Fixed Amount</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-600 mb-1">Value</label>
-                        <input type="number" name="discount_value[]" placeholder="Enter value" class="w-full text-sm rounded-md border-gray-300">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-600 mb-1">Minimum Days</label>
-                        <input type="number" name="min_days[]" placeholder="Minimum days required" class="w-full text-sm rounded-md border-gray-300" min="1">
-                    </div>
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-600 mb-1">Expiry Date</label>
-                        <input type="date" name="discount_expiry[]" class="w-full text-sm rounded-md border-gray-300">
-                    </div>
-                </div>
-            </div>
-            <button type="button" onclick="removeDiscount(this)" class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-    `;
-    $('#discountFields').append(newDiscountHtml);
-}
-
+    // Save changes
     function saveChanges(e) {
         e.preventDefault();        
-    const form = document.querySelector('#editVenueForm');
-    const formData = new FormData(form);
+
+        const form = document.querySelector('#editVenueForm'); // Form element
+        const formData = new FormData(form); // Create FormData from the form
         const defaultImages = <?php echo json_encode($venueView['image_urls']); ?>;
 
-    // Add existing form data
-    formData.append('imagesToDelete', JSON.stringify(window.venueState.imagesToDelete));
+        formData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+        // Append it to the FormData as a JSON string
         formData.append('defaultImages', JSON.stringify(defaultImages));
-    formData.append('thumbnailIndex', window.venueState.thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
-    formData.append('venueID', <?php echo $VENUE_ID ?>);
 
-    // Add discount data
-    const discounts = [];
-    $('.discount-entry').each(function() {
-        const discount = {
-            code: $(this).find('input[name="discount_code[]"]').val(),
-            type: $(this).find('select[name="discount_type[]"]').val(),
-            value: $(this).find('input[name="discount_value[]"]').val(),
-            min_days: $(this).find('input[name="min_days[]"]').val(),
-            expiry: $(this).find('input[name="discount_expiry[]"]').val()
-        };
-        discounts.push(discount);
-    });
-    formData.append('discounts', JSON.stringify(discounts));
+        formData.append('thumbnailIndex', thumbnailIndex ?? <?php echo $venueView['thumbnail'] ?>);
 
-    // Add new images
-    window.venueState.newImages.forEach(file => {
-        formData.append('newImages[]', file);
-    });
+        formData.append('venueID', <?php echo $VENUE_ID?>);
+        // Append new images as files, not as JSON string
+        newImages.forEach(file => {
+            console.log(file);  // Log each file to inspect the details
+            formData.append('newImages[]', file);  // Append each new image file to the FormData
+        });
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);  // Log each key-value pair in the FormData
+        }
 
         fetch('./api/updateVenue.api.php', {
             method: 'POST',
@@ -1201,6 +985,7 @@ function addNewDiscount() {
         })
             .then(response => {
                 if (!response.ok) {
+                    // Handle HTTP errors
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 return response.json();
@@ -1209,7 +994,7 @@ function addNewDiscount() {
                 if (data.status == 'success') {
                     showModal(data.message, function () {
                         location.reload();
-            }, "black_ico.png");
+                    } , "black_ico.png");
                 } else {
                     showModal(`Failed to save changes: ${data.message || 'Unknown error'}`, undefined, "black_ico.png");
                 }
@@ -1218,5 +1003,94 @@ function addNewDiscount() {
                 console.error('Error:', error);
                 showModal('An error occurred while saving changes. Please try again.', undefined, "black_ico.png");
             });
+
     }
+   let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let bookedDatesArr = <?php echo json_encode($bookedDatesArray); ?>;
+let venueView = <?php echo json_encode($venueView); ?>;
+
+function updateCalendar() {
+    const calendarDays = document.querySelector('.calendar-days');
+    const calendarMonth = document.querySelector('.calendar-month');
+    calendarDays.innerHTML = '';
+
+    // Validate bookedDatesArr and venueView
+    const bookedDates = Array.isArray(bookedDatesArr) ? bookedDatesArr : [];
+    const venuePrice = venueView?.price || 0;
+
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const firstDayOfWeek = firstDay.getDay();
+
+    // Set the calendar month and year
+    calendarMonth.textContent = firstDay.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+    // Fill empty grid slots before the 1st of the month
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'p-2 border-b border-r text-gray-400';
+        calendarDays.appendChild(emptyCell);
+    }
+
+    // Generate days with proper alignment
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+        const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const isBooked = bookedDates.includes(dateString);
+        const isToday = dateString === new Date().toISOString().split('T')[0];
+
+        // Create day cell
+        const dayCell = document.createElement('div');
+        dayCell.className = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
+        if (isBooked) dayCell.classList.add('bg-red-100');
+        if (isToday) dayCell.classList.add('font-bold', 'text-blue-500');
+
+        // Add day number
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'text-sm';
+        dayNumber.textContent = day;
+
+        // Add price
+        const price = document.createElement('div');
+        price.className = 'text-xs text-gray-600';
+        price.textContent = `₱${venuePrice}`;
+
+        // Add booked date text if applicable
+        if (isBooked) {
+            const bookedText = document.createElement('div');
+            bookedText.className = 'text-xs text-red-600';
+            bookedText.textContent = 'Booked';
+            dayCell.appendChild(bookedText);
+        }
+
+        // Append elements to day cell
+        dayCell.appendChild(dayNumber);
+        dayCell.appendChild(price);
+        calendarDays.appendChild(dayCell);
+    }
+}
+
+document.querySelector('.calendar-prev').addEventListener('click', (e) => {
+    e.preventDefault();
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
+    updateCalendar();
+});
+
+document.querySelector('.calendar-next').addEventListener('click', (e) => {
+    e.preventDefault();
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    updateCalendar();
+});
+
+
+    // Initial calendar update
+    updateCalendar();
 </script>

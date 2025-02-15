@@ -551,10 +551,9 @@ class Venue
             $conn = $this->db->connect();
             $STATUS_1 = 1;
             $STATUS_2 = 2;
-            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate FROM bookings WHERE booking_venue_id = :venue_id AND booking_status_id IN (:status1, :status2)";
+            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate FROM bookings WHERE booking_venue_id = :venue_id AND booking_status_id IN (:status2)";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);
-            $stmt->bindParam(':status1', $STATUS_1);
             $stmt->bindParam(':status2', $STATUS_2);
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
