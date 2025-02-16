@@ -356,6 +356,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
     include_once './components/feedback.modal.html';
     include_once './components/confirm.feedback.modal.html';
     include_once './components/Menu.html';
+    include_once './components/terms.html';
 
     ?>
 
@@ -863,6 +864,20 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
     <script src="./vendor/jQuery-3.7.1/jquery-3.7.1.min.js"></script>
     <script src="./js/user.jquery.js"></script>
+    <script>
+        const termsBtn = document.getElementById('termsBtn');
+        const termsModal = document.getElementById('terms');
+
+        termsBtn.addEventListener('click', function () {
+            termsModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        terms.addEventListener('click', function () {
+            termsModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+    </script>
     <script>
         window.closeComparison = function () {
             const mainContent = document.querySelector('.main-content');
