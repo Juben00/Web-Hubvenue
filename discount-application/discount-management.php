@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . '/../classes/account.class.php');
 $account = new Account();
-$discountApplications = $account->getDiscountApplications("", ""); // You'll need to add this method to your account class
+$discountApplications = $account->getDiscountApplicationsInfo("", "", "");
 ?>
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 hidden md:block">Discount Applications</h1>

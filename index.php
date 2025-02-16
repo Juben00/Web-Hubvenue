@@ -193,6 +193,8 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
     include_once './components/feedback.modal.html';
     include_once './components/confirm.feedback.modal.html';
     include_once './components/Menu.html';
+    include_once './components/terms.html';
+
 
     ?>
 
@@ -568,6 +570,20 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
     <script>
         let map;
         let marker;
+
+        const termsBtn = document.getElementById('termsBtn');
+        const termsModal = document.getElementById('terms');
+
+        termsBtn.addEventListener('click', function () {
+            termsModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        terms.addEventListener('click', function () {
+            termsModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
     </script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {

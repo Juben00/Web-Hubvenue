@@ -718,7 +718,7 @@ class Account
         }
     }
 
-    public function getDiscountApplications($search = "", $filter = "")
+    public function getDiscountApplicationsInfo($id = "", $search = "", $filter = "")
     {
         $sql = "SELECT 
                     md.id,
@@ -743,6 +743,11 @@ class Account
         if (!empty($filter)) {
             $sql .= " AND md.status = ?";
             $params[] = $filter;
+        }
+
+        if (!empty($id)) {
+            $sql .= " AND md.userId = ?";
+            $params[] = $id;
         }
 
         $sql .= " ORDER BY md.created_at DESC";
