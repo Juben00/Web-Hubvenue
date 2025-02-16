@@ -1260,9 +1260,9 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         document.querySelector('.tab-links').click();
     });
 
-    let currentStats = null;
-    let revenueChart = null;
-    let bookingsChart = null;
+    currentStats = null;
+    revenueChart = null;
+    bookingsChart = null;
 
     function showDetailedStats(venueData) {
         currentStats = venueData;

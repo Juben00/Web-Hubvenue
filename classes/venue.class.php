@@ -757,7 +757,7 @@ LEFT JOIN
         }
     }
 
-    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueStatus, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $removedImage)
+    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $discountValue, $discountType, $discountCode, $discountDate)
     {
         try {
             $conn = $this->db->connect();
@@ -765,40 +765,36 @@ LEFT JOIN
             // Begin transaction
             $conn->beginTransaction();
 
-
-
             // Update venue details in `venues` table
             $sql = "UPDATE venues 
-                SET 
-                    name = :name, 
-                    description = :description, 
-                    location = :location, 
-                    price = :price, 
-                    capacity = :capacity, 
-                    amenities = :amenities, 
-                    rules = :rules, 
-                    entrance = :entrance, 
-                    cleaning = :cleaning, 
-                    down_payment_id = :down_payment_id, 
-                    venue_tag = :venue_tag, 
-                    thumbnail = :thumbnail, 
-                    -- status_id = :status_id, 
-                    availability_id = :availability_id 
-                WHERE id = :id";
+            SET 
+                name = :name, 
+                description = :description, 
+                location = :location, 
+                price = :price, 
+                capacity = :capacity, 
+                amenities = :amenities, 
+                rules = :rules, 
+                entrance = :entrance, 
+                cleaning = :cleaning, 
+                down_payment_id = :down_payment_id, 
+                venue_tag = :venue_tag, 
+                thumbnail = :thumbnail, 
+                availability_id = :availability_id 
+            WHERE id = :id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':name', $venueName);
             $stmt->bindParam(':description', $venueDescription);
             $stmt->bindParam(':location', $venueLocation);
             $stmt->bindParam(':price', $venuePrice);
             $stmt->bindParam(':capacity', $venueCapacity);
-            $stmt->bindParam(':amenities', $venueAmenities); // Store as JSON
-            $stmt->bindParam(':rules', $venueRules); // Store as JSON
+            $stmt->bindParam(':amenities', $venueAmenities);
+            $stmt->bindParam(':rules', $venueRules);
             $stmt->bindParam(':entrance', $venueEntrance);
             $stmt->bindParam(':cleaning', $venueCleaning);
             $stmt->bindParam(':down_payment_id', $venueDownpayment);
             $stmt->bindParam(':venue_tag', $venueType);
             $stmt->bindParam(':thumbnail', $venueThumbnail);
-            // $stmt->bindParam(':status_id', $venueStatus);
             $stmt->bindParam(':availability_id', $venueAvailability);
             $stmt->bindParam(':id', $venueId);
             $stmt->execute();
@@ -810,13 +806,26 @@ LEFT JOIN
                 $stmt->bindParam(':id', $venueId);
                 $stmt->execute();
 
-
-
-                $sql = "INSERT INTO venue_images (venue_id, image_url) VALUES (?, ?)";
+                $sql = "INSERT INTO venue_images (venue_id, image_url) VALUES (:venue_id, :image_url)";
                 $stmt = $conn->prepare($sql);
                 foreach ($venueImgs as $image) {
-                    $stmt->execute([$venueId, $image]);
+                    $stmt->bindParam(':venue_id', $venueId);
+                    $stmt->bindParam(':image_url', $image);
+                    $stmt->execute();
                 }
+            }
+
+            // Insert discount if applicable
+            if (!empty($discountValue) && !empty($discountType) && !empty($discountCode) && !empty($discountDate)) {
+                $sql = "INSERT INTO discounts (venue_id, discount_value, discount_type, discount_code, expiration_date) 
+                    VALUES (:venue_id, :discount_value, :discount_type, :discount_code, :expiration_date)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':venue_id', $venueId);
+                $stmt->bindParam(':discount_value', $discountValue);
+                $stmt->bindParam(':discount_type', $discountType);
+                $stmt->bindParam(':discount_code', $discountCode);
+                $stmt->bindParam(':expiration_date', $discountDate);
+                $stmt->execute();
             }
 
             // Commit transaction
@@ -830,6 +839,7 @@ LEFT JOIN
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
 
     function rateHost($user_id, $host_id, $rating, $review)
     {
@@ -1428,6 +1438,26 @@ LEFT JOIN
         } catch (Exception $e) {
             error_log($e->getMessage());
             return ['status' => 'error', 'message' => 'An error occurred while deleting the venue.'];
+        }
+    }
+
+    function getDiscountsByVenue($venueID)
+    {
+        try {
+            $sql = "SELECT * FROM discounts WHERE venue_id = :venueID;";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venueID', $venueID);
+            $stmt->execute();
+            $discounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (count($discounts) > 0) {
+                return $discounts;
+            } else {
+                return [];
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [];
         }
     }
 

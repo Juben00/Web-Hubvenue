@@ -17,7 +17,6 @@ $cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
 $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
 ?>
-pendingBooking
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
     <div class="px-4 sm:px-0">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Your Rent History</h1>
@@ -1363,6 +1362,7 @@ pendingBooking
     html {
         scroll-behavior: smooth;
     }
+
     /* Update review modal styles */
     .review-step {
         transition: opacity 0.3s ease-out, transform 0.3s ease-out;
@@ -1380,25 +1380,33 @@ pendingBooking
     }
 
     /* Enhanced star rating styles */
-    .star-overall, .star-cleanliness, .star-accuracy, 
-    .star-communication, .star-location, .star-value {
+    .star-overall,
+    .star-cleanliness,
+    .star-accuracy,
+    .star-communication,
+    .star-location,
+    .star-value {
         transition: all 0.2s ease-out;
         display: inline-block;
         cursor: pointer;
         user-select: none;
     }
 
-    .star-overall:hover ~ .star-overall,
-    .star-cleanliness:hover ~ .star-cleanliness,
-    .star-accuracy:hover ~ .star-accuracy,
-    .star-communication:hover ~ .star-communication,
-    .star-location:hover ~ .star-location,
-    .star-value:hover ~ .star-value {
+    .star-overall:hover~.star-overall,
+    .star-cleanliness:hover~.star-cleanliness,
+    .star-accuracy:hover~.star-accuracy,
+    .star-communication:hover~.star-communication,
+    .star-location:hover~.star-location,
+    .star-value:hover~.star-value {
         opacity: 0.5;
     }
 
-    .star-overall:hover, .star-cleanliness:hover, .star-accuracy:hover, 
-    .star-communication:hover, .star-location:hover, .star-value:hover {
+    .star-overall:hover,
+    .star-cleanliness:hover,
+    .star-accuracy:hover,
+    .star-communication:hover,
+    .star-location:hover,
+    .star-value:hover {
         transform: scale(1.2);
         text-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
     }
@@ -1408,7 +1416,7 @@ pendingBooking
         transition: all 0.2s ease-out;
     }
 
-    input[type="checkbox"]:checked + span {
+    input[type="checkbox"]:checked+span {
         color: black;
         font-weight: 500;
     }
@@ -1426,7 +1434,7 @@ pendingBooking
     /* Photo upload area styles */
     .border-dashed {
         background-image: linear-gradient(to right, transparent 50%, rgba(0, 0, 0, 0.05) 50%),
-                          linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.05) 50%);
+            linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.05) 50%);
         background-size: 30px 30px;
         transition: all 0.3s ease-out;
     }
@@ -1441,6 +1449,7 @@ pendingBooking
             opacity: 0;
             transform: translateY(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -1457,6 +1466,7 @@ pendingBooking
             opacity: 0;
             transform: translateY(10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -1469,11 +1479,13 @@ pendingBooking
 
     /* Add these new styles for consistent step sizing */
     .review-step {
-        height: 520px; /* Fixed height for all steps */
-        overflow: hidden; /* Hide overflow at the step level */
+        height: 520px;
+        /* Fixed height for all steps */
+        overflow: hidden;
+        /* Hide overflow at the step level */
     }
 
-    .review-step > div {
+    .review-step>div {
         height: 100%;
         max-height: 100%;
     }

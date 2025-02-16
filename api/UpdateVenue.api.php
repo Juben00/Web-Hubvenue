@@ -23,13 +23,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $venueCapacity = clean_input($_POST['editVenueCapacity']);
     $venueAmenities = clean_input($_POST['editVenueAmenities'] ?? '');
     $venueRules = clean_input($_POST['editVenueRules'] ?? '');
-    $venueStatus = clean_input($_POST['editVenueStatus']);
     $venueType = clean_input($_POST['editVenueType']);
     $venuePrice = clean_input($_POST['editVenuePrice']);
     $venueEntrance = clean_input($_POST['editVenueEntrance']);
     $venueCleaning = clean_input($_POST['editVenueCleaning']);
     $venueAvailability = clean_input($_POST['editVenueStatus'] ?? 1);
     $venueDownpayment = clean_input($_POST['editDownPayment']);
+    $discountValue = clean_input($_POST['discountValue']) ?? null;
+    $discountType = clean_input($_POST['discountType']) ?? null;
+    $discountCode = clean_input($_POST['discountCode']) ?? null;
+    $discountDate = clean_input($_POST['discountDate']) ?? null;
+
 
     // Process venue amenities and rules
     $venueAmenities = !empty($venueAmenities) ? array_map('trim', explode(',', $venueAmenities)) : [];
@@ -50,9 +54,71 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors[] = "Invalid Venue Type";
     }
 
+    if ($discountValue < 0) {
+        $errors[] = "Discount value cannot be negative";
+    }
+
+    if ($discountType > 85) {
+        $errors[] = "Discount value cannot be granted more than 85%";
+    }
+
+    if (!is_numeric($discountValue)) {
+        $errors[] = "Discount value must be a number";
+    }
+
+    if ($discountType !== 'percentage' && $discountType !== 'flat') {
+        $errors[] = "Invalid discount type";
+    }
+
+    if ($discountDate < date('Y-m-d')) {
+        $errors[] = "Discount date cannot be in the past";
+    }
+
+
     if (empty($venueId)) {
         $venueIdErr = "Invalid Venue ID";
     }
+
+    if (empty($venueName)) {
+        $venueNameErr = "Venue name is required";
+    }
+
+    if (empty($venueThumbnail)) {
+        $venueThumbnailErr = "Thumbnail is required";
+    }
+
+    if (empty($venueLocation)) {
+        $venueLocationErr = "Venue location is required";
+    }
+
+    if (empty($venueDescription)) {
+        $venueDescriptionErr = "Venue description is required";
+    }
+
+    if (empty($venueCapacity)) {
+        $venueCapacityErr = "Venue capacity is required";
+    }
+
+    if (empty($venueAmenities)) {
+        $venueAmenitiesErr = "Venue amenities are required";
+    }
+
+    if (empty($venueRules)) {
+        $venueRulesErr = "Venue rules are required";
+    }
+
+    if (empty($venueType)) {
+        $venueTypeErr = "Venue type is required";
+    }
+
+    if (empty($venuePrice)) {
+        $venuePriceErr = "Venue price is required";
+    }
+
+    if (empty($venueDownpayment)) {
+        $venueDownpaymentErr = "Venue downpayment is required";
+    }
+
 
     // Handle file uploads
     $imageErr = [];
@@ -82,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $venueAmenities = json_encode($venueAmenities);
 
     // If no errors, proceed with updating the venue
-    if (empty($venueStatusErr) && empty($venueTypeErr) && empty($venueIdErr) && empty($imageErr)) {
+    if (empty($venueStatusErr) && empty($venueTypeErr) && empty($venueIdErr) && empty($imageErr) && empty($venueNameErr) && empty($venueThumbnailErr) && empty($venueLocationErr) && empty($venueDescriptionErr) && empty($venueCapacityErr) && empty($venueAmenitiesErr) && empty($venueRulesErr) && empty($venuePriceErr) && empty($venueDownpaymentErr)) {
         $result = $venueObj->updateVenue(
             $venueId,
             $venueName,
@@ -93,14 +159,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $venueCapacity,
             $venueAmenities,
             $venueRules,
-            $venueStatus,
             $venueType,
             $venuePrice,
             $venueDownpayment,
             $venueEntrance,
             $venueCleaning,
             $venueAvailability,
-            $removedImage
+            $discountValue,
+            $discountType,
+            $discountCode,
+            $discountDate
         );
 
         echo json_encode($result);
@@ -110,8 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode([
             'status' => 'error',
             'errors' => implode('<br>', array_merge(
-                array_filter([$venueStatusErr, $venueTypeErr, $venueIdErr]),
-                $imageErr
+                array_filter([$venueStatusErr, $venueTypeErr, $venueIdErr, $venueNameErr, $venueThumbnailErr, $venueLocationErr, $venueDescriptionErr, $venueCapacityErr, $venueAmenitiesErr, $venueRulesErr, $venuePriceErr, $venueDownpaymentErr, $venueEntranceErr, $venueCleaningErr, $imageErr])
             ))
         ]);
     }

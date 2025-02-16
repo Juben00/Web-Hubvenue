@@ -8,11 +8,10 @@ $accountObj = new Account();
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $OWNER_ID = $_GET['id'] ?? null;
 $owner = $accountObj->getOwner($_GET['id']);
-$venues = $venueObj->getAllVenues(2, $OWNER_ID);
+$venues = $venueObj->getAllVenues(2, '', $OWNER_ID);
 $profilePic = $owner['profile_pic'] ?? null;
 
 $rating = $venueObj->getHostRatings($OWNER_ID);
-
 $reviews = $venueObj->getHostReviews($OWNER_ID);
 
 if (!isset($OWNER_ID) || empty($OWNER_ID) || !is_numeric($OWNER_ID)) {

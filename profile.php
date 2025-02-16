@@ -20,6 +20,12 @@ if (!isset($_SESSION['user'])) {
     <link rel="stylesheet" href="./output.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="node_modules/flatpickr/dist/flatpickr.min.css">
+    <script src="node_modules/flatpickr/dist/flatpickr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+
+
 
 
     <style>
@@ -198,5 +204,27 @@ if (!isset($_SESSION['user'])) {
         let newImages = [];
         let isEditVenue = false;
         let thumbnailIndex;
+
+
+        const spinner = $("#spinner");
+
+        function spinnerOn() {
+            spinner.removeClass("hidden");
+            spinner.addClass("flex");
+        }
+
+        function spinnerOff() {
+            spinner.removeClass("flex");
+            spinner.addClass("hidden");
+        }
+
+        let currentMonth = null;
+        let currentYear = null;
+        let bookedDatesArr = null;
+        let venueView = null;
+
+        let currentStats = null;
+        let revenueChart = null;
+        let bookingsChart = null;
     </script>
 </body>

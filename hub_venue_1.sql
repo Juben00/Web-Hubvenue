@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2025 at 01:58 PM
+-- Generation Time: Feb 16, 2025 at 12:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `hub_venue`
+-- Database: `hub_venue_1`
 --
 
 -- --------------------------------------------------------
@@ -114,7 +114,34 @@ CREATE TABLE `bookmarks` (
 --
 
 INSERT INTO `bookmarks` (`id`, `userId`, `venueId`, `created_at`, `updated_at`) VALUES
-(123, 31, 61, '2025-01-23 17:21:09', '2025-01-23 17:21:09');
+(143, 31, 77, '2025-02-16 07:07:28', '2025-02-16 07:07:28');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `conversations`
+--
+
+CREATE TABLE `conversations` (
+  `id` int(11) NOT NULL,
+  `booking_id` int(11) DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `conversation_participants`
+--
+
+CREATE TABLE `conversation_participants` (
+  `id` int(11) NOT NULL,
+  `conversation_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `role` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -128,21 +155,21 @@ CREATE TABLE `discounts` (
   `discount_code` varchar(255) DEFAULT NULL,
   `discount_type` enum('flat','percentage') DEFAULT NULL,
   `discount_value` decimal(10,2) DEFAULT NULL,
-  `min_days` int(11) DEFAULT 1,
   `expiration_date` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `min_days` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `discounts`
 --
 
-INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `min_days`, `expiration_date`, `created_at`, `updated_at`) VALUES
-(1, NULL, 'SAVE10', 'percentage', 10.00, 1, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
-(2, NULL, 'SAVE20', 'percentage', 20.00, 2, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
-(3, NULL, 'SAVE30', 'percentage', 30.00, 3, '2025-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46'),
-(4, NULL, 'none', 'percentage', 0.00, 1, NULL, '2025-01-24 02:07:46', '2025-01-24 02:07:46');
+INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `expiration_date`, `created_at`, `updated_at`, `min_days`) VALUES
+(1, NULL, 'SAVE10', 'percentage', 10.00, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
+(2, NULL, 'SAVE20', 'percentage', 20.00, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
+(3, NULL, 'SAVE30', 'percentage', 30.00, '2025-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
+(4, NULL, 'none', 'percentage', 0.00, NULL, '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1);
 
 -- --------------------------------------------------------
 
@@ -278,7 +305,104 @@ CREATE TABLE `mandatory_discount` (
 --
 
 INSERT INTO `mandatory_discount` (`id`, `userId`, `discount_type`, `fullname`, `discount_id`, `card_image`, `status`, `created_at`, `updated_at`, `discount_value`) VALUES
-(5, 31, 'PWD', 'Joevin Ansoc', '126215090018', '/mandatory_discount_id/6795deb68ae1a.png', 'Active', '2025-01-26 07:05:26', '2025-01-26 07:06:12', 20.00);
+(7, 31, 'PWD', 'Joevin Ansoc', '54545sf', '/mandatory_discount_id/67b0544e5e885.jpg', 'Active', '2025-02-15 08:46:06', '2025-02-15 08:46:27', 20.00);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `conversation_id` int(11) DEFAULT NULL,
+  `sender_id` int(11) DEFAULT NULL,
+  `content` text DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `message_status`
+--
+
+CREATE TABLE `message_status` (
+  `id` int(11) NOT NULL,
+  `message_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `type` enum('booking','message','venue') NOT NULL,
+  `reference_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `read_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_settings`
+--
+
+CREATE TABLE `notification_settings` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `notification_type_id` int(11) NOT NULL,
+  `email_enabled` tinyint(1) DEFAULT 1,
+  `push_enabled` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notification_settings`
+--
+
+INSERT INTO `notification_settings` (`id`, `user_id`, `notification_type_id`, `email_enabled`, `push_enabled`, `created_at`, `updated_at`) VALUES
+(1, 30, 1, 1, 1, '2025-02-06 21:23:26', '2025-02-06 21:23:26'),
+(2, 30, 2, 1, 1, '2025-02-06 21:23:26', '2025-02-06 21:23:26'),
+(3, 30, 3, 1, 1, '2025-02-06 21:23:26', '2025-02-06 21:23:26'),
+(4, 31, 1, 1, 1, '2025-02-06 21:23:26', '2025-02-06 21:23:26'),
+(5, 31, 2, 1, 1, '2025-02-06 21:23:26', '2025-02-06 21:23:26'),
+(6, 31, 3, 1, 1, '2025-02-06 21:23:26', '2025-02-06 21:23:26');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notification_types`
+--
+
+CREATE TABLE `notification_types` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notification_types`
+--
+
+INSERT INTO `notification_types` (`id`, `name`, `description`) VALUES
+(1, 'booking', 'Notifications related to bookings'),
+(2, 'message', 'Notifications related to messages'),
+(3, 'venue', 'Notifications related to venues');
 
 -- --------------------------------------------------------
 
@@ -374,6 +498,12 @@ CREATE TABLE `users` (
   `bio` text DEFAULT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
+  `is_Verified` enum('Verified','Not Verified') NOT NULL DEFAULT 'Not Verified',
+  `verification_Token` text NOT NULL,
+  `remember_token` text DEFAULT NULL,
+  `token_expiry` datetime DEFAULT NULL,
+  `reset_token` text DEFAULT NULL,
+  `reset_token_expiry` datetime DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -382,9 +512,11 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `firstname`, `lastname`, `middlename`, `sex_id`, `user_type_id`, `birthdate`, `contact_number`, `address`, `profile_pic`, `bio`, `email`, `password`, `created_at`, `updated_at`) VALUES
-(30, 'Joevin', 'Ansoc', 'C', 1, 3, '2003-09-28', '09053258512', '6.952867833063975,122.08186864914751', NULL, NULL, 'joevinansoc870@gmail.com', '$2y$10$smhcx5OP9rFvCtpQEzLEBOWmqxYhglKgDpyt2y5ZLRQwpz.ghICc.', '2025-01-19 08:59:35', '2025-01-19 09:01:39'),
-(31, 'Joevin', 'Ansoc', 'C', 1, 1, '2003-09-28', '09053258512', '6.92106841695142,122.08812713302906', NULL, '', 'joevinansoc871@gmail.com', '$2y$10$U0hitgecUwvWCunyGve9Qe6XOfTwoMknXxPX5vfxmf1IOdx0ffE6S', '2025-01-19 09:03:00', '2025-01-19 10:40:03');
+INSERT INTO `users` (`id`, `firstname`, `lastname`, `middlename`, `sex_id`, `user_type_id`, `birthdate`, `contact_number`, `address`, `profile_pic`, `bio`, `email`, `password`, `is_Verified`, `verification_Token`, `remember_token`, `token_expiry`, `reset_token`, `reset_token_expiry`, `created_at`, `updated_at`) VALUES
+(30, 'Joevin', 'Ansoc', 'C', 1, 3, '2003-09-28', '09053258512', '6.952867833063975,122.08186864914751', NULL, NULL, 'joevinansoc870@gmail.com', '$2y$10$smhcx5OP9rFvCtpQEzLEBOWmqxYhglKgDpyt2y5ZLRQwpz.ghICc.', 'Verified', '', NULL, NULL, NULL, NULL, '2025-01-19 08:59:35', '2025-02-11 08:23:39'),
+(31, 'Joevin', 'Ansoc', 'C', 1, 1, '2003-09-28', '09053258512', '6.920443579780613,122.08435059124896', '/profile_image_uploads/67ab01b974cef.jpg', '', 'joevinansoc871@gmail.com', '$2y$10$U0hitgecUwvWCunyGve9Qe6XOfTwoMknXxPX5vfxmf1IOdx0ffE6S', 'Verified', '', 'c1818c730f2c49d7180a58e444aeaab772a063ea1356864e814f84513ec1cc75', '2025-03-18 07:49:34', NULL, NULL, '2025-01-19 09:03:00', '2025-02-16 06:49:34'),
+(42, 'Joevin', 'Ansoc', 'C', 1, 2, '2003-09-28', '09053258512', '6.947367699979677,122.07307815537207', NULL, NULL, 'visew97278@intady.com', '$2y$10$YhKF59J5ek51PistUlp9Lem3YTs8IDR.lz4UWOMICLXPc7zYUnxjC', 'Verified', '20bcac07695a547ee468b7cec085216a3b9bd07d4cfc4f06c4ed01377dda173d', NULL, NULL, NULL, NULL, '2025-02-11 11:42:21', '2025-02-11 11:47:35'),
+(43, 'Joevin', 'Ansoc', 'C', 1, 2, '0321-12-23', '09053258512', '6.955736212950079,122.09300994261868', NULL, NULL, 'qrh8z1xskx@ibolinva.com', '$2y$10$JzXQY2DfrMBUHQq80un5uOWgna5EWwjtTCLZX6eVbDEJNj4gwo.sm', 'Verified', 'b7aa88c5de67441d95b0164ba36d0bf488db7d9400b32866e052f1710e7822f5', NULL, NULL, NULL, NULL, '2025-02-11 13:38:55', '2025-02-11 14:27:52');
 
 -- --------------------------------------------------------
 
@@ -440,7 +572,7 @@ CREATE TABLE `venues` (
 --
 
 INSERT INTO `venues` (`id`, `name`, `description`, `address`, `location`, `price`, `capacity`, `amenities`, `rules`, `entrance`, `cleaning`, `down_payment_id`, `venue_tag`, `thumbnail`, `time_inout`, `host_id`, `status_id`, `availability_id`, `created_at`, `updated_at`) VALUES
-(61, 'Marcian Convention Center', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Marcian Convention center, Governor Camins Avenue, Zone Ⅱ, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.918710471255118,122.06581115721748', 3800.00, 200, '[\"Wifi\",\"TV\",\"Kitchen\",\"Free parking on premises\",\"Air conditioning\",\"Dedicated workspace\",\"Pool\",\"Pool table\",\"Piano\",\"Exercise equipment\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\"]', '[\"No smoking\",\"No pets\",\"No outside food and drinks\"]', 0, 0, 2, 2, 11, '{\"check_in\":\"14:00\",\"check_out\":\"12:00\"}', 31, 2, 1, '2025-01-23 17:06:12', '2025-01-27 12:34:44');
+(77, 'Marcian Garden Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Marcian Garden Hotel, Governor Camins Avenue, Canelar, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.918939461449293,122.06591129288428', 4800.00, 200, '[\"Wifi\",\"TV\",\"Free parking on premises\",\"Air Conditioned Room\",\"CCTV Cameras\",\"Dedicated workspace\",\"Pool\",\"Outdoor dining area\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\",\"Sprinkler\",\"Wine Bar\",\"Water and Beverage Dispenser\",\"Bidet\",\"Garment Rack\",\"Sanitary Products\",\"Hair Dryer\",\"Grooming Kit\",\"Fresh Towels\",\"Dressing and Vanity Area\"]', '[\"No smoking\",\"No pets\",\"No outside food and drinks\"]', 0, 500, 3, 2, 11, '{\"check_in\":\"14:00\",\"check_out\":\"12:00\"}', 31, 2, 1, '2025-02-16 06:54:24', '2025-02-16 06:55:57');
 
 -- --------------------------------------------------------
 
@@ -479,21 +611,21 @@ CREATE TABLE `venue_images` (
 --
 
 INSERT INTO `venue_images` (`id`, `venue_id`, `image_url`, `created_at`) VALUES
-(449, 61, '/venue_image_uploads/679277047a91f.jpeg', '2025-01-27 12:34:44'),
-(450, 61, '/venue_image_uploads/679277047ae19.jpeg', '2025-01-27 12:34:44'),
-(451, 61, '/venue_image_uploads/679277047b18e.jpeg', '2025-01-27 12:34:44'),
-(452, 61, '/venue_image_uploads/679277047b43a.jpeg', '2025-01-27 12:34:44'),
-(453, 61, '/venue_image_uploads/679277047b6b8.jpeg', '2025-01-27 12:34:44'),
-(454, 61, '/venue_image_uploads/679277047f0bf.jpeg', '2025-01-27 12:34:44'),
-(455, 61, '/venue_image_uploads/679277047f60a.jpeg', '2025-01-27 12:34:44'),
-(456, 61, '/venue_image_uploads/679277047f9a3.jpeg', '2025-01-27 12:34:44'),
-(457, 61, '/venue_image_uploads/679277047fce4.jpeg', '2025-01-27 12:34:44'),
-(458, 61, '/venue_image_uploads/679277047fffc.jpeg', '2025-01-27 12:34:44'),
-(459, 61, '/venue_image_uploads/67927704802c0.jpeg', '2025-01-27 12:34:44'),
-(460, 61, '/venue_image_uploads/6792770480558.jpeg', '2025-01-27 12:34:44'),
-(461, 61, '/venue_image_uploads/67927704807d1.jpeg', '2025-01-27 12:34:44'),
-(462, 61, '/venue_image_uploads/6792770480a3e.jpeg', '2025-01-27 12:34:44'),
-(463, 61, '/venue_image_uploads/6792770480dcd.jpeg', '2025-01-27 12:34:44');
+(880, 77, '/venue_image_uploads/67b18ba018778.jpeg', '2025-02-16 06:55:10'),
+(881, 77, '/venue_image_uploads/67b18ba018e8e.jpeg', '2025-02-16 06:55:10'),
+(882, 77, '/venue_image_uploads/67b18ba019287.jpeg', '2025-02-16 06:55:10'),
+(883, 77, '/venue_image_uploads/67b18ba0195ec.jpeg', '2025-02-16 06:55:10'),
+(884, 77, '/venue_image_uploads/67b18ba019892.jpeg', '2025-02-16 06:55:10'),
+(885, 77, '/venue_image_uploads/67b18ba019b5c.jpeg', '2025-02-16 06:55:10'),
+(886, 77, '/venue_image_uploads/67b18ba019e77.jpeg', '2025-02-16 06:55:10'),
+(887, 77, '/venue_image_uploads/67b18ba01a2f6.jpeg', '2025-02-16 06:55:10'),
+(888, 77, '/venue_image_uploads/67b18ba01a609.jpeg', '2025-02-16 06:55:10'),
+(889, 77, '/venue_image_uploads/67b18ba01a8bf.jpeg', '2025-02-16 06:55:10'),
+(890, 77, '/venue_image_uploads/67b18ba01ab6e.jpeg', '2025-02-16 06:55:10'),
+(891, 77, '/venue_image_uploads/67b18ba01ae1f.jpeg', '2025-02-16 06:55:10'),
+(892, 77, '/venue_image_uploads/67b18ba01b11f.jpeg', '2025-02-16 06:55:10'),
+(893, 77, '/venue_image_uploads/67b18ba01b501.jpeg', '2025-02-16 06:55:10'),
+(894, 77, '/venue_image_uploads/67b18ba01bb39.jpeg', '2025-02-16 06:55:10');
 
 -- --------------------------------------------------------
 
@@ -575,6 +707,21 @@ ALTER TABLE `bookmarks`
   ADD KEY `venueId` (`venueId`);
 
 --
+-- Indexes for table `conversations`
+--
+ALTER TABLE `conversations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `booking_id` (`booking_id`);
+
+--
+-- Indexes for table `conversation_participants`
+--
+ALTER TABLE `conversation_participants`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `conversation_id` (`conversation_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `discounts`
 --
 ALTER TABLE `discounts`
@@ -622,6 +769,44 @@ ALTER TABLE `host_reviews`
 ALTER TABLE `mandatory_discount`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_user` (`userId`);
+
+--
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `conversation_id` (`conversation_id`),
+  ADD KEY `sender_id` (`sender_id`);
+
+--
+-- Indexes for table `message_status`
+--
+ALTER TABLE `message_status`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_message_user` (`message_id`,`user_id`),
+  ADD KEY `idx_message_user` (`message_id`,`user_id`),
+  ADD KEY `idx_user_read` (`user_id`,`is_read`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `notification_settings`
+--
+ALTER TABLE `notification_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_notification_type` (`user_id`,`notification_type_id`),
+  ADD KEY `notification_type_id` (`notification_type_id`);
+
+--
+-- Indexes for table `notification_types`
+--
+ALTER TABLE `notification_types`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `payment_method_sub`
@@ -709,7 +894,7 @@ ALTER TABLE `venue_tag_sub`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
 
 --
 -- AUTO_INCREMENT for table `booking_charges`
@@ -721,7 +906,19 @@ ALTER TABLE `booking_charges`
 -- AUTO_INCREMENT for table `bookmarks`
 --
 ALTER TABLE `bookmarks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+
+--
+-- AUTO_INCREMENT for table `conversations`
+--
+ALTER TABLE `conversations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+
+--
+-- AUTO_INCREMENT for table `conversation_participants`
+--
+ALTER TABLE `conversation_participants`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `discounts`
@@ -739,7 +936,7 @@ ALTER TABLE `downpayment_sub`
 -- AUTO_INCREMENT for table `host_application`
 --
 ALTER TABLE `host_application`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `host_application_status_sub`
@@ -757,7 +954,37 @@ ALTER TABLE `host_reviews`
 -- AUTO_INCREMENT for table `mandatory_discount`
 --
 ALTER TABLE `mandatory_discount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=536;
+
+--
+-- AUTO_INCREMENT for table `message_status`
+--
+ALTER TABLE `message_status`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=989;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `notification_settings`
+--
+ALTER TABLE `notification_settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT for table `notification_types`
+--
+ALTER TABLE `notification_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `payment_method_sub`
@@ -775,7 +1002,7 @@ ALTER TABLE `payment_status_sub`
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `sex_sub`
@@ -787,7 +1014,7 @@ ALTER TABLE `sex_sub`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `user_types_sub`
@@ -799,7 +1026,7 @@ ALTER TABLE `user_types_sub`
 -- AUTO_INCREMENT for table `venues`
 --
 ALTER TABLE `venues`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `venue_availability_sub`
@@ -811,7 +1038,7 @@ ALTER TABLE `venue_availability_sub`
 -- AUTO_INCREMENT for table `venue_images`
 --
 ALTER TABLE `venue_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=464;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=895;
 
 --
 -- AUTO_INCREMENT for table `venue_status_sub`
@@ -855,6 +1082,19 @@ ALTER TABLE `bookmarks`
   ADD CONSTRAINT `bookmarks_ibfk_2` FOREIGN KEY (`venueId`) REFERENCES `venues` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `conversations`
+--
+ALTER TABLE `conversations`
+  ADD CONSTRAINT `conversations_ibfk_1` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `conversation_participants`
+--
+ALTER TABLE `conversation_participants`
+  ADD CONSTRAINT `conversation_participants_ibfk_1` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `conversation_participants_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `discounts`
 --
 ALTER TABLE `discounts`
@@ -887,11 +1127,38 @@ ALTER TABLE `mandatory_discount`
   ADD CONSTRAINT `fk_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `messages`
+--
+ALTER TABLE `messages`
+  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`conversation_id`) REFERENCES `conversations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `message_status`
+--
+ALTER TABLE `message_status`
+  ADD CONSTRAINT `message_status_ibfk_1` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `message_status_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `fk_notifications_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `notification_settings`
+--
+ALTER TABLE `notification_settings`
+  ADD CONSTRAINT `fk_notification_settings_type` FOREIGN KEY (`notification_type_id`) REFERENCES `notification_types` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_notification_settings_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `reviews`
 --
 ALTER TABLE `reviews`
-  ADD CONSTRAINT `fk_reviews_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_reviews_venue_id` FOREIGN KEY (`venue_id`) REFERENCES `venues` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_reviews_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_reviews_venue_id` FOREIGN KEY (`venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users`

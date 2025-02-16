@@ -10,11 +10,12 @@ $VENUE_ID = $_GET['id'];
 $venueView = $venueObj->getSingleVenue($VENUE_ID);
 $VENUE_NOT_AVAILABLE = 2;
 
-$ratings = $venueObj->getRatings($_GET['id']);
-$reviews = $venueObj->getReview($_GET['id']);
+$ratings = $venueObj->getRatings($VENUE_ID);
+$reviews = $venueObj->getReview($VENUE_ID);
 
-$bookings = $venueObj->getBookingByVenue($_GET['id'], 2);
-$remainingBookings = $venueObj->getRemainingBookings($_GET['id']);
+$bookings = $venueObj->getBookingByVenue($VENUE_ID, 2);
+$remainingBookings = $venueObj->getRemainingBookings($VENUE_ID);
+$discounts = $venueObj->getDiscountsByVenue($VENUE_ID);
 
 $bookingCount = 0;
 $bookingRevenue = 0;
@@ -31,7 +32,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 <div id="venueDetailsView" class="container mx-auto pt-24 mb-8">
    <form class="flex gap-6" id="editVenueForm" enctype="multipart/form-data">
         <!-- Main Content -->
-        <div class="flex-grow">
+        <div class="w-full">
             <div class="bg-white text-neutral-900 rounded-lg shadow-sm">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
@@ -486,14 +487,14 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
         </div>
 
         <!-- Right Sidebar -->
-        <div class="w-96">
+        <div class="w-2/5">
             <div class="bg-white rounded-lg shadow-sm p-6 sticky top-0">
                 <div class="mb-6">
                     <h3 class="text-lg font-semibold mb-4">Venue Settings</h3>
                     <!-- Venue Status -->
                      <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Venue Status</span>
+                            <span class="font-semibold">Venue Status</span>
                             <p><?php echo htmlspecialchars($venueView['availability_id'] == 1 ? "Active" : "Onhold") ?></p>
                         </div>
                      </div>
@@ -536,7 +537,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <!-- Venue Type -->
                       <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Venue Tag</span>
+                            <span class="font-semibold">Venue Tag</span>
                             <p><?php 
                             $venueType = $venueView['venue_tag'];
 
@@ -562,7 +563,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     </div>
                     <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Venue Type</label>
-                        <select class="block w-full p-2 pl-10 text-sm text-gray-700 rounded-md" name="editVenueType"
+                        <select class="block w-full p-2 text-sm text-gray-700 rounded-md border" name="editVenueType"
                             id="">
                             <option value="1" <?php echo ($venueView['venue_tag'] == 1) ? 'selected' : ''; ?>>Corporate Events</option>
                             <option value="2" <?php echo ($venueView['venue_tag'] == 2) ? 'selected' : ''; ?>>Reception Hall</option>
@@ -575,14 +576,14 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <!-- Price Setting -->
                      <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Price per day</span>
+                            <span class="font-semibold">Price per day</span>
                             <p>₱<?php echo htmlspecialchars($venueView['price']) ?></p>
                         </div>
                     </div>
 
                     <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Price per day</label>
-                        <div class="flex items-center">
+                        <div class="flex items-center border p-1 py-2 rounded-md">
                             <span class="text-gray-500 mr-2">₱</span>
                             <input type="number" id="venuePrice" name="editVenuePrice" class=" rounded-md w-full"
                                 value="<?php echo htmlspecialchars($venueView['price']) ?>">
@@ -591,9 +592,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
                     <!-- Down Payment Options -->
                      <div class="border-b pb-4 mb-4 viewMode text-sm">
-                        <div class="flex justify-between items-center">
-                            <span class="">Down Payment Options</span>
-                            <p><?php
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="font-semibold">Down Payment Options</span>
+                            <p class="text-right"><?php
                             $downPayment = $venueView['down_payment_id'];
                             $downPaymentName = $downPayment == 1 ? '30% Down Payment' : ($downPayment == 2 ? '50% Down Payment' : 'Full Payment Required');
                             echo htmlspecialchars($downPaymentName);
@@ -604,7 +605,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Down Payment
                             Required</label>
-                        <select class=" rounded-md w-full" name="editDownPayment" id="editDownPayment">
+                        <select class="border text-sm p-2 rounded-md w-full" name="editDownPayment" id="editDownPayment">
                             <option value="1" <?php echo ($venueView['down_payment_id'] == 1) ? 'selected' : ''; ?>>30%
                                 of
                                 total amount
@@ -623,14 +624,14 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <!-- Entrance -->
                      <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Entrance per person</span>
+                            <span class="font-semibold">Entrance per person</span>
                             <p>₱<?php echo htmlspecialchars($venueView['entrance']) ?></p>
                         </div>
                     </div>
                     
                     <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Entrance per person</label>
-                        <div class="flex items-center">
+                        <div class="flex items-center px-1 py-2 border rounded-md">
                             <span class="text-gray-500 mr-2">₱</span>
                             <input type="number" id="venueEntrance" name="editVenueEntrance" class=" rounded-md w-full"
                                 value="<?php echo htmlspecialchars($venueView['entrance']) ?>">
@@ -638,9 +639,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     </div>
 
                     <!-- Cleaning Fee -->
-                      <div class="border-b pb-4 mb-4 viewMode text-sm">
+                    <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
-                            <span class="">Cleaning Fee</span>
+                            <span class="font-semibold">Cleaning Fee</span>
                             <p>₱<?php echo htmlspecialchars($venueView['cleaning']) ?></p>
                         </div>
                     </div>
@@ -649,7 +650,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     
                     <div class="mb-4 editMode hidden">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Cleaning Fee</label>
-                        <div class="flex items-center">
+                        <div class="flex items-center px-1 py-2 border rounded-md">
                             <span class="text-gray-500 mr-2">₱</span>
                             <input type="number" id="venueCleaning" name="editVenueCleaning" class=" rounded-md w-full"
                                 value="<?php echo htmlspecialchars($venueView['cleaning']) ?>">
@@ -657,45 +658,97 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     </div>
 
 
-                    <!-- Discounts -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Discounts</label>
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-2">
-                                <input type="number" placeholder="%" class=" rounded-md w-20">
-                                <input type="text" placeholder="Discount name" class=" rounded-md flex-grow">
-                                <button class="p-2 text-red-500 hover:bg-red-50 rounded-md">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
+                    <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex flex-col justify-start items-start">
+                            <span class="font-semibold mb-2">Discounts</span>
+                            <div class="flex flex-col gap-1 w-full ">
+                                <?php if (!empty($discounts)) {
+                                    foreach ($discounts as $discount) {
+                                        if ($discount['discount_type'] == 'percentage') {
+                                            $displayValue = floatval($discount['discount_value']) . '%';
+                                        } else {
+                                            $displayValue = '₱' . number_format((float) $discount['discount_value'], 2);
+                                        }
+                                        echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md">';
+                                        echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
+                                        echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                                        echo '</div>';
+                                    }
+                                } else {
+                                    echo '<p class="text-gray-500">No discounts available</p>';
+                                }
+                                ?>
                             </div>
-                            <button class="text-sm text-blue-600 hover:text-blue-800">+ Add new
-                                discount</button>
+                            
                         </div>
                     </div>
 
-                    <!-- Save Changes Button -->
+                    <div class="border-b pb-4 mb-4 editMode hidden text-sm">
+                        <div class="flex flex-col justify-start items-start gap-4">
+                            <span class="font-semibold ">Discounts</span>
+                            <div class="flex flex-col gap-1 w-full ">
+                                <?php if (!empty($discounts)) {
+                                    foreach ($discounts as $discount) {
+                                        if ($discount['discount_type'] == 'percentage') {
+                                            $displayValue = floatval($discount['discount_value']) . '%';
+                                        } else {
+                                            $displayValue = '₱' . number_format((float) $discount['discount_value'], 2);
+                                        }
+                                        echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md">';
+                                        echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
+                                        echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                                        echo '</div>';
+                                    }
+                                } else {
+                                    echo '<p class="text-gray-500">No discounts available</p>';
+                                }
+
+                                ?>
+                            </div>
+                            <div class="flex flex-col gap-2 w-full">
+                                <label for="" class="font-semibold text-sm ">New Discount</label>
+                                <div class="flex flex-col items-start gap-2 w-full">
+                                    <span class="flex items-center gap-2 w-full">
+                                        <input type="number" name="discountValue" min="1" max="85" class="w-1/4 p-2 border rounded-md" placeholder="Value">
+                                 <select name="discountType" type="text" class="flex-1 p-2 border rounded-md" placeholder="">
+                                     <option value="">Value type</option>
+                                     <option value="percentage">Percentage</option>
+                                     <option value="flat">Flat</option>
+                                     </select>
+                                    </span>
+                                    <span class="w-full">
+                                        <input type="text" name="discountCode" class="border rounded-md p-2 w-full" placeholder="Discount Code">
+                                    </span>
+                                    <span class="w-full">
+                                        <input type="date" name="discountDate" class="border rounded-md p-2 w-full" placeholder="Description">
+                                    </span>
+                             </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <span class="editMode hidden space-y-3">
+                        <!-- Save Changes Button -->
                     <button onclick="saveChanges(event)"
-                        class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 mt-4">
+                        class="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 ">
                         Save Changes
-                    </button>
-                    
+                    </button> 
+
                     <?php
                     if ($venueView['availability_id'] == $VENUE_NOT_AVAILABLE && empty($remainingBookings)) {
-                        echo '<button id="venueDeleteBtn" class="w-full bg-slate-50 border-2 text-black py-2 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 mt-2" data-venue-id="' . htmlspecialchars($_GET['id']) . '">Delete Venue</button>';
-                    } else {
-                        echo '
-                        <div class="my-4 p-2 py-4 flex gap-2 flex-col items-center border shadow-md rounded-md">
-                            <span class="font-semibold">Note</span>
-                            <span class="text-sm text-gray-700 text-center">
-                                Deleting venue is only available when the status is on hold and there are no active bookings.
-                            </span>
-                        </div>';
-                    }
-                    ?>
-
+                        echo '<button id="venueDeleteBtn" class="w-full bg-slate-50 border-2 text-black py-2 px-4 rounded-lg hover:bg-gray-800 hover:text-white duration-150 " data-venue-id="' . htmlspecialchars($_GET['id']) . '">Delete Venue</button>';
+                        } else {
+                            echo '
+                            <div class=" p-2 py-4 flex gap-2 flex-col items-center border shadow-md rounded-md">
+                        <span class="font-semibold">Note</span>
+                        <span class="text-sm text-gray-700 text-center">
+                            Deleting venue is only available when the status is on hold and there are no active bookings.
+                        </span>
+                    </div>';
+                        }
+                        ?>
+                    </span>
                 </div>
 
                 <?php
@@ -716,7 +769,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                 ?>
 
                 <!-- Quick Stats -->
-                <div class="border-t pt-6">
+                <div class="pt-4">
                     <h4 class="text-sm font-medium text-gray-700 mb-3">Booking Statistics</h4>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-3 rounded-lg">
@@ -794,17 +847,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 
 <script>
 
-    const spinner = $("#spinner");
-
-    function spinnerOn() {
-        spinner.removeClass("hidden");
-        spinner.addClass("flex");
-    }
-
-    function spinnerOff() {
-        spinner.removeClass("flex");
-        spinner.addClass("hidden");
-    }
+   
 
    $('#venueDeleteBtn').on('click', function (e) {
         e.preventDefault();
@@ -1062,126 +1105,126 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             });
 
     }
-   let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
-let bookedDatesArr = <?php echo json_encode($bookedDatesArray); ?>;
-let venueView = <?php echo json_encode($venueView); ?>;
+    currentMonth = new Date().getMonth();
+    currentYear = new Date().getFullYear();
+    bookedDatesArr = <?php echo json_encode($bookedDatesArray); ?>;
+    venueView = <?php echo json_encode($venueView); ?>;
 
-function updateCalendar() {
-    const calendarDays = document.querySelector('.calendar-days');
-    const calendarMonth = document.querySelector('.calendar-month');
-    calendarDays.innerHTML = '';
+    function updateCalendar() {
+        const calendarDays = document.querySelector('.calendar-days');
+        const calendarMonth = document.querySelector('.calendar-month');
+        calendarDays.innerHTML = '';
 
-    // Validate bookedDatesArr and venueView
-    const bookedDates = Array.isArray(bookedDatesArr) ? bookedDatesArr : [];
-    const venuePrice = venueView?.price || 0;
+        // Validate bookedDatesArr and venueView
+        const bookedDates = Array.isArray(bookedDatesArr) ? bookedDatesArr : [];
+        const venuePrice = venueView?.price || 0;
 
-    const firstDay = new Date(currentYear, currentMonth, 1);
-    const lastDay = new Date(currentYear, currentMonth + 1, 0);
-    const firstDayOfWeek = firstDay.getDay();
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const firstDayOfWeek = firstDay.getDay();
 
-    // Set the calendar month and year
-    calendarMonth.textContent = firstDay.toLocaleString('default', { month: 'long', year: 'numeric' });
+        // Set the calendar month and year
+        calendarMonth.textContent = firstDay.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-    // Fill empty grid slots before the 1st of the month
-    for (let i = 0; i < firstDayOfWeek; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'p-2 border-b border-r text-gray-400';
-        calendarDays.appendChild(emptyCell);
-    }
-
-    // Generate days with proper alignment
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-        const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        const isBooked = bookedDates.includes(dateString);
-        const isToday = dateString === new Date().toISOString().split('T')[0];
-
-        // Create day cell
-        const dayCell = document.createElement('div');
-        dayCell.className = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
-        if (isBooked) dayCell.classList.add('bg-red-100');
-        if (isToday) dayCell.classList.add('font-bold', 'text-blue-500');
-
-        // Add day number
-        const dayNumber = document.createElement('div');
-        dayNumber.className = 'text-sm';
-        dayNumber.textContent = day;
-
-        // Add price
-        const price = document.createElement('div');
-        price.className = 'text-xs text-gray-600';
-        price.textContent = `₱${venuePrice}`;
-
-        // Add booked date text if applicable
-        if (isBooked) {
-            const bookedText = document.createElement('div');
-            bookedText.className = 'text-xs text-red-600';
-            bookedText.textContent = 'Booked';
-            dayCell.appendChild(bookedText);
+        // Fill empty grid slots before the 1st of the month
+        for (let i = 0; i < firstDayOfWeek; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'p-2 border-b border-r text-gray-400';
+            calendarDays.appendChild(emptyCell);
         }
 
-        // Append elements to day cell
-        dayCell.appendChild(dayNumber);
-        dayCell.appendChild(price);
-        calendarDays.appendChild(dayCell);
-    }
-}
+        // Generate days with proper alignment
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            const isBooked = bookedDates.includes(dateString);
+            const isToday = dateString === new Date().toISOString().split('T')[0];
 
-document.querySelector('.calendar-prev').addEventListener('click', (e) => {
-    e.preventDefault();
-    currentMonth--;
-    if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-    }
-    updateCalendar();
-});
+            // Create day cell
+            const dayCell = document.createElement('div');
+            dayCell.className = 'relative p-2 border-b border-r hover:bg-gray-50 cursor-pointer';
+            if (isBooked) dayCell.classList.add('bg-red-100');
+            if (isToday) dayCell.classList.add('font-bold', 'text-blue-500');
 
-document.querySelector('.calendar-next').addEventListener('click', (e) => {
-    e.preventDefault();
-    currentMonth++;
-    if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-    }
-    updateCalendar();
-});
+            // Add day number
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'text-sm';
+            dayNumber.textContent = day;
 
+            // Add price
+            const price = document.createElement('div');
+            price.className = 'text-xs text-gray-600';
+            price.textContent = `₱${venuePrice}`;
 
-    // Initial calendar update
-    updateCalendar();
+            // Add booked date text if applicable
+            if (isBooked) {
+                const bookedText = document.createElement('div');
+                bookedText.className = 'text-xs text-red-600';
+                bookedText.textContent = 'Booked';
+                dayCell.appendChild(bookedText);
+            }
 
-document.getElementById('prevReview').addEventListener('click', function (e) {
-    e.preventDefault();
-    navigateReview(-1);
-});
-
-document.getElementById('nextReview').addEventListener('click', function (e) {
-    e.preventDefault();
-    navigateReview(1);
-});
-
-function navigateReview(direction) {
-    const reviews = document.querySelectorAll('.review');
-    let currentIndex = -1;
-
-    reviews.forEach((review, index) => {
-        if (review.style.display !== 'none') {
-            currentIndex = index;
+            // Append elements to day cell
+            dayCell.appendChild(dayNumber);
+            dayCell.appendChild(price);
+            calendarDays.appendChild(dayCell);
         }
+    }
+
+    document.querySelector('.calendar-prev').addEventListener('click', (e) => {
+        e.preventDefault();
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        updateCalendar();
     });
 
-    if (currentIndex !== -1) {
-        reviews[currentIndex].style.display = 'none';
-        let newIndex = currentIndex + direction;
-
-        if (newIndex < 0) {
-            newIndex = reviews.length - 1;
-        } else if (newIndex >= reviews.length) {
-            newIndex = 0;
+    document.querySelector('.calendar-next').addEventListener('click', (e) => {
+        e.preventDefault();
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
         }
+        updateCalendar();
+    });
 
-        reviews[newIndex].style.display = '';
+
+        // Initial calendar update
+        updateCalendar();
+
+    document.getElementById('prevReview').addEventListener('click', function (e) {
+        e.preventDefault();
+        navigateReview(-1);
+    });
+
+    document.getElementById('nextReview').addEventListener('click', function (e) {
+        e.preventDefault();
+        navigateReview(1);
+    });
+
+    function navigateReview(direction) {
+        const reviews = document.querySelectorAll('.review');
+        let currentIndex = -1;
+
+        reviews.forEach((review, index) => {
+            if (review.style.display !== 'none') {
+                currentIndex = index;
+            }
+        });
+
+        if (currentIndex !== -1) {
+            reviews[currentIndex].style.display = 'none';
+            let newIndex = currentIndex + direction;
+
+            if (newIndex < 0) {
+                newIndex = reviews.length - 1;
+            } else if (newIndex >= reviews.length) {
+                newIndex = 0;
+            }
+
+            reviews[newIndex].style.display = '';
+        }
     }
-}
 </script>
