@@ -757,7 +757,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                 $currentMonth = new DateTime(); // Defaults to the current date and time
                 foreach ($bookings as $booking) {
                     $bookingCount += 1; // Aggregate booking count
-                    $bookingRevenue += $booking['booking_grand_total'] - $booking['booking_service_fee']; // Aggregate revenue
+                    $bookingRevenue += $booking['booking_dp_amount'];
                 
                     $bookingEndDate = new DateTime($booking['booking_end_date']);
 
@@ -803,6 +803,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                             echo '<p class="text-gray-600 text-xs text-center">No bookings found.</p>';
                         }
                         foreach ($bookings as $booking):
+                            // var_dump($booking);
                             ?>
                             <!-- Sample Reservation Items -->
                             <div class="bg-gray-50 p-4 rounded-lg">
@@ -826,9 +827,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                         ?>
                                     </p>
                                 </div>
-                                <p>Down Payment: <span class="text-gray-600 ">₱<?php echo $booking['booking_grand_total'] ?></span></p>
-                                <p>Platform Fee: <span class="text-gray-600 ">₱<?php echo $booking['booking_service_fee'] ?></span></p>
+                                <p>Total Amount: <span class="text-gray-600 ">₱<?php echo $booking['booking_dp_amount'] ?></span></p>
                                 <p>Balance: <span class="text-gray-600 ">₱<?php echo $booking['booking_balance'] ?></span></p>
+                                <p>Payment Method: <span class="text-gray-600 "><?php echo $booking['payment_method_name'] ?></span></p>
                             </div>
                             <?php
                         endforeach;
