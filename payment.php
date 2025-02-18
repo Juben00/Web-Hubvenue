@@ -65,14 +65,13 @@ $venueDetails = $venueObj->getSingleVenue($venueId);
 $venueName = htmlspecialchars($venueDetails["venue_name"]);
 $venueDownpayment = $venueObj->getDownpayment($venueId);
 
-$Total = bcmul($computedTotal, (string) $venueDownpayment, 2);
+$Total = bcmul($computedTotal, (string) $venueDownpayment['value'], 2);
 $Balance = bcsub($computedTotal, $Total, 2);
 
 // Update reservation data with exact values
 $reservationData['Total'] = $Total;
 $reservationData['Balance'] = $Balance;
-$reservationData['RawPrice'] = $totalPriceForNights + $totalEntranceFee + $cleaningFee + $serviceFee;
-$reservationData['Downpayment'] = number_format($venueDownpayment, 2, '.', '');
+$reservationData['Downpayment'] = $venueDownpayment['id'];
 
 // Update the session
 $_SESSION['reservationFormData'] = $reservationData;
@@ -125,6 +124,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
+                        <?php var_dump($reservationData) ?>
 
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 p-4 rounded-lg mb-4">
@@ -197,7 +197,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Host's Down Payment Requirement</span>
-                                    <span id="downPayment"><?php echo $venueDownpayment * 100 ?>%</span>
+                                    <span id="downPayment"><?php echo $venueDownpayment['value'] * 100 ?>%</span>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-gray-300 flex justify-between font-semibold">
                                     <span>Total</span>
@@ -218,6 +218,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <div id="step2" class="step hidden">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
+                        <?php var_dump($reservationData) ?>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
                                 onclick="selectPaymentMethod('gcash')">
@@ -347,6 +348,7 @@ $_SESSION['reservationFormData'] = $reservationData;
         const labelText = document.getElementById("fileLabelText");
         const label = document.getElementById("receiptLabel");
         const clearButton = document.getElementById("clearButton");
+        let paymentForm = document.getElementById('paymentForm');
 
         fileInput.addEventListener("change", () => {
             if (fileInput.files.length > 0) {
@@ -439,14 +441,14 @@ $_SESSION['reservationFormData'] = $reservationData;
                         const discountValue = <?php echo ($isSpecial && isset($discountStatus['discount_value']))
                             ? ($discountStatus['discount_value'] / 100) : 0; ?> + (data.discountValue || 0);
 
-                        console.log(discountValue);
+                        console.log("Discount Value:", discountValue);
 
                         <?php $discountApplied = true; ?>
 
                         const gt = parseFloat((1 - discountValue) * <?php echo $subTotal ?? 0; ?>);
-                        const downPaymentPercentage = <?php echo $venueDownpayment ?? 0; ?>;
-                        const totalToPay = gt * downPaymentPercentage;
-                        const leftToPay = gt - totalToPay;
+                        const downPaymentPercentage = <?php echo $venueDownpayment['value'] ?? 0; ?>;
+                        totalToPay = gt * downPaymentPercentage;
+                        leftToPay = gt - totalToPay;
 
                         <?php
                         $reservationData['Total'] = $Total ?? 0;
@@ -460,6 +462,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                         document.getElementById('applyCouponBtn').style.display = '';
                         document.getElementById('grandTotal').textContent = `₱ ${totalToPay.toFixed(2)}`;
                         document.getElementById('balance').textContent = `₱ ${leftToPay.toFixed(2)}`;
+
                     } else {
                         showModal("Invalid Coupon Code", function () {
                             document.getElementById('couponCode').value = '';
@@ -468,10 +471,20 @@ $_SESSION['reservationFormData'] = $reservationData;
                 });
         }
 
+        function appendHiddenInput(form, name, value) {
+            const input = document.createElement('input');
+            input.type = 'hidden'; // Set input type to hidden
+            input.name = name; // Set the name attribute
+            input.value = value; // Set the value attribute
+            form.appendChild(input); // Append the input to the form
+        }
+
         function selectPaymentMethod(method) {
             document.querySelector(`input[value="${method}"]`).checked = true;
 
             const totalAmount = totalToPay.toFixed(2);
+            appendHiddenInput(paymentForm, 'Total', totalToPay.toFixed(2));
+            appendHiddenInput(paymentForm, 'Balance', leftToPay.toFixed(2));
 
             document.getElementById('nextBtn').disabled = true;
 

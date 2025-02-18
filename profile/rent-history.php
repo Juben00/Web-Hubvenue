@@ -56,6 +56,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
                         $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+
                         ?>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
@@ -128,7 +129,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                     <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
                                     <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
                                     <p class="text-gray-600 mt-1">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                         for
                                         <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                         days
@@ -286,7 +287,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                     <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
                                     <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
                                     <p class="text-gray-600 mt-1">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                         for
                                         <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                         days
@@ -395,7 +396,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?></p>
                                         <p class="text-gray-600">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -508,7 +509,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                     echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                     ?></p>
                                     <p class="text-gray-600">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                         for
                                         <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                         days
@@ -548,9 +549,15 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
             class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
             <!-- Modal Header -->
             <div class="flex justify-between items-center pb-6 border-b">
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
-                    <p class="text-sm text-gray-500 mt-1">Booking Details</p>
+                <div class="flex items-start gap-4 ">
+                    <div class="">
+                        <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
+                        <p class="text-sm text-gray-500 mt-1">Booking Details</p>
+                    </div>
+                    <!-- Status Tags -->
+                    <div class="flex items-center gap-3 ">
+                        <span id="booking-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                    </div>
                 </div>
                 <button onclick="closeModal()"
                     class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
@@ -581,27 +588,23 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
                     <!-- Right Column - Details -->
                     <div class="space-y-6">
-                        <!-- Status Tags -->
-                        <div class="flex items-center gap-3">
-                            <span id="booking-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
-                            <span id="booking-type" class="px-3 py-1 rounded-full text-sm font-medium"></span>
-                        </div>
+
 
                         <!-- Price Details -->
                         <div class="bg-gray-50 p-6 rounded-xl space-y-3">
-                            <h4 class="font-semibold text-gray-900">Price Details</h4>
+                            <h4 class="font-semibold text-gray-900">Payment Details</h4>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Total Amount</span>
                                     <span id="price-per-night" class="text-xl font-bold text-gray-900"></span>
                                 </div>
-                                <div class="flex justify-between items-center text-sm text-gray-600">
-                                    <span>Duration</span>
-                                    <span id="booking-duration"></span>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Down Payment</span>
+                                    <span id="down-payment" class="text-xl font-bold text-gray-900"></span>
                                 </div>
-                                <div class="flex justify-between items-center text-sm text-gray-600">
-                                    <span>Cleaning Fee</span>
-                                    <span id="cleaning-fee"></span>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Balance</span>
+                                    <span id="balance-payment" class="text-xl font-bold text-gray-900"></span>
                                 </div>
                             </div>
                         </div>

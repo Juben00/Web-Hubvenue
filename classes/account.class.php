@@ -711,7 +711,8 @@ class Account
             $stmt->execute();
             $discount = $stmt->fetch();
 
-            return $discount ? true : false;  // Only return `true` if discount exists and is active.
+            return $discount; // Return the discount application if found
+
         } catch (PDOException $e) {
             error_log("Error fetching discount application: " . $e->getMessage());
             return ['status' => 'error', 'message' => $e->getMessage()];

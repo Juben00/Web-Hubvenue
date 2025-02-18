@@ -347,48 +347,56 @@ class Venue
     function bookVenue(
         $booking_start_date,
         $booking_end_date,
-        $booking_duration,
-        $booking_status_id,
-        $booking_request,
         $booking_participants,
-        $booking_original_price,
+        $booking_venue_price,
+        $booking_entrance,
+        $booking_cleaning,
+        $booking_service_fee,
+        $booking_duration,
         $booking_grand_total,
+        $booking_dp_amount,
         $booking_balance,
+        $booking_dp_id,
+        $booking_coupon_id,
+        $booking_discount_id,
+        $booking_status_id,
         $booking_guest_id,
         $booking_venue_id,
-        $booking_down_payment,
-        $booking_discount,
         $booking_payment_method,
         $booking_payment_reference,
         $booking_payment_status_id,
-        $booking_service_fee
+        $booking_request
     ) {
         try {
             $conn = $this->db->connect();
 
-            // Insert new booking
-            $sql = "INSERT INTO bookings (booking_start_date, booking_end_date, booking_duration, booking_status_id, booking_request, booking_participants, booking_original_price, booking_grand_total, booking_balance, booking_guest_id, booking_venue_id, booking_down_payment, booking_discount, booking_payment_method, booking_payment_reference, booking_payment_status_id, booking_service_fee) 
-                VALUES (:booking_start_date, :booking_end_date, :booking_duration, :booking_status_id, :booking_request, :booking_participants, :booking_original_price, :booking_grand_total, :booking_balance, :booking_guest_id, :booking_venue_id, :booking_down_payment, :booking_discount, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id, :booking_service_fee)";
+            $sql = "INSERT INTO bookings (booking_start_date, booking_end_date, booking_participants, booking_venue_price, booking_entrance, booking_cleaning, booking_service_fee, booking_duration, booking_grand_total, booking_dp_amount, booking_balance, booking_dp_id, booking_coupon_id, booking_discount_id, booking_status_id, booking_guest_id, booking_venue_id, booking_payment_method, booking_payment_reference, booking_payment_status_id, booking_request) 
+                VALUES (:booking_start_date, :booking_end_date, :booking_participants, :booking_venue_price, :booking_entrance, :booking_cleaning, :booking_service_fee, :booking_duration, :booking_grand_total, :booking_dp_amount, :booking_balance, :booking_dp_id, :booking_coupon_id, :booking_discount_id, :booking_status_id, :booking_guest_id, :booking_venue_id, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id, :booking_request)";
             $stmt = $conn->prepare($sql);
 
             // Bind the parameters
             $stmt->bindParam(':booking_start_date', $booking_start_date);
             $stmt->bindParam(':booking_end_date', $booking_end_date);
-            $stmt->bindParam(':booking_duration', $booking_duration);
-            $stmt->bindParam(':booking_status_id', $booking_status_id);
-            $stmt->bindParam(':booking_request', $booking_request);
             $stmt->bindParam(':booking_participants', $booking_participants);
-            $stmt->bindParam(':booking_original_price', $booking_original_price);
+            $stmt->bindParam(':booking_venue_price', $booking_venue_price);
+            $stmt->bindParam(':booking_entrance', $booking_entrance);
+            $stmt->bindParam(':booking_cleaning', $booking_cleaning);
+            $stmt->bindParam(':booking_service_fee', $booking_service_fee);
+            $stmt->bindParam(':booking_duration', $booking_duration);
             $stmt->bindParam(':booking_grand_total', $booking_grand_total);
+            $stmt->bindParam(':booking_dp_amount', $booking_dp_amount);
             $stmt->bindParam(':booking_balance', $booking_balance);
+            $stmt->bindParam(':booking_dp_id', $booking_dp_id);
+            $stmt->bindParam(':booking_coupon_id', $booking_coupon_id);
+            $stmt->bindParam(':booking_discount_id', $booking_discount_id);
+            $stmt->bindParam(':booking_status_id', $booking_status_id);
             $stmt->bindParam(':booking_guest_id', $booking_guest_id);
             $stmt->bindParam(':booking_venue_id', $booking_venue_id);
-            $stmt->bindParam(':booking_down_payment', $booking_down_payment);
-            $stmt->bindParam(':booking_discount', $booking_discount);
             $stmt->bindParam(':booking_payment_method', $booking_payment_method);
             $stmt->bindParam(':booking_payment_reference', $booking_payment_reference);
             $stmt->bindParam(':booking_payment_status_id', $booking_payment_status_id);
-            $stmt->bindParam(':booking_service_fee', $booking_service_fee);
+            $stmt->bindParam(':booking_request', $booking_request);
+
 
             if ($stmt->execute()) {
                 $bookingId = $conn->lastInsertId();
@@ -398,12 +406,12 @@ class Venue
 
                 // Update the check_in_link column with the generated link
                 $updateSql = "UPDATE bookings 
-              SET check_in_link = :checkInLink, 
-                  check_out_link = :checkOutLink 
+              SET booking_checkin_link = :booking_checkin_link, 
+                  booking_checkout_link = :booking_checkout_link 
               WHERE id = :booking_id";
                 $updateStmt = $conn->prepare($updateSql);
-                $updateStmt->bindParam(':checkInLink', $checkInLink);
-                $updateStmt->bindParam(':checkOutLink', $checkOutLink);
+                $updateStmt->bindParam(':booking_checkin_link', $checkInLink);
+                $updateStmt->bindParam(':booking_checkout_link', $checkOutLink);
                 $updateStmt->bindParam(':booking_id', $bookingId);
                 $updateStmt->execute();
 
@@ -429,7 +437,7 @@ class Venue
                     b.booking_end_date,
                     b.booking_duration,
                     b.booking_participants,
-                    b.booking_original_price,
+                    b.booking_venue_price,
                     b.booking_grand_total,
                     b.booking_discount,
                     b.booking_payment_method,
@@ -556,10 +564,15 @@ class Venue
             $conn = $this->db->connect();
             $STATUS_1 = 1;
             $STATUS_2 = 2;
-            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate FROM bookings WHERE booking_venue_id = :venue_id AND booking_status_id IN (:status2)";
+            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate 
+            FROM bookings 
+            WHERE booking_venue_id = :venue_id
+            AND booking_status_id = :status1 OR booking_status_id = :status2";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);
+            $stmt->bindParam(':status1', $STATUS_1);
             $stmt->bindParam(':status2', $STATUS_2);
+
             $stmt->execute();
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $result;
@@ -580,9 +593,9 @@ class Venue
     b.booking_end_date,
     b.booking_duration,
     b.booking_participants,
-    b.booking_original_price,
+    b.booking_venue_price,
     b.booking_grand_total,
-    b.booking_discount,
+    b.booking_discount_id,
     b.booking_payment_method,
     b.booking_payment_reference,
     b.booking_service_fee,
@@ -613,7 +626,7 @@ class Venue
 FROM 
     bookings b
 LEFT JOIN
-    discounts d ON d.discount_code = b.booking_discount
+    discounts d ON d.discount_code = b.booking_discount_id
 LEFT JOIN 
     users u ON b.booking_guest_id = u.id
 LEFT JOIN 
@@ -917,13 +930,13 @@ LEFT JOIN
     {
         try {
             $conn = $this->db->connect();
-            $sql = "SELECT value FROM venues
-            JOIN downpayment_sub ON downpayment_sub.id = venues.down_payment_id
-             WHERE venues.id = :venue_id";
+            $sql = "SELECT downpayment_sub.* FROM downpayment_sub
+            JOIN venues ON downpayment_sub.id = venues.down_payment_id
+            WHERE venues.id = :venue_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venueId);
             $stmt->execute();
-            $downpayment = $stmt->fetchColumn();
+            $downpayment = $stmt->fetch();
             return $downpayment;
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
@@ -1311,7 +1324,7 @@ LEFT JOIN
                     b.booking_end_date,
                     b.booking_status_id,
                     b.booking_participants,
-                    b.booking_original_price,
+                    b.booking_venue_price,
                     b.booking_grand_total,
                     b.booking_guest_id,
                     v.id as venue_id,
@@ -1458,6 +1471,26 @@ LEFT JOIN
         } catch (Exception $e) {
             error_log($e->getMessage());
             return [];
+        }
+    }
+
+    function getIdOfCoupon($couponCode)
+    {
+        try {
+            $sql = "SELECT id FROM discounts WHERE discount_code = :couponCode;";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':couponCode', $couponCode);
+            $stmt->execute();
+            $coupon = $stmt->fetchColumn();
+            if ($coupon) {
+                return $coupon;
+            } else {
+                return null;
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return 0;
         }
     }
 

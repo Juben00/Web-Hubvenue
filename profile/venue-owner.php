@@ -134,7 +134,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
                                         </p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -258,7 +258,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
                                         </p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -373,7 +373,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
                                         </p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -497,7 +497,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
                                         </p>
                                         <p class="text-gray-700 mt-1">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
                                             for
                                             <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
                                             days
@@ -1153,7 +1153,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         document.getElementById('request').textContent = booking.booking_request;
         document.getElementById('attendees').textContent = booking.booking_participants;
         document.getElementById('mode-of-payment').textContent = booking.booking_payment_method;
-        document.getElementById('raw-cost').textContent = `₱${numberWithCommas(booking.booking_original_price)}`;
+        document.getElementById('raw-cost').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
         document.getElementById('total-cost').textContent = `₱${numberWithCommas(parseFloat(booking.booking_grand_total) + parseFloat(booking.booking_balance))}`;
         document.getElementById('payment').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
         document.getElementById('balance').textContent = `₱${numberWithCommas(booking.booking_balance)}`;
