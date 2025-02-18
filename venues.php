@@ -949,7 +949,6 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
             let cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
             const SERVICE_FEE_RATE = 0.15;
             const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
-
             const bookedDates = <?php echo json_encode($bookedDates); ?>;
 
             function disableBookedDates(date) {
@@ -1033,8 +1032,9 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                     const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
                     let totalEntranceFee = entranceFee * guests;
                     let totalPriceForNights = pricePerNight * days;
-                    let serviceFee = totalPriceForNights * SERVICE_FEE_RATE;
-                    let grandTotal = (totalPriceForNights + totalEntranceFee + cleaningFee + serviceFee) * discountMultiplier;
+                    let serviceFee = (((pricePerNight + cleaningFee) * days) + totalEntranceFee) * SERVICE_FEE_RATE;
+                    let grandTotal = (((pricePerNight + cleaningFee) * days) + totalEntranceFee + serviceFee);
+                    let grandTotalshow = (((pricePerNight + cleaningFee) * days) + totalEntranceFee + serviceFee) * discountMultiplier;
 
 
                     console.log('Calculations:', {
@@ -1051,19 +1051,20 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                     totalPriceForNightsInput.innerHTML = totalPriceForNights.toFixed(2);
                     entranceFeeInput.innerHTML = totalEntranceFee.toFixed(2);
                     serviceFeeInput.innerHTML = serviceFee.toFixed(2);
-                    totalPriceInput.innerHTML = grandTotal.toFixed(2);
-
-                    serviceFee = serviceFee * discountMultiplier;
-                    totalPriceForNights = totalPriceForNights * discountMultiplier;
-                    cleaningFee = cleaningFee * discountMultiplier;
-                    totalEntranceFee = totalEntranceFee * discountMultiplier;
+                    totalPriceInput.innerHTML = grandTotalshow.toFixed(2);
 
                     let reservationForm = document.getElementById('reservationForm');
-                    appendHiddenInput(reservationForm, 'totalPriceForNights', totalPriceForNights.toFixed(2));
+
+                    appendHiddenInput(reservationForm, 'price', pricePerNight.toFixed(2));
                     appendHiddenInput(reservationForm, 'entranceFee', totalEntranceFee.toFixed(2));
                     appendHiddenInput(reservationForm, 'cleaningFee', cleaningFee.toFixed(2));
+                    appendHiddenInput(reservationForm, 'duration', days);
+                    appendHiddenInput(reservationForm, 'discount', <?php echo $discountStatus ? $discountStatus['id'] : null ?>);
+                    appendHiddenInput(reservationForm, 'totalPriceForNights', totalPriceForNights.toFixed(2));
                     appendHiddenInput(reservationForm, 'serviceFee', serviceFee.toFixed(2));
                     appendHiddenInput(reservationForm, 'grandTotal', grandTotal.toFixed(2));
+                    appendHiddenInput(reservationForm, 'grandTotalShow', grandTotalshow.toFixed(2));
+
 
                 }
             }
