@@ -582,6 +582,7 @@ class Venue
         }
     }
 
+    // for host
     public function getAllBookings($userId = null, $status = null)
     {
         try {
@@ -596,7 +597,14 @@ class Venue
     b.booking_venue_price,
     b.booking_grand_total,
     b.booking_discount_id,
-    b.booking_payment_method,
+    b.booking_participants,
+    b.booking_duration,
+    b.booking_dp_amount,
+    b.booking_entrance,
+    b.booking_coupon_id,
+    b.booking_cleaning,
+    b.booking_balance,
+    b.booking_request,
     b.booking_payment_reference,
     b.booking_service_fee,
     b.booking_status_id,
@@ -604,10 +612,13 @@ class Venue
     b.booking_created_at,
 
     u.id AS guest_id,
-    CONCAT(u.firstname, ' ', COALESCE(u.middlename, ''), ' ', u.lastname) AS guest_name,
+    CONCAT(u.firstname, ' ', COALESCE(u.middlename, '.'), ' ', u.lastname) AS guest_name,
     u.contact_number AS guest_contact_number,
     u.email AS guest_email,
     u.address AS guest_address,
+    u.sex_id AS guest_sex,
+    u.birthdate AS guest_birthdate,
+    u.created_at AS guest_created_at,
 
     v.id AS venue_id,
     v.name AS venue_name,
@@ -615,18 +626,28 @@ class Venue
     v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,
+    v.amenities AS venue_amenities,
     v.thumbnail,
     v.availability_id AS venue_availability_id,
 
+    p.payment_method_name AS payment_method_name,
+
     d.discount_value AS discount_value,
+    d.discount_code AS discount_code,
+
+    md.userId AS is_discounted,
 
     vt.tag_name AS venue_tag_name,
 
     GROUP_CONCAT(COALESCE(vi.image_url, '')) AS image_urls
 FROM 
     bookings b
+LEFT JOIN 
+    payment_method_sub p ON b.booking_payment_method = p.id
+LEFT JOIN 
+    mandatory_discount md ON b.booking_guest_id = md.userId
 LEFT JOIN
-    discounts d ON d.discount_code = b.booking_discount_id
+    discounts d ON d.id = b.booking_coupon_id
 LEFT JOIN 
     users u ON b.booking_guest_id = u.id
 LEFT JOIN 
@@ -674,6 +695,111 @@ LEFT JOIN
         }
     }
 
+    // for guest
+    public function guestgetAllBookings($userId = null, $status = null)
+    {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "SELECT 
+    b.id AS booking_id,
+    b.booking_start_date,
+    b.booking_end_date,
+    b.booking_duration,
+    b.booking_participants,
+    b.booking_venue_price,
+    b.booking_grand_total,
+    b.booking_participants,
+    b.booking_duration,
+    b.booking_dp_amount,
+    b.booking_entrance,
+    b.booking_cleaning,
+    b.booking_balance,
+    b.booking_payment_reference,
+    b.booking_service_fee,
+    b.booking_status_id,
+    b.booking_cancellation_reason,
+    b.booking_created_at,
+
+    u.id AS host_id,
+    CONCAT(u.firstname, ' ', COALESCE(u.middlename, ''), ' ', u.lastname) AS host_name,
+    u.contact_number AS host_contact_number,
+    u.email AS host_email,
+    u.address AS host_address,
+
+    v.id AS venue_id,
+    v.name AS venue_name,
+    v.address AS venue_location,
+    v.capacity AS venue_capacity,
+    v.price AS venue_price,
+    v.rules AS venue_rules,
+    v.amenities AS venue_amenities,
+    v.thumbnail,
+    v.availability_id AS venue_availability_id,
+
+    p.payment_method_name AS payment_method_name,
+
+    md.discount_value AS mandatory_discount_value,
+
+    d.discount_value AS discount_value,
+
+    vt.tag_name AS venue_tag_name,
+
+    GROUP_CONCAT(COALESCE(vi.image_url, '')) AS image_urls
+FROM 
+    bookings b
+LEFT JOIN 
+    mandatory_discount md ON b.booking_discount_id = md.id
+LEFT JOIN 
+    payment_method_sub p ON b.booking_payment_method = p.id
+LEFT JOIN
+    discounts d ON d.id = b.booking_coupon_id
+LEFT JOIN 
+    venues v ON b.booking_venue_id = v.id
+LEFT JOIN 
+    users u ON v.host_id = u.id
+LEFT JOIN
+    venue_tag_sub vt ON v.venue_tag = vt.id
+LEFT JOIN 
+    venue_images vi ON v.id = vi.venue_id
+";
+
+            // Filter conditions
+            $conditions = [];
+            $params = [];
+
+            if ($userId) {
+                $conditions[] = "b.booking_guest_id = :userId";
+                $params[':userId'] = $userId;
+            }
+            if ($status) {
+                $conditions[] = "b.booking_status_id LIKE :status";
+                $params[':status'] = "%$status%";
+            }
+
+            // Append conditions to query
+            if (!empty($conditions)) {
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            // Add GROUP BY clause
+            $sql .= " GROUP BY b.id";
+
+            // Add ORDER BY clause
+            $sql .= " ORDER BY b.booking_created_at DESC";
+
+            // Prepare and execute the statement
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+
+            // Fetch and return results
+            $bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $bookings;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
     function cancelBooking($bookingId, $reason)
     {
         try {
