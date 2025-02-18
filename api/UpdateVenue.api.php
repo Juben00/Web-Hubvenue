@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $discountType = clean_input($_POST['discountType']) ?? null;
     $discountCode = clean_input($_POST['discountCode']) ?? null;
     $discountDate = clean_input($_POST['discountDate']) ?? null;
+    $discountToDelete = json_decode($_POST['discountsToDelete'], true) ?? [];
 
 
     // Process venue amenities and rules
@@ -168,7 +169,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $discountValue,
             $discountType,
             $discountCode,
-            $discountDate
+            $discountDate,
+            $discountToDelete
         );
 
         echo json_encode($result);

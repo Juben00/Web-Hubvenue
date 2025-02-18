@@ -694,15 +694,17 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                         } else {
                                             $displayValue = '₱' . number_format((float) $discount['discount_value'], 2);
                                         }
-                                        echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md">';
+                                        echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md discount-item">';
+                                        echo '<div class="flex items-center gap-2">';
                                         echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
                                         echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                                        echo '</div>';
+                                        echo '<button onclick="deleteDiscount(event)" class="text-red-500 font-bold flex items-center" data-discount-id="' . htmlspecialchars($discount['id']) . '">x</button>';
                                         echo '</div>';
                                     }
                                 } else {
                                     echo '<p class="text-gray-500">No discounts available</p>';
                                 }
-
                                 ?>
                             </div>
                             <div class="flex flex-col gap-2 w-full">
@@ -846,8 +848,20 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 </div>
 
 <script>
+    let discountsToDelete = []; 
 
-   
+    function deleteDiscount(e) {
+        e.preventDefault();
+        const discountId = e.currentTarget.getAttribute('data-discount-id');
+        if (!discountsToDelete.includes(discountId)) {
+            discountsToDelete.push(discountId);
+        }
+
+        const discountElement = e.currentTarget.closest('.discount-item');
+        if (discountElement) {
+            discountElement.style.display = 'none'; 
+        }
+    }
 
    $('#venueDeleteBtn').on('click', function (e) {
         e.preventDefault();
@@ -1074,6 +1088,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
             console.log(file);  // Log each file to inspect the details
             formData.append('newImages[]', file);  // Append each new image file to the FormData
         });
+
+        // Append discounts to delete
+        formData.append('discountsToDelete', JSON.stringify(discountsToDelete));
 
         for (let [key, value] of formData.entries()) {
             console.log(`${key}:`, value);  // Log each key-value pair in the FormData

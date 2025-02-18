@@ -186,7 +186,6 @@ class Venue
             // Establish database connection
             $conn = $this->db->connect();
 
-            // Start building the SQL query
             $sql = "SELECT 
                 v.id AS venue_id, 
                 v.name AS venue_name, 
@@ -896,7 +895,7 @@ LEFT JOIN
         }
     }
 
-    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $discountValue, $discountType, $discountCode, $discountDate)
+    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $discountValue, $discountType, $discountCode, $discountDate, $discountsToDelete)
     {
         try {
             $conn = $this->db->connect();
@@ -965,6 +964,15 @@ LEFT JOIN
                 $stmt->bindParam(':discount_code', $discountCode);
                 $stmt->bindParam(':expiration_date', $discountDate);
                 $stmt->execute();
+            }
+
+            if (!empty($discountsToDelete)) {
+                $sql = "DELETE FROM discounts WHERE id = :id";
+                $stmt = $conn->prepare($sql);
+                foreach ($discountsToDelete as $discountId) {
+                    $stmt->bindParam(':id', $discountId);
+                    $stmt->execute();
+                }
             }
 
             // Commit transaction
