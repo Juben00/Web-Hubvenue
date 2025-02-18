@@ -876,12 +876,16 @@ LEFT JOIN
                 COUNT(b.id) OVER() AS booking_count, 
                 b.*, 
                 u.*, 
-                v.* 
+                v.* ,
+
+                p.payment_method_name AS payment_method_name
             FROM bookings b
+            LEFT JOIN 
+                payment_method_sub p ON b.booking_payment_method = p.id
             JOIN users u ON b.booking_guest_id = u.id
             JOIN venues v ON b.booking_venue_id = v.id
-            WHERE b.booking_venue_id = :venue_id AND b.booking_status_id = :status;
-            GROUP BY b.booking_start_date;
+            WHERE b.booking_venue_id = :venue_id AND b.booking_status_id = :status
+            GROUP BY b.booking_created_at DESC LIMIT 3;
         ";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);

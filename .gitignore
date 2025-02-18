@@ -1,6 +1,7 @@
 /node_modules
-/venue_image_uploads/*
-!/venue_image_uploads/.gitignore
-/host_id_image/*
-!/host_id_image/.gitignore
+# /venue_image_uploads/*
+# !/venue_image_uploads/.gitignore
+# /host_id_image/*
+# !/host_id_image/.gitignore
+# !/profile_image_uploads/.gitignore
 /vendor/
