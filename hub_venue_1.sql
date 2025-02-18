@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 16, 2025 at 12:25 PM
+-- Generation Time: Feb 18, 2025 at 04:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,33 +29,45 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `bookings` (
   `id` int(11) NOT NULL,
-  `booking_start_date` date NOT NULL,
-  `booking_end_date` date NOT NULL,
-  `booking_duration` int(11) NOT NULL,
+  `booking_start_date` date DEFAULT NULL,
+  `booking_end_date` date DEFAULT NULL,
+  `booking_participants` int(11) DEFAULT NULL,
+  `booking_venue_price` decimal(10,2) DEFAULT NULL,
+  `booking_entrance` decimal(10,2) DEFAULT NULL,
+  `booking_cleaning` decimal(10,2) DEFAULT NULL,
+  `booking_service_fee` decimal(10,2) DEFAULT NULL,
+  `booking_duration` int(11) DEFAULT NULL,
+  `booking_grand_total` decimal(10,2) DEFAULT NULL,
+  `booking_dp_amount` decimal(10,2) DEFAULT NULL,
+  `booking_balance` decimal(10,2) DEFAULT NULL,
+  `booking_dp_id` int(11) DEFAULT NULL,
+  `booking_coupon_id` int(11) DEFAULT NULL,
+  `booking_discount_id` int(11) DEFAULT NULL,
   `booking_status_id` int(11) DEFAULT NULL,
-  `booking_request` text DEFAULT NULL,
-  `booking_participants` int(11) NOT NULL,
-  `booking_original_price` decimal(10,2) NOT NULL,
-  `booking_grand_total` decimal(10,2) NOT NULL,
-  `booking_balance` decimal(10,2) NOT NULL,
   `booking_guest_id` int(11) DEFAULT NULL,
   `booking_venue_id` int(11) DEFAULT NULL,
-  `booking_down_payment` int(11) NOT NULL,
-  `booking_discount` varchar(255) DEFAULT NULL,
-  `booking_payment_method` varchar(50) DEFAULT NULL,
-  `booking_payment_reference` text NOT NULL,
+  `booking_payment_method` int(11) DEFAULT NULL,
+  `booking_payment_reference` varchar(255) DEFAULT NULL,
   `booking_payment_status_id` int(11) DEFAULT NULL,
+  `booking_request` text DEFAULT NULL,
   `booking_cancellation_reason` text DEFAULT NULL,
-  `booking_service_fee` decimal(10,2) NOT NULL,
+  `booking_checkin_link` text NOT NULL,
+  `booking_checkout_link` text NOT NULL,
+  `booking_checkin_status` enum('Pending','Checked-In','No-Show') NOT NULL DEFAULT 'Pending',
+  `booking_checkout_status` enum('Pending','Checked-Out') NOT NULL DEFAULT 'Pending',
+  `booking_checkin_date` date NOT NULL,
+  `booking_checkout_date` date NOT NULL,
   `booking_created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `booking_updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `check_in_link` varchar(255) DEFAULT NULL,
-  `check_out_link` varchar(255) DEFAULT NULL,
-  `check_in_status` enum('Pending','Checked-In','No-Show') DEFAULT 'Pending',
-  `check_out_status` enum('Pending','Checked-Out') DEFAULT 'Pending',
-  `check_in_date` datetime DEFAULT NULL,
-  `check_out_date` datetime DEFAULT NULL
+  `booking_updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`id`, `booking_start_date`, `booking_end_date`, `booking_participants`, `booking_venue_price`, `booking_entrance`, `booking_cleaning`, `booking_service_fee`, `booking_duration`, `booking_grand_total`, `booking_dp_amount`, `booking_balance`, `booking_dp_id`, `booking_coupon_id`, `booking_discount_id`, `booking_status_id`, `booking_guest_id`, `booking_venue_id`, `booking_payment_method`, `booking_payment_reference`, `booking_payment_status_id`, `booking_request`, `booking_cancellation_reason`, `booking_checkin_link`, `booking_checkout_link`, `booking_checkin_status`, `booking_checkout_status`, `booking_checkin_date`, `booking_checkout_date`, `booking_created_at`, `booking_updated_at`) VALUES
+(23, '2025-02-19', '2025-02-21', 200, 4800.00, 0.00, 1000.00, 1590.00, 2, 12190.00, 6095.00, 0.00, 3, 3, 7, 2, 31, 77, 1, 'asdasdas', 2, 'asdasdasdasdasd', NULL, 'http://localhost/hubvenue/api/checkInBooking.api.php?booking_id=23', 'http://localhost/hubvenue/api/checkOutBooking.api.php?booking_id=23', 'Pending', 'Pending', '0000-00-00', '0000-00-00', '2025-02-18 08:07:15', '2025-02-18 08:08:35'),
+(24, '2025-02-23', '2025-02-24', 200, 4800.00, 0.00, 500.00, 795.00, 1, 6095.00, 4266.50, 0.00, 3, 1, 7, 2, 31, 77, 1, 'asdasdas', 2, 'SAVE', NULL, 'http://localhost/hubvenue/api/checkInBooking.api.php?booking_id=24', 'http://localhost/hubvenue/api/checkOutBooking.api.php?booking_id=24', 'Pending', 'Pending', '0000-00-00', '0000-00-00', '2025-02-18 10:07:08', '2025-02-18 10:08:36');
 
 -- --------------------------------------------------------
 
@@ -114,7 +126,9 @@ CREATE TABLE `bookmarks` (
 --
 
 INSERT INTO `bookmarks` (`id`, `userId`, `venueId`, `created_at`, `updated_at`) VALUES
-(143, 31, 77, '2025-02-16 07:07:28', '2025-02-16 07:07:28');
+(143, 31, 77, '2025-02-16 07:07:28', '2025-02-16 07:07:28'),
+(144, 31, 78, '2025-02-18 12:45:14', '2025-02-18 12:45:14'),
+(145, 31, 79, '2025-02-18 12:45:15', '2025-02-18 12:45:15');
 
 -- --------------------------------------------------------
 
@@ -155,7 +169,7 @@ CREATE TABLE `discounts` (
   `discount_code` varchar(255) DEFAULT NULL,
   `discount_type` enum('flat','percentage') DEFAULT NULL,
   `discount_value` decimal(10,2) DEFAULT NULL,
-  `expiration_date` datetime DEFAULT NULL,
+  `expiration_date` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `min_days` int(11) DEFAULT 1
@@ -166,10 +180,11 @@ CREATE TABLE `discounts` (
 --
 
 INSERT INTO `discounts` (`id`, `venue_id`, `discount_code`, `discount_type`, `discount_value`, `expiration_date`, `created_at`, `updated_at`, `min_days`) VALUES
-(1, NULL, 'SAVE10', 'percentage', 10.00, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
-(2, NULL, 'SAVE20', 'percentage', 20.00, '2024-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
-(3, NULL, 'SAVE30', 'percentage', 30.00, '2025-12-25 20:40:37', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
-(4, NULL, 'none', 'percentage', 0.00, NULL, '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1);
+(1, NULL, 'SAVE10', 'percentage', 10.00, '2025-12-31', '2025-01-24 02:07:46', '2025-02-17 17:17:21', 1),
+(2, NULL, 'SAVE20', 'percentage', 20.00, '2024-12-25', '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
+(3, NULL, 'SAVE30', 'percentage', 30.00, '2025-12-31', '2025-01-24 02:07:46', '2025-02-17 18:42:50', 1),
+(4, NULL, 'none', 'percentage', 0.00, NULL, '2025-01-24 02:07:46', '2025-01-24 02:07:46', 1),
+(5, 77, 'Marcian', 'percentage', 20.00, '2025-02-28', '2025-02-16 14:16:02', '2025-02-16 14:16:02', 1);
 
 -- --------------------------------------------------------
 
@@ -572,7 +587,10 @@ CREATE TABLE `venues` (
 --
 
 INSERT INTO `venues` (`id`, `name`, `description`, `address`, `location`, `price`, `capacity`, `amenities`, `rules`, `entrance`, `cleaning`, `down_payment_id`, `venue_tag`, `thumbnail`, `time_inout`, `host_id`, `status_id`, `availability_id`, `created_at`, `updated_at`) VALUES
-(77, 'Marcian Garden Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Marcian Garden Hotel, Governor Camins Avenue, Canelar, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.918939461449293,122.06591129288428', 4800.00, 200, '[\"Wifi\",\"TV\",\"Free parking on premises\",\"Air Conditioned Room\",\"CCTV Cameras\",\"Dedicated workspace\",\"Pool\",\"Outdoor dining area\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\",\"Sprinkler\",\"Wine Bar\",\"Water and Beverage Dispenser\",\"Bidet\",\"Garment Rack\",\"Sanitary Products\",\"Hair Dryer\",\"Grooming Kit\",\"Fresh Towels\",\"Dressing and Vanity Area\"]', '[\"No smoking\",\"No pets\",\"No outside food and drinks\"]', 0, 500, 3, 2, 11, '{\"check_in\":\"14:00\",\"check_out\":\"12:00\"}', 31, 2, 1, '2025-02-16 06:54:24', '2025-02-16 06:55:57');
+(77, 'Marcian Garden Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Marcian Garden Hotel, Governor Camins Avenue, Canelar, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.918939461449293,122.06591129288428', 4800.00, 200, '[\"Wifi\",\"TV\",\"Free parking on premises\",\"Air Conditioned Room\",\"CCTV Cameras\",\"Dedicated workspace\",\"Pool\",\"Outdoor dining area\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\",\"Sprinkler\",\"Wine Bar\",\"Water and Beverage Dispenser\",\"Bidet\",\"Garment Rack\",\"Sanitary Products\",\"Hair Dryer\",\"Grooming Kit\",\"Fresh Towels\",\"Dressing and Vanity Area\"]', '[\"No smoking\",\"No pets\",\"No outside food and drinks\"]', 0, 500, 3, 2, 9, '{\"check_in\":\"14:00\",\"check_out\":\"12:00\"}', 31, 2, 1, '2025-02-16 06:54:24', '2025-02-18 14:52:40'),
+(78, 'LM Metro Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'LM Metro Hotel, Don A. V. Toribio Street, Tetuan, Guiwan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.919940626575424,122.09259599447252', 18500.00, 150, '[\"Wifi\",\"TV\",\"Kitchen\",\"Free parking on premises\",\"CCTV Cameras\",\"Dedicated workspace\",\"Pool\",\"Exercise equipment\",\"Sound System\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\",\"Carbon monoxide alarm\",\"Sprinkler\",\"Buffet Table\",\"Wine Bar\",\"Water and Beverage Dispenser\",\"Bidet\",\"Garment Rack\",\"Sanitary Products\",\"Hair Dryer\",\"Grooming Kit\",\"Fresh Towels\",\"Dressing and Vanity Area\"]', '[\"No smoking\"]', 0, 500, 3, 2, 4, '{\"check_in\":\"00:00\",\"check_out\":\"14:00\"}', 31, 2, 1, '2025-02-18 11:15:50', '2025-02-18 12:36:47'),
+(79, 'Astoria Grand Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Astoria Hotel, Mayor Cesar C. Climaco Avenue, Zone IV, Santa Catalina, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.909012900910168,122.07365423440935', 16000.00, 200, '[\"Wifi\",\"TV\",\"Air Conditioned Room\",\"CCTV Cameras\",\"Dedicated workspace\",\"Pool\",\"Pool table\",\"Sound System\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\",\"Carbon monoxide alarm\",\"Sprinkler\",\"Buffet Table\",\"Wine Bar\",\"Bidet\",\"Garment Rack\",\"Sanitary Products\",\"Hair Dryer\",\"Grooming Kit\",\"Fresh Towels\",\"Dressing and Vanity Area\"]', '[\"No smoking\",\"No pets\"]', 0, 1000, 3, 2, 6, '{\"check_in\":\"12:00\",\"check_out\":\"14:00\"}', 31, 2, 1, '2025-02-18 12:27:46', '2025-02-18 12:36:53'),
+(80, 'WINN Hotel', 'A versatile and elegantly designed space featuring modern amenities and customizable layouts to suit various needs. With its convenient location, ample parking, and dedicated staff, it ensures a seamless and memorable experience for all occasions.', 'Mayor M.S. Jaldon Street, Canelar, Baliwasan, Zamboanga City, Zamboanga Peninsula, 7000, Pilipinas', '6.910461424883246,122.0732867717743', 8900.00, 100, '[\"Wifi\",\"Free parking on premises\",\"Air Conditioned Room\",\"CCTV Cameras\",\"Dedicated workspace\",\"Pool\",\"Exercise equipment\",\"Karaoke System\",\"Sound System\",\"Smoke alarm\",\"First aid kit\",\"Fire extinguisher\",\"Carbon monoxide alarm\",\"Sprinkler\",\"Buffet Table\",\"Wine Bar\",\"Water and Beverage Dispenser\",\"Microwave Oven\",\"Bidet\",\"Cleaning Products and Tool\",\"Iron\",\"Garment Rack\",\"Sanitary Products\",\"Hair Dryer\",\"Grooming Kit\",\"Fresh Towels\",\"Dressing and Vanity Area\"]', '[\"No smoking\",\"No pets\"]', 0, 700, 3, 2, 1, '{\"check_in\":\"12:00\",\"check_out\":\"14:00\"}', 31, 2, 1, '2025-02-18 12:36:15', '2025-02-18 12:36:50');
 
 -- --------------------------------------------------------
 
@@ -611,21 +629,54 @@ CREATE TABLE `venue_images` (
 --
 
 INSERT INTO `venue_images` (`id`, `venue_id`, `image_url`, `created_at`) VALUES
-(880, 77, '/venue_image_uploads/67b18ba018778.jpeg', '2025-02-16 06:55:10'),
-(881, 77, '/venue_image_uploads/67b18ba018e8e.jpeg', '2025-02-16 06:55:10'),
-(882, 77, '/venue_image_uploads/67b18ba019287.jpeg', '2025-02-16 06:55:10'),
-(883, 77, '/venue_image_uploads/67b18ba0195ec.jpeg', '2025-02-16 06:55:10'),
-(884, 77, '/venue_image_uploads/67b18ba019892.jpeg', '2025-02-16 06:55:10'),
-(885, 77, '/venue_image_uploads/67b18ba019b5c.jpeg', '2025-02-16 06:55:10'),
-(886, 77, '/venue_image_uploads/67b18ba019e77.jpeg', '2025-02-16 06:55:10'),
-(887, 77, '/venue_image_uploads/67b18ba01a2f6.jpeg', '2025-02-16 06:55:10'),
-(888, 77, '/venue_image_uploads/67b18ba01a609.jpeg', '2025-02-16 06:55:10'),
-(889, 77, '/venue_image_uploads/67b18ba01a8bf.jpeg', '2025-02-16 06:55:10'),
-(890, 77, '/venue_image_uploads/67b18ba01ab6e.jpeg', '2025-02-16 06:55:10'),
-(891, 77, '/venue_image_uploads/67b18ba01ae1f.jpeg', '2025-02-16 06:55:10'),
-(892, 77, '/venue_image_uploads/67b18ba01b11f.jpeg', '2025-02-16 06:55:10'),
-(893, 77, '/venue_image_uploads/67b18ba01b501.jpeg', '2025-02-16 06:55:10'),
-(894, 77, '/venue_image_uploads/67b18ba01bb39.jpeg', '2025-02-16 06:55:10');
+(1196, 78, '/venue_image_uploads/67b46be694675.jpg', '2025-02-18 11:15:50'),
+(1197, 78, '/venue_image_uploads/67b46be6953f0.jpg', '2025-02-18 11:15:50'),
+(1198, 78, '/venue_image_uploads/67b46be69579e.jpg', '2025-02-18 11:15:50'),
+(1199, 78, '/venue_image_uploads/67b46be695a4b.jpg', '2025-02-18 11:15:50'),
+(1200, 78, '/venue_image_uploads/67b46be695cc5.jpg', '2025-02-18 11:15:50'),
+(1201, 78, '/venue_image_uploads/67b46be695eeb.jpg', '2025-02-18 11:15:50'),
+(1202, 78, '/venue_image_uploads/67b46be696141.jpg', '2025-02-18 11:15:50'),
+(1203, 78, '/venue_image_uploads/67b46be696397.jpg', '2025-02-18 11:15:50'),
+(1204, 78, '/venue_image_uploads/67b46be6965dc.jpg', '2025-02-18 11:15:50'),
+(1205, 78, '/venue_image_uploads/67b46be696835.jpg', '2025-02-18 11:15:50'),
+(1206, 78, '/venue_image_uploads/67b46be696b72.jpg', '2025-02-18 11:15:50'),
+(1207, 78, '/venue_image_uploads/67b46be696dce.jpg', '2025-02-18 11:15:50'),
+(1208, 78, '/venue_image_uploads/67b46be697216.jpg', '2025-02-18 11:15:50'),
+(1209, 78, '/venue_image_uploads/67b46be69782c.jpg', '2025-02-18 11:15:50'),
+(1210, 78, '/venue_image_uploads/67b46be697b80.jpg', '2025-02-18 11:15:50'),
+(1211, 78, '/venue_image_uploads/67b46be697e55.jpg', '2025-02-18 11:15:50'),
+(1212, 78, '/venue_image_uploads/67b46be6980f3.jpg', '2025-02-18 11:15:50'),
+(1213, 78, '/venue_image_uploads/67b46be698378.jpg', '2025-02-18 11:15:50'),
+(1214, 78, '/venue_image_uploads/67b46be6985e0.jpg', '2025-02-18 11:15:50'),
+(1215, 78, '/venue_image_uploads/67b46be698832.jpg', '2025-02-18 11:15:50'),
+(1216, 79, '/venue_image_uploads/67b47cc2333f7.jpg', '2025-02-18 12:27:46'),
+(1217, 79, '/venue_image_uploads/67b47cc233e96.jpg', '2025-02-18 12:27:46'),
+(1218, 79, '/venue_image_uploads/67b47cc2343a1.jpg', '2025-02-18 12:27:46'),
+(1219, 79, '/venue_image_uploads/67b47cc2349ce.jpg', '2025-02-18 12:27:46'),
+(1220, 79, '/venue_image_uploads/67b47cc2355dc.jpg', '2025-02-18 12:27:46'),
+(1221, 79, '/venue_image_uploads/67b47cc236012.jpg', '2025-02-18 12:27:46'),
+(1222, 79, '/venue_image_uploads/67b47cc23655f.jpg', '2025-02-18 12:27:46'),
+(1223, 80, '/venue_image_uploads/67b47ebf00056.png', '2025-02-18 12:36:15'),
+(1224, 80, '/venue_image_uploads/67b47ebf0055c.png', '2025-02-18 12:36:15'),
+(1225, 80, '/venue_image_uploads/67b47ebf00997.png', '2025-02-18 12:36:15'),
+(1226, 80, '/venue_image_uploads/67b47ebf00e7f.png', '2025-02-18 12:36:15'),
+(1227, 80, '/venue_image_uploads/67b47ebf01364.png', '2025-02-18 12:36:15'),
+(1228, 80, '/venue_image_uploads/67b47ebf01851.png', '2025-02-18 12:36:15'),
+(1390, 77, '/venue_image_uploads/67b18ba018778.jpeg', '2025-02-18 14:52:40'),
+(1391, 77, '/venue_image_uploads/67b18ba0195ec.jpeg', '2025-02-18 14:52:40'),
+(1392, 77, '/venue_image_uploads/67b18ba019892.jpeg', '2025-02-18 14:52:40'),
+(1393, 77, '/venue_image_uploads/67b18ba019b5c.jpeg', '2025-02-18 14:52:40'),
+(1394, 77, '/venue_image_uploads/67b18ba019e77.jpeg', '2025-02-18 14:52:40'),
+(1395, 77, '/venue_image_uploads/67b18ba01a2f6.jpeg', '2025-02-18 14:52:40'),
+(1396, 77, '/venue_image_uploads/67b18ba01a609.jpeg', '2025-02-18 14:52:40'),
+(1397, 77, '/venue_image_uploads/67b18ba01a8bf.jpeg', '2025-02-18 14:52:40'),
+(1398, 77, '/venue_image_uploads/67b18ba01ab6e.jpeg', '2025-02-18 14:52:40'),
+(1399, 77, '/venue_image_uploads/67b18ba01ae1f.jpeg', '2025-02-18 14:52:40'),
+(1400, 77, '/venue_image_uploads/67b18ba01b11f.jpeg', '2025-02-18 14:52:40'),
+(1401, 77, '/venue_image_uploads/67b18ba01b501.jpeg', '2025-02-18 14:52:40'),
+(1402, 77, '/venue_image_uploads/67b18ba01bb39.jpeg', '2025-02-18 14:52:40'),
+(1403, 77, '/venue_image_uploads/67b49dcd3328c.jpeg', '2025-02-18 14:52:40'),
+(1404, 77, '/venue_image_uploads/67b49dcd33909.jpeg', '2025-02-18 14:52:40');
 
 -- --------------------------------------------------------
 
@@ -677,13 +728,14 @@ INSERT INTO `venue_tag_sub` (`id`, `tag_name`) VALUES
 --
 ALTER TABLE `bookings`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `booking_guest_id` (`booking_guest_id`),
-  ADD KEY `booking_venue_id` (`booking_venue_id`),
-  ADD KEY `booking_status_id` (`booking_status_id`),
-  ADD KEY `booking_payment_status_id` (`booking_payment_status_id`),
-  ADD KEY `booking_payment_method` (`booking_payment_method`),
-  ADD KEY `booking_discount` (`booking_discount`),
-  ADD KEY `bookings_ibfk_10` (`booking_down_payment`);
+  ADD KEY `booking_ibfk_1` (`booking_guest_id`),
+  ADD KEY `booking_ibfk_2` (`booking_dp_id`),
+  ADD KEY `booking_ibfk_3` (`booking_venue_id`),
+  ADD KEY `booking_ibfk_4` (`booking_status_id`),
+  ADD KEY `booking_ibfk_7` (`booking_payment_status_id`),
+  ADD KEY `booking_ibfk_6` (`booking_discount_id`),
+  ADD KEY `booking_ibfk_8` (`booking_coupon_id`),
+  ADD KEY `bookings_ibfk_9` (`booking_payment_method`);
 
 --
 -- Indexes for table `bookings_status_sub`
@@ -894,7 +946,7 @@ ALTER TABLE `venue_tag_sub`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `booking_charges`
@@ -906,7 +958,7 @@ ALTER TABLE `booking_charges`
 -- AUTO_INCREMENT for table `bookmarks`
 --
 ALTER TABLE `bookmarks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT for table `conversations`
@@ -924,7 +976,7 @@ ALTER TABLE `conversation_participants`
 -- AUTO_INCREMENT for table `discounts`
 --
 ALTER TABLE `discounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `downpayment_sub`
@@ -1026,7 +1078,7 @@ ALTER TABLE `user_types_sub`
 -- AUTO_INCREMENT for table `venues`
 --
 ALTER TABLE `venues`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `venue_availability_sub`
@@ -1038,7 +1090,7 @@ ALTER TABLE `venue_availability_sub`
 -- AUTO_INCREMENT for table `venue_images`
 --
 ALTER TABLE `venue_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=895;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1405;
 
 --
 -- AUTO_INCREMENT for table `venue_status_sub`
@@ -1060,13 +1112,14 @@ ALTER TABLE `venue_tag_sub`
 -- Constraints for table `bookings`
 --
 ALTER TABLE `bookings`
-  ADD CONSTRAINT `bookings_ibfk_1` FOREIGN KEY (`booking_guest_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bookings_ibfk_10` FOREIGN KEY (`booking_down_payment`) REFERENCES `downpayment_sub` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `bookings_ibfk_2` FOREIGN KEY (`booking_venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `bookings_ibfk_4` FOREIGN KEY (`booking_status_id`) REFERENCES `bookings_status_sub` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `bookings_ibfk_6` FOREIGN KEY (`booking_payment_status_id`) REFERENCES `payment_status_sub` (`id`),
-  ADD CONSTRAINT `bookings_ibfk_8` FOREIGN KEY (`booking_payment_method`) REFERENCES `payment_method_sub` (`payment_method_name`),
-  ADD CONSTRAINT `bookings_ibfk_9` FOREIGN KEY (`booking_discount`) REFERENCES `discounts` (`discount_code`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`booking_guest_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `booking_ibfk_2` FOREIGN KEY (`booking_dp_id`) REFERENCES `downpayment_sub` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `booking_ibfk_3` FOREIGN KEY (`booking_venue_id`) REFERENCES `venues` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `booking_ibfk_4` FOREIGN KEY (`booking_status_id`) REFERENCES `bookings_status_sub` (`id`),
+  ADD CONSTRAINT `booking_ibfk_5` FOREIGN KEY (`booking_payment_status_id`) REFERENCES `payment_status_sub` (`id`),
+  ADD CONSTRAINT `booking_ibfk_6` FOREIGN KEY (`booking_discount_id`) REFERENCES `mandatory_discount` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `booking_ibfk_8` FOREIGN KEY (`booking_coupon_id`) REFERENCES `discounts` (`id`),
+  ADD CONSTRAINT `bookings_ibfk_9` FOREIGN KEY (`booking_payment_method`) REFERENCES `payment_method_sub` (`id`);
 
 --
 -- Constraints for table `booking_charges`
