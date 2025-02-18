@@ -11,10 +11,10 @@ $PREVIOUS_BOOKING = 4;
 
 $VENUE_AVAILABLE = 1;
 
-$pendingBooking = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
-$currentBooking = $venueObj->getAllBookings($USER_ID, $CURRENT_BOOKING);
-$cancelledBooking = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
-$previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
+$pendingBooking = $venueObj->guestgetAllBookings($USER_ID, $PENDING_BOOKING);
+$currentBooking = $venueObj->guestgetAllBookings($USER_ID, $CURRENT_BOOKING);
+$cancelledBooking = $venueObj->guestgetAllBookings($USER_ID, $CANCELLED_BOOKING);
+$previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
 ?>
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
@@ -154,7 +154,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                                 'booking_end_date' => $booking['booking_end_date'] ?? '',
                                                 'booking_duration' => $booking['booking_duration'] ?? '',
                                                 'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
                                                 'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
                                                 'booking_service_fee' => $booking['booking_service_fee'] ?? '',
                                                 'venue_location' => $booking['venue_location'] ?? ''
@@ -171,7 +171,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                                 'booking_end_date' => $booking['booking_end_date'] ?? '',
                                                 'booking_duration' => $booking['booking_duration'] ?? '',
                                                 'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
                                                 'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
                                                 'booking_service_fee' => $booking['booking_service_fee'] ?? '',
                                                 'venue_location' => $booking['venue_location'] ?? ''
@@ -312,7 +312,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                                 'booking_end_date' => $booking['booking_end_date'] ?? '',
                                                 'booking_duration' => $booking['booking_duration'] ?? '',
                                                 'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
                                                 'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
                                                 'booking_service_fee' => $booking['booking_service_fee'] ?? '',
                                                 'venue_location' => $booking['venue_location'] ?? ''
@@ -329,7 +329,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                                 'booking_end_date' => $booking['booking_end_date'] ?? '',
                                                 'booking_duration' => $booking['booking_duration'] ?? '',
                                                 'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
                                                 'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
                                                 'booking_service_fee' => $booking['booking_service_fee'] ?? '',
                                                 'venue_location' => $booking['venue_location'] ?? ''
@@ -592,64 +592,99 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
                         <!-- Price Details -->
                         <div class="bg-gray-50 p-6 rounded-xl space-y-3">
-                            <h4 class="font-semibold text-gray-900">Payment Details</h4>
+                            <h4 class="font-semibold text-gray-900">Booking Details</h4>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Date</span>
+                                    <span id="date" class="text-sm font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Number of Days/Nights</span>
+                                    <span id="daysnights" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Price per night</span>
+                                    <span id="price-per-night" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Guests</span>
+                                    <span id="guest" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Entrance Fee</span>
+                                    <span id="total-entrance" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Cleaning Fee</span>
+                                    <span id="total-cleaning" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Platform Fee</span>
+                                    <span id="platform-fee" class="font-bold text-gray-900"></span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <h4 class="font-semibold text-gray-900">Payment Details</h4>
+                                <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Total Amount</span>
-                                    <span id="price-per-night" class="text-xl font-bold text-gray-900"></span>
+                                    <span id="total-payment" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">PWD/Senior Discount</span>
+                                    <span id="mandatory-discount" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Coupon</span>
+                                    <span id="coupon" class="font-bold text-gray-900"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Down Payment</span>
-                                    <span id="down-payment" class="text-xl font-bold text-gray-900"></span>
+                                    <span id="down-payment" class="font-bold text-gray-900"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-gray-600">Balance</span>
-                                    <span id="balance-payment" class="text-xl font-bold text-gray-900"></span>
+                                    <span id="balance-payment" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">Payment method</span>
+                                    <span id="payment-method" class="font-bold text-gray-900"></span>
+                                </div>
+                                <div class="flex justify-between items-start">
+                                    <span class="text-gray-600">Payment Reference</span>
+                                    <span id="payment-reference" class="font-bold text-gray-900"></span>
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Location Details -->
-                        <div class="space-y-2">
-                            <h4 class="font-semibold text-gray-900">Location</h4>
-                            <div id="location-details" class="text-gray-600 text-sm space-y-1"></div>
-                        </div>
-
-                        <!-- Capacity & Amenities -->
-                        <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-6 rounded-xl space-y-3">
                             <div class="space-y-2">
-                                <h4 class="font-semibold text-gray-900">Capacity</h4>
-                                <p id="venue-capacity" class="text-gray-600 text-sm"></p>
+                                <h4 class="font-semibold text-gray-900">Location</h4>
+                                <div id="location-details" class="text-gray-600 text-sm space-y-1"></div>
                             </div>
+
+                            <!-- Capacity & Amenities -->
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-900">Capacity</h4>
+                                    <p id="venue-capacity" class="text-gray-600 text-sm"></p>
+                                </div>
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-900">Amenities</h4>
+                                    <ul id="amenities-list"
+                                        class="text-gray-600 text-sm space-y-1 overflow-y-auto h-40">
+
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
                             <div class="space-y-2">
-                                <h4 class="font-semibold text-gray-900">Amenities</h4>
-                                <ul id="amenities-list" class="text-gray-600 text-sm space-y-1"></ul>
+                                <h4 class="font-semibold text-gray-900">Contact Information</h4>
+                                <div id="contact-details" class="text-gray-600 text-sm space-y-1"></div>
                             </div>
                         </div>
-
-                        <!-- Contact Information -->
-                        <div class="space-y-2">
-                            <h4 class="font-semibold text-gray-900">Contact Information</h4>
-                            <div id="contact-details" class="text-gray-600 text-sm space-y-1"></div>
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex gap-3 pt-4">
-                            <div id="book-again-container" class="hidden">
-                                <button
-                                    class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
-                                    Book Again
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews Section -->
-                <div id="reviews-section" class="mt-8 pt-6 border-t">
-                    <h4 class="font-semibold text-gray-900 mb-4">Reviews</h4>
-                    <div id="reviews-container" class="space-y-4">
-                        <!-- Reviews will be dynamically loaded here -->
                     </div>
                 </div>
             </div>
@@ -785,75 +820,88 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
         bookingStatus.textContent = statusText;
         bookingStatus.className = `px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.booking_status_id)}`;
 
+        // set booking details
+        const startDate = new Date(booking.booking_start_date);
+        const endDate = new Date(booking.booking_end_date);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+        document.getElementById('date').textContent = `${startDate.toLocaleDateString('en-US', options)} to ${endDate.toLocaleDateString('en-US', options)}`;
+        document.getElementById('daysnights').textContent = `${booking.booking_duration} days`;
+        document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.venue_price)}`;
+        document.getElementById('guest').textContent = `${booking.booking_participants} guests`;
+        document.getElementById('total-entrance').textContent = `₱${numberWithCommas(booking.booking_entrance)}`;
+        document.getElementById('total-cleaning').textContent = `₱${numberWithCommas(booking.booking_cleaning)}`;
+        document.getElementById('platform-fee').textContent = `₱${numberWithCommas(booking.booking_service_fee)}`;
+
         // Set price details
-        document.getElementById('price-per-night').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
-        document.getElementById('booking-duration').textContent = `${booking.booking_duration} days`;
-        document.getElementById('cleaning-fee').textContent = `₱500`;
+        document.getElementById('total-payment').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
+        document.getElementById('mandatory-discount').textContent = Math.round(booking.mandatory_discount_value) + '%';
+        document.getElementById('coupon').textContent = Math.round(booking.discount_value) + '%';
+        document.getElementById('down-payment').textContent = `₱${numberWithCommas(booking.booking_dp_amount)}`;
+        document.getElementById('balance-payment').textContent = `₱${numberWithCommas(booking.booking_balance)}`;
+        document.getElementById('payment-method').textContent = booking.payment_method_name;
+        const paymentReference = booking.booking_payment_reference;
+
+        if (paymentReference.match(/\.(jpg|jpeg|png)$/i)) {
+            document.getElementById('payment-reference').innerHTML = `<img src="./${paymentReference}" class="h-40" alt="Payment Reference Image" />`;
+        } else {
+            // Otherwise, display the payment reference as text
+            document.getElementById('payment-reference').innerHTML = paymentReference;
+        }
 
         // Set location details
         const locationDetails = document.getElementById('location-details');
         locationDetails.innerHTML = `
             <p class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
                 ${booking.venue_location}
             </p>
-            <p class="ml-6">Governor Camins Avenue, Zone II</p>
-            <p class="ml-6">Baliwasan, Zamboanga City</p>
-            <p class="ml-6">Zamboanga Peninsula, 7000</p>
         `;
 
         // Set capacity and amenities
-        document.getElementById('venue-capacity').textContent = `${booking.venue_capacity || 3} guests`;
+        document.getElementById('venue-capacity').textContent = `${booking.venue_capacity} guests`;
         const amenitiesList = document.getElementById('amenities-list');
-        amenitiesList.innerHTML = `
+        let venue_amenities = JSON.parse(booking.venue_amenities);
+
+        // Check if venue_amenities is an array before calling forEach
+        if (Array.isArray(venue_amenities)) {
+            let amenitiesHTML = '';
+            venue_amenities.forEach(amenity => {
+                amenitiesHTML += `
             <li class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
-                Pool
-            </li>
-            <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                WiFi
-            </li>
-            <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                Air-conditioned Room
-            </li>
-            <li class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                Smart TV
+                ${amenity}
             </li>
         `;
+            });
+
+            amenitiesList.innerHTML = amenitiesHTML;
+        }
 
         // Set contact details
         const contactDetails = document.getElementById('contact-details');
         contactDetails.innerHTML = `
-            <p class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-                joevinansoc870@gmail.com
-            </p>
-            <p class="flex items-center gap-2">
-                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                </svg>
-                09053258512
-            </p>
+        <p class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 7.292M12 12v.01M12 16h.01"/>
+            </svg>
+            ${booking.host_name}
+        </p>
+                    <p class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            ${booking.host_email}
+        </p>
+        <p class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            ${booking.host_contact_number}
+        </p>
         `;
 
-        // Toggle book again button
-        bookAgainContainer.classList.toggle('hidden', booking.booking_status_id === '2');
     }
 
     // Helper functions
@@ -1099,7 +1147,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                         <div class="section-title">Payment Details</div>
                         <div class="info">
                             <div>
-                            <span class="label">Payment Method:</span> ${bookingData.booking_payment_method}
+                            <span class="label">Payment Method:</span> ${bookingData.payment_method_name}
                             </div>
                             <div class="flex flex-col gap-2 items-start">
                             <span class="label">Reference Number:</span> 
@@ -1285,7 +1333,7 @@ $previousBooking = $venueObj->getAllBookings($USER_ID, $PREVIOUS_BOOKING);
                     <div class="section">
                         <div class="section-title">Payment Details</div>
                         <div class="info">
-                            <div><span class="label">Payment Method:</span> ${bookingData.booking_payment_method}</div>
+                            <div><span class="label">Payment Method:</span> ${bookingData.payment_method_name}</div>
                             <div><span class="label">Reference Number:</span> ${bookingData.booking_payment_reference}</div>
                         </div>
                     </div>

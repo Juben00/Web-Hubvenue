@@ -159,7 +159,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -174,7 +174,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -283,7 +283,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -298,7 +298,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -398,7 +398,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -413,7 +413,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -522,7 +522,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -537,7 +537,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                     'booking_end_date' => $booking['booking_end_date'],
                                                     'booking_duration' => $booking['booking_duration'],
                                                     'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'booking_payment_method' => $booking['booking_payment_method'],
+                                                    'payment_method_name' => $booking['payment_method_name'],
                                                     'booking_payment_reference' => $booking['booking_payment_reference'],
                                                     'booking_service_fee' => $booking['booking_service_fee'],
                                                     'venue_location' => $booking['venue_location']
@@ -770,12 +770,12 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                 </div>
                                 <div
                                     class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Raw Cost</h5>
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Total Cost</h5>
                                     <p id="raw-cost" class="text-gray-900 font-medium text-sm"></p>
                                 </div>
                                 <div
                                     class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Total Cost</h5>
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Grand Total</h5>
                                     <p id="total-cost" class="text-gray-900 font-medium text-sm"></p>
                                 </div>
                                 <div
@@ -1086,9 +1086,9 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             : 'No email provided';
 
         // Set xes with fallback
-        document.getElementById('xes').innerHTML = booking.guest_sex_id === 1
+        document.getElementById('xes').innerHTML = booking.guest_sex === 1
             ? 'Male'
-            : (booking.guest_sex_id === 2 ? 'Female' : 'Not specified');
+            : (booking.guest_sex === 2 ? 'Female' : 'Not specified');
 
         // Show modal with fade-in effect
         modal.classList.remove('hidden');
@@ -1128,14 +1128,15 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         locationDetails.innerHTML = `<p>${booking.address}</p>`;
 
         // Set capacity and amenities
-        document.getElementById('venue-capacity').textContent = `${booking.capacity || 3} guests`;
+        document.getElementById('venue-capacity').textContent = `${booking.venue_capacity} guests`;
+
         const amenitiesList = document.getElementById('amenities-list');
-        const amenities = JSON.parse(booking.amenities); // Parse the JSON string first
+        const amenities = JSON.parse(booking.venue_amenities); // Parse the JSON string first
         amenitiesList.innerHTML = amenities.map(amenity => `<li>${amenity}</li>`).join('');
 
         // Set rules
         const rulesList = document.getElementById('venue-rules');
-        const rules = JSON.parse(booking.rules); // Parse the JSON string first
+        const rules = JSON.parse(booking.venue_rules); // Parse the JSON string first
         rulesList.innerHTML = rules.map(rule => `<li>${rule}</li>`).join('');
 
         // Set booking details
@@ -1152,12 +1153,12 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         });
         document.getElementById('request').textContent = booking.booking_request;
         document.getElementById('attendees').textContent = booking.booking_participants;
-        document.getElementById('mode-of-payment').textContent = booking.booking_payment_method;
+        document.getElementById('mode-of-payment').textContent = booking.payment_method_name;
         document.getElementById('raw-cost').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
-        document.getElementById('total-cost').textContent = `₱${numberWithCommas(parseFloat(booking.booking_grand_total) + parseFloat(booking.booking_balance))}`;
-        document.getElementById('payment').textContent = `₱${numberWithCommas(booking.booking_grand_total)}`;
+        document.getElementById('total-cost').textContent = `₱${numberWithCommas(parseFloat(booking.booking_dp_amount + booking.booking_balance))}`;
+        document.getElementById('payment').textContent = `₱${numberWithCommas(booking.booking_dp_amount)}`;
         document.getElementById('balance').textContent = `₱${numberWithCommas(booking.booking_balance)}`;
-        document.getElementById('reservation-date').textContent = new Date(booking.created_at).toLocaleDateString('en-US', {
+        document.getElementById('reservation-date').textContent = new Date(booking.booking_created_at).toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
             year: 'numeric'
@@ -1165,24 +1166,10 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
         // Set discount details
         const discount = document.getElementById('discount');
-        let discountText = booking.is_discounted == 0 ? '' : 'PWD/Senior Citizen Discount';
+        let discountText = booking.is_discounted == null ? '' : 'PWD/Senior Citizen Discount';
         let platformDiscount = '';
-        switch (booking.booking_discount) {
-            case 'SAVE30':
-                platformDiscount = '30% Platform Discount';
-                break;
-            case 'SAVE20':
-                platformDiscount = '20% Platform Discount';
-                break;
-            case 'SAVE10':
-                platformDiscount = '10% Platform Discount';
-                break;
-            default:
-                platformDiscount = '';
-                break;
-        }
-        discount.textContent = `${discountText} ${platformDiscount}`;
-        document.getElementById('name').textContent = `${booking.guest_firstname} ${booking.guest_lastname}`;
+        discount.textContent = `${discountText} ${booking.discount_code ? `${booking.discount_code} - ${booking.discount_value}%` : ''}`;
+        document.getElementById('name').textContent = `${booking.guest_name}`;
 
         const birthDate = new Date(booking.guest_birthdate); // Assuming 'booking.birthdate' is in a valid date format
         const today = new Date();

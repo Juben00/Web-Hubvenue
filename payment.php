@@ -456,7 +456,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                         ?>
 
                         document.getElementById('subTotal').textContent = `₱ ${gt.toFixed(2)}`;
-                        document.getElementById('discountValue').textContent = `${(couponDiscount * 100).toFixed(2)}%`;
+                        document.getElementById('discountValue').textContent = `${(couponDiscount * 100)}%`;
                         document.getElementById('couponMessage').classList.remove('hidden');
                         document.getElementById('couponCode').disabled = true;
                         document.getElementById('applyCouponBtn').style.display = '';
@@ -485,6 +485,7 @@ $_SESSION['reservationFormData'] = $reservationData;
             const totalAmount = totalToPay.toFixed(2);
             appendHiddenInput(paymentForm, 'Total', totalToPay.toFixed(2));
             appendHiddenInput(paymentForm, 'Balance', leftToPay.toFixed(2));
+            appendHiddenInput(paymentForm, 'couponCode', couponCode.value);
 
             document.getElementById('nextBtn').disabled = true;
 

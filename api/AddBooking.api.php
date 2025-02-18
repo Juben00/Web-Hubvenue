@@ -10,9 +10,9 @@ $reservationData = $_SESSION['reservationFormData'];
 $accountObj = new Account();
 $venueObj = new Venue();
 
-$booking_start_date = $booking_end_date = $booking_duration = $booking_status_id = $booking_participants = $booking_original_price = $booking_grand_total = $booking_guest_id = $booking_venue_id = $booking_discount = $booking_payment_method = $booking_payment_reference = $booking_payment_status_id = $booking_cancellation_reason = $booking_service_fee = "";
+$booking_start_date = $booking_end_date = $booking_duration = $booking_status_id = $booking_participants = $booking_original_price = $booking_grand_total = $booking_guest_id = $booking_venue_id = $booking_discount = $payment_method_name = $booking_payment_reference = $booking_payment_status_id = $booking_cancellation_reason = $booking_service_fee = "";
 
-$booking_start_dateErr = $booking_end_dateErr = $booking_durationErr = $booking_status_idErr = $booking_participantsErr = $booking_original_priceErr = $booking_grand_totalErr = $booking_guest_idErr = $booking_venue_idErr = $booking_discountErr = $booking_payment_methodErr = $booking_payment_referenceErr = $booking_payment_status_idErr = $booking_cancellation_reasonErr = $booking_service_feeErr = "";
+$booking_start_dateErr = $booking_end_dateErr = $booking_durationErr = $booking_status_idErr = $booking_participantsErr = $booking_original_priceErr = $booking_grand_totalErr = $booking_guest_idErr = $booking_venue_idErr = $booking_discountErr = $payment_method_nameErr = $booking_payment_referenceErr = $booking_payment_status_idErr = $booking_cancellation_reasonErr = $booking_service_feeErr = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -28,12 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $booking_status_id = 1;
     $booking_participants = clean_input($reservationData['numberOfGuest']);
     $booking_request = clean_input($reservationData['specialRequest']);
-    $booking_original_price = clean_input($reservationData['grandTotal']);
-    $booking_grand_total = clean_input($reservationData['grandTotalShow']);
+    $booking_grand_total = clean_input($reservationData['grandTotal']);
     $booking_balance = clean_input($reservationData['Balance']);
     $booking_guest_id = clean_input($_SESSION['user']);
     $booking_venue_id = clean_input($reservationData['venueId']);
-    $booking_payment_method = clean_input($_POST['paymentMethod']);
+    $payment_method_name = clean_input($_POST['paymentMethod']);
     $booking_payment_reference = clean_input($_POST['finalRef']);
     $booking_payment_receipt = clean_input($_FILES["receiptUpload"]["name"]);
     $booking_payment_status_id = 1;
@@ -65,9 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($booking_participants)) {
         $booking_participantsErr = "Number of participants is required";
     }
-    if (empty($booking_original_price)) {
-        $booking_original_priceErr = "Original price is required";
-    }
     if (empty($booking_grand_total)) {
         $booking_grand_totalErr = "Grand total is required";
     }
@@ -77,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($booking_venue_id)) {
         $booking_venue_idErr = "Venue ID is required";
     }
-    if (empty($booking_payment_method)) {
-        $booking_payment_methodErr = "Payment method is required";
-    } else if ($booking_payment_method === "gcash") {
-        $bpm = "G-cash";
-    } else if ($booking_payment_method === "paymaya") {
-        $bpm = "PayMaya";
+    if (empty($payment_method_name)) {
+        $payment_method_nameErr = "Payment method is required";
+    } else if ($payment_method_name === "gcash") {
+        $bpm = "1";
+    } else if ($payment_method_name === "paymaya") {
+        $bpm = "2";
     }
 
     if ($booking_payment_receipt !== "") {
@@ -128,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (
         empty($booking_start_dateErr) && empty($booking_end_dateErr) && empty($booking_participantsErr) &&
-        empty($booking_durationErr) && empty($booking_original_priceErr) && empty($booking_grand_totalErr) &&
-        empty($booking_guest_idErr) && empty($booking_venue_idErr) && empty($booking_payment_methodErr) &&
+        empty($booking_durationErr) && empty($booking_grand_totalErr) &&
+        empty($booking_guest_idErr) && empty($booking_venue_idErr) && empty($payment_method_nameErr) &&
         empty($booking_payment_referenceErr)
     ) {
         $booking_payment_reference = $booking_payment_reference === "" ? $booking_payment_receipt : $booking_payment_reference;
@@ -170,11 +166,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $booking_end_dateErr,
                 $booking_participantsErr,
                 $booking_durationErr,
-                $booking_original_priceErr,
                 $booking_grand_totalErr,
                 $booking_guest_idErr,
                 $booking_venue_idErr,
-                $booking_payment_methodErr,
+                $payment_method_nameErr,
                 $booking_payment_referenceErr
             ]))
         ]);
