@@ -6,8 +6,8 @@ $accountObj = new Account();
 
 session_start();
 
-$fullname = $address = $birthdate = $idOne_type = $idOne_url = $idTwo_type = $idTwo_url = "";
-$fullnameErr = $addressErr = $birthdateErr = $idOne_typeErr = $idOne_urlErr = $idTwo_typeErr = $idTwo_urlErr = "";
+$fullname = $address = $birthdate = $idOne_type = $idOne_url = $idTwo_type = $idTwo_url = $MOP = $accNum = "";
+$fullnameErr = $addressErr = $birthdateErr = $idOne_typeErr = $idOne_urlErr = $idTwo_typeErr = $idTwo_urlErr = $MOPErr = $accNumErr = "";
 $uploadDir = '/host_id_image/';
 $allowedType = ['jpg', 'jpeg', 'png'];
 
@@ -18,6 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Check if idType and idType2 are set before trying to access them
     $idOne_type = isset($_POST['idType']) ? clean_input($_POST['idType']) : '';
     $idTwo_type = isset($_POST['idType2']) ? clean_input($_POST['idType2']) : '';
+
+    $MOP = clean_input($_POST['paymentMethod']);
+    $accNum = clean_input($_POST['accountNumber']);
 
     // Validate Full Name
     if (empty($fullname)) {
@@ -40,6 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($idTwo_type)) {
         $idTwo_typeErr = 'ID type is required';
     }
+
+
 
     // Validate and Upload ID Image 1
     if (empty($_FILES['idImage']['name'])) {
@@ -79,9 +84,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
+    if (empty($MOP)) {
+        $MOPErr = 'Please select a payment method';
+    }
+
+    if (empty($accNum)) {
+        $accNumErr = 'Please provide an account number';
+    }
+
 
     // Check for errors and proceed with upgrading user
-    if (empty($fullnameErr) && empty($addressErr) && empty($birthdateErr) && empty($idOne_typeErr) && empty($idOne_urlErr) && empty($idTwo_typeErr) && empty($idTwo_urlErr)) {
+    if (empty($fullnameErr) && empty($addressErr) && empty($birthdateErr) && empty($idOne_typeErr) && empty($idOne_urlErr) && empty($idTwo_typeErr) && empty($idTwo_urlErr) && empty($MOPErr) && empty($accNumErr)) {
         $accountObj->userId = $_SESSION['user'];
         $accountObj->fullname = $fullname;
         $accountObj->address = $address;
@@ -90,6 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $accountObj->idOne_url = $idOne_url;
         $accountObj->idTwo_type = $idTwo_type;
         $accountObj->idTwo_url = $idTwo_url;
+        $accountObj->MOP = $MOP;
+        $accountObj->accNum = $accNum;
 
         $result = $accountObj->upgradeUser();
 
