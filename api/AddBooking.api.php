@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $booking_balance = clean_input($_POST['Balance']);
     $booking_dp_id = clean_input($reservationData['Downpayment']);
     $booking_coupon_code = clean_input($venueObj->getIdOfCoupon(isset($_POST['couponCode']) && !empty($_POST['couponCode']) ? $_POST['couponCode'] : 'none'));
-    $booking_disount_id = clean_input($reservationData['discount']);
+    $booking_discount_id = clean_input(!empty($reservationData['discount']) ? $reservationData['discount'] : null);
 
     if (empty($booking_start_date)) {
         $booking_start_dateErr = "Start date is required";
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $booking_balance,
             $booking_dp_id,
             $booking_coupon_code,
-            $booking_disount_id,
+            $booking_discount_id,
             $booking_status_id,
             $booking_guest_id,
             $booking_venue_id,

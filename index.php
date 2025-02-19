@@ -90,7 +90,7 @@ $venueImages = $venueObj->getAllVenueImages();
             height: 90vh;
             background-size: cover;
             background-position: center;
-            transition: background 1s ease-in-out;
+            transition: background 1s ease-in;
             margin: 0;
             position: relative;
             z-index: 1;
@@ -105,11 +105,8 @@ $venueImages = $venueObj->getAllVenueImages();
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
-            /* Adjust the opacity as needed */
             z-index: -1;
-            /* Place the overlay behind the content */
             pointer-events: none;
-            /* Ensure the overlay doesn't interfere with interactions */
         }
 
         #authModal {

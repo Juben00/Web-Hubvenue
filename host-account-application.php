@@ -220,27 +220,6 @@ $address = getAddressByCoordinates($user['address']);
                                     <input type="text" id="address" name="address" placeholder="Where do you live?" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                         value="<?php echo htmlspecialchars($address); ?>" readonly>
-                                    <!-- <button class="maps-button border bg-gray-50 hover:bg-gray-100 duration-150 p-3 rounded-md">
-                                            <svg height="24px" width="24px" version="1.1" id="Layer_1"
-                                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                                viewBox="0 0 512 512" xml:space="preserve" fill="#bcc2bc" stroke="#bcc2bc">
-                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                                <g id="SVGRepo_iconCarrier">
-                                                    <polygon points="154.64,420.096 154.64,59.496 0,134 0,512 "></polygon>
-                                                    <polygon style="fill:#d3d5de;"
-                                                        points="309.288,146.464 309.288,504.472 154.64,420.096 154.64,59.496 ">
-                                                    </polygon>
-                                                    <polygon
-                                                        points="463.928,50.152 309.288,146.464 309.288,504.472 463.928,415.68 ">
-                                                    </polygon>
-                                                    <path style="fill:#e73023;"
-                                                        d="M414.512,281.656l-11.92-15.744c-8.8-11.472-85.6-113.984-85.6-165.048 C317.032,39.592,355.272,0,414.512,0S512,39.592,512,100.864c0,50.992-76.8,153.504-85.488,165.048L414.512,281.656z">
-                                                    </path>
-                                                    <circle style="fill:#FFFFFF;" cx="414.512" cy="101.536" r="31.568"></circle>
-                                                </g>
-                                            </svg>
-                                        </button> -->
                                 </span>
                             </div>
                             <div>
@@ -311,8 +290,34 @@ $address = getAddressByCoordinates($user['address']);
                     </div>
 
 
-                    <!-- Step 4: Review and Submit -->
                     <div id="step4" class="step hidden">
+                        <h1 class="text-2xl font-bold mb-2">Mode of Payment</h1>
+                        <p class="text-gray-600 mb-6">Select your payment method and upload your identification card.</p>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="paymentMethod" class="block text-sm font-medium text-gray-700">Payment
+                                    Method</label>
+                                <select name="paymentMethod" id="paymentMethod"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 px-2 py-3">
+                                    <option value="" disabled selected>Please choose your payment method</option>
+                                    <option value="G-Cash">G-Cash</option>
+                                    <option value="PayMaya">PayMaya</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="paymentMethod" class="block text-sm font-medium text-gray-700">Account
+                                    Number</label>
+                                <input type="text" id="accountNumber" name="accountNumber"
+                                    placeholder="Enter your account number" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                                    value="">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Step 4: Review and Submit -->
+                    <div id="step5" class="step hidden">
                         <h1 class="text-2xl font-bold mb-2">Review and Submit</h1>
                         <p class="text-gray-600 mb-6">Please review your information before submitting.</p>
                         <div id="reviewContent" class="space-y-2"></div>
@@ -351,12 +356,15 @@ $address = getAddressByCoordinates($user['address']);
 
             // Show specific step based on current user
             function showStep(stepuser) {
-                steps.forEach((step, user) => {
-                    step.classList.toggle('hidden', user !== stepuser);
-                });
-                prevBtn.style.display = stepuser === 0 ? 'none' : 'block';
-                nextBtn.textContent = stepuser === steps.length - 1 ? 'Submit' : 'Next';
-                progressBarFill.style.width = `${((stepuser + 1) / steps.length) * 100}%`;
+                if (stepuser) {
+
+                    steps.forEach((step, user) => {
+                        step.classList.toggle('hidden', user !== stepuser);
+                    });
+                    prevBtn.style.display = stepuser === 0 ? 'none' : 'block';
+                    nextBtn.textContent = stepuser === steps.length - 1 ? 'Submit' : 'Next';
+                    progressBarFill.style.width = `${((stepuser + 1) / steps.length) * 100}%`;
+                }
             }
 
             // Update review content with user inputs
@@ -366,6 +374,8 @@ $address = getAddressByCoordinates($user['address']);
                 const bd = document.getElementById('hostBd').value;
                 const idType1 = document.getElementById('idType').value;
                 const idType2 = document.getElementById('idType2').value;
+                const MOP = document.getElementById('paymentMethod').value;
+                const accNum = document.getElementById('accountNumber').value;
 
                 reviewContent.innerHTML = `
                 <p><strong>Full Name:</strong> ${fullName || 'Empty'}</p>
@@ -373,6 +383,9 @@ $address = getAddressByCoordinates($user['address']);
                 <p><strong>Birthdate:</strong> ${bd || 'Empty'}</p>
                 <p><strong>Identification Card 1 Type:</strong> ${idType1 || 'Empty'}</p>
                 <p><strong>Identification Card 2 Type:</strong> ${idType2 || 'Empty'} </p>
+                <p><strong>Payment Method:</strong> ${MOP || 'Empty'}</p>
+                <p><strong>Account Number:</strong> ${accNum || 'Empty'}</p>
+
             `;
             }
 
@@ -437,6 +450,16 @@ $address = getAddressByCoordinates($user['address']);
                     }
                 }
 
+                if (currentStep === 3) {
+                    const paymentMethod = document.getElementById('paymentMethod').value;
+                    const accountNumber = document.getElementById('accountNumber').value;
+
+                    if (!paymentMethod || !accountNumber) {
+                        showModal('Please fill in all required fields before proceeding.', undefined, "black_ico.png");
+                        return;
+                    }
+                }
+
                 // Proceed to the next step if it's not the last step
                 if (currentStep < steps.length - 1) {
                     // Update review content on the second-to-last step
@@ -450,11 +473,10 @@ $address = getAddressByCoordinates($user['address']);
                     return; // Exit after moving to the next step
                 }
 
-                // Submit the form if it's the final step
                 if (currentStep === steps.length - 1) {
                     document.getElementById('sform').click();
                 }
-            });       // Handle the Previous button click
+            });
             prevBtn?.addEventListener('click', function () {
                 if (currentStep > 0) {
                     currentStep--;
