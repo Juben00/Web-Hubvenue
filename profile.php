@@ -226,5 +226,8 @@ if (!isset($_SESSION['user'])) {
         let currentStats = null;
         let revenueChart = null;
         let bookingsChart = null;
+
+
+        let discountsToDelete = []; 
     </script>
 </body>
