@@ -29,6 +29,9 @@ class Account
     public $idTwo_type;
     public $idTwo_url;
 
+    public $MOP;
+    public $accNum;
+
     protected $db;
 
     function __construct()
@@ -277,7 +280,7 @@ class Account
             }
 
             // Insert new host application
-            $sql = "INSERT INTO host_application (userId, fullname, address, birthdate, status_id) VALUES (:userId, :fullname, :address, :birthdate, :status_id)";
+            $sql = "INSERT INTO host_application (userId, fullname, address, birthdate, MOP, MOP_details, status_id) VALUES (:userId, :fullname, :address, :birthdate, :MOP, :MOP_details, :status_id)";
             $stmt = $conn->prepare($sql);
 
             $stmt->bindParam(':userId', $this->userId);
@@ -285,6 +288,8 @@ class Account
             $stmt->bindParam(':address', $this->address);
             $stmt->bindParam(':birthdate', $this->birthdate);
             $stmt->bindParam(':status_id', $this->status_id);
+            $stmt->bindParam(':MOP', $this->MOP);
+            $stmt->bindParam(':MOP_details', $this->accNum);
 
             if ($stmt->execute()) {
                 $lastInsertedHostId = $conn->lastInsertId();
@@ -317,8 +322,6 @@ class Account
 
         } catch (PDOException $e) {
             $conn->rollBack();
-            // $errMessage = "Database error: " . $e->getMessage();
-            // error_log($errMessage); // Log the error message
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
