@@ -311,7 +311,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                         <!-- File Upload -->
                         <p class="block text-center text-sm font-medium text-gray-700">OR</p>
                         <div class="relative group">
-                            <label for="receiptUpload" id="receiptLabel" class="flex items-center justify-between gap-2 cursor-pointer 
+                            <label for="receiptUpload" id="receiptLabel" class="overflow-x-scroll flex items-center justify-between gap-2 cursor-pointer 
         border border-gray-300 rounded-lg px-4 py-3 shadow-sm bg-gray-50 
         text-sm text-gray-600 hover:bg-gray-100 hover:border-gray-400 transition">
                                 <div class="flex items-center gap-2">

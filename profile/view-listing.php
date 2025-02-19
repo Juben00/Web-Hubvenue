@@ -849,7 +849,6 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 </div>
 
 <script>
-    let discountsToDelete = []; 
 
     function deleteDiscount(e) {
         e.preventDefault();

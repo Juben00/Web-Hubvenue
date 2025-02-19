@@ -357,7 +357,7 @@ class Venue
         $booking_balance,
         $booking_dp_id,
         $booking_coupon_id,
-        $booking_discount_id,
+        $booking_discount_id = null,
         $booking_status_id,
         $booking_guest_id,
         $booking_venue_id,
@@ -387,7 +387,7 @@ class Venue
             $stmt->bindParam(':booking_balance', $booking_balance);
             $stmt->bindParam(':booking_dp_id', $booking_dp_id);
             $stmt->bindParam(':booking_coupon_id', $booking_coupon_id);
-            $stmt->bindParam(':booking_discount_id', $booking_discount_id);
+            $stmt->bindParam(':booking_discount_id', $booking_discount_id, );
             $stmt->bindParam(':booking_status_id', $booking_status_id);
             $stmt->bindParam(':booking_guest_id', $booking_guest_id);
             $stmt->bindParam(':booking_venue_id', $booking_venue_id);

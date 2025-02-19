@@ -356,12 +356,15 @@ $address = getAddressByCoordinates($user['address']);
 
             // Show specific step based on current user
             function showStep(stepuser) {
-                steps.forEach((step, user) => {
-                    step.classList.toggle('hidden', user !== stepuser);
-                });
-                prevBtn.style.display = stepuser === 0 ? 'none' : 'block';
-                nextBtn.textContent = stepuser === steps.length - 1 ? 'Submit' : 'Next';
-                progressBarFill.style.width = `${((stepuser + 1) / steps.length) * 100}%`;
+                if (stepuser) {
+
+                    steps.forEach((step, user) => {
+                        step.classList.toggle('hidden', user !== stepuser);
+                    });
+                    prevBtn.style.display = stepuser === 0 ? 'none' : 'block';
+                    nextBtn.textContent = stepuser === steps.length - 1 ? 'Submit' : 'Next';
+                    progressBarFill.style.width = `${((stepuser + 1) / steps.length) * 100}%`;
+                }
             }
 
             // Update review content with user inputs

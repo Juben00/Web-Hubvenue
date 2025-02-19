@@ -713,13 +713,13 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
                             <form id="reservationForm" method="POST">
                                 <!-- Pr ice Header -->
-                                <div class="flex flex-col lg:flex-row justify-between items-center mb-6">
-                                    <div class="flex items-baseline">
+                                <div class="flex flex-col lg:flex-row justify-between items-center mb-6 flex-wrap">
+                                    <div class="flex items-center">
                                         <span
-                                            class="text-3xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?></span>
-                                        <span class="text-gray-600 ml-2">/ night</span>
+                                            class="text-xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?><span
+                                                class="text-sm text-gray-600 font-normal">/night</span></span>
                                     </div>
-                                    <div class="flex items-center gap-2 text-sm">
+                                    <div class="flex items-center gap-1 text-sm">
                                         <i class="fas fa-star text-yellow-400 mr-1"></i>
                                         <span
                                             class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
