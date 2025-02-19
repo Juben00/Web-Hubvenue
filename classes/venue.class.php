@@ -1632,6 +1632,25 @@ LEFT JOIN
         }
     }
 
+    function getAllVenueImages()
+    {
+        try {
+            $sql = "SELECT image_url FROM venue_images";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $images = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($images > 1) {
+                return $images;
+            } else {
+                return [];
+            }
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
 }
 
 $venueObj = new Venue();
