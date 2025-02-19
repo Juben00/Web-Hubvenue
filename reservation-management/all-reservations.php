@@ -4,12 +4,12 @@ require_once '../classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-// Get bookings using the existing method
-$Reservations = $venueObj->getBookings();
+// Get all bookings using the new method
+$Reservations = $venueObj->getAdminBookings('all');
 
 // Filter for status_id = 1 (Pending)
 $Reservations = array_filter($Reservations, function ($booking) {
-    return $booking['booking_status_id'] == 1;
+    return isset($booking['booking_status_id']) && $booking['booking_status_id'] == 1;
 });
 
 function formatDate($date)
@@ -103,7 +103,7 @@ function formatDate($date)
                             <td class="py-2 px-4"><?php echo $reservation['venue_capacity']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_original_price'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_discount'] ?: 'N/A'; ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['discount_code'] ?: 'N/A'; ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($discounted_price, 0) ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_payment_method']; ?></td>
@@ -132,7 +132,7 @@ function formatDate($date)
                                         <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                         <input type="hidden" name="status_id" value="2">
                                         <button type="submit"
-                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">
+                                            class="text-blue-500 font-bold py-1 px-3 rounded">
                                             Approve
                                         </button>
                                     </form>
@@ -140,7 +140,7 @@ function formatDate($date)
                                         <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                         <input type="hidden" name="status_id" value="4">
                                         <button type="submit"
-                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded">
+                                            class="text-red-500 font-bold py-1 px-3 rounded">
                                             Reject
                                         </button>
                                     </form>

@@ -4,18 +4,31 @@ require_once '../classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-// Get approved bookings using the new method
-$Reservations = $venueObj->getAdminBookings('approved');
+// Get check-in bookings using the new method
+$Reservations = $venueObj->getAdminBookings('checkin');
+
+// Filter for confirmed bookings that haven't checked in yet
+$Reservations = array_filter($Reservations, function ($booking) {
+    return isset($booking['booking_status_id']) && 
+           isset($booking['booking_checkin_status']) && 
+           $booking['booking_status_id'] == 2 && 
+           $booking['booking_checkin_status'] == 'Pending';
+});
 
 function formatDate($date)
 {
     return date('F d, Y', strtotime($date));
 }
+
+function formatPrice($price)
+{
+    return '₱' . number_format($price, 2);
+}
 ?>
 
 <!-- Search and Filter Section -->
 <section class="bg-white rounded-lg shadow-md p-4 mb-8">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Search and Filter Reservations</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Search and Filter Check-Ins</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
@@ -30,8 +43,7 @@ function formatDate($date)
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
-            <input type="text" id="customerFilter" class="border rounded p-2 w-full"
-                placeholder="Filter by customer name">
+            <input type="text" id="customerFilter" class="border rounded p-2 w-full" placeholder="Filter by customer name">
         </div>
     </div>
     <div class="flex items-center gap-2">
@@ -45,9 +57,9 @@ function formatDate($date)
     </div>
 </section>
 
-<!-- Reservations Table -->
+<!-- Check-In Table -->
 <section class="bg-white rounded-lg shadow-md p-4 mb-8">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Approved Reservations</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Pending Check-Ins</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
             <thead class="bg-gray-100">
@@ -55,21 +67,12 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Book Date</th>
                     <th class="py-2 px-4 text-left">Start Date</th>
                     <th class="py-2 px-4 text-left">End Date</th>
-                    <th class="py-2 px-4 text-left">Number of Days</th>
-                    <th class="py-2 px-4 text-left">Name</th>
+                    <th class="py-2 px-4 text-left">Guest Name</th>
                     <th class="py-2 px-4 text-left">Contact</th>
-                    <th class="py-2 px-4 text-left">Email</th>
                     <th class="py-2 px-4 text-left">Venue</th>
-                    <th class="py-2 px-4 text-left">Venue Location</th>
-                    <th class="py-2 px-4 text-left">Capacity</th>
                     <th class="py-2 px-4 text-left">Participants</th>
-                    <th class="py-2 px-4 text-left">Original Price</th>
-                    <th class="py-2 px-4 text-left">Discount Code</th>
-                    <th class="py-2 px-4 text-left">Discount Value</th>
-                    <th class="py-2 px-4 text-left">Grand Total</th>
-                    <th class="py-2 px-4 text-left">Payment Method</th>
-                    <th class="py-2 px-4 text-left">Payment Reference</th>
-                    <th class="py-2 px-4 text-left">Status</th>
+                    <th class="py-2 px-4 text-left">Check-In Status</th>
+                    <th class="py-2 px-4 text-left">Payment Status</th>
                     <th class="py-2 px-4 text-left">Actions</th>
                 </tr>
             </thead>
@@ -77,38 +80,50 @@ function formatDate($date)
                 <?php
                 if (!empty($Reservations)) {
                     foreach ($Reservations as $reservation) {
-                        // Calculate discount
-                        $original_price = $reservation['booking_original_price'];
-                        $discount_value = $reservation['discount_value'];
-                        $discounted_amount = ($original_price * $discount_value) / 100;
+                        // Get payment status
+                        $payment_status_id = isset($reservation['booking_payment_status_id']) ? $reservation['booking_payment_status_id'] : null;
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_start_date']); ?></td>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_end_date']); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_duration']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['guest_name']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['guest_contact_number']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['guest_email']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['venue_name']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['venue_location']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['venue_capacity']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($original_price, 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['discount_code']; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($discounted_amount, 2); ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['payment_method_name']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_payment_reference']; ?></td>
                             <td class="py-2 px-4">
-                                <span class="bg-green-200 text-green-800 rounded-full px-2">Approved</span>
+                                <span class="rounded-full px-2">Pending Check-In</span>
                             </td>
                             <td class="py-2 px-4">
-                                <form class="cancelReservationButton inline-block" method="POST">
+                                <?php
+                                switch ($payment_status_id) {
+                                    case 1:
+                                        echo '<span class="bg-yellow-200 text-yellow-800 rounded-full px-2">Pending</span>';
+                                        break;
+                                    case 2:
+                                        echo '<span class="bg-green-200 text-green-800 rounded-full px-2">Paid</span>';
+                                        break;
+                                    case 3:
+                                        echo '<span class="bg-red-200 text-red-800 rounded-full px-2">Failed</span>';
+                                        break;
+                                    default:
+                                        echo '<span class="bg-gray-200 text-gray-800 rounded-full px-2">Unknown</span>';
+                                }
+                                ?>
+                            </td>
+                            <td class="py-2 px-4">
+                                <form class="checkInButton inline-block" method="POST">
                                     <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                     <button type="submit"
-                                        class="text-red-500 font-bold py-1 px-3 rounded">
-                                        Cancel
+                                        class=" text-green-500 font-bold py-1 px-3 rounded">
+                                        Check In
+                                    </button>
+                                </form>
+                                <form class="noShowButton inline-block" method="POST">
+                                    <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
+                                    <button type="submit"
+                                        class="  text-red-600  font-bold py-1 px-3 rounded">
+                                        No Show
                                     </button>
                                 </form>
                             </td>
@@ -118,7 +133,7 @@ function formatDate($date)
                 } else {
                     ?>
                     <tr>
-                        <td colspan="19" class="py-4 text-center">No approved reservations found</td>
+                        <td colspan="10" class="py-4 text-center">No pending check-ins found</td>
                     </tr>
                     <?php
                 }
@@ -139,8 +154,8 @@ function formatDate($date)
         $('#clearFilters').click(function () {
             // Clear all inputs
             $('#startDate, #endDate, #venueFilter, #customerFilter').val('');
-            // Show all data rows
-            $('#reservationsTable tr').show();
+            // Show all rows except header
+            $('#reservationsTable tr:not(:first)').show();
             $('#noResultsRow').remove();
         });
 
@@ -150,21 +165,21 @@ function formatDate($date)
             const venue = $('#venueFilter').val().toLowerCase();
             const customer = $('#customerFilter').val().toLowerCase();
 
-            // Remove existing no results row
+            // Hide the "No results" row if it exists
             $('#noResultsRow').remove();
 
-            // Get all data rows (excluding the header)
-            const dataRows = $('#reservationsTable tr:not(thead tr)');
-            let visibleRows = 0;
+            // Get all rows except the header row
+            const rows = $('#reservationsTable tr:not(:first)');
 
-            dataRows.each(function () {
+            rows.each(function () {
                 const row = $(this);
+                // Skip the "No results" row if it exists
                 if (row.attr('id') === 'noResultsRow') return;
 
                 const rowStartDate = new Date(row.find('td:eq(1)').text()).getTime();
                 const rowEndDate = new Date(row.find('td:eq(2)').text()).getTime();
-                const rowVenue = row.find('td:eq(7)').text().toLowerCase();
-                const rowCustomer = row.find('td:eq(4)').text().toLowerCase();
+                const rowVenue = row.find('td:eq(5)').text().toLowerCase();
+                const rowCustomer = row.find('td:eq(3)').text().toLowerCase();
 
                 let showRow = true;
 
@@ -188,47 +203,77 @@ function formatDate($date)
                     showRow = false;
                 }
 
-                if (showRow) {
-                    visibleRows++;
-                    row.show();
-                } else {
-                    row.hide();
-                }
+                row.toggle(showRow);
             });
 
-            // Show "No results found" if no data rows are visible
-            if (visibleRows === 0) {
-                $('#reservationsTable tbody').append(
-                    '<tr id="noResultsRow"><td colspan="19" class="py-4 text-center">No results found</td></tr>'
+            // Show "No results found" if all rows are hidden
+            if ($('#reservationsTable tr:visible').length === 1) { // Only header row is visible
+                $('#reservationsTable').append(
+                    '<tr id="noResultsRow"><td colspan="10" class="py-4 text-center">No results found</td></tr>'
                 );
             }
         }
 
-        // Update cancel reservation handler
-        $('.cancelReservationButton').on("submit", function (e) {
+        // Handle check-in
+        $('.checkInButton').on("submit", function (e) {
             e.preventDefault();
             const formData = $(this).serialize();
 
             confirmshowModal(
-                "Are you sure you want to cancel this reservation?",
+                "Are you sure you want to check in this guest?",
                 function () {
                     $.ajax({
                         type: "POST",
-                        url: "../api/CancelReservation.api.php",
+                        url: "../api/checkInBooking.api.php",
                         data: formData,
                         dataType: 'json',
                         success: function (response) {
                             if (response.status === "success") {
-                                loadReservationView('cancelled-reservations'); // Change to load cancelled reservations
+                                showFeedbackModal("Success!", response.message, "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                showFeedbackModal("Error!", response.message, "error");
                             }
                         },
-                        error: function (xhr, status, error) {
-                            console.error("Error:", error);
+                        error: function () {
+                            showFeedbackModal("Error!", "Something went wrong. Please try again.", "error");
                         }
                     });
-                },
-                "black_ico.png"
+                }
+            );
+        });
+
+        // Handle no-show
+        $('.noShowButton').on("submit", function (e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            confirmshowModal(
+                "Are you sure you want to mark this guest as no-show?",
+                function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "../api/noShowBooking.api.php",
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status === "success") {
+                                showFeedbackModal("Success!", response.message, "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 2000);
+                            } else {
+                                showFeedbackModal("Error!", response.message, "error");
+                            }
+                        },
+                        error: function () {
+                            showFeedbackModal("Error!", "Something went wrong. Please try again.", "error");
+                        }
+                    });
+                }
             );
         });
     });
-</script>
+</script> 

@@ -1,31 +1,52 @@
 <?php
-require_once '../classes/account.class.php';
 require_once '../classes/venue.class.php';
-require_once '../sanitize.php';
+require_once '../classes/account.class.php';
 
+header('Content-Type: application/json');
+
+$venueObj = new Venue();
+$accountObj = new Account();
+
+// Check if user is logged in and has admin privileges
 session_start();
+if (!isset($_SESSION['logged_in']) || $_SESSION['user_type'] != 3) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Unauthorized access'
+    ]);
+    exit;
+}
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Read and decode the raw JSON input
-    $data = json_decode(file_get_contents('php://input'), true);
+// Get booking ID from POST data
+$booking_id = isset($_POST['booking_id']) ? $_POST['booking_id'] : null;
 
-    $bookingId = clean_input($data['booking_id'] ?? '');
+if (!$booking_id) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Booking ID is required'
+    ]);
+    exit;
+}
 
-    if (empty($bookingId)) {
+try {
+    // Update booking check-in status to No-Show
+    $result = $venueObj->updateBookingNoShow($booking_id);
+
+    if ($result) {
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Guest has been marked as no-show'
+        ]);
+    } else {
         echo json_encode([
             'status' => 'error',
-            'message' => 'Failed to mark booking as no-show. Booking ID is missing.',
+            'message' => 'Failed to mark guest as no-show'
         ]);
-        exit();
     }
-
-    $venueObj = new Venue();
-    $result = $venueObj->markNoShow($bookingId);
-
+} catch (Exception $e) {
     echo json_encode([
-        'status' => $result ? 'success' : 'error',
-        'message' => $result ? 'Booking marked as no-show.' : 'Failed to mark booking as no-show.',
+        'status' => 'error',
+        'message' => $e->getMessage()
     ]);
-    exit();
 }
 ?>
