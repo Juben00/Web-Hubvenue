@@ -141,7 +141,7 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
   // Function to update navigation color based on scroll position
   function updateNavColor() {
     const mainNav = document.getElementById("main-nav");
-    const firstSection = document.querySelector(".first-section");
+    const firstSection = document.getElementById("first-section");
     const bottomSearch = document.getElementById("bottom-search");
     const navButtons = mainNav.querySelectorAll(".nav-buttons");
 

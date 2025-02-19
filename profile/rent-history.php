@@ -146,37 +146,14 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
                                             Details</button>
                                         <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                            <button onclick="printReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
+                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-print mr-2"></i>Print Receipt
                                             </button>
-                                            <button onclick="downloadReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
+                                            <button
+                                                onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-download mr-2"></i>Download Receipt
                                             </button>
@@ -304,37 +281,14 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
                                             Details</button>
                                         <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                            <button onclick="printReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
+                                            <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-print mr-2"></i>Print Receipt
                                             </button>
-                                            <button onclick="downloadReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'payment_method_name' => $booking['payment_method_name'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
+                                            <button
+                                                onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                type="button"
                                                 class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                 <i class="fas fa-download mr-2"></i>Download Receipt
                                             </button>
@@ -1008,7 +962,6 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
             paymentReferenceTemplate = `<p>${bookingData.booking_payment_reference}</p>`;
         }
 
-
         // Add error handling for the window opening
         if (!receiptWindow) {
             alert('Please allow popups to print the receipt');
@@ -1017,163 +970,88 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
 
         const receiptHTML = `
             <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Booking Receipt</title>
-                <style>
-                    @page {
-                        size: A4;
-                        margin: 1.5cm;
-                    }
-                    body {
-                        font-family: Arial, sans-serif;
-                        max-width: 800px;
-                        margin: 0 auto;
-                        padding: 20px;
-                        color: #333;
-                        line-height: 1.6;
-                    }
-                    .logo {
-                        width: 150px;
-                        height: auto;
-                        margin-bottom: 10px;
-                        object-fit: contain;
-                    }
-                    .header {
-                        text-align: center;
-                        margin-bottom: 40px;
-                        padding-bottom: 20px;
-                        border-bottom: 2px solid #e5e5e5;
-                    }
-                    .header h1 {
-                        color: #1a1a1a;
-                        margin: 10px 0;
-                        font-size: 28px;
-                    }
-                    .header p {
-                        color: #666;
-                        font-size: 14px;
-                    }
-                    .receipt-details {
-                        margin-bottom: 30px;
-                        display: grid;
-                        grid-template-columns: repeat(2, 1fr);
-                        gap: 20px;
-                    }
-                    .receipt-details .section {
-                        margin-bottom: 20px;
-                    }
-                    .receipt-details .section-title {
-                        font-weight: bold;
-                        color: #1a1a1a;
-                        margin-bottom: 10px;
-                        font-size: 16px;
-                    }
-                    .receipt-details .info {
-                        background: #f8f8f8;
-                        padding: 15px;
-                        border-radius: 8px;
-                    }
-                    .receipt-details .info div {
-                        margin-bottom: 8px;
-                        font-size: 14px;
-                    }
-                    .receipt-details .label {
-                        color: #666;
-                        font-weight: 500;
-                    }
-                    .total {
-                        margin-top: 30px;
-                        padding: 20px;
-                        background: #f8f8f8;
-                        border-radius: 8px;
-                    }
-                    .total-row {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 10px;
-                        font-size: 14px;
-                    }
-                    .grand-total {
-                        margin-top: 15px;
-                        padding-top: 15px;
-                        border-top: 2px solid #e5e5e5;
-                        font-weight: bold;
-                        font-size: 16px;
-                    }
-                    .footer {
-                        margin-top: 40px;
-                        text-align: center;
-                        color: #666;
-                        font-size: 12px;
-                        padding-top: 20px;
-                        border-top: 1px solid #e5e5e5;
-                    }
-                    @media print {
-                        .no-print {
-                            display: none;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo" 
-                         onerror="this.style.display='none'">
-                    <h1>Booking Receipt</h1>
-                    <p>Thank you for choosing HubVenue!</p>
-                </div>
-                
-                <div class="receipt-details">
-                    <div class="section">
-                        <div class="section-title">Booking Information</div>
-                        <div class="info">
-                            <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
-                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
-                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
-                            <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Venue Details</div>
-                        <div class="info">
-                            <div><span class="label">Venue Name:</span> ${bookingData.venue_name}</div>
-                            <div><span class="label">Location:</span> ${bookingData.venue_location}</div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Payment Details</div>
-                        <div class="info">
-                            <div>
-                            <span class="label">Payment Method:</span> ${bookingData.payment_method_name}
-                            </div>
-                            <div class="flex flex-col gap-2 items-start">
-                            <span class="label">Reference Number:</span> 
-                            <div>${paymentReferenceTemplate}</div>
-                            </div>
-                        </div>
+        <html>
+        <head>
+            <title>Booking Receipt</title>
+            <style>
+                @page {
+                    size: A4;
+                    margin: 1.5cm;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    color: #333;
+                    line-height: 1.6;
+                }
+                .section-title {
+                    font-weight: bold;
+                    color: #1a1a1a;
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                }
+                .info {
+                    background: #f8f8f8;
+                    padding: 15px;
+                    border-radius: 8px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo" onerror="this.style.display='none'">
+                <h1>Booking Receipt</h1>
+                <p>Thank you for choosing HubVenue!</p>
+            </div>
+            
+            <div class="receipt-details">
+                <div class="section">
+                    <div class="section-title">Booking Details</div>
+                    <div class="info">
+                        <div id="booking-date"></div>
+                        <div id="booking-duration"></div>
+                        <div id="price-per-night"></div>
+                        <div id="guest-count"></div>
+                        <div id="entrance-fee"></div>
+                        <div id="cleaning-fee"></div>
+                        <div id="platform-fee"></div>
                     </div>
                 </div>
 
-                <div class="total">
-                    <div class="total-row">
-                        <span>Service Fee</span>
-                        <span>₱${parseFloat(bookingData.booking_service_fee).toFixed(2)}</span>
-                    </div>
-                    <div class="total-row grand-total">
-                        <span>Total Amount</span>
-                        <span>₱${parseFloat(bookingData.booking_grand_total).toFixed(2)}</span>
+                <div class="section">
+                    <div class="section-title">Payment Details</div>
+                    <div class="info">
+                        <div id="total-amount"></div>
+                        <div id="discount-pwd"></div>
+                        <div id="discount-coupon"></div>
+                        <div id="down-payment"></div>
+                        <div id="balance"></div>
+                        <div id="payment-method"></div>
+                        <div id="payment-reference"></div>
                     </div>
                 </div>
 
-                <div class="footer">
-                    <p>This is an electronically generated receipt. For questions or concerns, please contact our support team.</p>
-                    <p>© ${new Date().getFullYear()} HubVenue. All rights reserved.</p>
+                <div class="section">
+                    <div class="section-title">Venue Information</div>
+                    <div class="info">
+                        <div id="venue-location"></div>
+                        <div id="venue-capacity"></div>
+                    </div>
                 </div>
-            </body>
-            </html>
+
+                <div class="section">
+                    <div class="section-title">Contact Information</div>
+                    <div class="info">
+                        <div id="contact-name"></div>
+                        <div id="contact-email"></div>
+                        <div id="contact-phone"></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
         `;
 
         receiptWindow.document.write(receiptHTML);
@@ -1201,161 +1079,100 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
     }
 
     function downloadReceipt(bookingData) {
-        // Create the receipt HTML (reuse the same template as printReceipt)
+
+        const imageExt = ['jpeg', 'jpg', 'png'];
+        let = paymentReferenceTemplate = null;
+        if (imageExt.some(ext => bookingData.booking_payment_reference.endsWith(ext))) {
+            paymentReferenceTemplate = `<img src="./${bookingData.booking_payment_reference}" alt="Payment Reference" class="w-full h-auto">`;
+        } else {
+            paymentReferenceTemplate = `<p>${bookingData.booking_payment_reference}</p>`;
+        }
+
         const receiptHTML = `
             <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Booking Receipt</title>
-                <style>
-                    @page {
-                        size: A4;
-                        margin: 1.5cm;
-                    }
-                    body {
-                        font-family: Arial, sans-serif;
-                        max-width: 800px;
-                        margin: 0 auto;
-                        padding: 20px;
-                        color: #333;
-                        line-height: 1.6;
-                    }
-                    .logo {
-                        width: 150px;
-                        height: auto;
-                        margin-bottom: 10px;
-                        object-fit: contain;
-                    }
-                    .header {
-                        text-align: center;
-                        margin-bottom: 40px;
-                        padding-bottom: 20px;
-                        border-bottom: 2px solid #e5e5e5;
-                    }
-                    .header h1 {
-                        color: #1a1a1a;
-                        margin: 10px 0;
-                        font-size: 28px;
-                    }
-                    .header p {
-                        color: #666;
-                        font-size: 14px;
-                    }
-                    .receipt-details {
-                        margin-bottom: 30px;
-                        display: grid;
-                        grid-template-columns: repeat(2, 1fr);
-                        gap: 20px;
-                    }
-                    .receipt-details .section {
-                        margin-bottom: 20px;
-                    }
-                    .receipt-details .section-title {
-                        font-weight: bold;
-                        color: #1a1a1a;
-                        margin-bottom: 10px;
-                        font-size: 16px;
-                    }
-                    .receipt-details .info {
-                        background: #f8f8f8;
-                        padding: 15px;
-                        border-radius: 8px;
-                    }
-                    .receipt-details .info div {
-                        margin-bottom: 8px;
-                        font-size: 14px;
-                    }
-                    .receipt-details .label {
-                        color: #666;
-                        font-weight: 500;
-                    }
-                    .total {
-                        margin-top: 30px;
-                        padding: 20px;
-                        background: #f8f8f8;
-                        border-radius: 8px;
-                    }
-                    .total-row {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 10px;
-                        font-size: 14px;
-                    }
-                    .grand-total {
-                        margin-top: 15px;
-                        padding-top: 15px;
-                        border-top: 2px solid #e5e5e5;
-                        font-weight: bold;
-                        font-size: 16px;
-                    }
-                    .footer {
-                        margin-top: 40px;
-                        text-align: center;
-                        color: #666;
-                        font-size: 12px;
-                        padding-top: 20px;
-                        border-top: 1px solid #e5e5e5;
-                    }
-                    @media print {
-                        .no-print {
-                            display: none;
-                        }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo" 
-                         onerror="this.style.display='none'">
-                    <h1>Booking Receipt</h1>
-                    <p>Thank you for choosing HubVenue!</p>
-                </div>
-                
-                <div class="receipt-details">
-                    <div class="section">
-                        <div class="section-title">Booking Information</div>
-                        <div class="info">
-                            <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
-                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
-                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
-                            <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Venue Details</div>
-                        <div class="info">
-                            <div><span class="label">Venue Name:</span> ${bookingData.venue_name}</div>
-                            <div><span class="label">Location:</span> ${bookingData.venue_location}</div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-title">Payment Details</div>
-                        <div class="info">
-                            <div><span class="label">Payment Method:</span> ${bookingData.payment_method_name}</div>
-                            <div><span class="label">Reference Number:</span> ${bookingData.booking_payment_reference}</div>
-                        </div>
+        <html>
+        <head>
+            <title>Booking Receipt</title>
+            <style>
+                @page {
+                    size: A4;
+                    margin: 1.5cm;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    color: #333;
+                    line-height: 1.6;
+                }
+                .section-title {
+                    font-weight: bold;
+                    color: #1a1a1a;
+                    margin-bottom: 10px;
+                    font-size: 16px;
+                }
+                .info {
+                    background: #f8f8f8;
+                    padding: 15px;
+                    border-radius: 8px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <img src="./images/white_ico.png" alt="HubVenue Logo" class="logo" onerror="this.style.display='none'">
+                <h1>Booking Receipt</h1>
+                <p>Thank you for choosing HubVenue!</p>
+            </div>
+            
+            <div class="receipt-details">
+                <div class="section">
+                    <div class="section-title">Booking Details</div>
+                    <div class="info">
+                        <div id="booking-date"></div>
+                        <div id="booking-duration"></div>
+                        <div id="price-per-night"></div>
+                        <div id="guest-count"></div>
+                        <div id="entrance-fee"></div>
+                        <div id="cleaning-fee"></div>
+                        <div id="platform-fee"></div>
                     </div>
                 </div>
 
-                <div class="total">
-                    <div class="total-row">
-                        <span>Service Fee</span>
-                        <span>₱${parseFloat(bookingData.booking_service_fee).toFixed(2)}</span>
-                    </div>
-                    <div class="total-row grand-total">
-                        <span>Total Amount</span>
-                        <span>₱${parseFloat(bookingData.booking_grand_total).toFixed(2)}</span>
+                <div class="section">
+                    <div class="section-title">Payment Details</div>
+                    <div class="info">
+                        <div id="total-amount"></div>
+                        <div id="discount-pwd"></div>
+                        <div id="discount-coupon"></div>
+                        <div id="down-payment"></div>
+                        <div id="balance"></div>
+                        <div id="payment-method"></div>
+                        <div id="payment-reference"></div>
                     </div>
                 </div>
 
-                <div class="footer">
-                    <p>This is an electronically generated receipt. For questions or concerns, please contact our support team.</p>
-                    <p>© ${new Date().getFullYear()} HubVenue. All rights reserved.</p>
+                <div class="section">
+                    <div class="section-title">Venue Information</div>
+                    <div class="info">
+                        <div id="venue-location"></div>
+                        <div id="venue-capacity"></div>
+                    </div>
                 </div>
-            </body>
-            </html>
+
+                <div class="section">
+                    <div class="section-title">Contact Information</div>
+                    <div class="info">
+                        <div id="contact-name"></div>
+                        <div id="contact-email"></div>
+                        <div id="contact-phone"></div>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+
         `;
 
         // Create a Blob from the HTML content

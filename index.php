@@ -32,6 +32,8 @@ $VENUE_AVAILABLE = "1"; // 2 if not
 $venues = $venueObj->getAllVenues('2', $VENUE_AVAILABLE);
 $bookmarks = $accountObj->getBookmarks($USER_ID);
 $bookmarkIds = array_column($bookmarks, 'venue_id');
+$venueImages = $venueObj->getAllVenueImages();
+
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +51,7 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
         body {
-            background: #3490dc;
+            background: #FFF;
         }
 
         .cloud-bottom {
@@ -84,9 +86,30 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             transition: color 0.3s ease;
         }
 
-        .first-section {
-            height: 80vh;
-            /* 3/4 of the viewport height */
+        #first-section {
+            height: 90vh;
+            background-size: cover;
+            background-position: center;
+            transition: background 1s ease-in-out;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+
+        #first-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            /* Adjust the opacity as needed */
+            z-index: -1;
+            /* Place the overlay behind the content */
+            pointer-events: none;
+            /* Ensure the overlay doesn't interfere with interactions */
         }
 
         #authModal {
@@ -177,9 +200,6 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
 </head>
 
 <body class="min-h-screen text-gray-900 flex flex-col">
-
-
-
     <!-- Header -->
     <?php
     // Check if the 'user' key exists in the session
@@ -204,11 +224,11 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
         <?php include_once './components/sidebar.html' ?>
 
         <!-- Main content -->
-        <main class="flex-1 mt-28">
+        <main class="flex-1">
             <?php require_once './spinner.php'; ?>
 
             <!-- First section with blue background -->
-            <div class="bg-blue-500/20 relative">
+            <div class="bg-gray-500 relative">
                 <?php require_once './components/coverPage.html' ?>
             </div>
 
@@ -625,6 +645,32 @@ $bookmarkIds = array_column($bookmarks, 'venue_id');
             document.querySelectorAll('.scroll-animate').forEach(element => {
                 observer.observe(element);
             });
+        });
+    </script>
+
+    <!-- bg image animation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const bgPlaceholder = document.getElementById('first-section');
+
+            const venueImages = <?php echo json_encode($venueImages); ?>;
+
+            if (!venueImages || venueImages.length === 0) {
+                console.error('No venue images found. Using fallback image.');
+                bgPlaceholder.style.backgroundImage = `url('./images/default.jpg')`;
+                return;
+            }
+
+            function setRandomBackground() {
+                const randomImage = venueImages[Math.floor(Math.random() * venueImages.length)].image_url;
+                bgPlaceholder.style.backgroundImage = `url('./${randomImage}')`;
+            }
+
+            setRandomBackground();
+
+            setInterval(() => {
+                setRandomBackground();
+            }, 4000);
         });
     </script>
 

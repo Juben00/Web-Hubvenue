@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const stickySearch = document.getElementById('stickySearch');
-    const firstSection = document.querySelector('.first-section');
+    const firstSection = document.getElementById('first-section');
     
     window.addEventListener('scroll', function() {
         // Get the bottom position of the first section
