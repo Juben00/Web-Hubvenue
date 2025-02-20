@@ -1651,6 +1651,210 @@ LEFT JOIN
         }
     }
 
+    public function updateBookingCheckIn($booking_id) {
+        try {
+            $sql = "UPDATE bookings 
+                    SET booking_checkin_status = 'Checked-In',
+                        booking_checkin_date = CURRENT_DATE
+                    WHERE id = ?";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $booking_id);
+            
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateBookingCheckOut($booking_id) {
+        try {
+            $sql = "UPDATE bookings 
+                    SET booking_checkout_status = 'Checked-Out',
+                        booking_checkout_date = CURRENT_DATE,
+                        booking_status_id = 4
+                    WHERE id = ?";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $booking_id);
+            
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateBookingNoShow($booking_id) {
+        try {
+            $sql = "UPDATE bookings 
+                    SET booking_checkin_status = 'No-Show'
+                    WHERE id = ?";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $booking_id);
+            
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function addBookingCharge($booking_id, $item, $description, $cost) {
+        try {
+            $sql = "INSERT INTO booking_charges (booking_id, item, description, cost)
+                    VALUES (?, ?, ?, ?)";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("issd", $booking_id, $item, $description, $cost);
+            
+            return $stmt->execute();
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function getBookingCharges($booking_id) {
+        try {
+            if (!$booking_id) {
+                return [];
+            }
+
+            $conn = $this->db->connect();
+            
+            $sql = "SELECT * FROM booking_charges WHERE booking_id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $booking_id);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log("Error getting booking charges: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function getPaymentMethodName($payment_method_id) {
+        try {
+            $sql = "SELECT payment_method_name 
+                    FROM payment_method_sub 
+                    WHERE id = ?";
+            
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param("i", $payment_method_id);
+            $stmt->execute();
+            
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            
+            return $row ? $row['payment_method_name'] : 'Unknown';
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            return 'Unknown';
+        }
+    }
+
+    public function getPaymentStatusName($payment_status_id) {
+        try {
+            if (!$payment_status_id) {
+                return 'Unknown';
+            }
+
+            $conn = $this->db->connect();
+            
+            $sql = "SELECT payment_status_name FROM payment_status_sub WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $payment_status_id);
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result ? $result['payment_status_name'] : 'Unknown';
+
+        } catch (PDOException $e) {
+            error_log("Error getting payment status name: " . $e->getMessage());
+            return 'Unknown';
+        }
+    }
+
+    public function getAdminBookings($type = 'all') {
+        try {
+            $conn = $this->db->connect();
+
+            $sql = "SELECT 
+                    b.id AS booking_id,
+                    b.booking_start_date,
+                    b.booking_end_date,
+                    b.booking_duration,
+                    b.booking_participants,
+                    b.booking_venue_price AS booking_original_price,
+                    b.booking_grand_total,
+                    b.booking_payment_method,
+                    b.booking_payment_reference,
+                    b.booking_service_fee,
+                    b.booking_status_id,
+                    b.booking_payment_status_id,
+                    b.booking_cancellation_reason,
+                    b.booking_created_at,
+                    b.booking_checkin_status,
+                    b.booking_checkout_status,
+                    b.booking_checkin_date,
+                    b.booking_checkout_date,
+
+                    u.id AS guest_id,
+                    CONCAT(u.firstname, ' ', u.middlename, ' ', u.lastname) AS guest_name,
+                    u.contact_number AS guest_contact_number,
+                    u.email AS guest_email,
+
+                    v.name AS venue_name,
+                    v.location AS venue_location,
+                    v.capacity AS venue_capacity,
+
+                    COALESCE(d.discount_value, 0) AS discount_value,
+                    COALESCE(d.discount_code, 'N/A') AS discount_code,
+                    
+                    pm.payment_method_name
+                FROM 
+                    bookings b
+                    LEFT JOIN users u ON b.booking_guest_id = u.id
+                    LEFT JOIN venues v ON b.booking_venue_id = v.id
+                    LEFT JOIN discounts d ON b.booking_coupon_id = d.id
+                    LEFT JOIN payment_method_sub pm ON b.booking_payment_method = pm.id
+                WHERE 1=1";
+
+            switch ($type) {
+                case 'approved':
+                    $sql .= " AND b.booking_status_id = 2";
+                    break;
+                case 'cancelled':
+                    $sql .= " AND b.booking_status_id = 3";
+                    break;
+                case 'rejected':
+                    $sql .= " AND b.booking_status_id = 4";
+                    break;
+                case 'checkin':
+                    $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Pending'";
+                    break;
+                case 'checkout':
+                    $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Checked-In' AND b.booking_checkout_status = 'Pending'";
+                    break;
+            }
+
+            $sql .= " ORDER BY b.booking_created_at DESC";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log("Error getting admin bookings: " . $e->getMessage());
+            return [];
+        }
+    }
+
 }
 
 $venueObj = new Venue();

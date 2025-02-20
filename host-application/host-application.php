@@ -22,6 +22,8 @@ $users = $account->getHostApplications("", "");
                             <th class="py-2 px-4 text-left">Address</th>
                             <th class="py-2 px-4 text-left">Birthdate</th>
                             <th class="py-2 px-4 text-left">Identification Cards</th>
+                            <th class="py-2 px-4 text-left">Mode of Payment</th>
+                            <th class="py-2 px-4 text-left">MOP Details</th>
                             <th class="py-2 px-4 text-left">Status</th>
                             <th class="py-2 px-4 text-left">Actions</th>
                         </tr>
@@ -47,6 +49,8 @@ $users = $account->getHostApplications("", "");
                                         </a>
                                     <?php endif; ?>
                                 </td>
+                                <td class="py-2 px-4 border-b"><?= $user['MOP'] ?></td>
+                                <td class="py-2 px-4 border-b"><?= $user['MOP_details'] ?></td>
                                 <td class="py-2 px-4 border-b"><?= $user['status'] ?></td>
                                 <td class="py-2 px-4 border-b">
                                     <?php

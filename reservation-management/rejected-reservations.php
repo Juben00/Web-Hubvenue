@@ -4,13 +4,8 @@ require_once '../classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-// Get all bookings
-$allReservations = $venueObj->getBookings();
-
-// Filter for status_id = 4 (Completed)
-$Reservations = array_filter($allReservations, function ($booking) {
-    return $booking['booking_status_id'] == 4;
-});
+// Get rejected bookings using the new method
+$Reservations = $venueObj->getAdminBookings('rejected');
 
 function formatDate($date)
 {
@@ -81,14 +76,17 @@ function formatDate($date)
                 <?php
                 if (!empty($Reservations)) {
                     foreach ($Reservations as $reservation) {
-
-                        $original_price = $reservation['booking_original_price']; // Example original price
-                        $discount_value = number_format($reservation['discount_value']); // Assuming this is 30
-                
-                        $discount_decimal = $discount_value / 100;
-
-                        $discounted_price = $original_price * $discount_decimal;
-
+                        // Calculate discount
+                        $original_price = $reservation['booking_original_price'];
+                        $discount_value = $reservation['discount_value'];
+                        $discounted_amount = ($original_price * $discount_value) / 100;
+                        $payref = $reservation['booking_payment_reference'];
+                        $paymentTemp = null;
+                        if (str_ends_with($payref, ".png") || str_ends_with($payref, ".jpeg") || str_ends_with($payref, ".jpg")) {
+                            $paymentTemp = "<img src='..$payref' alt='Payment Reference Image' style='max-width: 100%; height: auto;'>";
+                        } else {
+                            $paymentTemp = $payref;
+                        }
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
@@ -102,12 +100,12 @@ function formatDate($date)
                             <td class="py-2 px-4"><?php echo $reservation['venue_location']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['venue_capacity']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_original_price'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_discount'] ?: 'N/A'; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($reservation['discount_value'], 2); ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($original_price, 2); ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['discount_code']; ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($discounted_amount, 2); ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_payment_method']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_payment_reference']; ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['payment_method_name']; ?></td>
+                            <td class="py-2 px-4"><?php echo $paymentTemp ?></td>
                             <td class="py-2 px-4">
                                 <span class="bg-red-200 text-red-800 rounded-full px-2">Rejected</span>
                             </td>

@@ -1,8 +1,13 @@
 <?php
-session_start(); ?>
+session_start();
+require_once '../classes/account.class.php';
+
+$accountObj = new Account();
+$user = $accountObj->getUser($_SESSION['user']);
+?>
 <div class="container mx-auto px-6 py-8">
     <h3 class="text-gray-700 text-3xl font-medium">Welcome,
-        <?php echo htmlspecialchars($_SESSION['user']['firstname']) ?>
+        <?php echo htmlspecialchars($user['firstname']) ?>
     </h3>
     <h6 class="text-gray-500 text-1xl font-small">Let's make this day productive.</h6>
 
@@ -89,7 +94,7 @@ session_start(); ?>
                     </div>
                 </div>
             </section>
-
+ 
             <!-- Account Settings Section -->
 
         </div>

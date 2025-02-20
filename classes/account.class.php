@@ -922,6 +922,91 @@ class Account
         }
     }
 
+    public function getAllUsers() {
+        try {
+            $sql = "SELECT 
+                        u.*,
+                        COALESCE(s.name, '') as sex_name,
+                        COALESCE(ut.name, '') as user_type_name
+                    FROM users u
+                    LEFT JOIN sex_sub s ON u.sex_id = s.id
+                    LEFT JOIN user_types_sub ut ON u.user_type_id = ut.id
+                    ORDER BY u.created_at DESC";
+            
+            $stmt = $this->db->connect()->prepare($sql);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function getUserById($id) {
+        try {
+            $sql = "SELECT 
+                        u.*,
+                        COALESCE(s.name, '') as sex_name,
+                        COALESCE(ut.name, '') as user_type_name
+                    FROM users u
+                    LEFT JOIN sex_sub s ON u.sex_id = s.id
+                    LEFT JOIN user_types_sub ut ON u.user_type_id = ut.id
+                    WHERE u.id = :id";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function adminSignup()
+    {
+        try {
+            // Check if the email already exists
+            $sql = 'SELECT * FROM users WHERE email = :email';
+            $chkstmt = $this->db->connect()->prepare($sql);
+            $chkstmt->bindParam(':email', $this->email);
+            $chkstmt->execute();
+
+            if ($chkstmt->rowCount() > 0) {
+                return ['status' => 'error', 'message' => 'Email already exists'];
+            }
+
+            // Insert new account
+            $sql = 'INSERT INTO users (firstname, lastname, middlename, sex_id, user_type_id, birthdate, contact_number, address, email, password, is_Verified) 
+                VALUES (:firstname, :lastname, :middlename, :sex_id, :user_type_id, :birthdate, :contact_number, :address, :email, :password, "Verified")';
+            $stmt = $this->db->connect()->prepare($sql);
+
+            $stmt->bindParam(':firstname', $this->firstname);
+            $stmt->bindParam(':lastname', $this->lastname);
+            $stmt->bindParam(':middlename', $this->middlename);
+            $stmt->bindParam(':sex_id', $this->sex);
+            $stmt->bindParam(':user_type_id', $this->usertype);
+            $stmt->bindParam(':birthdate', $this->birthdate);
+            $stmt->bindParam(':contact_number', $this->contact_number);
+            $stmt->bindParam(':address', $this->address);
+            $stmt->bindParam(':email', $this->email);
+
+            // Hash the password before saving to the database
+            $this->password = password_hash($this->password, PASSWORD_DEFAULT);
+            $stmt->bindParam(':password', $this->password);
+
+            if ($stmt->execute()) {
+                return ['status' => 'success', 'message' => 'Account created successfully'];
+            } else {
+                return ['status' => 'error', 'message' => 'Failed to create account'];
+            }
+        } catch (PDOException $e) {
+            error_log("Error creating account: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }
 
 

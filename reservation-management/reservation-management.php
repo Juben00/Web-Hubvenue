@@ -9,7 +9,7 @@ $accountObj = new Account();
     <h1 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-6">Reservation Management</h1>
 
     <!-- Tabs -->
-    <div class="flex space-x-1 rounded-lg bg-white p-1 mb-4">
+    <div class="flex flex-wrap gap-2 rounded-lg bg-white p-2 mb-4 shadow-sm">
         <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white"
             id="all-reservations-rm">All Reservations</button>
@@ -22,6 +22,12 @@ $accountObj = new Account();
         <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             id="rejected-reservations-rm">Rejected</button>
+        <button
+            class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            id="checkin-reservations-rm">Check-In</button>
+        <button
+            class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            id="checkout-reservations-rm">Check-Out</button>
     </div>
 
     <div id="reservation-management-view">
@@ -56,6 +62,18 @@ $accountObj = new Account();
         $("#rejected-reservations-rm").on("click", function (e) {
             e.preventDefault();
             viewRmRejected();
+            activateTab($(this));
+        });
+
+        $("#checkin-reservations-rm").on("click", function (e) {
+            e.preventDefault();
+            viewRmCheckin();
+            activateTab($(this));
+        });
+
+        $("#checkout-reservations-rm").on("click", function (e) {
+            e.preventDefault();
+            viewRmCheckout();
             activateTab($(this));
         });
     });
@@ -109,6 +127,28 @@ $accountObj = new Account();
         $.ajax({
             type: "GET",
             url: "../reservation-management/rejected-reservations.php",
+            dataType: "html",
+            success: function (response) {
+                $("#reservation-management-view").html(response);
+            },
+        });
+    }
+
+    function viewRmCheckin() {
+        $.ajax({
+            type: "GET",
+            url: "../reservation-management/checkin-reservations.php",
+            dataType: "html",
+            success: function (response) {
+                $("#reservation-management-view").html(response);
+            },
+        });
+    }
+
+    function viewRmCheckout() {
+        $.ajax({
+            type: "GET",
+            url: "../reservation-management/checkout-reservations.php",
             dataType: "html",
             success: function (response) {
                 $("#reservation-management-view").html(response);
