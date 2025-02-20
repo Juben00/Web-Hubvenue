@@ -1,27 +1,52 @@
 <?php
-require_once '../classes/account.class.php';
 require_once '../classes/venue.class.php';
-require_once '../sanitize.php';
+require_once '../classes/account.class.php';
 
+header('Content-Type: application/json');
+
+$venueObj = new Venue();
+$accountObj = new Account();
+
+// Check if user is logged in and has admin privileges
 session_start();
-
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $bookingId = clean_input($_GET['booking_id']);
-    $guestId = clean_input($_SESSION['user']);
-
-    if (empty($bookingId) || empty($bookingId)) {
-        $response = array(
-            'status' => 'error',
-            'message' => 'Failed to mark booking as attended. Please try again.'
-        );
-        echo json_encode($response);
-        exit();
-    } else {
-        $venueObj = new Venue();
-        $result = $venueObj->markBookingAsCheckedIn($bookingId, $guestId);
-
-        // echo json_encode($result);
-        header('Location: ../index.php');
-        exit();
-    }
+if (!isset($_SESSION['logged_in']) || $_SESSION['user_type'] != 3) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Unauthorized access'
+    ]);
+    exit;
 }
+
+// Get booking ID from POST data
+$booking_id = isset($_POST['booking_id']) ? $_POST['booking_id'] : null;
+
+if (!$booking_id) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Booking ID is required'
+    ]);
+    exit;
+}
+
+try {
+    // Update booking check-in status
+    $result = $venueObj->updateBookingCheckIn($booking_id);
+
+    if ($result) {
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Guest has been checked in successfully'
+        ]);
+    } else {
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to check in guest'
+        ]);
+    }
+} catch (Exception $e) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => $e->getMessage()
+    ]);
+}
+?>

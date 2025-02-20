@@ -17,8 +17,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['user_type'] != 3) {
     exit;
 }
 
-// Get booking ID from POST data
-$booking_id = isset($_POST['booking_id']) ? $_POST['booking_id'] : null;
+// Get booking ID from GET data
+$booking_id = isset($_GET['booking_id']) ? $_GET['booking_id'] : null;
 
 if (!$booking_id) {
     echo json_encode([
@@ -29,24 +29,17 @@ if (!$booking_id) {
 }
 
 try {
-    // Update booking check-out status
-    $result = $venueObj->updateBookingCheckOut($booking_id);
+    // Get the booking charges
+    $charges = $venueObj->getBookingCharges($booking_id);
 
-    if ($result) {
-        echo json_encode([
-            'status' => 'success',
-            'message' => 'Guest has been checked out successfully'
-        ]);
-    } else {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Failed to check out guest'
-        ]);
-    }
+    echo json_encode([
+        'status' => 'success',
+        'charges' => $charges
+    ]);
 } catch (Exception $e) {
     echo json_encode([
         'status' => 'error',
         'message' => $e->getMessage()
     ]);
 }
-?>
+?> 
