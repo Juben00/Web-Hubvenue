@@ -628,6 +628,7 @@ class Venue
     v.amenities AS venue_amenities,
     v.thumbnail,
     v.availability_id AS venue_availability_id,
+    v.host_id AS host_id,
 
     p.payment_method_name AS payment_method_name,
 
@@ -662,7 +663,7 @@ LEFT JOIN
             $params = [];
 
             if ($userId) {
-                $conditions[] = "b.booking_guest_id = :userId";
+                $conditions[] = "host_id = :userId";
                 $params[':userId'] = $userId;
             }
             if ($status) {

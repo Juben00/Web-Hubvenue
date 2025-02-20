@@ -192,12 +192,22 @@ function formatDate($date)
                                 <?php echo $status ?>
                             </td>
                             <td class="py-2 px-4">
-                                <form class="cancelReservationButton inline-block" method="POST">
-                                    <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                    <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
-                                        Cancel
-                                    </button>
-                                </form>
+                                <?php if ($reservation['booking_status_id'] == 1): ?>
+                                    <form class="approveReservationButton inline-block" method="POST">
+                                        <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
+                                        <input type="hidden" name="status_id" value="2">
+                                        <button type="submit" class="text-blue-500 font-bold py-1 px-3 rounded">
+                                            Approve
+                                        </button>
+                                    </form>
+                                    <form class="rejectReservationButton inline-block" method="POST">
+                                        <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
+                                        <input type="hidden" name="status_id" value="4">
+                                        <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
+                                            Reject
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php

@@ -124,7 +124,6 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <div id="step1" class="step">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
-                        <?php var_dump($reservationData) ?>
 
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 p-4 rounded-lg mb-4">
@@ -218,7 +217,6 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <div id="step2" class="step hidden">
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
-                        <?php var_dump($reservationData) ?>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
                                 onclick="selectPaymentMethod('gcash')">
