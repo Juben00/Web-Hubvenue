@@ -1840,14 +1840,16 @@ LEFT JOIN
                     $sql .= " AND b.booking_status_id = 3";
                     break;
                 case 'rejected':
+                    $sql .= " AND b.booking_status_id = 0";
+                    break;
+                case 'completed':
                     $sql .= " AND b.booking_status_id = 4";
-                    break;
-                case 'checkin':
-                    $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Pending'";
-                    break;
-                case 'checkout':
-                    $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Checked-In' AND b.booking_checkout_status = 'Pending'";
-                    break;
+                // case 'checkin':
+                //     $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Pending'";
+                //     break;
+                // case 'checkout':
+                //     $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Checked-In' AND b.booking_checkout_status = 'Pending'";
+                //     break;
             }
 
             $sql .= " ORDER BY b.booking_created_at DESC";

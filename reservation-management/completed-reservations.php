@@ -4,8 +4,8 @@ require_once '../classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-// Get rejected bookings using the new method
-$Reservations = $venueObj->getAdminBookings('rejected');
+// Get approved bookings using the new method
+$Reservations = $venueObj->getAdminBookings('completed');
 
 function formatDate($date)
 {
@@ -47,7 +47,7 @@ function formatDate($date)
 
 <!-- Reservations Table -->
 <section class="bg-white rounded-lg shadow-md p-4 mb-8">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Rejected Reservations</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Completed Reservations</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
             <thead class="bg-gray-100">
@@ -81,7 +81,6 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Payment Method</th>
                     <th class="py-2 px-4 text-left">Payment Reference</th>
                     <th class="py-2 px-4 text-left">Status</th>
-                    <th class="py-2 px-4 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody id="reservationsTable">
@@ -186,21 +185,13 @@ function formatDate($date)
                             <td class="py-2 px-4">
                                 <?php echo $status ?>
                             </td>
-                            <td class="py-2 px-4">
-                                <form class="cancelReservationButton inline-block" method="POST">
-                                    <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                    <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
-                                        Cancel
-                                    </button>
-                                </form>
-                            </td>
                         </tr>
                         <?php
                     }
                 } else {
                     ?>
                     <tr>
-                        <td colspan="19" class="py-4 text-center">No rejected reservations found</td>
+                        <td colspan="19" class="py-4 text-center">No completed reservations found</td>
                     </tr>
                     <?php
                 }
@@ -210,10 +201,107 @@ function formatDate($date)
     </div>
 </section>
 
-<!-- Keep the same script as cancelled-reservations.php -->
 <script>
-    // Same script as cancelled-reservations.php
     $(document).ready(function () {
-        // ... (same filter functionality)
+        // Handle filter functionality
+        $('#applyFilters').click(function () {
+            applyFilters();
+        });
+
+        // Handle clear filters
+        $('#clearFilters').click(function () {
+            // Clear all inputs
+            $('#startDate, #endDate, #venueFilter, #customerFilter').val('');
+            // Show all data rows
+            $('#reservationsTable tr').show();
+            $('#noResultsRow').remove();
+        });
+
+        function applyFilters() {
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+            const venue = $('#venueFilter').val().toLowerCase();
+            const customer = $('#customerFilter').val().toLowerCase();
+
+            // Remove existing no results row
+            $('#noResultsRow').remove();
+
+            // Get all data rows (excluding the header)
+            const dataRows = $('#reservationsTable tr:not(thead tr)');
+            let visibleRows = 0;
+
+            dataRows.each(function () {
+                const row = $(this);
+                if (row.attr('id') === 'noResultsRow') return;
+
+                const rowStartDate = new Date(row.find('td:eq(1)').text()).getTime();
+                const rowEndDate = new Date(row.find('td:eq(2)').text()).getTime();
+                const rowVenue = row.find('td:eq(7)').text().toLowerCase();
+                const rowCustomer = row.find('td:eq(4)').text().toLowerCase();
+
+                let showRow = true;
+
+                // Date range filter
+                if (startDate && endDate) {
+                    const filterStartTimestamp = new Date(startDate).getTime();
+                    const filterEndTimestamp = new Date(endDate).getTime();
+
+                    if (rowStartDate < filterStartTimestamp || rowEndDate > filterEndTimestamp) {
+                        showRow = false;
+                    }
+                }
+
+                // Venue filter
+                if (venue && !rowVenue.includes(venue)) {
+                    showRow = false;
+                }
+
+                // Customer filter
+                if (customer && !rowCustomer.includes(customer)) {
+                    showRow = false;
+                }
+
+                if (showRow) {
+                    visibleRows++;
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+
+            // Show "No results found" if no data rows are visible
+            if (visibleRows === 0) {
+                $('#reservationsTable tbody').append(
+                    '<tr id="noResultsRow"><td colspan="19" class="py-4 text-center">No results found</td></tr>'
+                );
+            }
+        }
+
+        // Update cancel reservation handler
+        $('.cancelReservationButton').on("submit", function (e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            confirmshowModal(
+                "Are you sure you want to cancel this reservation?",
+                function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "../api/CancelReservation.api.php",
+                        data: formData,
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status === "success") {
+                                loadReservationView('cancelled-reservations'); // Change to load cancelled reservations
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error:", error);
+                        }
+                    });
+                },
+                "black_ico.png"
+            );
+        });
     });
 </script>

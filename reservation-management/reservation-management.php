@@ -22,6 +22,10 @@ $accountObj = new Account();
         <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             id="rejected-reservations-rm">Rejected</button>
+        <button
+            class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            id="completed-reservations-rm">Completed</button>
+
         <!-- <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             id="checkin-reservations-rm">Check-In</button>
@@ -64,6 +68,13 @@ $accountObj = new Account();
             viewRmRejected();
             activateTab($(this));
         });
+
+        $("#completed-reservations-rm").on("click", function (e) {
+            e.preventDefault();
+            viewRmCompleted();
+            activateTab($(this));
+        });
+
 
         $("#checkin-reservations-rm").on("click", function (e) {
             e.preventDefault();
@@ -127,6 +138,17 @@ $accountObj = new Account();
         $.ajax({
             type: "GET",
             url: "../reservation-management/rejected-reservations.php",
+            dataType: "html",
+            success: function (response) {
+                $("#reservation-management-view").html(response);
+            },
+        });
+    }
+
+    function viewRmCompleted() {
+        $.ajax({
+            type: "GET",
+            url: "../reservation-management/completed-reservations.php",
             dataType: "html",
             success: function (response) {
                 $("#reservation-management-view").html(response);
