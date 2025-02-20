@@ -4,13 +4,8 @@ require_once '../classes/account.class.php';
 $venueObj = new Venue();
 $accountObj = new Account();
 
-// Get all bookings using the new method
-$Reservations = $venueObj->getAdminBookings('all');
-
-// Filter for status_id = 1 (Pending)
-$Reservations = array_filter($Reservations, function ($booking) {
-    return isset($booking['booking_status_id']) && $booking['booking_status_id'] == 1;
-});
+// Get approved bookings using the new method
+$Reservations = $venueObj->getAdminBookings('completed');
 
 function formatDate($date)
 {
@@ -52,7 +47,7 @@ function formatDate($date)
 
 <!-- Reservations Table -->
 <section class="bg-white rounded-lg shadow-md p-4 mb-8">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Reservations</h2>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Completed Reservations</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
             <thead class="bg-gray-100">
@@ -86,7 +81,6 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Payment Method</th>
                     <th class="py-2 px-4 text-left">Payment Reference</th>
                     <th class="py-2 px-4 text-left">Status</th>
-                    <th class="py-2 px-4 text-left">Actions</th>
                 </tr>
             </thead>
             <tbody id="reservationsTable">
@@ -191,35 +185,18 @@ function formatDate($date)
                             <td class="py-2 px-4">
                                 <?php echo $status ?>
                             </td>
-                            <td class="py-2 px-4">
-                                <?php if ($reservation['booking_status_id'] == 1): ?>
-                                    <form class="approveReservationButton inline-block" method="POST">
-                                        <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                        <input type="hidden" name="status_id" value="2">
-                                        <button type="submit" class="text-blue-500 font-bold py-1 px-3 rounded">
-                                            Approve
-                                        </button>
-                                    </form>
-                                    <form class="rejectReservationButton inline-block" method="POST">
-                                        <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                        <input type="hidden" name="status_id" value="4">
-                                        <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
-                                            Reject
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
-                            </td>
                         </tr>
                         <?php
                     }
                 } else {
                     ?>
                     <tr>
-                        <td colspan="19" class="py-4 text-center">No approved reservations found</td>
+                        <td colspan="19" class="py-4 text-center">No completed reservations found</td>
                     </tr>
                     <?php
                 }
                 ?>
+            </tbody>
         </table>
     </div>
 </section>
@@ -235,8 +212,8 @@ function formatDate($date)
         $('#clearFilters').click(function () {
             // Clear all inputs
             $('#startDate, #endDate, #venueFilter, #customerFilter').val('');
-            // Show all rows except header
-            $('#reservationsTable tr:not(:first)').show();
+            // Show all data rows
+            $('#reservationsTable tr').show();
             $('#noResultsRow').remove();
         });
 
@@ -246,15 +223,15 @@ function formatDate($date)
             const venue = $('#venueFilter').val().toLowerCase();
             const customer = $('#customerFilter').val().toLowerCase();
 
-            // Hide the "No results" row if it exists
+            // Remove existing no results row
             $('#noResultsRow').remove();
 
-            // Get all rows except the header row
-            const rows = $('#reservationsTable tr:not(:first)');
+            // Get all data rows (excluding the header)
+            const dataRows = $('#reservationsTable tr:not(thead tr)');
+            let visibleRows = 0;
 
-            rows.each(function () {
+            dataRows.each(function () {
                 const row = $(this);
-                // Skip the "No results" row if it exists
                 if (row.attr('id') === 'noResultsRow') return;
 
                 const rowStartDate = new Date(row.find('td:eq(1)').text()).getTime();
@@ -284,60 +261,38 @@ function formatDate($date)
                     showRow = false;
                 }
 
-                row.toggle(showRow);
+                if (showRow) {
+                    visibleRows++;
+                    row.show();
+                } else {
+                    row.hide();
+                }
             });
 
-            // Show "No results found" if all rows are hidden
-            if ($('#reservationsTable tr:visible').length === 1) { // Only header row is visible
-                $('#reservationsTable').append(
+            // Show "No results found" if no data rows are visible
+            if (visibleRows === 0) {
+                $('#reservationsTable tbody').append(
                     '<tr id="noResultsRow"><td colspan="19" class="py-4 text-center">No results found</td></tr>'
                 );
             }
         }
 
-        // Update approve reservation handler
-        $('.approveReservationButton').on("submit", function (e) {
+        // Update cancel reservation handler
+        $('.cancelReservationButton').on("submit", function (e) {
             e.preventDefault();
             const formData = $(this).serialize();
 
             confirmshowModal(
-                "Are you sure you want to approve this reservation?",
+                "Are you sure you want to cancel this reservation?",
                 function () {
                     $.ajax({
                         type: "POST",
-                        url: "../api/ApproveReservation.api.php",
+                        url: "../api/CancelReservation.api.php",
                         data: formData,
                         dataType: 'json',
                         success: function (response) {
                             if (response.status === "success") {
-                                window.location.reload();
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error:", error);
-                        }
-                    });
-                },
-                "black_ico.png"
-            );
-        });
-
-        // Update reject reservation handler
-        $('.rejectReservationButton').on("submit", function (e) {
-            e.preventDefault();
-            const formData = $(this).serialize();
-
-            confirmshowModal(
-                "Are you sure you want to reject this reservation?",
-                function () {
-                    $.ajax({
-                        type: "POST",
-                        url: "../api/RejectReservation.api.php",
-                        data: formData,
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.status === "success") {
-                                window.location.reload();
+                                loadReservationView('cancelled-reservations'); // Change to load cancelled reservations
                             }
                         },
                         error: function (xhr, status, error) {

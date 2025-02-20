@@ -200,7 +200,7 @@ function formatDate($date)
                 } else {
                     ?>
                     <tr>
-                        <td colspan="19" class="py-4 text-center">No approved reservations found</td>
+                        <td colspan="19" class="py-4 text-center">No rejected reservations found</td>
                     </tr>
                     <?php
                 }

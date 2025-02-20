@@ -152,33 +152,15 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                 class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View Details
                                             </button>
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                                <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
-                                                <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
                                                 </button>
@@ -276,33 +258,15 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                 class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View Details
                                             </button>
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                                <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
-                                                <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
                                                 </button>
@@ -391,33 +355,15 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                 class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View Details
                                             </button>
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                                <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
-                                                <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
                                                 </button>
@@ -515,33 +461,15 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                                 class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View Details
                                             </button>
                                             <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                                <button onclick="printReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-print mr-2"></i>Print Receipt
                                                 </button>
-                                                <button onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode([
-                                                    'booking_id' => $booking['booking_id'],
-                                                    'venue_name' => $booking['venue_name'],
-                                                    'booking_start_date' => $booking['booking_start_date'],
-                                                    'booking_end_date' => $booking['booking_end_date'],
-                                                    'booking_duration' => $booking['booking_duration'],
-                                                    'booking_grand_total' => $booking['booking_grand_total'],
-                                                    'payment_method_name' => $booking['payment_method_name'],
-                                                    'booking_payment_reference' => $booking['booking_payment_reference'],
-                                                    'booking_service_fee' => $booking['booking_service_fee'],
-                                                    'venue_location' => $booking['venue_location']
-                                                ])); ?>)" type="button"
+                                                <button
+                                                    onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
                                                     class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
                                                     <i class="fas fa-download mr-2"></i>Download Receipt
                                                 </button>

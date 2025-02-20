@@ -6,13 +6,15 @@ $venues = $venueObj->getAllVenues($status = '2');
 ?>
 
 <!-- Venue Details Modal -->
-<div id="venue-details-modal-manage" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50">
+<div id="venue-details-modal-manage"
+    class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-50">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto mx-4">
         <!-- Modal Header -->
         <div class="flex items-center justify-between p-6 border-b">
             <h3 class="text-2xl font-semibold text-gray-800">Venue Details</h3>
             <button class="close-modal text-gray-500 hover:text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
@@ -53,11 +55,13 @@ $venues = $venueObj->getAllVenues($status = '2');
                     foreach ($venues as $venue): ?>
                         <tr class="border-b transition-colors hover:bg-muted/50">
                             <td class="p-4 align-middle"><?= htmlspecialchars($venue['venue_id']) ?></td>
-                            <td class="p-4 align-middle max-w-[200px] truncate" title="<?= htmlspecialchars($venue['name']) ?>">
+                            <td class="p-4 align-middle max-w-[200px] truncate"
+                                title="<?= htmlspecialchars($venue['name']) ?>">
                                 <?= htmlspecialchars($venue['name']) ?>
                             </td>
-                            <td class="p-4 align-middle max-w-[200px] truncate" title="<?= htmlspecialchars($venue['location']) ?>">
-                                <?= htmlspecialchars($venue['location']) ?>
+                            <td class="p-4 align-middle max-w-[200px] truncate"
+                                title="<?= htmlspecialchars($venue['address']) ?>">
+                                <?= htmlspecialchars($venue['address']) ?>
                             </td>
                             <td class="p-4 align-middle">₱<?= number_format(htmlspecialchars($venue['price']), 2) ?></td>
 
@@ -75,27 +79,29 @@ $venues = $venueObj->getAllVenues($status = '2');
                             </td>
 
                             <td class="p-4 align-middle">
-                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
+                                <span
+                                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800">
                                     Approved
                                 </span>
                             </td>
-                            
+
                             <td class="p-4 align-middle">
                                 <?php if (!empty($venue['image_urls'])): ?>
                                     <img src="../<?= htmlspecialchars($venue['image_urls'][0]) ?>" alt="Venue Thumbnail"
                                         class="w-16 h-16 object-cover rounded-md">
                                 <?php endif; ?>
                             </td>
-                            
+
                             <td class="p-4 align-middle">
                                 <div class="flex flex-col gap-2">
-                                    <button 
+                                    <button
                                         class="view-details-btn inline-flex items-center justify-center rounded-md text-sm font-medium bg-blue-500 text-white hover:bg-blue-600 h-9 px-3"
                                         data-venue-id="<?= htmlspecialchars($venue['venue_id']) ?>">
                                         View Details
                                     </button>
                                     <form class="declineVenueButton" method="POST">
-                                        <input type="hidden" name="venue_id" value="<?= htmlspecialchars($venue['venue_id']) ?>">
+                                        <input type="hidden" name="venue_id"
+                                            value="<?= htmlspecialchars($venue['venue_id']) ?>">
                                         <button type="submit"
                                             class="inline-flex w-full items-center justify-center rounded-md text-sm font-medium bg-red-500 text-white hover:bg-red-600 h-9 px-3">
                                             Reject
@@ -112,65 +118,65 @@ $venues = $venueObj->getAllVenues($status = '2');
 </div>
 
 <script>
-// Initialize view details functionality
-document.querySelectorAll('.view-details-btn').forEach(button => {
-    button.addEventListener('click', async function() {
-        const venueId = this.dataset.venueId;
-        console.log('Fetching details for venue:', venueId);
-        
-        // First check if ModalManager exists and initialize if needed
-        if (!window.ModalManager || !window.ModalManager.initialized) {
-            console.log('Initializing ModalManager...');
-            window.ModalManager.initialize();
-        }
+    // Initialize view details functionality
+    document.querySelectorAll('.view-details-btn').forEach(button => {
+        button.addEventListener('click', async function () {
+            const venueId = this.dataset.venueId;
+            console.log('Fetching details for venue:', venueId);
 
-        // Show loading state
-        const loadingHtml = `
+            // First check if ModalManager exists and initialize if needed
+            if (!window.ModalManager || !window.ModalManager.initialized) {
+                console.log('Initializing ModalManager...');
+                window.ModalManager.initialize();
+            }
+
+            // Show loading state
+            const loadingHtml = `
             <div class="flex items-center justify-center p-6">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-700"></div>
             </div>
         `;
-        const modalContent = document.getElementById('venue-details-content');
-        if (modalContent) {
-            modalContent.innerHTML = loadingHtml;
-            const modal = document.getElementById('venue-details-modal-manage');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-        
-        try {
-            // Fetch venue details
-            const response = await fetch(`../api/getVenueDetails.api.php?venue_id=${venueId}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const data = await response.json();
-            console.log('Venue data:', data);
-            
-            if (!data.success) {
-                throw new Error(data.message || 'Failed to load venue details');
+            const modalContent = document.getElementById('venue-details-content');
+            if (modalContent) {
+                modalContent.innerHTML = loadingHtml;
+                const modal = document.getElementById('venue-details-modal-manage');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
             }
 
-            const venue = data.venue;
-            
-            // Fetch venue owner details
-            const ownerResponse = await fetch(`../api/getVenueOwner.api.php?host_id=${venue.host_id}`);
-            if (!ownerResponse.ok) {
-                throw new Error(`HTTP error! status: ${ownerResponse.status}`);
-            }
-            
-            const ownerData = await ownerResponse.json();
-            console.log('Owner data:', ownerData);
-            const owner = ownerData.success ? ownerData.owner : null;
+            try {
+                // Fetch venue details
+                const response = await fetch(`../api/getVenueDetails.api.php?venue_id=${venueId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-            // Safely parse JSON strings or use arrays directly
-            const amenities = typeof venue.amenities === 'string' ? 
-                JSON.parse(venue.amenities) : (venue.amenities || []);
-            const rules = typeof venue.rules === 'string' ? 
-                JSON.parse(venue.rules) : (venue.rules || []);
+                const data = await response.json();
+                console.log('Venue data:', data);
 
-            modalContent.innerHTML = `
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load venue details');
+                }
+
+                const venue = data.venue;
+
+                // Fetch venue owner details
+                const ownerResponse = await fetch(`../api/getVenueOwner.api.php?host_id=${venue.host_id}`);
+                if (!ownerResponse.ok) {
+                    throw new Error(`HTTP error! status: ${ownerResponse.status}`);
+                }
+
+                const ownerData = await ownerResponse.json();
+                console.log('Owner data:', ownerData);
+                const owner = ownerData.success ? ownerData.owner : null;
+
+                // Safely parse JSON strings or use arrays directly
+                const amenities = typeof venue.amenities === 'string' ?
+                    JSON.parse(venue.amenities) : (venue.amenities || []);
+                const rules = typeof venue.rules === 'string' ?
+                    JSON.parse(venue.rules) : (venue.rules || []);
+
+                modalContent.innerHTML = `
                 <div class="space-y-8">
                     <!-- Images Section -->
                     ${venue.image_urls && venue.image_urls.length > 0 ? `
@@ -199,7 +205,7 @@ document.querySelectorAll('.view-details-btn').forEach(button => {
                                     </div>
                                     <div>
                                         <span class="text-sm text-gray-500">Price</span>
-                                        <p class="text-gray-800 font-medium text-lg">₱${parseFloat(venue.price || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</p>
+                                        <p class="text-gray-800 font-medium text-lg">₱${parseFloat(venue.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
                                     </div>
                                     <div>
                                         <span class="text-sm text-gray-500">Capacity</span>
@@ -279,71 +285,71 @@ document.querySelectorAll('.view-details-btn').forEach(button => {
                     </div>
                 </div>
             `;
-        } catch (error) {
-            console.error('Error:', error);
-            if (modalContent) {
-                modalContent.innerHTML = `
+            } catch (error) {
+                console.error('Error:', error);
+                if (modalContent) {
+                    modalContent.innerHTML = `
                     <div class="p-6 text-center text-red-600">
                         <p>Error loading venue details: ${error.message}</p>
                     </div>
                 `;
+                }
             }
+        });
+    });
+
+    // Add close modal functionality
+    document.querySelector('#venue-details-modal-manage .close-modal').addEventListener('click', function () {
+        const modal = document.getElementById('venue-details-modal-manage');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('venue-details-modal-manage').addEventListener('click', function (e) {
+        if (e.target === this) {
+            this.classList.add('hidden');
+            this.classList.remove('flex');
         }
     });
-});
 
-// Add close modal functionality
-document.querySelector('#venue-details-modal-manage .close-modal').addEventListener('click', function() {
-    const modal = document.getElementById('venue-details-modal-manage');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-});
+    // Initialize decline functionality
+    document.querySelectorAll('.declineVenueButton').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const venueId = formData.get('venue_id');
+            console.log(`Decline venue form submitted for venue ID: ${venueId}`);
 
-// Close modal when clicking outside
-document.getElementById('venue-details-modal-manage').addEventListener('click', function(e) {
-    if (e.target === this) {
-        this.classList.add('hidden');
-        this.classList.remove('flex');
-    }
-});
-
-// Initialize decline functionality
-document.querySelectorAll('.declineVenueButton').forEach(form => {
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const venueId = formData.get('venue_id');
-        console.log(`Decline venue form submitted for venue ID: ${venueId}`);
-        
-        confirmshowModal('Are you sure you want to decline this venue?', () => {
-            console.log('Sending decline venue request...');
-            fetch('../api/declineVenue.api.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Decline venue response:', data);
-                if (data.success) {
-                    showModal('Venue declined successfully!', () => {
-                        // Reload the current tab content
-                        loadContent('approved-venues.php');
+            confirmshowModal('Are you sure you want to decline this venue?', () => {
+                console.log('Sending decline venue request...');
+                fetch('../api/declineVenue.api.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Decline venue response:', data);
+                        if (data.success) {
+                            showModal('Venue declined successfully!', () => {
+                                // Reload the current tab content
+                                loadContent('approved-venues.php');
+                            });
+                        } else {
+                            console.error('Decline venue failed:', data.message);
+                            showModal('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error in decline venue request:', error);
+                        showModal('An error occurred while declining the venue.');
                     });
-                } else {
-                    console.error('Decline venue failed:', data.message);
-                    showModal('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error in decline venue request:', error);
-                showModal('An error occurred while declining the venue.');
-            });
-        }, 'black_ico.png');
+            }, 'black_ico.png');
+        });
     });
-});
 </script>

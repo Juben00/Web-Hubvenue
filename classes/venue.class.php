@@ -628,6 +628,7 @@ class Venue
     v.amenities AS venue_amenities,
     v.thumbnail,
     v.availability_id AS venue_availability_id,
+    v.host_id AS host_id,
 
     p.payment_method_name AS payment_method_name,
 
@@ -662,7 +663,7 @@ LEFT JOIN
             $params = [];
 
             if ($userId) {
-                $conditions[] = "b.booking_guest_id = :userId";
+                $conditions[] = "host_id = :userId";
                 $params[':userId'] = $userId;
             }
             if ($status) {
@@ -1840,14 +1841,16 @@ LEFT JOIN
                     $sql .= " AND b.booking_status_id = 3";
                     break;
                 case 'rejected':
+                    $sql .= " AND b.booking_status_id = 0";
+                    break;
+                case 'completed':
                     $sql .= " AND b.booking_status_id = 4";
-                    break;
-                case 'checkin':
-                    $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Pending'";
-                    break;
-                case 'checkout':
-                    $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Checked-In' AND b.booking_checkout_status = 'Pending'";
-                    break;
+                // case 'checkin':
+                //     $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Pending'";
+                //     break;
+                // case 'checkout':
+                //     $sql .= " AND b.booking_status_id = 2 AND b.booking_checkin_status = 'Checked-In' AND b.booking_checkout_status = 'Pending'";
+                //     break;
             }
 
             $sql .= " ORDER BY b.booking_created_at DESC";
