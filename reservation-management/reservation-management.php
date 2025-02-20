@@ -22,12 +22,12 @@ $accountObj = new Account();
         <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             id="rejected-reservations-rm">Rejected</button>
-        <button
+        <!-- <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             id="checkin-reservations-rm">Check-In</button>
         <button
             class="tab-button flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-            id="checkout-reservations-rm">Check-Out</button>
+            id="checkout-reservations-rm">Check-Out</button> -->
     </div>
 
     <div id="reservation-management-view">

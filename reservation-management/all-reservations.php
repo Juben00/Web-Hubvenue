@@ -66,12 +66,23 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Email</th>
                     <th class="py-2 px-4 text-left">Venue</th>
                     <th class="py-2 px-4 text-left">Venue Location</th>
+                    <th class="py-2 px-4 text-left">Down payment requirement</th>
+                    <th class="py-2 px-4 text-left">Venue Price</th>
                     <th class="py-2 px-4 text-left">Capacity</th>
                     <th class="py-2 px-4 text-left">Participants</th>
-                    <th class="py-2 px-4 text-left">Original Price</th>
-                    <th class="py-2 px-4 text-left">Discount Code</th>
-                    <th class="py-2 px-4 text-left">Discount Value</th>
+                    <th class="py-2 px-4 text-left">Mandatory Discount</th>
+                    <th class="py-2 px-4 text-left">Coupon Code</th>
+                    <th class="py-2 px-4 text-left">Coupon Value</th>
+                    <th class="py-2 px-4 text-left">Cleaning Fee</th>
+                    <th class="py-2 px-4 text-left">Entrance Fee</th>
                     <th class="py-2 px-4 text-left">Grand Total</th>
+                    <th class="py-2 px-4 text-left">Down Payment</th>
+                    <th class="py-2 px-4 text-left">Balance</th>
+                    <th class="py-2 px-4 text-left">Service Fee</th>
+                    <th class="py-2 px-4 text-left">Check In Status</th>
+                    <th class="py-2 px-4 text-left">Check In Date</th>
+                    <th class="py-2 px-4 text-left">Check Out Status</th>
+                    <th class="py-2 px-4 text-left">Checkout Date</th>
                     <th class="py-2 px-4 text-left">Payment Method</th>
                     <th class="py-2 px-4 text-left">Payment Reference</th>
                     <th class="py-2 px-4 text-left">Status</th>
@@ -82,18 +93,70 @@ function formatDate($date)
                 <?php
                 if (!empty($Reservations)) {
                     foreach ($Reservations as $reservation) {
-                        $original_price = $reservation['booking_original_price']; // Example original price
-                        $discount_value = number_format($reservation['discount_value']); // Assuming this is 30
-                
-                        $discount_decimal = $discount_value / 100;
-
-                        $discounted_price = $original_price * $discount_decimal;
+                        // Calculate discount
+                        $original_price = $reservation['booking_original_price'];
+                        $discount_value = $reservation['discount_value'];
+                        $discounted_amount = ($original_price * $discount_value) / 100;
                         $payref = $reservation['booking_payment_reference'];
                         $paymentTemp = null;
                         if (str_ends_with($payref, ".png") || str_ends_with($payref, ".jpeg") || str_ends_with($payref, ".jpg")) {
                             $paymentTemp = "<img src='..$payref' alt='Payment Reference Image' style='max-width: 100%; height: auto;'>";
                         } else {
                             $paymentTemp = $payref;
+                        }
+                        $isMandatory_Discount = $reservation['booking_discount_id'] == 0 ? "None" : "20%";
+                        $dp_option = $reservation['booking_dp_id'];
+                        switch ($dp_option) {
+                            case 0:
+                                $dp_option = "30% Downpayment";
+                                break;
+                            case 1:
+                                $dp_option = "50% Downpayment";
+                                break;
+                            case 3:
+                                $dp_option = "100% Downpayment";
+                                break;
+                        }
+                        $checkin_status = $reservation['booking_checkin_status'];
+                        $checkout_status = $reservation['booking_checkout_status'];
+                        $checkin_date = $reservation['booking_checkin_date'] ? formatDate($reservation['booking_checkin_date']) : 'N/A';
+                        $checkout_date = $reservation['booking_checkout_date'] ? formatDate($reservation['booking_checkout_date']) : 'N/A';
+
+                        switch ($checkin_status) {
+                            case 'Checked-In':
+                                $checkin_status = 'Checked In';
+                                break;
+                            case 'No-Show':
+                                $checkin_status = 'Guest did not show up';
+                                break;
+                            default:
+                                $checkin_status = 'Not yet checked in';
+                                break;
+                        }
+
+                        switch ($checkout_status) {
+                            case 'Checked-Out':
+                                $checkout_status = 'Checked Out';
+                                break;
+                            default:
+                                $checkout_status = 'Not yet checked out';
+                                break;
+                        }
+
+                        $status = $reservation['booking_status_id'];
+                        switch ($status) {
+                            case 1:
+                                $status = "<span class='bg-yellow-200 text-yellow-800 rounded-full px-2'>Pending</span>";
+                                break;
+                            case 2:
+                                $status = "<span class='bg-green-200 text-green-800 rounded-full px-2'>Confirmed</span>";
+                                break;
+                            case 3:
+                                $status = "<span class='bg-red-200 text-red-800 rounded-full px-2'>Cancelled</span>";
+                                break;
+                            case 4:
+                                $status = "<span class='bg-blue-200 text-blue-800 rounded-full px-2'>Completed</span>";
+                                break;
                         }
                         ?>
                         <tr>
@@ -106,49 +169,35 @@ function formatDate($date)
                             <td class="py-2 px-4"><?php echo $reservation['guest_email']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['venue_name']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['venue_location']; ?></td>
+                            <td class="py-2 px-4"><?php echo $dp_option ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_venue_price'], 2); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['venue_capacity']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_original_price'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['discount_code'] ?: 'N/A'; ?></td>
-                            <td class="py-2 px-4">₱<?php echo number_format($discounted_price, 0) ?></td>
+                            <td class="py-2 px-4"><?php echo $isMandatory_Discount ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['discount_code']; ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($discounted_amount, 2); ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_cleaning'], 2); ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_entrance'], 2); ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_payment_method']; ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_dp_amount'], 2); ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_balance'], 2); ?></td>
+                            <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_service_fee'], 2); ?></td>
+                            <td class="py-2 px-4"><?php echo $checkin_status; ?></td>
+                            <td class="py-2 px-4"><?php echo $checkin_date ?></td>
+                            <td class="py-2 px-4"><?php echo $checkout_status; ?></td>
+                            <td class="py-2 px-4"><?php echo $checkout_date ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['payment_method_name']; ?></td>
                             <td class="py-2 px-4"><?php echo $paymentTemp ?></td>
                             <td class="py-2 px-4">
-                                <?php
-                                switch ($reservation['booking_status_id']) {
-                                    case 1:
-                                        echo '<span class="bg-yellow-200 text-yellow-800 rounded-full px-2">Pending</span>';
-                                        break;
-                                    case 2:
-                                        echo '<span class="bg-green-200 text-green-800 rounded-full px-2">Approved</span>';
-                                        break;
-                                    case 3:
-                                        echo '<span class="bg-red-200 text-red-800 rounded-full px-2">Cancelled</span>';
-                                        break;
-                                    case 4:
-                                        echo '<span class="bg-blue-200 text-blue-800 rounded-full px-2">Completed</span>';
-                                        break;
-                                }
-                                ?>
+                                <?php echo $status ?>
                             </td>
                             <td class="py-2 px-4">
-                                <?php if ($reservation['booking_status_id'] == 1): ?>
-                                    <form class="approveReservationButton inline-block" method="POST">
-                                        <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                        <input type="hidden" name="status_id" value="2">
-                                        <button type="submit" class="text-blue-500 font-bold py-1 px-3 rounded">
-                                            Approve
-                                        </button>
-                                    </form>
-                                    <form class="rejectReservationButton inline-block" method="POST">
-                                        <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                        <input type="hidden" name="status_id" value="4">
-                                        <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
-                                            Reject
-                                        </button>
-                                    </form>
-                                <?php endif; ?>
+                                <form class="cancelReservationButton inline-block" method="POST">
+                                    <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
+                                    <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
+                                        Cancel
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         <?php
@@ -156,12 +205,11 @@ function formatDate($date)
                 } else {
                     ?>
                     <tr>
-                        <td colspan="19" class="py-4 text-center">No reservations found</td>
+                        <td colspan="19" class="py-4 text-center">No approved reservations found</td>
                     </tr>
                     <?php
                 }
                 ?>
-            </tbody>
         </table>
     </div>
 </section>
