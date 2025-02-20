@@ -88,7 +88,13 @@ function formatDate($date)
                         $discount_decimal = $discount_value / 100;
 
                         $discounted_price = $original_price * $discount_decimal;
-
+                        $payref = $reservation['booking_payment_reference'];
+                        $paymentTemp = null;
+                        if (str_ends_with($payref, ".png") || str_ends_with($payref, ".jpeg") || str_ends_with($payref, ".jpg")) {
+                            $paymentTemp = "<img src='..$payref' alt='Payment Reference Image' style='max-width: 100%; height: auto;'>";
+                        } else {
+                            $paymentTemp = $payref;
+                        }
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
@@ -107,7 +113,7 @@ function formatDate($date)
                             <td class="py-2 px-4">₱<?php echo number_format($discounted_price, 0) ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_payment_method']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_payment_reference']; ?></td>
+                            <td class="py-2 px-4"><?php echo $paymentTemp ?></td>
                             <td class="py-2 px-4">
                                 <?php
                                 switch ($reservation['booking_status_id']) {
@@ -131,16 +137,14 @@ function formatDate($date)
                                     <form class="approveReservationButton inline-block" method="POST">
                                         <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                         <input type="hidden" name="status_id" value="2">
-                                        <button type="submit"
-                                            class="text-blue-500 font-bold py-1 px-3 rounded">
+                                        <button type="submit" class="text-blue-500 font-bold py-1 px-3 rounded">
                                             Approve
                                         </button>
                                     </form>
                                     <form class="rejectReservationButton inline-block" method="POST">
                                         <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                         <input type="hidden" name="status_id" value="4">
-                                        <button type="submit"
-                                            class="text-red-500 font-bold py-1 px-3 rounded">
+                                        <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
                                             Reject
                                         </button>
                                     </form>

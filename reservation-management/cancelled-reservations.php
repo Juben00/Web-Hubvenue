@@ -80,6 +80,13 @@ function formatDate($date)
                         $original_price = $reservation['booking_original_price'];
                         $discount_value = $reservation['discount_value'];
                         $discounted_amount = ($original_price * $discount_value) / 100;
+                        $payref = $reservation['booking_payment_reference'];
+                        $paymentTemp = null;
+                        if (str_ends_with($payref, ".png") || str_ends_with($payref, ".jpeg") || str_ends_with($payref, ".jpg")) {
+                            $paymentTemp = "<img src='..$payref' alt='Payment Reference Image' style='max-width: 100%; height: auto;'>";
+                        } else {
+                            $paymentTemp = $payref;
+                        }
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
@@ -98,7 +105,7 @@ function formatDate($date)
                             <td class="py-2 px-4">₱<?php echo number_format($discounted_amount, 2); ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_grand_total'], 2); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['payment_method_name']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_payment_reference']; ?></td>
+                            <td class="py-2 px-4"><?php echo $paymentTemp ?></td>
                             <td class="py-2 px-4">
                                 <span class="bg-red-200 text-red-800 rounded-full px-2">Cancelled</span>
                             </td>
