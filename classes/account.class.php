@@ -922,7 +922,8 @@ class Account
         }
     }
 
-    public function getAllUsers() {
+    public function getAllUsers()
+    {
         try {
             $sql = "SELECT 
                         u.*,
@@ -932,18 +933,19 @@ class Account
                     LEFT JOIN sex_sub s ON u.sex_id = s.id
                     LEFT JOIN user_types_sub ut ON u.user_type_id = ut.id
                     ORDER BY u.created_at DESC";
-            
+
             $stmt = $this->db->connect()->prepare($sql);
             $stmt->execute();
-            
+
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
     }
 
-    public function getUserById($id) {
+    public function getUserById($id)
+    {
         try {
             $sql = "SELECT 
                         u.*,
@@ -953,11 +955,11 @@ class Account
                     LEFT JOIN sex_sub s ON u.sex_id = s.id
                     LEFT JOIN user_types_sub ut ON u.user_type_id = ut.id
                     WHERE u.id = :id";
-            
-            $stmt = $this->db->prepare($sql);
+
+            $stmt = $this->db->connect()->prepare($sql);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
