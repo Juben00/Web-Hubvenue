@@ -688,6 +688,43 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 value="<?php echo htmlspecialchars($venueView['max_attendees']) ?>">
                         </div>
                     </div>
+
+
+                    <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-semibold">Opening Time</span>
+                            <p><?php echo htmlspecialchars($venueView['opening_time'] ? $venueView['opening_time'] : "Not Set") ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Opening Time</label>
+                        <div class="flex items-center px-1 py-2 border rounded-md">
+                            <input type="time" id="venueOpeningTime" name="editOpeningTime"
+                                placeholder="Set Opening Time" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['opening_time']) ?>">
+                        </div>
+                    </div>
+
+                    <div class="border-b pb-4 mb-4 viewMode text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="font-semibold">Closing Time</span>
+                            <p><?php echo htmlspecialchars($venueView['closing_time'] ? $venueView['closing_time'] : "Not Set") ?>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 editMode hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Closing Time</label>
+                        <div class="flex items-center px-1 py-2 border rounded-md">
+                            <input type="time" id="venueClosingTime" name="editClosingTime"
+                                placeholder="Set Closing Time" class=" rounded-md w-full"
+                                value="<?php echo htmlspecialchars($venueView['closing_time']) ?>">
+                        </div>
+                    </div>
+
+
                     <!-- Entrance -->
                     <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">

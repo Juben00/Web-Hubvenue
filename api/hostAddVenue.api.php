@@ -30,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $max_attendees = clean_input($_POST['max-attendees']);
     $min_time = clean_input($_POST['min-time']);
     $max_time = clean_input($_POST['max-time']);
+    $opening_time = clean_input($_POST['open-time']) ?? null;
+    $closing_time = clean_input($_POST['close-time']) ?? null;
     $cleaning = clean_input($_POST['cleaning-fee']) ?? 0;
     $entrance = clean_input($_POST['entrance-fee'] ?? 0);
     $tag = clean_input(isset($_POST['placeType']) ? $_POST['placeType'] : '');
@@ -128,6 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $venueObj->max_attendees = $max_attendees;
         $venueObj->min_time = $min_time;
         $venueObj->max_time = $max_time;
+        $venueObj->opening_time = $opening_time;
+        $venueObj->closing_time = $closing_time;
         $venueObj->entrance = $entrance;
         $venueObj->cleaning = $cleaning;
         $venueObj->tag = $tag;

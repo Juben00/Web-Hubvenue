@@ -18,6 +18,9 @@ class Venue
     public $max_attendees;
     public $min_time;
     public $max_time;
+
+    public $opening_time;
+    public $closing_time;
     public $entrance;
     public $cleaning;
 
@@ -51,7 +54,7 @@ class Venue
 
             // Insert venue information
 
-            $sql = 'INSERT INTO venues (name, description, address, location, amenities, rules, pricing_type, price, min_attendees, max_attendees, min_time, max_time, entrance, cleaning, down_payment_id, venue_tag, thumbnail, host_id, status_id, availability_id) VALUES (:name, :description, :address, :location, :amenities, :rules, :pricing_type, :price, :min_attendees, :max_attendees, :min_time, :max_time, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :host_id, :status_id, :availability_id)';
+            $sql = 'INSERT INTO venues (name, description, address, location, amenities, rules, pricing_type, price, min_attendees, max_attendees, min_time, max_time, opening_time, closing_time, entrance, cleaning, down_payment_id, venue_tag, thumbnail, host_id, status_id, availability_id) VALUES (:name, :description, :address, :location, :amenities, :rules, :pricing_type, :price, :min_attendees, :max_attendees, :min_time, :max_time, :opening_time, :closing_time, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :host_id, :status_id, :availability_id)';
 
             $stmt = $conn->prepare($sql);
 
@@ -68,6 +71,8 @@ class Venue
             $stmt->bindParam(':max_attendees', $this->max_attendees);
             $stmt->bindParam(':min_time', $this->min_time);
             $stmt->bindParam(':max_time', $this->max_time);
+            $stmt->bindParam(':opening_time', $this->opening_time);
+            $stmt->bindParam(':closing_time', $this->closing_time);
             $stmt->bindParam(':entrance', $this->entrance);
             $stmt->bindParam(':cleaning', $this->cleaning);
             $stmt->bindParam(':down_payment_id', $this->downPayment);
@@ -920,6 +925,8 @@ LEFT JOIN
         $venueMaxHead,
         $venueMinTime,
         $venueMaxTime,
+        $venueOpeningTime,
+        $venueClosingTime,
         $venueEntrance,
         $venueCleaning,
         $venueDownpayment,
@@ -954,6 +961,8 @@ LEFT JOIN
                 max_attendees = :max_attendees,
                 min_time = :min_time,
                 max_time = :max_time,
+                opening_time = :opening_time,
+                closing_time = :closing_time,
                 entrance = :entrance, 
                 cleaning = :cleaning, 
                 down_payment_id = :down_payment_id, 
@@ -974,6 +983,8 @@ LEFT JOIN
             $stmt->bindParam(':max_attendees', $venueMaxHead);
             $stmt->bindParam(':min_time', $venueMinTime);
             $stmt->bindParam(':max_time', $venueMaxTime);
+            $stmt->bindParam(':opening_time', $venueOpeningTime);
+            $stmt->bindParam(':closing_time', $venueClosingTime);
             $stmt->bindParam(':entrance', $venueEntrance);
             $stmt->bindParam(':cleaning', $venueCleaning);
             $stmt->bindParam(':down_payment_id', $venueDownpayment);
