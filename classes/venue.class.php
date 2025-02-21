@@ -464,7 +464,6 @@ class Venue
                     v.id AS venue_id,
                     v.name AS venue_name,
                     v.location AS venue_location,
-                    v.capacity AS venue_capacity,
                     v.price AS venue_price,
                     v.rules AS venue_rules,
 
@@ -631,7 +630,6 @@ class Venue
     v.id AS venue_id,
     v.name AS venue_name,
     v.address AS venue_location,
-    v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,
     v.amenities AS venue_amenities,
@@ -739,7 +737,6 @@ LEFT JOIN
     v.id AS venue_id,
     v.name AS venue_name,
     v.address AS venue_location,
-    v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,
     v.amenities AS venue_amenities,
@@ -1863,7 +1860,6 @@ LEFT JOIN
 
                     v.name AS venue_name,
                     v.address AS venue_location,
-                    v.capacity AS venue_capacity,
 
                     COALESCE(d.discount_value, 0) AS discount_value,
                     COALESCE(d.discount_code, 'N/A') AS discount_code,
