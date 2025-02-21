@@ -7,8 +7,9 @@ session_start();
 
 $venueObj = new Venue();
 
-$name = $description = $location = $address = $price = $capacity = $amenities = $tag = $entrance = $cleaning = $rules = $addRules = $checkIn = $checkOut = $check_inout = "";
-$nameErr = $descriptionErr = $locationErr = $priceErr = $capacityErr = $amenitiesErr = $tagErr = $entranceErr = $cleaningErr = $imageErr = $rulesErr = $checkInErr = $checkOutErr = "";
+$name = $description = $location = $address = $amenities = $rules = $addRules = $pricing_type = $price = $min_attendees = $max_attendees = $min_time = $max_time = $cleaning = $entrance = $tag = $thumbnail = "";
+
+$nameErr = $descriptionErr = $locationErr = $addressErr = $amenitiesErr = $rulesErr = $pricing_typeErr = $priceErr = $attendeesErr = $timeErr = $tagErr = $thumbnailErr = "";
 
 $uploadDir = '/venue_image_uploads/';
 $allowedType = ['jpg', 'jpeg', 'png'];
@@ -20,25 +21,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location = clean_input($_POST['venue-location']);
     $coor = clean_input($_POST['venueCoordinates']);
     $address = getAddressByCoordinates($coor);
-    $price = clean_input($_POST['price']);
-    $capacity = clean_input($_POST['venue-max-guest']);
-    $amenities = $_POST['amenities'];
-    $tag = clean_input(isset($_POST['placeType']) ? $_POST['placeType'] : '');
-    $entrance = clean_input($_POST['entrance-fee'] ?? 0);
-    $cleaning = clean_input($_POST['cleaning-fee']) ?? 0;
-    $thumbnail = clean_input($_POST['imageThumbnail']);
+    $amenities = array_map('clean_input', $_POST['amenities']);
     $rules = isset($_POST['fixedRules']) && is_array($_POST['fixedRules']) ? $_POST['fixedRules'] : [];
-    $sanitizedRules = array_map('clean_input', $rules); // Sanitize each checkbox value
     $addRules = isset($_POST['additionalRules']) ? clean_input($_POST['additionalRules']) : '';
-    $checkIn = clean_input($_POST['checkin-time']);
-    $checkOut = clean_input($_POST['checkout-time']);
-    $check_inout = json_encode(['check_in' => $checkIn, 'check_out' => $checkOut]);
+    $pricing_type = clean_input($_POST['pricing-type']);
+    $price = clean_input($_POST['price']);
+    $min_attendees = clean_input($_POST['min-attendees']);
+    $max_attendees = clean_input($_POST['max-attendees']);
+    $min_time = clean_input($_POST['min-time']);
+    $max_time = clean_input($_POST['max-time']);
+    $cleaning = clean_input($_POST['cleaning-fee']) ?? 0;
+    $entrance = clean_input($_POST['entrance-fee'] ?? 0);
+    $tag = clean_input(isset($_POST['placeType']) ? $_POST['placeType'] : '');
+    $thumbnail = clean_input($_POST['imageThumbnail']);
+    $sanitizedRules = array_map('clean_input', $rules); // Sanitize each checkbox value
 
-    // Validate address
-    // $addressData = coorAddressVerify($location, $coor);
-    // if (!$addressData) {
-    //     $locationErr = 'Invalid address and coordinates. Please try again.';
-    // }
     // Validation for required fields
     if (empty($name))
         $nameErr = "Name is required";
@@ -46,25 +43,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $descriptionErr = "Description is required";
     if (empty($location))
         $locationErr = "Location is required";
+    if (empty($address))
+        $locationErr = "Invalid address";
+    if (empty($pricing_type))
+        $pricing_typeErr = "Pricing type is required";
     if (empty($price))
         $priceErr = "Price is required";
-    if (empty($capacity))
-        $capacityErr = "Capacity is required";
+    if (empty($min_attendees) || empty($max_attendees)) {
+        $attendeesErr = "Mininum and Maximun number of attendees is required";
+    }
+    if (empty($min_time) || empty($max_time)) {
+        $timeErr = "Minimum and Maximum time is required";
+    }
     if (empty($amenities))
         $amenitiesErr = "Amenities are required";
     if (empty($tag))
         $tagErr = "Tag is required";
-    if (empty($rules))
+    if (empty($sanitizedRules))
         $rulesErr = "Rules are required";
-    if (empty($checkIn))
-        $checkInErr = "Check-in time is required";
-    if (empty($checkOut))
-        $checkOutErr = "Check-out time is required";
     if ($thumbnail === '' || $thumbnail === null)
         $imageErr = "Thumbnail is required";
-    if (empty($address))
-        $locationErr = "Invalid address";
-
 
     // Prepare amenities JSON
     $amenitiesJson = json_encode($amenities);
@@ -115,25 +113,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Proceed if no errors
     if (
-        empty($nameErr) && empty($descriptionErr) && empty($checkInErr) && empty($checkOutErr) && empty($locationErr) && empty($priceErr) && empty($capacityErr) && empty($amenitiesErr)
-        && empty($imageErr)
+        empty($nameErr) && empty($descriptionErr) && empty($locationErr) && empty($addressErr) && empty($pricing_typeErr) && empty($priceErr) && empty($attendeesErr) && empty($timeErr) && empty($amenitiesErr) && empty($rulesErr) && empty($tagErr) && empty($thumbnailErr) && empty($imageErr)
     ) {
         // Set venue object data
         $venueObj->name = $name;
         $venueObj->description = $description;
+        $venueObj->address = $address;
         $venueObj->location = $coor;
-        $venueObj->price = $price;
-        $venueObj->capacity = $capacity;
         $venueObj->amenities = $amenitiesJson;
         $venueObj->rules = $mergedRulesJson;
-        $venueObj->tag = $tag;
-        $venueObj->host_id = $_SESSION['user'];
+        $venueObj->pricing_type = $pricing_type;
+        $venueObj->price = $price;
+        $venueObj->min_attendees = $min_attendees;
+        $venueObj->max_attendees = $max_attendees;
+        $venueObj->min_time = $min_time;
+        $venueObj->max_time = $max_time;
         $venueObj->entrance = $entrance;
         $venueObj->cleaning = $cleaning;
-        $venueObj->check_inout = $check_inout;
-        $venueObj->image_url = json_encode($uploadedImages); // Save multiple image paths as JSON
+        $venueObj->tag = $tag;
         $venueObj->imageThumbnail = $thumbnail;
-        $venueObj->address = $address;
+        $venueObj->host_id = $_SESSION['user'];
+        $venueObj->image_url = json_encode($uploadedImages);
 
         // Add venue with image URLs to the database
         $result = $venueObj->addVenue();

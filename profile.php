@@ -120,7 +120,7 @@ if (!isset($_SESSION['user'])) {
     require_once './components/feedback.modal.html';
     require_once './components/confirm.feedback.modal.html';
     require_once './components/Menu.html';
-
+    require_once './spinner.php';
     ?>
 
     <div id="profileDisplay">

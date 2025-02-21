@@ -23,7 +23,6 @@ session_start();
             transition: all 0.3s ease;
         }
 
-        /* Styling for the border and hover effects */
         label:hover {
             border-color: black;
         }
@@ -33,34 +32,25 @@ session_start();
             ring: 2px solid black;
         }
 
-        /* Styling for the hidden checkbox */
         input[type="checkbox"] {
             display: none;
-            /* Hides the actual checkbox */
         }
 
-        /* Custom appearance when the checkbox is checked */
         input[type="checkbox"]:checked+svg {
             fill: #3490dc;
-            /* Green icon for a checked state */
             transition: fill 0.3s ease;
         }
 
         input[type="checkbox"]:checked+span {
             font-weight: bold;
-            /* Emphasize the label text */
         }
 
-        /* Label styles on peer interaction */
         label.peer-checked {
             color: #3490dc;
-            /* Light gray background for the selected option */
             border-color: black;
-            /* Highlight selected border */
             border-width: 2px;
         }
 
-        /* Smooth transitions for label states */
         label.transition {
             transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
         }
@@ -1180,7 +1170,6 @@ session_start();
                 <input type="text" id="venueCoordinates" name="venueCoordinates" class="hidden">
             </div>
 
-
             <div id="step5" class="step">
                 <h1 class="text-4xl font-bold mb-4">Add photos of your venue</h1>
                 <p class="text-xl text-gray-600 mb-8">Photos help guests imagine staying in your place. You can start
@@ -1243,12 +1232,19 @@ session_start();
                         <p class="text-gray-500 text-sm mt-2">50 characters maximum</p>
                     </div>
                 </div>
-                <h1 class="text-4xl font-bold mb-4 mt-12">Maximum number of Guest</h1>
+                <h1 class="text-4xl font-bold mb-4 mt-12">Number of Guest</h1>
                 <p class="text-gray-600 mb-8">How many guest can fit in your venue?</p>
 
-                <div class="space-y-6">
+                <div class="flex items-center gap-4">
                     <div>
-                        <input type="number" name="venue-max-guest" id="venue-max-guest"
+                        <label for="venue-min-guest">Minimum number of guest</label>
+                        <input type="number" name="min-attendees" id="min-attendees"
+                            class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                            placeholder="Number of guest">
+                    </div>
+                    <div>
+                        <label for="venue-min-guest">Maximum number of guest</label>
+                        <input type="number" name="max-attendees" id="max-attendees"
                             class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                             placeholder="Number of guest">
                     </div>
@@ -1301,23 +1297,35 @@ session_start();
                 <p class="text-gray-600 mb-6">You can change it anytime.</p>
 
                 <div class="text-center mb-8">
-                    <div class="text-center mb-8">
-                        <input type="number" name="price" id="price"
-                            class="w-full p-4 border rounded-lg text-center text-6xl font-bold focus:outline-none focus:ring-2 focus:ring-black mb-8"
-                            placeholder="₱**,***">
-                        <!-- Add preferred check-in and check-out times -->
-                        <div class="flex items-center w-full gap-4">
+                    <div class="text-center mb-8 flex flex-col gap-10">
+                        <div class="flex  items-center w-full gap-4">
                             <div class="w-full">
-                                <h2 class="text-xl font-semibold">Preferred Check-in Time</h2>
-                                <input type="time" name="checkin-time"
-                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                    placeholder="Check-in Time">
+                                <input type="number" name="price" id="price"
+                                    class="w-full p-4 border rounded-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-black"
+                                    placeholder="₱0">
                             </div>
                             <div class="w-full">
-                                <h2 class="text-xl font-semibold">Preferred Check-out Time</h2>
-                                <input type="time" name="checkout-time"
+                                <select name="pricing-type" id="pricing-type"
+                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black">
+                                    <option value="">Select Pricing option</option>
+                                    <option value="fixed">Per hour rate</option>
+                                    <option value="per_head">Per head count * hours</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Add preferred check-in and check-out times -->
+                        <div class="flex items-center w-full gap-4">
+                            <div class="w-full flex flex-col items-start">
+                                <h2 class="text-lg font-semibold">Minimun Booking Hours</h2>
+                                <input type="number" name="min-time" id="min-time" min="1"
+                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                    placeholder="Minimun Booking time limit">
+                            </div>
+                            <div class="w-full flex flex-col items-start">
+                                <h2 class="text-lg font-semibold">Maximum Booking Hours</h2>
+                                <input type="number" name="max-time" id="max-time" min="1"
                                     class="w-full p-4 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                    placeholder="Check-out Time">
+                                    placeholder="Maximum Booking time limit">
                             </div>
                         </div>
                     </div>
@@ -1547,7 +1555,19 @@ session_start();
                         return;
                     }
 
-                    const maxGuest = document.getElementById('venue-max-guest').value;
+                    const minGuest = document.getElementById('min-attendees').value;
+                    const maxGuest = document.getElementById('max-attendees').value;
+
+                    if (!minGuest) {
+                        showModal('Please enter the minimun number of guests.', undefined, 'black_ico.png');
+                        return;
+                    } else if (minGuest < 1) {
+                        showModal('Please enter a valid number of guests.', undefined, 'black_ico.png');
+                        return;
+                    } else if (minGuest.includes('.')) {
+                        showModal('Please enter a whole number for the minimum number of guests.', undefined, 'black_ico.png');
+                        return;
+                    }
 
                     if (!maxGuest) {
                         showModal('Please enter the maximum number of guests.', undefined, 'black_ico.png');
@@ -1559,6 +1579,7 @@ session_start();
                         showModal('Please enter a whole number for the maximum number of guests.', undefined, 'black_ico.png');
                         return;
                     }
+
                 }
 
                 if (currentStep === 10) {
@@ -1574,10 +1595,28 @@ session_start();
                         return;
                     }
 
-                    const checkinTime = document.getElementsByName('checkin-time')[0].value;
-                    const checkoutTime = document.getElementsByName('checkout-time')[0].value;
-                    if (checkinTime === '' || checkoutTime === '') {
-                        showModal('Please enter both check-in and check-out times.', undefined, 'black_ico.png');
+                    const minTime = document.getElementById('min-time').value;
+                    const maxTime = document.getElementById('max-time').value;
+
+                    if (!minTime) {
+                        showModal('Please enter the minimum booking time.', undefined, 'black_ico.png');
+                        return;
+                    } else if (minTime < 1) {
+                        showModal('Please enter a valid minimum booking time.', undefined, 'black_ico.png');
+                        return;
+                    } else if (minTime.includes('.')) {
+                        showModal('Please enter a whole number for the minimum booking time.', undefined, 'black_ico.png');
+                        return;
+                    }
+
+                    if (!maxTime) {
+                        showModal('Please enter the minimum booking time.', undefined, 'black_ico.png');
+                        return;
+                    } else if (maxTime < 1) {
+                        showModal('Please enter a valid minimum booking time.', undefined, 'black_ico.png');
+                        return;
+                    } else if (maxTime.includes('.')) {
+                        showModal('Please enter a whole number for the minimum booking time.', undefined, 'black_ico.png');
                         return;
                     }
 
