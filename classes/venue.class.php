@@ -925,8 +925,8 @@ LEFT JOIN
         $venueMaxHead,
         $venueMinTime,
         $venueMaxTime,
-        $venueOpeningTime,
-        $venueClosingTime,
+        $venueOpeningTime = null,
+        $venueClosingTime = null,
         $venueEntrance,
         $venueCleaning,
         $venueDownpayment,
@@ -983,8 +983,8 @@ LEFT JOIN
             $stmt->bindParam(':max_attendees', $venueMaxHead);
             $stmt->bindParam(':min_time', $venueMinTime);
             $stmt->bindParam(':max_time', $venueMaxTime);
-            $stmt->bindParam(':opening_time', $venueOpeningTime);
-            $stmt->bindParam(':closing_time', $venueClosingTime);
+            $stmt->bindValue(':opening_time', $venueOpeningTime, is_null($venueOpeningTime) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':closing_time', $venueClosingTime, is_null($venueClosingTime) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindParam(':entrance', $venueEntrance);
             $stmt->bindParam(':cleaning', $venueCleaning);
             $stmt->bindParam(':down_payment_id', $venueDownpayment);

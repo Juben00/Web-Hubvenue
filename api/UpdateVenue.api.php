@@ -31,8 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $venueMaxTime = clean_input($_POST['editMaxTime']);
     $venueMinHead = clean_input($_POST['editMinHead']);
     $venueMaxHead = clean_input($_POST['editMaxHead']);
-    $venueOpeningTime = clean_input($_POST['editOpeningTime']);
-    $venueClosingTime = clean_input($_POST['editClosingTime']);
+    $venueOpeningTime = clean_input($_POST['editOpeningTime'] ?? null);
+    $venueOpeningTime = ($venueOpeningTime === '00:00:00' || empty($venueOpeningTime)) ? null : $venueOpeningTime;
+    $venueClosingTime = clean_input($_POST['editClosingTime'] ?? null);
+    $venueClosingTime = ($venueClosingTime === '00:00:00' || empty($venueClosingTime)) ? null : $venueClosingTime;
     $venueEntrance = clean_input($_POST['editVenueEntrance']);
     $venueCleaning = clean_input($_POST['editVenueCleaning']);
     $venueAvailability = clean_input($_POST['editVenueStatus'] ?? 1);
