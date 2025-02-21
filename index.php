@@ -90,9 +90,10 @@ $venueImages = $venueObj->getAllVenueImages();
             height: 90vh;
             background-size: cover;
             background-position: center;
-            transition: background 1s ease-in;
+            transition: background 1s;
             margin: 0;
             position: relative;
+            animation: fadeOut 2s forwards;
             z-index: 1;
         }
 

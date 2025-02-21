@@ -7,19 +7,23 @@ class Venue
     public $id;
     public $name;
     public $description;
-
     public $address;
     public $location;
-    public $price;
-    public $capacity;
     public $amenities;
+    public $rules;
+    public $pricing_type;
+    public $price;
+
+    public $min_attendees;
+    public $max_attendees;
+    public $min_time;
+    public $max_time;
+    public $entrance;
+    public $cleaning;
 
     public $imageThumbnail;
 
-    public $rules;
     public $tag;
-    public $entrance;
-    public $cleaning;
     public $host_id;
     public $status = 1;
     public $availability = 1;
@@ -46,8 +50,9 @@ class Venue
             $conn->beginTransaction();
 
             // Insert venue information
-            $sql = 'INSERT INTO venues (name, description, location, address, price, capacity, amenities, rules, entrance, cleaning, down_payment_id, venue_tag, thumbnail, time_inout, host_id, status_id, availability_id) 
-                VALUES (:name, :description, :location, :address, :price, :capacity, :amenities, :rules, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :time_inout, :host_id, :status_id, :availability_id)';
+
+            $sql = 'INSERT INTO venues (name, description, address, location, amenities, rules, pricing_type, price, min_attendees, max_attendees, min_time, max_time, entrance, cleaning, down_payment_id, venue_tag, thumbnail, host_id, status_id, availability_id) VALUES (:name, :description, :address, :location, :amenities, :rules, :pricing_type, :price, :min_attendees, :max_attendees, :min_time, :max_time, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :host_id, :status_id, :availability_id)';
+
             $stmt = $conn->prepare($sql);
 
             // Bind parameters
@@ -55,19 +60,23 @@ class Venue
             $stmt->bindParam(':description', $this->description);
             $stmt->bindParam(':location', $this->location);
             $stmt->bindParam(':address', $this->address);
-            $stmt->bindParam(':price', $this->price);
-            $stmt->bindParam(':capacity', $this->capacity);
             $stmt->bindParam(':amenities', $this->amenities);
             $stmt->bindParam(':rules', $this->rules);
+            $stmt->bindParam(':pricing_type', $this->pricing_type);
+            $stmt->bindParam(':price', $this->price);
+            $stmt->bindParam(':min_attendees', $this->min_attendees);
+            $stmt->bindParam(':max_attendees', $this->max_attendees);
+            $stmt->bindParam(':min_time', $this->min_time);
+            $stmt->bindParam(':max_time', $this->max_time);
             $stmt->bindParam(':entrance', $this->entrance);
             $stmt->bindParam(':cleaning', $this->cleaning);
             $stmt->bindParam(':down_payment_id', $this->downPayment);
             $stmt->bindParam(':venue_tag', $this->tag);
             $stmt->bindParam(':thumbnail', $this->imageThumbnail);
-            $stmt->bindParam(':time_inout', $this->check_inout);
             $stmt->bindParam(':host_id', $this->host_id);
             $stmt->bindParam(':status_id', $this->status);
             $stmt->bindParam(':availability_id', $this->availability);
+
 
             // Execute venue insertion
             if ($stmt->execute()) {
@@ -900,8 +909,33 @@ LEFT JOIN
         }
     }
 
-    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $discountValue, $discountType, $discountCode, $discountDate, $discountsToDelete)
-    {
+    function updateVenue(
+        $venueId,
+        $venueName,
+        $venueDescription,
+        $venueAddress,
+        $venueLocation,
+        $venueAmenities,
+        $venueRules,
+        $venuePricingType,
+        $venuePrice,
+        $venueMinHead,
+        $venueMaxHead,
+        $venueMinTime,
+        $venueMaxTime,
+        $venueEntrance,
+        $venueCleaning,
+        $venueDownpayment,
+        $venueType,
+        $venueThumbnail,
+        $venueAvailability,
+        $venueImgs,
+        $discountValue,
+        $discountType,
+        $discountCode,
+        $discountDate,
+        $discountsToDelete
+    ) {
         try {
             $conn = $this->db->connect();
 
@@ -912,12 +946,17 @@ LEFT JOIN
             $sql = "UPDATE venues 
             SET 
                 name = :name, 
-                description = :description, 
+                description = :description,
+                address = :address, 
                 location = :location, 
-                price = :price, 
-                capacity = :capacity, 
                 amenities = :amenities, 
                 rules = :rules, 
+                pricing_type = :pricing_type,
+                price = :price, 
+                min_attendees = :min_attendees,
+                max_attendees = :max_attendees,
+                min_time = :min_time,
+                max_time = :max_time,
                 entrance = :entrance, 
                 cleaning = :cleaning, 
                 down_payment_id = :down_payment_id, 
@@ -928,11 +967,16 @@ LEFT JOIN
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':name', $venueName);
             $stmt->bindParam(':description', $venueDescription);
+            $stmt->bindParam(':address', $venueAddress);
             $stmt->bindParam(':location', $venueLocation);
-            $stmt->bindParam(':price', $venuePrice);
-            $stmt->bindParam(':capacity', $venueCapacity);
             $stmt->bindParam(':amenities', $venueAmenities);
             $stmt->bindParam(':rules', $venueRules);
+            $stmt->bindParam(':pricing_type', $venuePricingType);
+            $stmt->bindParam(':price', $venuePrice);
+            $stmt->bindParam(':min_attendees', $venueMinHead);
+            $stmt->bindParam(':max_attendees', $venueMaxHead);
+            $stmt->bindParam(':min_time', $venueMinTime);
+            $stmt->bindParam(':max_time', $venueMaxTime);
             $stmt->bindParam(':entrance', $venueEntrance);
             $stmt->bindParam(':cleaning', $venueCleaning);
             $stmt->bindParam(':down_payment_id', $venueDownpayment);
