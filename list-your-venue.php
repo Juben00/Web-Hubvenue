@@ -1296,9 +1296,9 @@ session_start();
                 <h1 class="text-3xl font-bold mb-2">Now, set your price</h1>
                 <p class="text-gray-600 mb-6">You can change it anytime.</p>
 
-                <div class="text-center mb-8">
-                    <div class="text-center mb-8 flex flex-col gap-10">
-                        <div class="flex  items-center w-full gap-4">
+                <div class="mb-8">
+                    <div class="text-start mb-8 flex flex-col gap-10">
+                        <div class="flex items-center w-full gap-4">
                             <div class="w-full">
                                 <input type="number" name="price" id="price"
                                     class="w-full p-4 border rounded-lg text-center font-bold focus:outline-none focus:ring-2 focus:ring-black"
@@ -1313,19 +1313,42 @@ session_start();
                                 </select>
                             </div>
                         </div>
+
+
                         <!-- Add preferred check-in and check-out times -->
-                        <div class="flex items-center w-full gap-4">
-                            <div class="w-full flex flex-col items-start">
-                                <h2 class="text-lg font-semibold">Minimun Booking Hours</h2>
-                                <input type="number" name="min-time" id="min-time" min="1"
-                                    class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                    placeholder="Minimun Booking time limit">
+                        <div class="flex flex-col gap-2">
+                            <p class="text-gray-600">Business Hours (Optional)</p>
+                            <div class="flex items-center w-full gap-4">
+                                <div class="w-full flex flex-col items-start">
+                                    <h2 class="text-lg font-semibold">Opening Time</h2>
+                                    <input type="time" name="open-time" id="open-time" min="1"
+                                        class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        placeholder="Opening Hour">
+                                </div>
+                                <div class="w-full flex flex-col items-start">
+                                    <h2 class="text-lg font-semibold">Closing Time</h2>
+                                    <input type="time" name="close-time" id="close-time" min="1"
+                                        class="w-full p-4 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        placeholder="Maximum Booking time limit">
+                                </div>
                             </div>
-                            <div class="w-full flex flex-col items-start">
-                                <h2 class="text-lg font-semibold">Maximum Booking Hours</h2>
-                                <input type="number" name="max-time" id="max-time" min="1"
-                                    class="w-full p-4 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-                                    placeholder="Maximum Booking time limit">
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+                            <p class="text-gray-600">Reservation Timeframe</p>
+                            <div class="flex items-center w-full gap-4">
+                                <div class="w-full flex flex-col items-start">
+                                    <h2 class="text-lg font-semibold">Minimun Booking Hours</h2>
+                                    <input type="number" name="min-time" id="min-time" min="1"
+                                        class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        placeholder="Minimun Booking time limit">
+                                </div>
+                                <div class="w-full flex flex-col items-start">
+                                    <h2 class="text-lg font-semibold">Maximum Booking Hours</h2>
+                                    <input type="number" name="max-time" id="max-time" min="1"
+                                        class="w-full p-4 border  rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                                        placeholder="Maximum Booking time limit">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1559,9 +1582,9 @@ session_start();
                     const maxGuest = document.getElementById('max-attendees').value;
 
                     if (!minGuest) {
-                        showModal('Please enter the minimun number of guests.', undefined, 'black_ico.png');
+                        showModal('Please enter the minimum number of guests.', undefined, 'black_ico.png');
                         return;
-                    } else if (minGuest < 1) {
+                    } else if (isNaN(minGuest) || parseInt(minGuest) < 1) {
                         showModal('Please enter a valid number of guests.', undefined, 'black_ico.png');
                         return;
                     } else if (minGuest.includes('.')) {
@@ -1572,13 +1595,19 @@ session_start();
                     if (!maxGuest) {
                         showModal('Please enter the maximum number of guests.', undefined, 'black_ico.png');
                         return;
-                    } else if (maxGuest < 1) {
+                    } else if (isNaN(maxGuest) || parseInt(maxGuest) < 1) {
                         showModal('Please enter a valid number of guests.', undefined, 'black_ico.png');
                         return;
                     } else if (maxGuest.includes('.')) {
                         showModal('Please enter a whole number for the maximum number of guests.', undefined, 'black_ico.png');
                         return;
                     }
+
+                    if (parseInt(minGuest) > parseInt(maxGuest)) {
+                        showModal('Minimum number of guests should be less than the maximum number of guests.', undefined, 'black_ico.png');
+                        return;
+                    }
+
 
                 }
 
@@ -1619,6 +1648,14 @@ session_start();
                         showModal('Please enter a whole number for the minimum booking time.', undefined, 'black_ico.png');
                         return;
                     }
+
+                    let pricingType = document.getElementById("pricing-type").value;
+
+                    if (pricingType === "") {
+                        showModal('Please select a pricing option.', undefined, 'black_ico.png');
+                        return;
+                    }
+
 
                 }
 

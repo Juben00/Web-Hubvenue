@@ -451,7 +451,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
                         <h3 class="text-xl font-semibold mb-4">Venue Capacity</h3>
                         <p class="">
-                            <?php echo htmlspecialchars($venue['capacity']) ?>
+                            <?php echo htmlspecialchars($venue['max_attendees']) ?>
                             guests
                         </p>
 
@@ -622,7 +622,8 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                     ?>
                                     <li class="flex items-center gap-2">
                                         <i class="fas fa-users text-gray-600"></i>
-                                        <span>Maximum <?php echo htmlspecialchars($venue['capacity']) ?> guests</span>
+                                        <span>Maximum <?php echo htmlspecialchars($venue['max_attendees']) ?>
+                                            guests</span>
                                     </li>
                                     <?php
                                     if (!empty($venue['rules'])) {
@@ -748,10 +749,10 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                     <div class="p-3">
                                         <label class="block text-xs font-semibold text-gray-700 mb-1">
                                             GUESTS (Maximum <span
-                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
+                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['max_attendees']); ?></span>)
                                         </label>
                                         <input type="number" name="numberOfGuest" id="numberOFGuest" min="1"
-                                            max="<?php echo htmlspecialchars($venue['capacity']); ?>"
+                                            max="<?php echo htmlspecialchars($venue['max_attendees']); ?>"
                                             class="w-full bg-transparent focus:outline-none text-gray-800"
                                             placeholder="Enter number of guests">
                                     </div>
@@ -948,7 +949,8 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
             const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
             const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
             const SERVICE_FEE_RATE = 0.15;
-            const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
+            const minGuests = <?php echo htmlspecialchars($venue['min_attendees']) ?>;
+            const maxGuests = <?php echo htmlspecialchars($venue['max_attendees']) ?>;
             const bookedDates = <?php echo json_encode($bookedDates); ?>;
 
             function disableBookedDates(date) {

@@ -2373,6 +2373,10 @@ video {
   text-align: right;
 }
 
+.text-start {
+  text-align: start;
+}
+
 .align-middle {
   vertical-align: middle;
 }
