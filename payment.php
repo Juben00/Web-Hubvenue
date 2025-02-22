@@ -41,14 +41,14 @@ $bookingDuration = $interval->days;
 
 $request = $reservationData['specialRequest'];
 $numberOfGuest = $reservationData['numberOfGuest'];
-$totalPriceForNights = $reservationData['totalPriceForNights'];
+$totalPriceForHours = $reservationData['totalPriceForHours'];
 $totalEntranceFee = $reservationData['entranceFee'];
 $cleaningFee = $reservationData['cleaningFee'];
 $serviceFee = $reservationData['serviceFee'];
 $subTotal = $reservationData['grandTotal'];
 
 // Ensure all monetary values are strings
-$totalPriceForNights = number_format((float) $totalPriceForNights, 2, '.', '');
+$totalPriceForHours = number_format((float) $totalPriceForHours, 2, '.', '');
 $totalEntranceFee = number_format((float) $totalEntranceFee, 2, '.', '');
 $cleaningFee = number_format((float) $cleaningFee, 2, '.', '');
 $serviceFee = number_format((float) $serviceFee, 2, '.', '');
@@ -125,6 +125,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
 
+                        <?php var_dump($reservationData) ?>
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 p-4 rounded-lg mb-4">
                             <div class="flex gap-2">
@@ -159,7 +160,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                                 <div class="space-y-1">
                                     <div class="flex justify-between">
                                         <span>Total Price for Nights</span>
-                                        <span>₱ <?php echo $totalPriceForNights ?></span>
+                                        <span>₱ <?php echo $totalPriceForHours ?></span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span>Entrance Fee</span>
