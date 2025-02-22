@@ -45,7 +45,7 @@ $totalPriceForHours = $reservationData['totalPriceForHours'];
 $totalEntranceFee = $reservationData['entranceFee'];
 $cleaningFee = $reservationData['cleaningFee'];
 $serviceFee = $reservationData['serviceFee'];
-$subTotal = $reservationData['grandTotal'];
+$subTotal = $reservationData['grandTotalShow'];
 
 // Ensure all monetary values are strings
 $totalPriceForHours = number_format((float) $totalPriceForHours, 2, '.', '');
@@ -125,9 +125,11 @@ $_SESSION['reservationFormData'] = $reservationData;
                     <div class="space-y-6">
                         <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
 
-                        <?php var_dump($reservationData) ?>
                         <!-- Coupon Input Section -->
-                        <div class="bg-slate-50 p-4 rounded-lg mb-4">
+                        <div class="bg-slate-50 rounded-lg mb-4">
+                            <div>
+
+                            </div>
                             <div class="flex gap-2">
                                 <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
                                     value=""
@@ -147,13 +149,15 @@ $_SESSION['reservationFormData'] = $reservationData;
                             <div class="space-y-2">
                                 <p><strong>Date:</strong>
                                     <?php
-                                    $checkInFormatted = date('F j, Y', strtotime($reservationData['checkin']));
-                                    $checkOutFormatted = date('F j, Y', strtotime($reservationData['checkout']));
+                                    $checkInFormatted = date('F j, Y h:i A', strtotime($reservationData['checkin']));
+                                    $checkOutFormatted = date('F j, Y h:i A', strtotime($reservationData['checkout']));
+
                                     echo $checkInFormatted . ' to ' . $checkOutFormatted;
                                     ?>
                                 </p>
                                 <p><strong>Guests:</strong> <?php echo $numberOfGuest ?></p>
-                                <p><strong>Special Request:</strong> <?php echo $request ?></p>
+                                <p><strong>Special Request:</strong>
+                                    <?php echo !empty($request) ? $request : 'No special request' ?></p>
                             </div>
                             <div class="mt-6 pt-4 border-t border-gray-300">
                                 <h5 class="font-semibold mb-2">Price Breakdown</h5>
@@ -217,6 +221,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                 <!-- Step 2: Venue Details -->
                 <div id="step2" class="step hidden">
                     <div class="space-y-6">
+
                         <h3 class="text-2xl font-semibold mb-4">Payment Method</h3>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="border rounded-lg p-6 cursor-pointer hover:border-black transition-colors"
@@ -310,7 +315,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                         <!-- File Upload -->
                         <p class="block text-center text-sm font-medium text-gray-700">OR</p>
                         <div class="relative group">
-                            <label for="receiptUpload" id="receiptLabel" class="overflow-x-scroll flex items-center justify-between gap-2 cursor-pointer 
+                            <label for="receiptUpload" id="receiptLabel" class="overflow-x-auto flex items-center justify-between gap-2 cursor-pointer 
         border border-gray-300 rounded-lg px-4 py-3 shadow-sm bg-gray-50 
         text-sm text-gray-600 hover:bg-gray-100 hover:border-gray-400 transition">
                                 <div class="flex items-center gap-2">
