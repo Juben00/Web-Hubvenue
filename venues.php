@@ -994,9 +994,45 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
             const closeDateTime = <?php echo json_encode($closedDateTime['closing_time'] ? $closedDateTime['closing_time'] : null); ?>;
             const openDateTime = <?php echo json_encode($closedDateTime['opening_time'] ? $closedDateTime['opening_time'] : null); ?>;
             const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
-            let checkkk = null;
+            const pricingType = <?php echo json_encode($venue['pricing_type']); ?>;
+            const isFixedPricing = pricingType === "fixed" ? true : false;
+            let timeout = null;
+            let checkOutDateTemp = null;
 
-            // Parse opening and closing times
+            // Initialize Flatpickr with validation
+            flatpickr("#checkin", {
+                enableTime: true,
+                dateFormat: "Y-m-d h:i K",
+                minDate: "today",
+                time_24hr: false,
+                onClose: function (selectedDates) {
+                    if (selectedDates.length > 0) {
+                        validateDateTime(selectedDates[0]);
+                    }
+                }
+            });
+
+            flatpickr("#duration", {
+                enableTime: true,
+                noCalendar: true, // Hide date selection
+                dateFormat: "H:i", // Only hours and minutes
+                time_24hr: true, // Use 24-hour format
+                defaultHour: 0, // Start from 0
+                defaultMinute: 0,
+            });
+
+            // flatpickr("#checkout", {
+            //     enableTime: true,
+            //     dateFormat: "Y-m-d h:i K",
+            //     minDate: "today",
+            //     time_24hr: false,
+            //     onClose: function (selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             validateDateTime(selectedDates[0]);
+            //             // validateCheckinCheckout();
+            //         }
+            //     }
+            // });
 
             // Validate selected date and time
             function validateDateTime(selectedDateTime) {
@@ -1035,7 +1071,6 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
                 return true;
             }
-
             // Additional validation for checkout being after check-in
             function validateCheckinCheckout() {
                 const checkinDate = new Date(checkinInput.value);
@@ -1076,70 +1111,40 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
                 const totalHours = hours + minutes / 60;
 
-                if (totalHours < minTime || totalHours > maxTime) {
-                    showModal(`Duration must be between ${minTime} and ${maxTime} hours.`, () => {
-                        durationInput.value = "";
-                        checkoutInput.value = "";
-                        calculateCheckout();
-                        calculateTotal();
-                    }, "black_ico.png");
-                    return false;
+                if (minTime !== 0 && maxTime !== 0) {
+                    if (totalHours < minTime || totalHours > maxTime) {
+                        showModal(`Duration must be between ${minTime} and ${maxTime} hours.`, () => {
+                            durationInput.value = "";
+                            checkoutInput.value = "";
+                            calculateCheckout();
+                            calculateTotal();
+                        }, "black_ico.png");
+                        return false;
+                    }
                 }
+                calculateCheckout();
+                calculateTotal();
+
 
                 return true;
             }
 
-
-            // Initialize Flatpickr with validation
-            flatpickr("#checkin", {
-                enableTime: true,
-                dateFormat: "Y-m-d h:i K",
-                minDate: "today",
-                time_24hr: false,
-                onClose: function (selectedDates) {
-                    if (selectedDates.length > 0) {
-                        validateDateTime(selectedDates[0]);
-                    }
-                }
-            });
-
-            flatpickr("#duration", {
-                enableTime: true,
-                noCalendar: true, // Hide date selection
-                dateFormat: "H:i", // Only hours and minutes
-                time_24hr: true, // Use 24-hour format
-                defaultHour: 0, // Start from 0
-                defaultMinute: 0,
-            });
-
-
-            // flatpickr("#checkout", {
-            //     enableTime: true,
-            //     dateFormat: "Y-m-d h:i K",
-            //     minDate: "today",
-            //     time_24hr: false,
-            //     onClose: function (selectedDates) {
-            //         if (selectedDates.length > 0) {
-            //             validateDateTime(selectedDates[0]);
-            //             // validateCheckinCheckout();
-            //         }
-            //     }
-            // });
-
             // Validate guest count with debounce
-            let timeout = null;
             guestsInput.addEventListener("input", () => {
                 clearTimeout(timeout);
 
                 timeout = setTimeout(() => {
                     const value = parseInt(guestsInput.value, 10);
+                    let guestView = document.querySelector('span[total-entrance-guests]');
 
                     if (value < minGuests) {
                         showModal(`Minimum number of attendees is ${minGuests}`, undefined, "black_ico.png");
                         guestsInput.value = minGuests;
+                        guestView.textContent = minGuests;
                     } else if (value > maxGuests) {
                         showModal(`Maximum number of attendees is ${maxGuests}`, undefined, "black_ico.png");
                         guestsInput.value = maxGuests;
+                        guestView.textContent = maxGuests;
                     }
                 }, 500); // Debounce time of 500ms
             });
@@ -1179,8 +1184,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                 // Format the checkout date using flatpickr's formatDate
                 const formattedCheckout = flatpickr.formatDate(checkinDate, "Y-m-d h:i K");
                 checkoutInput.value = formattedCheckout;
-                checkkk = new Date(checkinDate);
-
+                checkOutDateTemp = new Date(checkinDate);
             }
 
             function parseDuration(duration) {
@@ -1201,35 +1205,55 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                 let guests = parseInt(guestsInput.value, 10) || minGuests;
                 // console.log(durationValue);
 
-
                 if (durationValue > 0) {
+                    const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
                     const totalEntranceFee = entranceFee * guests;
                     const totalCleaningFee = cleaningFee;
-                    const totalPriceForHours = pricePerHour * durationValue;
+                    let totalPriceForHours = 0;
+
+                    if (isFixedPricing) {
+                        totalPriceForHours = pricePerHour * durationValue;
+                    } else {
+                        totalPriceForHours = pricePerHour * durationValue * guests;
+                    }
+
                     const serviceFee = (totalPriceForHours + totalEntranceFee + totalCleaningFee) * SERVICE_FEE_RATE;
                     const grandTotal = (totalPriceForHours + totalEntranceFee + totalCleaningFee + serviceFee) * discountMultiplier;
+                    const grandTotalshow = (totalPriceForHours + totalEntranceFee + totalCleaningFee + serviceFee);
 
+                    // Update hidden inputs
+                    document.querySelector('span[total-Hours]').textContent = durationValue;
+                    document.querySelector('span[total-entrance-guests]').textContent = guests;
                     totalPriceForHoursInput.textContent = totalPriceForHours.toFixed(2);
                     entranceFeeInput.textContent = totalEntranceFee.toFixed(2);
                     cleaningFeeInput.textContent = totalCleaningFee.toFixed(2);
                     serviceFeeInput.textContent = serviceFee.toFixed(2);
                     totalPriceInput.textContent = grandTotal.toFixed(2);
+
+                    appendHiddenInput(reservationForm, 'price', pricePerHour.toFixed(2));
+                    appendHiddenInput(reservationForm, 'entranceFee', totalEntranceFee.toFixed(2));
+                    appendHiddenInput(reservationForm, 'cleaningFee', (totalCleaningFee).toFixed(2));
+                    appendHiddenInput(reservationForm, 'duration', durationInput.value);
+                    appendHiddenInput(reservationForm, 'discount', <?php echo $discountStatus ? $discountStatus['id'] : null ?>);
+                    appendHiddenInput(reservationForm, 'totalPriceForHours', totalPriceForHours.toFixed(2));
+                    appendHiddenInput(reservationForm, 'serviceFee', serviceFee.toFixed(2));
+                    appendHiddenInput(reservationForm, 'grandTotal', grandTotal.toFixed(2));
+                    appendHiddenInput(reservationForm, 'grandTotalShow', grandTotalshow.toFixed(2));
                 }
             }
             // Append hidden input to the form
-            function appendHiddenInput(name, value) {
-                let input = reservationForm.querySelector(`input[name="${name}"]`);
-                if (!input) {
-                    input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = name;
-                    reservationForm.appendChild(input);
-                }
-                input.value = value;
+            function appendHiddenInput(form, name, value) {
+                const input = document.createElement('input');
+                input.type = 'hidden'; // Set input type to hidden
+                input.name = name; // Set the name attribute
+                input.value = value; // Set the value attribute
+                form.appendChild(input); // Append the input to the form
             }
+
             checkinInput.addEventListener("change", calculateCheckout);
             durationInput.addEventListener("input", calculateCheckout);
             guestsInput.addEventListener("input", calculateCheckout);
+
             // Event listeners
             checkinInput.addEventListener('change', () => {
                 validateCheckinCheckout();
