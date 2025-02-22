@@ -631,7 +631,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
                             <span class="font-semibold">Minimun booking time</span>
-                            <p><?php echo htmlspecialchars($venueView['min_time']) ?> Hours</p>
+                            <p><?php echo htmlspecialchars(!empty($venueView['min_time']) ? $venueView['min_time'] . " Hours" : "Not Set") ?>
+                            </p>
                         </div>
                     </div>
 
@@ -646,7 +647,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     <div class="border-b pb-4 mb-4 viewMode text-sm">
                         <div class="flex justify-between items-center">
                             <span class="font-semibold">Maximum booking time</span>
-                            <p><?php echo htmlspecialchars($venueView['max_time']) ?> Hours</p>
+                            <p><?php echo htmlspecialchars(!empty($venueView['max_time']) ? $venueView['max_time'] . " Hours" : "Not Set") ?>
+                            </p>
                         </div>
                     </div>
 

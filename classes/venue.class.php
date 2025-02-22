@@ -358,8 +358,8 @@ class Venue
     }
 
     function bookVenue(
-        $booking_start_date,
-        $booking_end_date,
+        $booking_start_datetime,
+        $booking_end_datetime,
         $booking_participants,
         $booking_venue_price,
         $booking_entrance,
@@ -383,13 +383,13 @@ class Venue
         try {
             $conn = $this->db->connect();
 
-            $sql = "INSERT INTO bookings (booking_start_date, booking_end_date, booking_participants, booking_venue_price, booking_entrance, booking_cleaning, booking_service_fee, booking_duration, booking_grand_total, booking_dp_amount, booking_balance, booking_dp_id, booking_coupon_id, booking_discount_id, booking_status_id, booking_guest_id, booking_venue_id, booking_payment_method, booking_payment_reference, booking_payment_status_id, booking_request) 
-                VALUES (:booking_start_date, :booking_end_date, :booking_participants, :booking_venue_price, :booking_entrance, :booking_cleaning, :booking_service_fee, :booking_duration, :booking_grand_total, :booking_dp_amount, :booking_balance, :booking_dp_id, :booking_coupon_id, :booking_discount_id, :booking_status_id, :booking_guest_id, :booking_venue_id, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id, :booking_request)";
+            $sql = "INSERT INTO bookings (booking_start_datetime, booking_end_datetime, booking_participants, booking_venue_price, booking_entrance, booking_cleaning, booking_service_fee, booking_duration, booking_grand_total, booking_dp_amount, booking_balance, booking_dp_id, booking_coupon_id, booking_discount_id, booking_status_id, booking_guest_id, booking_venue_id, booking_payment_method, booking_payment_reference, booking_payment_status_id, booking_request) 
+                VALUES (:booking_start_datetime, :booking_end_datetime, :booking_participants, :booking_venue_price, :booking_entrance, :booking_cleaning, :booking_service_fee, :booking_duration, :booking_grand_total, :booking_dp_amount, :booking_balance, :booking_dp_id, :booking_coupon_id, :booking_discount_id, :booking_status_id, :booking_guest_id, :booking_venue_id, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id, :booking_request)";
             $stmt = $conn->prepare($sql);
 
             // Bind the parameters
-            $stmt->bindParam(':booking_start_date', $booking_start_date);
-            $stmt->bindParam(':booking_end_date', $booking_end_date);
+            $stmt->bindParam(':booking_start_datetime', $booking_start_datetime);
+            $stmt->bindParam(':booking_end_datetime', $booking_end_datetime);
             $stmt->bindParam(':booking_participants', $booking_participants);
             $stmt->bindParam(':booking_venue_price', $booking_venue_price);
             $stmt->bindParam(':booking_entrance', $booking_entrance);
@@ -446,8 +446,8 @@ class Venue
             $conn = $this->db->connect();
             $sql = "SELECT 
                     b.id AS booking_id,
-                    b.booking_start_date,
-                    b.booking_end_date,
+                    b.booking_start_datetime,
+                    b.booking_end_datetime,
                     b.booking_duration,
                     b.booking_participants,
                     b.booking_venue_price,
@@ -576,7 +576,7 @@ class Venue
             $conn = $this->db->connect();
             $STATUS_1 = 1;
             $STATUS_2 = 2;
-            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate 
+            $sql = "SELECT booking_start_datetime AS startdate, booking_end_datetime AS enddate 
             FROM bookings 
             WHERE booking_venue_id = :venue_id
             AND booking_status_id = :status1 OR booking_status_id = :status2";
@@ -602,8 +602,8 @@ class Venue
 
             $sql = "SELECT 
     b.id AS booking_id,
-    b.booking_start_date,
-    b.booking_end_date,
+    b.booking_start_datetime,
+    b.booking_end_datetime,
     b.booking_duration,
     b.booking_participants,
     b.booking_venue_price,
@@ -715,8 +715,8 @@ LEFT JOIN
 
             $sql = "SELECT 
     b.id AS booking_id,
-    b.booking_start_date,
-    b.booking_end_date,
+    b.booking_start_datetime,
+    b.booking_end_datetime,
     b.booking_duration,
     b.booking_participants,
     b.booking_venue_price,
@@ -925,8 +925,8 @@ LEFT JOIN
         $venueMaxHead,
         $venueMinTime,
         $venueMaxTime,
-        $venueOpeningTime,
-        $venueClosingTime,
+        $venueOpeningTime = null,
+        $venueClosingTime = null,
         $venueEntrance,
         $venueCleaning,
         $venueDownpayment,
@@ -983,8 +983,8 @@ LEFT JOIN
             $stmt->bindParam(':max_attendees', $venueMaxHead);
             $stmt->bindParam(':min_time', $venueMinTime);
             $stmt->bindParam(':max_time', $venueMaxTime);
-            $stmt->bindParam(':opening_time', $venueOpeningTime);
-            $stmt->bindParam(':closing_time', $venueClosingTime);
+            $stmt->bindValue(':opening_time', $venueOpeningTime, is_null($venueOpeningTime) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':closing_time', $venueClosingTime, is_null($venueClosingTime) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindParam(':entrance', $venueEntrance);
             $stmt->bindParam(':cleaning', $venueCleaning);
             $stmt->bindParam(':down_payment_id', $venueDownpayment);
@@ -1210,12 +1210,12 @@ LEFT JOIN
     {
         try {
             $sql = "SELECT 
-                    DATE_FORMAT(booking_start_date, '%Y-%m') as month,
+                    DATE_FORMAT(booking_start_datetime, '%Y-%m') as month,
                     SUM(booking_grand_total) as revenue
                     FROM bookings
                     WHERE booking_venue_id = ?
                     AND booking_status_id IN (2,4)
-                    GROUP BY DATE_FORMAT(booking_start_date, '%Y-%m')
+                    GROUP BY DATE_FORMAT(booking_start_datetime, '%Y-%m')
                     ORDER BY month DESC
                     LIMIT 12";
 
@@ -1422,12 +1422,12 @@ LEFT JOIN
     {
         try {
             $sql = "SELECT 
-                    DATE_FORMAT(booking_start_date, '%M') as month,
+                    DATE_FORMAT(booking_start_datetime, '%M') as month,
                     COUNT(*) as booking_count
                     FROM bookings
                     WHERE booking_venue_id = ?
                     AND booking_status_id IN (2,4)
-                    GROUP BY DATE_FORMAT(booking_start_date, '%M')
+                    GROUP BY DATE_FORMAT(booking_start_datetime, '%M')
                     ORDER BY booking_count DESC
                     LIMIT 1";
 
@@ -1511,8 +1511,8 @@ LEFT JOIN
             $query = "
                 SELECT DISTINCT
                     b.id as booking_id,
-                    b.booking_start_date,
-                    b.booking_end_date,
+                    b.booking_start_datetime,
+                    b.booking_end_datetime,
                     b.booking_status_id,
                     b.booking_participants,
                     b.booking_venue_price,
@@ -1561,7 +1561,7 @@ LEFT JOIN
     function getBookedDatesByVenue($month, $year, $venueID)
     {
         try {
-            $sql = "SELECT b.booking_start_date, b.booking_end_date FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE (MONTH(booking_start_date) = :month OR MONTH(b.booking_end_date) = :month) AND (YEAR(b.booking_start_date) = :year OR YEAR(b.booking_end_date) = :year) AND v.id = venueID;";
+            $sql = "SELECT b.booking_start_datetime, b.booking_end_datetime FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE (MONTH(booking_start_datetime) = :month OR MONTH(b.booking_end_datetime) = :month) AND (YEAR(b.booking_start_datetime) = :year OR YEAR(b.booking_end_datetime) = :year) AND v.id = venueID;";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':month', $month);
@@ -1603,7 +1603,7 @@ LEFT JOIN
     function getRemainingBookings($venueID)
     {
         try {
-            $sql = "SELECT COUNT(*) as remaining_bookings FROM bookings WHERE booking_venue_id = :venueID AND booking_status_id = 2 AND booking_start_date > NOW();";
+            $sql = "SELECT COUNT(*) as remaining_bookings FROM bookings WHERE booking_venue_id = :venueID AND booking_status_id = 2 AND booking_start_datetime > NOW();";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venueID', $venueID);
@@ -1846,8 +1846,8 @@ LEFT JOIN
             $sql = "SELECT 
                     b.*,
                     b.id AS booking_id,
-                    b.booking_start_date,
-                    b.booking_end_date,
+                    b.booking_start_datetime,
+                    b.booking_end_datetime,
                     b.booking_duration,
                     b.booking_participants,
                     b.booking_venue_price AS booking_original_price,
@@ -1913,6 +1913,22 @@ LEFT JOIN
         } catch (PDOException $e) {
             error_log("Error getting admin bookings: " . $e->getMessage());
             return [];
+        }
+    }
+
+    public function getClosedDateTime($venueId)
+    {
+        try {
+            $sql = "SELECT closing_time, opening_time FROM venues WHERE id = :venue_id";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return null;
         }
     }
 
