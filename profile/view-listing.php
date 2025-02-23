@@ -869,7 +869,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                     $bookingCount += 1; // Aggregate booking count
                     $bookingRevenue += $booking['booking_dp_amount'];
 
-                    $bookingEndDate = new DateTime($booking['booking_end_date']);
+                    $bookingEndDate = new DateTime($booking['booking_end_datetime']);
 
                     if (
                         $bookingEndDate->format('Y') === $currentMonth->format('Y') &&
@@ -931,8 +931,8 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 <div class="flex justify-between text-sm text-gray-600 mb-2">
                                     <p class="text-gray-600 mt-1">
                                         <?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        $startDate = new DateTime($booking['booking_start_datetime']);
+                                        $endDate = new DateTime($booking['booking_end_datetime']);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?>
                                     </p>

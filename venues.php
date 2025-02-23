@@ -43,9 +43,9 @@ $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
 
 $discountStatus = $accountObj->getDiscountApplication($USER_ID);
-var_dump($bookedDate);
-var_dump($closedDateTime);
-var_dump($venue['min_time']);
+// var_dump($bookedDate);
+// var_dump($closedDateTime);
+// var_dump($venue['min_time']);
 ?>
 
 
