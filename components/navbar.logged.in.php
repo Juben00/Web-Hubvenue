@@ -307,9 +307,46 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
     }
   }
 
-  // Update message count every 5 seconds
-  setInterval(updateMessageCount, 5000);
+  // Add notification count update function
+  async function updateNotificationCount() {
+    try {
+      const response = await fetch(`./api/getNotificationCount.api.php?user_id=<?php echo $USER_ID; ?>`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const notificationCountElement = document.getElementById('notificationCount');
+        const count = data.unread_count;
+        
+        if (count > 0) {
+          if (!notificationCountElement) {
+            // Create new badge if it doesn't exist
+            const badge = document.createElement('span');
+            badge.id = 'notificationCount';
+            badge.className = 'absolute -top-2 -right-2 flex items-center justify-center bg-red-500 text-white text-xs font-medium rounded-full h-5 w-5';
+            badge.textContent = count > 99 ? '99+' : count;
+            document.getElementById('notificationButton').parentElement.appendChild(badge);
+          } else {
+            // Update existing badge
+            notificationCountElement.textContent = count > 99 ? '99+' : count;
+            notificationCountElement.style.display = 'flex';
+          }
+        } else if (notificationCountElement) {
+          // Hide badge if count is 0
+          notificationCountElement.style.display = 'none';
+        }
+      }
+    } catch (error) {
+      console.error('Error updating notification count:', error);
+    }
+  }
 
-  // Initial update
+  // Update message count every 1 second
+  setInterval(updateMessageCount, 1000);
+
+  // Update notification count every 1 second
+  setInterval(updateNotificationCount, 1000);
+
+  // Initial updates
   updateMessageCount();
+  updateNotificationCount();
 </script>
