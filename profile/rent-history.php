@@ -55,7 +55,7 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                     foreach ($pendingBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
 
                         ?>
                         <div class="p-6">
@@ -136,8 +136,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                     </p>
                                     <p class="text-gray-600 mt-1">
                                         <?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        $startDate = new DateTime($booking['booking_start_datetime']);
+                                        $endDate = new DateTime($booking['booking_end_datetime']);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?>
                                     </p>
@@ -191,7 +191,7 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                     foreach ($currentBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                         ?>
                         <div class="p-6">
                             <div class="flex items-center justify-between mb-4">
@@ -271,8 +271,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                     </p>
                                     <p class="text-gray-600 mt-1">
                                         <?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        $startDate = new DateTime($booking['booking_start_datetime']);
+                                        $endDate = new DateTime($booking['booking_end_datetime']);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?>
                                     </p>
@@ -326,7 +326,7 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                     foreach ($previousBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
 
                         ?>
                         <div class="p-6">
@@ -345,8 +345,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                         <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
                                         </p>
                                         <p class="text-gray-600 mt-2"><?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
+                                        $startDate = new DateTime($booking['booking_start_datetime']);
+                                        $endDate = new DateTime($booking['booking_end_datetime']);
                                         echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                         ?></p>
                                         <p class="text-gray-600">
@@ -439,7 +439,7 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                 foreach ($cancelledBooking as $booking) {
                     $timezone = new DateTimeZone('Asia/Manila');
                     $currentDateTime = new DateTime('now', $timezone);
-                    $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                    $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                     ?>
                     <div class="p-6">
                         <div class="space-y-6">
@@ -458,8 +458,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                         <?php echo htmlspecialchars($booking['venue_name']) ?>
                                     </p>
                                     <p class="text-gray-600 mt-2"><?php
-                                    $startDate = new DateTime($booking['booking_start_date']);
-                                    $endDate = new DateTime($booking['booking_end_date']);
+                                    $startDate = new DateTime($booking['booking_start_datetime']);
+                                    $endDate = new DateTime($booking['booking_end_datetime']);
                                     echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                     ?></p>
                                     <p class="text-gray-600">
@@ -775,8 +775,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
         bookingStatus.className = `px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.booking_status_id)}`;
 
         // set booking details
-        const startDate = new Date(booking.booking_start_date);
-        const endDate = new Date(booking.booking_end_date);
+        const startDate = new Date(booking.booking_start_datetime);
+        const endDate = new Date(booking.booking_end_datetime);
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
         document.getElementById('date').textContent = `${startDate.toLocaleDateString('en-US', options)} to ${endDate.toLocaleDateString('en-US', options)}`;
@@ -1073,8 +1073,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
             <div class="section-title">Booking Information</div>
             <div class="info">
                 <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
-                <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
-                <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_datetime).toLocaleDateString()}</div>
+                <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_datetime).toLocaleDateString()}</div>
                 <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
             </div>
         </div>
@@ -1261,8 +1261,8 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
             <div class="section-title">Booking Information</div>
             <div class="info">
                 <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
-                <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
-                <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_datetime).toLocaleDateString()}</div>
+                <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_datetime).toLocaleDateString()}</div>
                 <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
             </div>
         </div>

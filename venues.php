@@ -38,23 +38,14 @@ $owner = $accountObj->getUser($venue['host_id']);
 $bookedDate = $venueObj->getBookedDates($_GET['id']);
 $closedDateTime = $venueObj->getClosedDateTime($_GET['id']);
 
-// Prepare booked dates for JavaScript
-$bookedDates = [];
-foreach ($bookedDate as $booking) {
-    $start = new DateTime($booking['startdate']);
-    $end = new DateTime($booking['enddate']);
-    $interval = new DateInterval('P1D');
-    $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
-
-    foreach ($dateRange as $date) {
-        $bookedDates[] = $date->format('Y-m-d');
-    }
-}
 
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
 
 $discountStatus = $accountObj->getDiscountApplication($USER_ID);
+var_dump($bookedDate);
+var_dump($closedDateTime);
+var_dump($venue['min_time']);
 ?>
 
 
@@ -344,7 +335,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
     </style>
 </head>
 
-<body class="bg-slate-50">
+<body class="bg-slate-50 relative">
     <!-- Header -->
     <?php
     if (isset($USER_ID)) {
@@ -361,7 +352,8 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
     ?>
 
-    <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
+    <?php require_once './components/customcalendar.php'; ?>
+    <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container ">
         <div class="main-content">
             <div id="venueDetails">
                 <div class="mb-6">
@@ -745,6 +737,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                                 font-normal"><?php echo $venue['pricing_type'] == "fixed" ? " × hours" : " × hours × attendees" ?></span></span>
                                     </div>
                                 </div>
+
                                 <!-- Date and Guest Selection -->
                                 <div class="border rounded-xl mb-6 shadow-sm bg-gray-50 relative">
                                     <div class="flex flex-col border-b">
@@ -756,8 +749,9 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                                 $closingTime = DateTime::createFromFormat('H:i:s', $venue['closing_time'])->format('h:i A');
                                                 echo "($openingTime to $closingTime)";
                                             } ?> </label>
-                                            <input type="text" name="checkin" id="checkin" placeholder="Set Date"
-                                                class="w-full bg-transparent focus:outline-none text-gray-800">
+                                            <input type="text" readonly name="checkin" id="checkin"
+                                                placeholder="Set Date"
+                                                class="w-full bg-transparent cursor-pointer focus:outline-none text-gray-800">
                                         </div>
                                         <div class="w-full p-3">
                                             <label class="block text-xs font-semibold text-gray-700 mb-1">EVENT DURATION <?php
@@ -990,7 +984,6 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
             const maxGuests = parseInt(<?php echo json_encode($venue['max_attendees']); ?>, 10);
             const minTime = parseInt(<?php echo json_encode($venue['min_time']); ?>, 10);
             const maxTime = parseInt(<?php echo json_encode($venue['max_time']); ?>, 10);
-            const bookedDates = <?php echo json_encode($bookedDates); ?>;
             const closeDateTime = <?php echo json_encode($closedDateTime['closing_time'] ? $closedDateTime['closing_time'] : null); ?>;
             const openDateTime = <?php echo json_encode($closedDateTime['opening_time'] ? $closedDateTime['opening_time'] : null); ?>;
             const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
@@ -1000,23 +993,62 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
             let checkOutDateTemp = null;
 
             // Initialize Flatpickr with validation
-            flatpickr("#checkin", {
-                enableTime: true,
-                dateFormat: "Y-m-d h:i K",
-                minDate: "today",
-                time_24hr: false,
-                onClose: function (selectedDates) {
-                    if (selectedDates.length > 0) {
-                        validateDateTime(selectedDates[0]);
-                    }
+            // flatpickr("#checkin", {
+            //     enableTime: true,
+            //     dateFormat: "Y-m-d h:i K",
+            //     minDate: "today",
+            //     time_24hr: false,
+            //     onClose: function (selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             validateDateTime(selectedDates[0]);
+            //         }
+            //     }
+            // });
+
+
+            document.getElementById("checkin").addEventListener("click", function () {
+                document.getElementById("datetimeselector").classList.remove("hidden");
+                document.getElementById("datetimeselector").classList.add("flex");
+
+                document.body.style.overflow = "hidden";
+            });
+
+            document.getElementById("datetimeselector").addEventListener("click", function (event) {
+                if (event.target === this) {
+                    document.getElementById("datetimeselector").classList.remove("flex");
+                    document.getElementById("datetimeselector").classList.add("hidden");
+
+                    document.body.style.overflow = "auto";
                 }
             });
+
+
+
+            // flatpickr("#checkin", {
+            //     enableTime: true,
+            //     dateFormat: "Y-m-d h:i K",
+            //     minDate: "today",
+            //     time_24hr: false,
+            //     allowInput: false,
+            //     disable: [
+            //         function (date) {
+            //             // Disable booked dates
+            //             return bookedDates.includes(date.toISOString().split('T')[0]);
+            //         }
+            //     ],
+            //     onClose: function (selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             validateDateTime(selectedDates[0]);
+            //         }
+            //     }
+            // });
 
             flatpickr("#duration", {
                 enableTime: true,
                 noCalendar: true, // Hide date selection
                 dateFormat: "H:i", // Only hours and minutes
                 time_24hr: true, // Use 24-hour format
+                allowInput: false,
                 defaultHour: 0, // Start from 0
                 defaultMinute: 0,
             });

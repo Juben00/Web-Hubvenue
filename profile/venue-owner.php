@@ -79,7 +79,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         foreach ($pendingBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
                             $currentDateTime = new DateTime('now', $timezone);
-                            $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                            $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                             ?>
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
@@ -141,8 +141,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         </p>
                                         <p class="text-gray-700 mt-1">
                                             <?php
-                                            $startDate = new DateTime($booking['booking_start_date']);
-                                            $endDate = new DateTime($booking['booking_end_date']);
+                                            $startDate = new DateTime($booking['booking_start_datetime']);
+                                            $endDate = new DateTime($booking['booking_end_datetime']);
                                             echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                             ?>
                                         </p>
@@ -185,7 +185,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         foreach ($confirmedBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
                             $currentDateTime = new DateTime('now', $timezone);
-                            $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                            $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                             ?>
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
@@ -247,8 +247,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         </p>
                                         <p class="text-gray-700 mt-1">
                                             <?php
-                                            $startDate = new DateTime($booking['booking_start_date']);
-                                            $endDate = new DateTime($booking['booking_end_date']);
+                                            $startDate = new DateTime($booking['booking_start_datetime']);
+                                            $endDate = new DateTime($booking['booking_end_datetime']);
                                             echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                             ?>
                                         </p>
@@ -291,7 +291,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         foreach ($cancelledBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
                             $currentDateTime = new DateTime('now', $timezone);
-                            $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                            $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                             ?>
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
@@ -344,8 +344,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         </p>
                                         <p class="text-gray-700 mt-1">
                                             <?php
-                                            $startDate = new DateTime($booking['booking_start_date']);
-                                            $endDate = new DateTime($booking['booking_end_date']);
+                                            $startDate = new DateTime($booking['booking_start_datetime']);
+                                            $endDate = new DateTime($booking['booking_end_datetime']);
                                             echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                             ?>
                                         </p>
@@ -388,7 +388,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         foreach ($completedBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
                             $currentDateTime = new DateTime('now', $timezone);
-                            $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                            $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                             ?>
                             <div class="p-6 border-b border-gray-200 booking-item"
                                 data-status="<?php echo $booking['booking_status_id']; ?>">
@@ -450,8 +450,8 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                                         </p>
                                         <p class="text-gray-700 mt-1">
                                             <?php
-                                            $startDate = new DateTime($booking['booking_start_date']);
-                                            $endDate = new DateTime($booking['booking_end_date']);
+                                            $startDate = new DateTime($booking['booking_start_datetime']);
+                                            $endDate = new DateTime($booking['booking_end_datetime']);
                                             echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
                                             ?>
                                         </p>
@@ -1069,12 +1069,12 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
         // Set booking details
         document.getElementById('booking-duration').textContent = `${booking.booking_duration} day/s`;
-        document.getElementById('start-date').textContent = new Date(booking.booking_start_date).toLocaleDateString('en-US', {
+        document.getElementById('start-date').textContent = new Date(booking.booking_start_datetime).toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
             year: 'numeric'
         });
-        document.getElementById('end-date').textContent = new Date(booking.booking_end_date).toLocaleDateString('en-US', {
+        document.getElementById('end-date').textContent = new Date(booking.booking_end_datetime).toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
             year: 'numeric'

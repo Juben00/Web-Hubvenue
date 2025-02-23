@@ -820,6 +820,11 @@ video {
   margin-bottom: 2rem;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .-mb-px {
   margin-bottom: -1px;
 }
@@ -1300,6 +1305,11 @@ video {
   width: auto;
 }
 
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .w-full {
   width: 100%;
 }
@@ -1661,10 +1671,6 @@ video {
 
 .overflow-x-hidden {
   overflow-x: hidden;
-}
-
-.overflow-x-scroll {
-  overflow-x: scroll;
 }
 
 .truncate {
@@ -2058,6 +2064,11 @@ video {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
+}
+
+.bg-yellow-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(253 224 71 / var(--tw-bg-opacity, 1));
 }
 
 .bg-opacity-30 {
