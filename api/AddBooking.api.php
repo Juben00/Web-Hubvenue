@@ -18,13 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $booking_start_date = clean_input($reservationData['checkin']);
     $booking_end_date = clean_input($reservationData['checkout']);
-    // Convert dates to DateTime objects
-    $startDate = new DateTime($booking_start_date);
-    $endDate = new DateTime($booking_end_date);
-    // Calculate the difference
-    $interval = $startDate->diff($endDate);
-    // Get the difference in days
-    $booking_duration = $interval->days;
+
+    // conver to 24 hours
+    $booking_start_date = date("Y-m-d H:i:s", strtotime($booking_start_date));
+    $booking_end_date = date("Y-m-d H:i:s", strtotime($booking_end_date));
+
     $booking_status_id = 1;
     $booking_participants = clean_input($reservationData['numberOfGuest']);
     $booking_request = clean_input($reservationData['specialRequest']);
@@ -55,9 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($booking_participants)) {
         $booking_participantsErr = "Number of participants is required";
     }
-    if (empty($booking_duration)) {
-        $booking_durationErr = "Duration is required";
-    }
+    // if (empty($booking_duration)) {
+    //     $booking_durationErr = "Duration is required";
+    // }
     if (empty($booking_status_id)) {
         $booking_status_idErr = "Status is required";
     }

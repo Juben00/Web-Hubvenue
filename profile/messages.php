@@ -102,7 +102,7 @@ try {
         // If this user isn't in our array yet, or if this booking is more recent, update it
         if (
             !isset($uniqueUsers[$userKey]) ||
-            strtotime($booking['booking_start_date']) > strtotime($uniqueUsers[$userKey]['booking_start_date'])
+            strtotime($booking['booking_start_datetime']) > strtotime($uniqueUsers[$userKey]['booking_start_datetime'])
         ) {
             $uniqueUsers[$userKey] = [
                 'booking_id' => $booking['id'],
@@ -111,7 +111,7 @@ try {
                 'guest_id' => $guestId,
                 'host_id' => $hostId,
                 'display_name' => $userName,
-                'booking_start_date' => $booking['booking_start_date'],
+                'booking_start_datetime' => $booking['booking_start_datetime'],
                 'booking_status_id' => $booking['booking_status_id'],
                 'name' => $venueName,
                 'unread_count' => (int) $booking['unread_count']
@@ -124,7 +124,7 @@ try {
 
     // Sort by most recent booking
     usort($uniqueUsers, function ($a, $b) {
-        return strtotime($b['booking_start_date']) - strtotime($a['booking_start_date']);
+        return strtotime($b['booking_start_datetime']) - strtotime($a['booking_start_datetime']);
     });
 
 } catch (PDOException $e) {
@@ -189,7 +189,7 @@ try {
                                             </div>
                                         </div>
                                         <span class="text-xs text-gray-500">
-                                            <?php echo date('M j, Y', strtotime($user['booking_start_date'])); ?>
+                                            <?php echo date('M j, Y', strtotime($user['booking_start_datetime'])); ?>
                                         </span>
                                     </div>
                                     <div class="flex justify-between items-center">

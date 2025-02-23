@@ -579,7 +579,8 @@ class Venue
             $sql = "SELECT booking_start_datetime AS startdate, booking_end_datetime AS enddate 
             FROM bookings 
             WHERE booking_venue_id = :venue_id
-            AND booking_status_id = :status1 OR booking_status_id = :status2";
+            AND booking_status_id = :status1 OR booking_status_id = :status2
+            GROUP BY id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);
             $stmt->bindParam(':status1', $STATUS_1);
@@ -1931,6 +1932,7 @@ LEFT JOIN
             return null;
         }
     }
+
 
 }
 
