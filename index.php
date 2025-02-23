@@ -90,9 +90,10 @@ $venueImages = $venueObj->getAllVenueImages();
             height: 90vh;
             background-size: cover;
             background-position: center;
-            transition: background 1s ease-in;
+            transition: background 1s;
             margin: 0;
             position: relative;
+            animation: fadeOut 2s forwards;
             z-index: 1;
         }
 
@@ -326,7 +327,9 @@ $venueImages = $venueObj->getAllVenueImages();
                                                 <p class="mt-2">
                                                     <span
                                                         class="font-semibold text-gray-900 text-base">₱<?= number_format($venue['price'], 2) ?></span>
-                                                    <span class="text-gray-900 text-sm"> per night</span>
+                                                    <span class="text-gray-900 text-sm"><span
+                                                            class="text-sm text-gray-600
+                                                font-normal"><?php echo $venue['pricing_type'] == "fixed" ? " × hours" : " × hours × attendees" ?></span></span></span>
                                                 </p>
                                             </div>
                                         </div>

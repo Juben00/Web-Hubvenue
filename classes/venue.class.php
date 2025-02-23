@@ -7,19 +7,26 @@ class Venue
     public $id;
     public $name;
     public $description;
-
     public $address;
     public $location;
-    public $price;
-    public $capacity;
     public $amenities;
+    public $rules;
+    public $pricing_type;
+    public $price;
+
+    public $min_attendees;
+    public $max_attendees;
+    public $min_time;
+    public $max_time;
+
+    public $opening_time;
+    public $closing_time;
+    public $entrance;
+    public $cleaning;
 
     public $imageThumbnail;
 
-    public $rules;
     public $tag;
-    public $entrance;
-    public $cleaning;
     public $host_id;
     public $status = 1;
     public $availability = 1;
@@ -46,8 +53,9 @@ class Venue
             $conn->beginTransaction();
 
             // Insert venue information
-            $sql = 'INSERT INTO venues (name, description, location, address, price, capacity, amenities, rules, entrance, cleaning, down_payment_id, venue_tag, thumbnail, time_inout, host_id, status_id, availability_id) 
-                VALUES (:name, :description, :location, :address, :price, :capacity, :amenities, :rules, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :time_inout, :host_id, :status_id, :availability_id)';
+
+            $sql = 'INSERT INTO venues (name, description, address, location, amenities, rules, pricing_type, price, min_attendees, max_attendees, min_time, max_time, opening_time, closing_time, entrance, cleaning, down_payment_id, venue_tag, thumbnail, host_id, status_id, availability_id) VALUES (:name, :description, :address, :location, :amenities, :rules, :pricing_type, :price, :min_attendees, :max_attendees, :min_time, :max_time, :opening_time, :closing_time, :entrance, :cleaning, :down_payment_id, :venue_tag, :thumbnail, :host_id, :status_id, :availability_id)';
+
             $stmt = $conn->prepare($sql);
 
             // Bind parameters
@@ -55,19 +63,25 @@ class Venue
             $stmt->bindParam(':description', $this->description);
             $stmt->bindParam(':location', $this->location);
             $stmt->bindParam(':address', $this->address);
-            $stmt->bindParam(':price', $this->price);
-            $stmt->bindParam(':capacity', $this->capacity);
             $stmt->bindParam(':amenities', $this->amenities);
             $stmt->bindParam(':rules', $this->rules);
+            $stmt->bindParam(':pricing_type', $this->pricing_type);
+            $stmt->bindParam(':price', $this->price);
+            $stmt->bindParam(':min_attendees', $this->min_attendees);
+            $stmt->bindParam(':max_attendees', $this->max_attendees);
+            $stmt->bindParam(':min_time', $this->min_time);
+            $stmt->bindParam(':max_time', $this->max_time);
+            $stmt->bindParam(':opening_time', $this->opening_time);
+            $stmt->bindParam(':closing_time', $this->closing_time);
             $stmt->bindParam(':entrance', $this->entrance);
             $stmt->bindParam(':cleaning', $this->cleaning);
             $stmt->bindParam(':down_payment_id', $this->downPayment);
             $stmt->bindParam(':venue_tag', $this->tag);
             $stmt->bindParam(':thumbnail', $this->imageThumbnail);
-            $stmt->bindParam(':time_inout', $this->check_inout);
             $stmt->bindParam(':host_id', $this->host_id);
             $stmt->bindParam(':status_id', $this->status);
             $stmt->bindParam(':availability_id', $this->availability);
+
 
             // Execute venue insertion
             if ($stmt->execute()) {
@@ -344,8 +358,8 @@ class Venue
     }
 
     function bookVenue(
-        $booking_start_date,
-        $booking_end_date,
+        $booking_start_datetime,
+        $booking_end_datetime,
         $booking_participants,
         $booking_venue_price,
         $booking_entrance,
@@ -368,6 +382,7 @@ class Venue
     ) {
         try {
             $conn = $this->db->connect();
+<<<<<<< HEAD
             
             // Debug logging
             error_log("Booking parameters:");
@@ -422,11 +437,16 @@ class Venue
             
             error_log("SQL Query: " . $sql);
             
+=======
+
+            $sql = "INSERT INTO bookings (booking_start_datetime, booking_end_datetime, booking_participants, booking_venue_price, booking_entrance, booking_cleaning, booking_service_fee, booking_duration, booking_grand_total, booking_dp_amount, booking_balance, booking_dp_id, booking_coupon_id, booking_discount_id, booking_status_id, booking_guest_id, booking_venue_id, booking_payment_method, booking_payment_reference, booking_payment_status_id, booking_request) 
+                VALUES (:booking_start_datetime, :booking_end_datetime, :booking_participants, :booking_venue_price, :booking_entrance, :booking_cleaning, :booking_service_fee, :booking_duration, :booking_grand_total, :booking_dp_amount, :booking_balance, :booking_dp_id, :booking_coupon_id, :booking_discount_id, :booking_status_id, :booking_guest_id, :booking_venue_id, :booking_payment_method, :booking_payment_reference, :booking_payment_status_id, :booking_request)";
+>>>>>>> 020c245a9c87e4846bd0efff377368df8af14a2b
             $stmt = $conn->prepare($sql);
 
             // Bind the parameters
-            $stmt->bindParam(':booking_start_date', $booking_start_date);
-            $stmt->bindParam(':booking_end_date', $booking_end_date);
+            $stmt->bindParam(':booking_start_datetime', $booking_start_datetime);
+            $stmt->bindParam(':booking_end_datetime', $booking_end_datetime);
             $stmt->bindParam(':booking_participants', $booking_participants);
             $stmt->bindParam(':booking_venue_price', $booking_venue_price);
             $stmt->bindParam(':booking_entrance', $booking_entrance);
@@ -487,8 +507,8 @@ class Venue
             $conn = $this->db->connect();
             $sql = "SELECT 
                     b.id AS booking_id,
-                    b.booking_start_date,
-                    b.booking_end_date,
+                    b.booking_start_datetime,
+                    b.booking_end_datetime,
                     b.booking_duration,
                     b.booking_participants,
                     b.booking_venue_price,
@@ -510,7 +530,6 @@ class Venue
                     v.id AS venue_id,
                     v.name AS venue_name,
                     v.location AS venue_location,
-                    v.capacity AS venue_capacity,
                     v.price AS venue_price,
                     v.rules AS venue_rules,
 
@@ -618,10 +637,11 @@ class Venue
             $conn = $this->db->connect();
             $STATUS_1 = 1;
             $STATUS_2 = 2;
-            $sql = "SELECT booking_start_date AS startdate, booking_end_date AS enddate 
+            $sql = "SELECT booking_start_datetime AS startdate, booking_end_datetime AS enddate 
             FROM bookings 
             WHERE booking_venue_id = :venue_id
-            AND booking_status_id = :status1 OR booking_status_id = :status2";
+            AND booking_status_id = :status1 OR booking_status_id = :status2
+            GROUP BY id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venue_id', $venue_id);
             $stmt->bindParam(':status1', $STATUS_1);
@@ -644,8 +664,8 @@ class Venue
 
             $sql = "SELECT 
     b.id AS booking_id,
-    b.booking_start_date,
-    b.booking_end_date,
+    b.booking_start_datetime,
+    b.booking_end_datetime,
     b.booking_duration,
     b.booking_participants,
     b.booking_venue_price,
@@ -677,7 +697,6 @@ class Venue
     v.id AS venue_id,
     v.name AS venue_name,
     v.address AS venue_location,
-    v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,
     v.amenities AS venue_amenities,
@@ -758,8 +777,8 @@ LEFT JOIN
 
             $sql = "SELECT 
     b.id AS booking_id,
-    b.booking_start_date,
-    b.booking_end_date,
+    b.booking_start_datetime,
+    b.booking_end_datetime,
     b.booking_duration,
     b.booking_participants,
     b.booking_venue_price,
@@ -785,7 +804,6 @@ LEFT JOIN
     v.id AS venue_id,
     v.name AS venue_name,
     v.address AS venue_location,
-    v.capacity AS venue_capacity,
     v.price AS venue_price,
     v.rules AS venue_rules,
     v.amenities AS venue_amenities,
@@ -955,8 +973,35 @@ LEFT JOIN
         }
     }
 
-    function updateVenue($venueId, $venueName, $venueImgs, $venueThumbnail, $venueLocation, $venueDescription, $venueCapacity, $venueAmenities, $venueRules, $venueType, $venuePrice, $venueDownpayment, $venueEntrance, $venueCleaning, $venueAvailability, $discountValue, $discountType, $discountCode, $discountDate, $discountsToDelete)
-    {
+    function updateVenue(
+        $venueId,
+        $venueName,
+        $venueDescription,
+        $venueAddress,
+        $venueLocation,
+        $venueAmenities,
+        $venueRules,
+        $venuePricingType,
+        $venuePrice,
+        $venueMinHead,
+        $venueMaxHead,
+        $venueMinTime,
+        $venueMaxTime,
+        $venueOpeningTime = null,
+        $venueClosingTime = null,
+        $venueEntrance,
+        $venueCleaning,
+        $venueDownpayment,
+        $venueType,
+        $venueThumbnail,
+        $venueAvailability,
+        $venueImgs,
+        $discountValue,
+        $discountType,
+        $discountCode,
+        $discountDate,
+        $discountsToDelete
+    ) {
         try {
             $conn = $this->db->connect();
 
@@ -967,12 +1012,19 @@ LEFT JOIN
             $sql = "UPDATE venues 
             SET 
                 name = :name, 
-                description = :description, 
+                description = :description,
+                address = :address, 
                 location = :location, 
-                price = :price, 
-                capacity = :capacity, 
                 amenities = :amenities, 
                 rules = :rules, 
+                pricing_type = :pricing_type,
+                price = :price, 
+                min_attendees = :min_attendees,
+                max_attendees = :max_attendees,
+                min_time = :min_time,
+                max_time = :max_time,
+                opening_time = :opening_time,
+                closing_time = :closing_time,
                 entrance = :entrance, 
                 cleaning = :cleaning, 
                 down_payment_id = :down_payment_id, 
@@ -983,11 +1035,18 @@ LEFT JOIN
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':name', $venueName);
             $stmt->bindParam(':description', $venueDescription);
+            $stmt->bindParam(':address', $venueAddress);
             $stmt->bindParam(':location', $venueLocation);
-            $stmt->bindParam(':price', $venuePrice);
-            $stmt->bindParam(':capacity', $venueCapacity);
             $stmt->bindParam(':amenities', $venueAmenities);
             $stmt->bindParam(':rules', $venueRules);
+            $stmt->bindParam(':pricing_type', $venuePricingType);
+            $stmt->bindParam(':price', $venuePrice);
+            $stmt->bindParam(':min_attendees', $venueMinHead);
+            $stmt->bindParam(':max_attendees', $venueMaxHead);
+            $stmt->bindParam(':min_time', $venueMinTime);
+            $stmt->bindParam(':max_time', $venueMaxTime);
+            $stmt->bindValue(':opening_time', $venueOpeningTime, is_null($venueOpeningTime) ? PDO::PARAM_NULL : PDO::PARAM_STR);
+            $stmt->bindValue(':closing_time', $venueClosingTime, is_null($venueClosingTime) ? PDO::PARAM_NULL : PDO::PARAM_STR);
             $stmt->bindParam(':entrance', $venueEntrance);
             $stmt->bindParam(':cleaning', $venueCleaning);
             $stmt->bindParam(':down_payment_id', $venueDownpayment);
@@ -1213,12 +1272,12 @@ LEFT JOIN
     {
         try {
             $sql = "SELECT 
-                    DATE_FORMAT(booking_start_date, '%Y-%m') as month,
+                    DATE_FORMAT(booking_start_datetime, '%Y-%m') as month,
                     SUM(booking_grand_total) as revenue
                     FROM bookings
                     WHERE booking_venue_id = ?
                     AND booking_status_id IN (2,4)
-                    GROUP BY DATE_FORMAT(booking_start_date, '%Y-%m')
+                    GROUP BY DATE_FORMAT(booking_start_datetime, '%Y-%m')
                     ORDER BY month DESC
                     LIMIT 12";
 
@@ -1425,12 +1484,12 @@ LEFT JOIN
     {
         try {
             $sql = "SELECT 
-                    DATE_FORMAT(booking_start_date, '%M') as month,
+                    DATE_FORMAT(booking_start_datetime, '%M') as month,
                     COUNT(*) as booking_count
                     FROM bookings
                     WHERE booking_venue_id = ?
                     AND booking_status_id IN (2,4)
-                    GROUP BY DATE_FORMAT(booking_start_date, '%M')
+                    GROUP BY DATE_FORMAT(booking_start_datetime, '%M')
                     ORDER BY booking_count DESC
                     LIMIT 1";
 
@@ -1514,8 +1573,8 @@ LEFT JOIN
             $query = "
                 SELECT DISTINCT
                     b.id as booking_id,
-                    b.booking_start_date,
-                    b.booking_end_date,
+                    b.booking_start_datetime,
+                    b.booking_end_datetime,
                     b.booking_status_id,
                     b.booking_participants,
                     b.booking_venue_price,
@@ -1564,7 +1623,7 @@ LEFT JOIN
     function getBookedDatesByVenue($month, $year, $venueID)
     {
         try {
-            $sql = "SELECT b.booking_start_date, b.booking_end_date FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE (MONTH(booking_start_date) = :month OR MONTH(b.booking_end_date) = :month) AND (YEAR(b.booking_start_date) = :year OR YEAR(b.booking_end_date) = :year) AND v.id = venueID;";
+            $sql = "SELECT b.booking_start_datetime, b.booking_end_datetime FROM bookings b JOIN venues v ON b.booking_venue_id = v.id WHERE (MONTH(booking_start_datetime) = :month OR MONTH(b.booking_end_datetime) = :month) AND (YEAR(b.booking_start_datetime) = :year OR YEAR(b.booking_end_datetime) = :year) AND v.id = venueID;";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':month', $month);
@@ -1606,7 +1665,7 @@ LEFT JOIN
     function getRemainingBookings($venueID)
     {
         try {
-            $sql = "SELECT COUNT(*) as remaining_bookings FROM bookings WHERE booking_venue_id = :venueID AND booking_status_id = 2 AND booking_start_date > NOW();";
+            $sql = "SELECT COUNT(*) as remaining_bookings FROM bookings WHERE booking_venue_id = :venueID AND booking_status_id = 2 AND booking_start_datetime > NOW();";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':venueID', $venueID);
@@ -1849,8 +1908,8 @@ LEFT JOIN
             $sql = "SELECT 
                     b.*,
                     b.id AS booking_id,
-                    b.booking_start_date,
-                    b.booking_end_date,
+                    b.booking_start_datetime,
+                    b.booking_end_datetime,
                     b.booking_duration,
                     b.booking_participants,
                     b.booking_venue_price AS booking_original_price,
@@ -1874,7 +1933,6 @@ LEFT JOIN
 
                     v.name AS venue_name,
                     v.address AS venue_location,
-                    v.capacity AS venue_capacity,
 
                     COALESCE(d.discount_value, 0) AS discount_value,
                     COALESCE(d.discount_code, 'N/A') AS discount_code,
@@ -1920,6 +1978,7 @@ LEFT JOIN
         }
     }
 
+<<<<<<< HEAD
     public function getDashboardStats($host_id) {
         try {
             $conn = $this->db->connect();
@@ -2255,6 +2314,25 @@ LEFT JOIN
         }
     }
 
+=======
+    public function getClosedDateTime($venueId)
+    {
+        try {
+            $sql = "SELECT closing_time, opening_time FROM venues WHERE id = :venue_id";
+            $conn = $this->db->connect();
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':venue_id', $venueId);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+
+>>>>>>> 020c245a9c87e4846bd0efff377368df8af14a2b
 }
 
 $venueObj = new Venue();

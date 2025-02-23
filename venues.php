@@ -36,24 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Retrieve the owner's information
 $owner = $accountObj->getUser($venue['host_id']);
 $bookedDate = $venueObj->getBookedDates($_GET['id']);
+$closedDateTime = $venueObj->getClosedDateTime($_GET['id']);
 
-// Prepare booked dates for JavaScript
-$bookedDates = [];
-foreach ($bookedDate as $booking) {
-    $start = new DateTime($booking['startdate']);
-    $end = new DateTime($booking['enddate']);
-    $interval = new DateInterval('P1D');
-    $dateRange = new DatePeriod($start, $interval, $end->modify('+1 day'));
-
-    foreach ($dateRange as $date) {
-        $bookedDates[] = $date->format('Y-m-d');
-    }
-}
 
 $ratings = $venueObj->getRatings($_GET['id']);
 $reviews = $venueObj->getReview($_GET['id']);
 
 $discountStatus = $accountObj->getDiscountApplication($USER_ID);
+// var_dump($bookedDate);
+// var_dump($closedDateTime);
+// var_dump($venue['min_time']);
 ?>
 
 
@@ -343,7 +335,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
     </style>
 </head>
 
-<body class="bg-slate-50">
+<body class="bg-slate-50 relative">
     <!-- Header -->
     <?php
     if (isset($USER_ID)) {
@@ -360,10 +352,9 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
     ?>
 
-    <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container">
+    <?php require_once './components/customcalendar.php'; ?>
+    <main class="max-w-7xl pt-32 mx-auto px-4 py-6 sm:px-6 lg:px-8 main-container ">
         <div class="main-content">
-
-
             <div id="venueDetails">
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-4">
@@ -435,12 +426,10 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                         <div class="flex justify-between items-center mb-6 gap-4">
                             <div>
                                 <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($venue['tag']) ?> at
-                                    <?php echo htmlspecialchars($venue['address']);
-                                    var_dump($USER_ID) ?>
+                                    <?php echo htmlspecialchars($venue['address']); ?>
                                 </h2>
                             </div>
                         </div>
-
 
                         <hr class="my-6">
 
@@ -451,8 +440,34 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
                         <h3 class="text-xl font-semibold mb-4">Venue Capacity</h3>
                         <p class="">
-                            <?php echo htmlspecialchars($venue['capacity']) ?>
+                            <?php echo htmlspecialchars($venue['max_attendees']) ?>
                             guests
+                        </p>
+
+                        <hr class="my-6">
+
+                        <h3 class="text-xl font-semibold mb-4">Venue Availability</h3>
+                        <p class="">
+                            <?php
+                            if (!empty($venue['opening_time']) && !empty($venue['closing_time'])) {
+                                $openingTime = DateTime::createFromFormat('H:i:s', $venue['opening_time'])->format('h:i A');
+                                $closingTime = DateTime::createFromFormat('H:i:s', $venue['closing_time'])->format('h:i A');
+                                echo "Open from $openingTime to $closingTime";
+                            } else {
+                                echo "Available 24/7";
+                            }
+                            ?>
+                        </p>
+                        <p>
+                            <?php
+                            if (!empty($venue['min_time']) && !empty($venue['max_time'])) {
+                                $minTime = $venue['min_time'];
+                                $maxTime = $venue['max_time'];
+                                echo "Minimum of $minTime hours and a maximum of $maxTime hours";
+                            } else {
+                                echo "No time limit";
+                            }
+                            ?>
                         </p>
 
                         <hr class="my-6">
@@ -622,7 +637,8 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                     ?>
                                     <li class="flex items-center gap-2">
                                         <i class="fas fa-users text-gray-600"></i>
-                                        <span>Maximum <?php echo htmlspecialchars($venue['capacity']) ?> guests</span>
+                                        <span>Maximum <?php echo htmlspecialchars($venue['max_attendees']) ?>
+                                            guests</span>
                                     </li>
                                     <?php
                                     if (!empty($venue['rules'])) {
@@ -714,44 +730,56 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                             <form id="reservationForm" method="POST">
                                 <!-- Pr ice Header -->
                                 <div class="flex flex-col lg:flex-row justify-between items-center mb-6 flex-wrap">
-                                    <div class="flex items-center">
+                                    <div class="flex items-center justify-center w-full text-center">
                                         <span
-                                            class="text-xl font-bold">₱<?php echo htmlspecialchars($venue['price']); ?><span
-                                                class="text-sm text-gray-600 font-normal">/night</span></span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-sm">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span
-                                            class="font-semibold"><?php echo number_format($venue['rating'], 1) ?></span>
-                                        <span class="text-gray-500 text-xs"> <?php echo $venue['total_reviews'] ?>
-                                            review/s</span>
+                                            class="text-lg font-bold">₱<?php echo htmlspecialchars($venue['price']); ?><span
+                                                class="text-sm text-gray-600
+                                                font-normal"><?php echo $venue['pricing_type'] == "fixed" ? " × hours" : " × hours × attendees" ?></span></span>
                                     </div>
                                 </div>
+
                                 <!-- Date and Guest Selection -->
                                 <div class="border rounded-xl mb-6 shadow-sm bg-gray-50 relative">
-                                    <div class="flex border-b">
+                                    <div class="flex flex-col border-b">
                                         <input type="hidden" name="venueId"
                                             value="<?php echo htmlspecialchars($venue['id']); ?>">
-                                        <div class="w-1/2 p-3 border-r">
-                                            <label
-                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN</label>
-                                            <input type="date" name="checkin" id="checkin" placeholder="Set Date"
-                                                class="w-full bg-transparent focus:outline-none text-gray-800">
+                                        <div class="w-full p-3 border-r">
+                                            <label class="block text-xs font-semibold text-gray-700 mb-1">CHECK-IN <?php if (isset($venue['opening_time']) && isset($venue['closing_time'])) {
+                                                $openingTime = DateTime::createFromFormat('H:i:s', $venue['opening_time'])->format('h:i A');
+                                                $closingTime = DateTime::createFromFormat('H:i:s', $venue['closing_time'])->format('h:i A');
+                                                echo "($openingTime to $closingTime)";
+                                            } ?> </label>
+                                            <input type="text" readonly name="checkin" id="checkin"
+                                                placeholder="Set Date"
+                                                class="w-full bg-transparent cursor-pointer focus:outline-none text-gray-800">
                                         </div>
-                                        <div class="w-1/2 p-3">
-                                            <label
-                                                class="block text-xs font-semibold text-gray-700 mb-1">CHECKOUT</label>
-                                            <input type="date" name="checkout" id="checkout" placeholder="Set Date"
+                                        <div class="w-full p-3">
+                                            <label class="block text-xs font-semibold text-gray-700 mb-1">EVENT DURATION <?php
+                                            if (!empty($venue['min_time']) && !empty($venue['max_time'])) {
+                                                $minTime = $venue['min_time'];
+                                                $maxTime = $venue['max_time'];
+                                                echo "(Min $minTime hours & Max $maxTime hours)";
+                                            } else {
+                                                echo "(No time limit)";
+                                            }
+                                            ?></label>
+                                            <input type="text" name="duration" id="duration"
+                                                placeholder="Set Event Duration"
+                                                class="w-full bg-transparent focus:outline-none text-gray-800">
+                                            <input type="hidden" name="checkout" id="checkout" placeholder="Set Date"
                                                 class="w-full bg-transparent focus:outline-none text-gray-800">
                                         </div>
                                     </div>
                                     <div class="p-3">
                                         <label class="block text-xs font-semibold text-gray-700 mb-1">
-                                            GUESTS (Maximum <span
-                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['capacity']); ?></span>)
+                                            GUESTS (Min <span
+                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['min_attendees']); ?></span>
+                                            & Max <span
+                                                class="text-red-500 font-bold"><?php echo htmlspecialchars($venue['max_attendees']); ?></span>)
                                         </label>
-                                        <input type="number" name="numberOfGuest" id="numberOFGuest" min="1"
-                                            max="<?php echo htmlspecialchars($venue['capacity']); ?>"
+                                        <input type="number" min="<?php echo $venue['min_attendees'] ?>"
+                                            name="numberOfGuest" id="numberOFGuest"
+                                            max="<?php echo htmlspecialchars($venue['max_attendees']); ?>"
                                             class="w-full bg-transparent focus:outline-none text-gray-800"
                                             placeholder="Enter number of guests">
                                     </div>
@@ -770,11 +798,11 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                     <div class="flex justify-between items-center">
                                         <span class="text-gray-600 hover:text-gray-900 cursor-help">
                                             ₱<?php echo htmlspecialchars($venue['price']); ?> × <span
-                                                total-nights>0</span>
-                                            nights
+                                                total-Hours>0</span>
+                                            Hours
                                         </span>
                                         <span class="font-medium flex items-center">
-                                            ₱ <p class="text-right bg-transparent w-24 " name="totalPriceForNights"
+                                            ₱ <p class="text-right bg-transparent w-24 " name="totalPriceForHours"
                                                 value="0" readonly>0</p>
                                         </span>
                                     </div>
@@ -935,159 +963,347 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
+            // DOM Elements
             const checkinInput = document.querySelector('input[name="checkin"]');
+            const durationInput = document.querySelector('input[name="duration"]');
             const checkoutInput = document.querySelector('input[name="checkout"]');
             const guestsInput = document.querySelector('input[name="numberOfGuest"]');
             const totalPriceInput = document.querySelector('p[name="totalPrice"]');
-            const totalPriceForNightsInput = document.querySelector('p[name="totalPriceForNights"]');
+            const totalPriceForHoursInput = document.querySelector('p[name="totalPriceForHours"]');
             const serviceFeeInput = document.querySelector('p[name="serviceFee"]');
             const entranceFeeInput = document.querySelector('p[name="totalEntranceFee"]');
             const cleaningFeeInput = document.querySelector('p[name="cleaningFee"]');
-            const pricePerNight = <?php echo htmlspecialchars($venue['price']) ?>;
-            const entranceFee = <?php echo htmlspecialchars($venue['entrance']) ?>;
-            const cleaningFee = <?php echo htmlspecialchars($venue['cleaning']) ?>;
+            const reservationForm = document.getElementById('reservationForm');
+
+            // PHP Variables (Sanitized)
+            const pricePerHour = parseFloat(<?php echo json_encode($venue['price']); ?>);
+            const entranceFee = parseFloat(<?php echo json_encode($venue['entrance']); ?>);
+            const cleaningFee = parseFloat(<?php echo json_encode($venue['cleaning']); ?>);
             const SERVICE_FEE_RATE = 0.15;
-            const maxGuests = <?php echo htmlspecialchars($venue['capacity']) ?>;
-            const bookedDates = <?php echo json_encode($bookedDates); ?>;
+            const minGuests = parseInt(<?php echo json_encode($venue['min_attendees']); ?>, 10);
+            const maxGuests = parseInt(<?php echo json_encode($venue['max_attendees']); ?>, 10);
+            const minTime = parseInt(<?php echo json_encode($venue['min_time']); ?>, 10);
+            const maxTime = parseInt(<?php echo json_encode($venue['max_time']); ?>, 10);
+            const closeDateTime = <?php echo json_encode($closedDateTime['closing_time'] ? $closedDateTime['closing_time'] : null); ?>;
+            const openDateTime = <?php echo json_encode($closedDateTime['opening_time'] ? $closedDateTime['opening_time'] : null); ?>;
+            const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
+            const pricingType = <?php echo json_encode($venue['pricing_type']); ?>;
+            const isFixedPricing = pricingType === "fixed" ? true : false;
+            let timeout = null;
+            let checkOutDateTemp = null;
 
-            function disableBookedDates(date) {
-                const dateString = date.toISOString().split('T')[0];
-                return bookedDates.includes(dateString);
-            }
+            // Initialize Flatpickr with validation
+            // flatpickr("#checkin", {
+            //     enableTime: true,
+            //     dateFormat: "Y-m-d h:i K",
+            //     minDate: "today",
+            //     time_24hr: false,
+            //     onClose: function (selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             validateDateTime(selectedDates[0]);
+            //         }
+            //     }
+            // });
 
-            function disableDates(input, minDate = "today") {
-                flatpickr(input, {
-                    minDate: minDate,
-                    disable: bookedDates,
-                    appendTo: input.parentElement,
-                    static: true,
-                    onChange: function (selectedDates, dateStr, instance) {
-                        validateDateRange();
+
+            document.getElementById("checkin").addEventListener("click", function () {
+                document.getElementById("datetimeselector").classList.remove("hidden");
+                document.getElementById("datetimeselector").classList.add("flex");
+
+                document.body.style.overflow = "hidden";
+            });
+
+            document.getElementById("datetimeselector").addEventListener("click", function (event) {
+                if (event.target === this) {
+                    document.getElementById("datetimeselector").classList.remove("flex");
+                    document.getElementById("datetimeselector").classList.add("hidden");
+
+                    document.body.style.overflow = "auto";
+                }
+            });
+
+
+
+            // flatpickr("#checkin", {
+            //     enableTime: true,
+            //     dateFormat: "Y-m-d h:i K",
+            //     minDate: "today",
+            //     time_24hr: false,
+            //     allowInput: false,
+            //     disable: [
+            //         function (date) {
+            //             // Disable booked dates
+            //             return bookedDates.includes(date.toISOString().split('T')[0]);
+            //         }
+            //     ],
+            //     onClose: function (selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             validateDateTime(selectedDates[0]);
+            //         }
+            //     }
+            // });
+
+            flatpickr("#duration", {
+                enableTime: true,
+                noCalendar: true, // Hide date selection
+                dateFormat: "H:i", // Only hours and minutes
+                time_24hr: true, // Use 24-hour format
+                allowInput: false,
+                defaultHour: 0, // Start from 0
+                defaultMinute: 0,
+            });
+
+            // flatpickr("#checkout", {
+            //     enableTime: true,
+            //     dateFormat: "Y-m-d h:i K",
+            //     minDate: "today",
+            //     time_24hr: false,
+            //     onClose: function (selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             validateDateTime(selectedDates[0]);
+            //             // validateCheckinCheckout();
+            //         }
+            //     }
+            // });
+
+            // Validate selected date and time
+            function validateDateTime(selectedDateTime) {
+                const now = new Date();
+
+                // Check if the selected date is in the past
+                if (selectedDateTime < now) {
+                    showModal("You cannot select a past date and time.", () => {
+                        checkinInput.value = "";
+                        checkoutInput.value = "";
                         calculateTotal();
-                        if (input.name === 'checkin') {
-                            checkoutInput._flatpickr.set('minDate', dateStr); // Set minDate for checkout based on checkin
-                        }
-                    }
-                });
-            }
+                    }, "black_ico.png");
+                    return false;
+                }
 
-            function validateDateRange() {
+                // Extract hours and minutes from the selected date
+                const selectedHours = selectedDateTime.getHours();
+                const selectedMinutes = selectedDateTime.getMinutes();
+
+                // Check if the selected time is outside the allowed range
+                if (closeDateTime && openDateTime) {
+                    const [closeHour, closeMinutes] = closeDateTime.split(":").map(Number);
+                    const [openHour, openMinutes] = openDateTime.split(":").map(Number);
+
+                    if ((selectedHours > closeHour || (selectedHours === closeHour && selectedMinutes >= closeMinutes)) ||
+                        (selectedHours < openHour || (selectedHours === openHour && selectedMinutes < openMinutes))) {
+                        showModal("Selected time is not available!", () => {
+                            checkinInput.value = "";
+                            checkoutInput.value = "";
+                            durationInput.value = "";
+                            calculateTotal();
+                        }, "black_ico.png");
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            // Additional validation for checkout being after check-in
+            function validateCheckinCheckout() {
                 const checkinDate = new Date(checkinInput.value);
                 const checkoutDate = new Date(checkoutInput.value);
-                const dateRange = new Date(checkinDate);
 
-                while (dateRange <= checkoutDate) {
-                    if (disableBookedDates(dateRange)) {
-                        showModal('Selected date range includes unavailable dates.', undefined, 'black_ico.png');
-                        checkinInput.value = '';
-                        checkoutInput.value = '';
-                        break;
-                    }
-                    dateRange.setDate(dateRange.getDate() + 1);
+                if (checkoutDate <= checkinDate) {
+                    showModal("Checkout time must be after check-in time.", () => {
+                        checkoutInput.value = "";
+                        calculateTotal();
+                    }, "black_ico.png");
+                    return false;
                 }
+
+                return true;
             }
 
-            disableDates(checkinInput);
-            disableDates(checkoutInput);
-
-            // Get today's date in YYYY-MM-DD format
-            const today = new Date();
-            const todayFormatted = today.toISOString().split('T')[0];
-
-            // Set 'min' attributes to today for both checkin and checkout inputs
-            checkinInput.setAttribute('min', todayFormatted);
-            checkoutInput.setAttribute('min', todayFormatted);
-
-            // Validate and correct selected date inputs
-            function validateDate(input) {
-                const selectedDate = new Date(input.value);
-                if (selectedDate < today) {
-                    input.value = todayFormatted; // Reset to today's date if past date is selected
+            function validateDuration() {
+                if (!durationInput.value.includes(":")) {
+                    showModal("Invalid duration format. Expected HH:mm.", () => {
+                        durationInput.value = "";
+                        calculateCheckout();
+                        calculateTotal();
+                    }, "black_ico.png");
+                    return false;
                 }
+
+                const [hours, minutes] = durationInput.value.split(":").map(Number);
+
+                // Ensure valid numeric values
+                if (isNaN(hours) || isNaN(minutes)) {
+                    showModal("Invalid duration. Please enter a valid time.", () => {
+                        durationInput.value = "";
+                        calculateCheckout();
+                        calculateTotal();
+                    }, "black_ico.png");
+                    return false;
+                }
+
+                const totalHours = hours + minutes / 60;
+
+                if (minTime !== 0 && maxTime !== 0) {
+                    if (totalHours < minTime || totalHours > maxTime) {
+                        showModal(`Duration must be between ${minTime} and ${maxTime} hours.`, () => {
+                            durationInput.value = "";
+                            checkoutInput.value = "";
+                            calculateCheckout();
+                            calculateTotal();
+                        }, "black_ico.png");
+                        return false;
+                    }
+                }
+                calculateCheckout();
+                calculateTotal();
+
+
+                return true;
+            }
+
+            // Validate guest count with debounce
+            guestsInput.addEventListener("input", () => {
+                clearTimeout(timeout);
+
+                timeout = setTimeout(() => {
+                    const value = parseInt(guestsInput.value, 10);
+                    let guestView = document.querySelector('span[total-entrance-guests]');
+
+                    if (value < minGuests) {
+                        showModal(`Minimum number of attendees is ${minGuests}`, undefined, "black_ico.png");
+                        guestsInput.value = minGuests;
+                        guestView.textContent = minGuests;
+                    } else if (value > maxGuests) {
+                        showModal(`Maximum number of attendees is ${maxGuests}`, undefined, "black_ico.png");
+                        guestsInput.value = maxGuests;
+                        guestView.textContent = maxGuests;
+                    }
+                }, 500); // Debounce time of 500ms
+            });
+
+            function calculateCheckout() {
+                const checkinInput = document.getElementById("checkin");
+                const durationInput = document.getElementById("duration");
+                const checkoutInput = document.getElementById("checkout");
+
+                // Ensure both inputs have values
+                if (!checkinInput.value || !durationInput.value) {
+                    return;
+                }
+
+                // Parse the check-in date using flatpickr's parseDate
+                const checkinDate = flatpickr.parseDate(checkinInput.value, "Y-m-d h:i K");
+                if (!checkinDate) {
+                    return;
+                }
+
+                // Parse the duration (H:i format)
+                const durationParts = durationInput.value.split(":");
+
+                const hours = parseInt(durationParts[0], 10);
+                const minutes = parseInt(durationParts[1], 10);
+
+                // Validate duration values
+                if (isNaN(hours) || isNaN(minutes) || hours < 0 || minutes < 0 || minutes >= 60) {
+                    console.error("Invalid duration values. Hours must be non-negative, and minutes must be between 0 and 59.");
+                    return;
+                }
+
+                // Add duration to the check-in date
+                checkinDate.setHours(checkinDate.getHours() + hours);
+                checkinDate.setMinutes(checkinDate.getMinutes() + minutes);
+
+                // Format the checkout date using flatpickr's formatDate
+                const formattedCheckout = flatpickr.formatDate(checkinDate, "Y-m-d h:i K");
+                checkoutInput.value = formattedCheckout;
+                checkOutDateTemp = new Date(checkinDate);
+            }
+
+            function parseDuration(duration) {
+                const [hours, minutes] = duration.split(":").map(Number);
+                return hours + minutes / 60;
             }
 
             function calculateTotal() {
-                console.log('Calculating total...'); // Debug log
-                validateDate(checkinInput);
-                validateDate(checkoutInput);
-
                 const checkinDate = new Date(checkinInput.value);
                 const checkoutDate = new Date(checkoutInput.value);
-                const timeDiff = checkoutDate - checkinDate;
-                const days = timeDiff / (1000 * 3600 * 24);
 
-                let guests = parseInt(guestsInput.value);
-                console.log('Days:', days, 'Guests:', guests); // Debug log
-
-                if (isNaN(guests) || guests < 1) {
-                    guests = 1;
-                } else if (guests > maxGuests) {
-                    guests = maxGuests;
-                    guestsInput.value = maxGuests;
+                if (isNaN(checkinDate) || isNaN(checkoutDate)) {
+                    return;
                 }
+                const durationValue = parseDuration(durationInput.value);
 
+                // const hours = (checkoutDate - checkinDate) / (1000 * 60 * 60);
+                let guests = parseInt(guestsInput.value, 10) || minGuests;
+                // console.log(durationValue);
 
-
-
-                if (days > 0) {
+                if (durationValue > 0) {
                     const discountMultiplier = <?php echo $discountStatus ? 0.8 : 1; ?>;
-                    let totalEntranceFee = entranceFee * guests;
-                    let totalCleaningFee = cleaningFee * days;
-                    let totalPriceForNights = pricePerNight * days;
-                    let serviceFee = (((pricePerNight + cleaningFee) * days) + totalEntranceFee) * SERVICE_FEE_RATE;
-                    let grandTotal = (((pricePerNight + cleaningFee) * days) + totalEntranceFee + serviceFee);
-                    let grandTotalshow = (((pricePerNight + cleaningFee) * days) + totalEntranceFee + serviceFee) * discountMultiplier;
+                    const totalEntranceFee = entranceFee * guests;
+                    const totalCleaningFee = cleaningFee;
+                    let totalPriceForHours = 0;
 
-                    console.log('Calculations:', {
-                        totalPriceForNights,
-                        totalEntranceFee,
-                        totalCleaningFee,
-                        serviceFee,
-                        grandTotal,
-                        discountMultiplier
-                    });
+                    if (isFixedPricing) {
+                        totalPriceForHours = pricePerHour * durationValue;
+                    } else {
+                        totalPriceForHours = pricePerHour * durationValue * guests;
+                    }
 
-                    document.querySelector('span[total-nights]').textContent = days;
+                    const serviceFee = (totalPriceForHours + totalEntranceFee + totalCleaningFee) * SERVICE_FEE_RATE;
+                    const grandTotal = (totalPriceForHours + totalEntranceFee + totalCleaningFee + serviceFee) * discountMultiplier;
+                    const grandTotalshow = (totalPriceForHours + totalEntranceFee + totalCleaningFee + serviceFee);
+
+                    // Update hidden inputs
+                    document.querySelector('span[total-Hours]').textContent = durationValue;
                     document.querySelector('span[total-entrance-guests]').textContent = guests;
-                    totalPriceForNightsInput.innerHTML = totalPriceForNights.toFixed(2);
-                    entranceFeeInput.innerHTML = totalEntranceFee.toFixed(2);
-                    serviceFeeInput.innerHTML = serviceFee.toFixed(2);
-                    totalPriceInput.innerHTML = grandTotalshow.toFixed(2);
-                    cleaningFeeInput.innerHTML = totalCleaningFee.toFixed(2);
+                    totalPriceForHoursInput.textContent = totalPriceForHours.toFixed(2);
+                    entranceFeeInput.textContent = totalEntranceFee.toFixed(2);
+                    cleaningFeeInput.textContent = totalCleaningFee.toFixed(2);
+                    serviceFeeInput.textContent = serviceFee.toFixed(2);
+                    totalPriceInput.textContent = grandTotal.toFixed(2);
 
-                    let reservationForm = document.getElementById('reservationForm');
-
-                    appendHiddenInput(reservationForm, 'price', pricePerNight.toFixed(2));
+                    appendHiddenInput(reservationForm, 'price', pricePerHour.toFixed(2));
                     appendHiddenInput(reservationForm, 'entranceFee', totalEntranceFee.toFixed(2));
                     appendHiddenInput(reservationForm, 'cleaningFee', (totalCleaningFee).toFixed(2));
-                    appendHiddenInput(reservationForm, 'duration', days);
+                    appendHiddenInput(reservationForm, 'duration', durationInput.value);
                     appendHiddenInput(reservationForm, 'discount', <?php echo $discountStatus ? $discountStatus['id'] : null ?>);
-                    appendHiddenInput(reservationForm, 'totalPriceForNights', totalPriceForNights.toFixed(2));
+                    appendHiddenInput(reservationForm, 'totalPriceForHours', totalPriceForHours.toFixed(2));
                     appendHiddenInput(reservationForm, 'serviceFee', serviceFee.toFixed(2));
                     appendHiddenInput(reservationForm, 'grandTotal', grandTotal.toFixed(2));
                     appendHiddenInput(reservationForm, 'grandTotalShow', grandTotalshow.toFixed(2));
-
-
                 }
             }
+            // Append hidden input to the form
+            function appendHiddenInput(form, name, value) {
+                const input = document.createElement('input');
+                input.type = 'hidden'; // Set input type to hidden
+                input.name = name; // Set the name attribute
+                input.value = value; // Set the value attribute
+                form.appendChild(input); // Append the input to the form
+            }
 
-            // Add event listeners
-            checkinInput.addEventListener('change', calculateTotal);
-            checkoutInput.addEventListener('change', calculateTotal);
+            checkinInput.addEventListener("change", calculateCheckout);
+            durationInput.addEventListener("input", calculateCheckout);
+            guestsInput.addEventListener("input", calculateCheckout);
+
+            // Event listeners
+            checkinInput.addEventListener('change', () => {
+                validateCheckinCheckout();
+                calculateTotal();
+            });
+            checkoutInput.addEventListener('change', () => {
+                validateCheckinCheckout();
+                calculateTotal();
+            });
+            durationInput.addEventListener('change', () => {
+                validateDuration();
+                calculateTotal();
+            });
             guestsInput.addEventListener('input', calculateTotal);
 
             // Initial calculation
             calculateTotal();
         });
-
-        function appendHiddenInput(form, name, value) {
-            const input = document.createElement('input');
-            input.type = 'hidden'; // Set input type to hidden
-            input.name = name; // Set the name attribute
-            input.value = value; // Set the value attribute
-            form.appendChild(input); // Append the input to the form
-        }
     </script>
 
     <!-- image gallery -->
@@ -1103,6 +1319,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 
             // Function to update main image with transition
             function updateMainImage(newIndex) {
+
                 mainImage.classList.add('fade-out');
 
                 setTimeout(() => {

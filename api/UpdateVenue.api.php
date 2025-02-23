@@ -1,6 +1,7 @@
 <?php
 require_once '../classes/venue.class.php';
 require_once '../sanitize.php';
+require_once './coorAddressVerify.api.php';
 
 $venueObj = new Venue();
 
@@ -19,12 +20,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $removedImage = json_decode($_POST['imagesToDelete'], true) ?? [];
     $venueThumbnail = clean_input($_POST['thumbnailIndex'] ?? 0);
     $venueLocation = clean_input($_POST['editVenueAddCoor']);
+    $venueAddress = getAddressByCoordinates($venueLocation);
     $venueDescription = clean_input($_POST['editVenueDescription']);
-    $venueCapacity = clean_input($_POST['editVenueCapacity']);
     $venueAmenities = clean_input($_POST['editVenueAmenities'] ?? '');
     $venueRules = clean_input($_POST['editVenueRules'] ?? '');
     $venueType = clean_input($_POST['editVenueType']);
+    $venuePricingType = clean_input($_POST['editVenuePricingType']);
     $venuePrice = clean_input($_POST['editVenuePrice']);
+    $venueMinTime = clean_input($_POST['editMinTime']);
+    $venueMaxTime = clean_input($_POST['editMaxTime']);
+    $venueMinHead = clean_input($_POST['editMinHead']);
+    $venueMaxHead = clean_input($_POST['editMaxHead']);
+    $venueOpeningTime = clean_input($_POST['editOpeningTime'] ?? null);
+    $venueOpeningTime = ($venueOpeningTime === '00:00:00' || empty($venueOpeningTime)) ? null : $venueOpeningTime;
+    $venueClosingTime = clean_input($_POST['editClosingTime'] ?? null);
+    $venueClosingTime = ($venueClosingTime === '00:00:00' || empty($venueClosingTime)) ? null : $venueClosingTime;
     $venueEntrance = clean_input($_POST['editVenueEntrance']);
     $venueCleaning = clean_input($_POST['editVenueCleaning']);
     $venueAvailability = clean_input($_POST['editVenueStatus'] ?? 1);
@@ -96,10 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $venueDescriptionErr = "Venue description is required";
     }
 
-    if (empty($venueCapacity)) {
-        $venueCapacityErr = "Venue capacity is required";
-    }
-
     if (empty($venueAmenities)) {
         $venueAmenitiesErr = "Venue amenities are required";
     }
@@ -153,19 +159,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = $venueObj->updateVenue(
             $venueId,
             $venueName,
-            $venueImgs,
-            $venueThumbnail,
-            $venueLocation,
             $venueDescription,
-            $venueCapacity,
+            $venueAddress,
+            $venueLocation,
             $venueAmenities,
             $venueRules,
-            $venueType,
+            $venuePricingType,
             $venuePrice,
-            $venueDownpayment,
+            $venueMinHead,
+            $venueMaxHead,
+            $venueMinTime,
+            $venueMaxTime,
+            $venueOpeningTime,
+            $venueClosingTime,
             $venueEntrance,
             $venueCleaning,
+            $venueDownpayment,
+            $venueType,
+            $venueThumbnail,
             $venueAvailability,
+            $venueImgs,
             $discountValue,
             $discountType,
             $discountCode,
