@@ -115,11 +115,51 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
       </div>
     </div>
     <!-- Right Section -->
+
+    
+    <div class="flex items-center space-x-4">
+
+
+    
+       <!-- Message Button -->
+       <a href="./messages.php" class="flex text-sm bg-white rounded-full focus:ring-4 focus:ring-gray-300 p-2 text-gray-900">
+         <span class="sr-only">Messages</span>
+         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+           </path>
+         </svg>
+       </a>
+                            
+       <!-- Notification Button -->
+       <div class="relative">
+           <button id="notificationButton" class="relative flex text-sm bg-white rounded-full focus:ring-4 focus:ring-gray-300 p-2 text-gray-900">
+               <span class="sr-only">Notifications</span>
+               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                       d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                   </path>
+               </svg>
+           </button>
+           <?php
+           require_once './classes/notification.class.php';
+           $notification = new Notification();
+           $unreadCount = $notification->getUnreadCount($USER_ID);
+           if ($unreadCount > 0): ?>
+               <span id="notificationCount" class="absolute -top-2 -right-2 flex items-center justify-center bg-red-500 text-white text-xs font-medium rounded-full h-5 w-5">
+                   <?php echo $unreadCount > 99 ? '99+' : $unreadCount; ?>
+               </span>
+           <?php endif; ?>
+
+           <!-- Notification Dropdown -->
+           <?php include './components/notifications.dropdown.php'; ?>
+       </div>
+
     <button class="flex items-center space-x-4" id="menutabtrigger">
       <div class="relative flex items-center space-x-2 bg-slate-50 shadow-md rounded-full ps-4 p-1">
         <i class="fas fa-bars text-gray-600"> </i>
         <div class="relative">
-          <div class="h-8 w-8 rounded-full bg-black text-white flex items-center justify-center">
+          <div class="h-8 w-8 rounded-full bg-gray-900 text-white flex items-center justify-center">
             <?php
 
 
@@ -134,6 +174,7 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
         </div>
       </div>
     </button>
+    </div>
   </div>
 </nav>
 
@@ -143,22 +184,10 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
     const mainNav = document.getElementById("main-nav");
     const firstSection = document.getElementById("first-section");
     const bottomSearch = document.getElementById("bottom-search");
-    const navButtons = mainNav.querySelectorAll(".nav-buttons");
 
     if (firstSection) {
       const firstSectionBottom = firstSection.offsetTop + firstSection.offsetHeight;
       const scrollPosition = window.scrollY;
-
-      // Update nav buttons' color based on scroll position
-      if (scrollPosition >= firstSectionBottom - mainNav.offsetHeight / 2) {
-        navButtons.forEach((button) => {
-          button.style.color = "#4A5568"; // Dark color
-        });
-      } else {
-        navButtons.forEach((button) => {
-          button.style.color = "white";
-        });
-      }
 
       // Show/hide the search bar based on scroll position
       if (scrollPosition >= firstSectionBottom - mainNav.offsetHeight / 2) {

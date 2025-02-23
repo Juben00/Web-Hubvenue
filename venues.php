@@ -1488,7 +1488,7 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
                                     <!-- Action Buttons -->
                                     <div class="flex gap-2 mt-4">
                                         <a href="venues.php?id=${venue.id}" 
-                                           class="flex-1 px-4 py-2 bg-red-500 text-white text-center font-medium rounded-lg hover:bg-red-600 transition-colors">
+                                           class="flex-1 px-4 py-2 bg-gray-900 text-white text-center font-medium rounded-lg hover:bg-green-600 transition-colors">
                                             View Details
                                         </a>
                                     </div>

@@ -61,16 +61,23 @@ $HOST_ROLE = "Host";
         </li>';
         }
         ?>
-        <li>
-          <a id="message" data-profileUrl="messages" class="profileNav w-[100px] cursor-pointer block py-2 px-3">
-            Messages
-          </a>
-        </li>
+       
       </ul>
     </div>
 
     <!-- Right Section -->
     <div class="flex items-center space-x-4">
+           <!-- Message Button -->
+       <a href="./messages.php" class="flex text-sm bg-gray-900 rounded-full focus:ring-4 focus:ring-gray-300 p-2 text-white">
+         <span class="sr-only">Messages</span>
+         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+           </path>
+         </svg>
+       </a>
+
+
       <!-- Notification Button -->
       <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 p-2">
         <span class="sr-only">Notifications</span>

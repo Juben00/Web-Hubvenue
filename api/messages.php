@@ -193,6 +193,17 @@ switch ($method) {
                             b.id as booking_id,
                             v.name as venue_name,
                             v.host_id,
+                            CASE WHEN m.reply_to_id IS NOT NULL THEN (
+                                SELECT JSON_OBJECT(
+                                    'id', rm.id,
+                                    'content', rm.content,
+                                    'sender_id', rm.sender_id,
+                                    'sender_name', CONCAT(ru.firstname, ' ', ru.lastname)
+                                )
+                                FROM messages rm
+                                JOIN users ru ON rm.sender_id = ru.id
+                                WHERE rm.id = m.reply_to_id
+                            ) END as reply_data,
                             (
                                 SELECT COUNT(*)
                                 FROM message_status ms
@@ -203,8 +214,12 @@ switch ($method) {
                                 SELECT COUNT(*)
                                 FROM conversation_participants cp
                                 WHERE cp.conversation_id = m.conversation_id
-                                AND cp.user_id != m.sender_id
-                            ) as recipient_count
+                            ) as total_participants,
+                            (
+                                SELECT COUNT(*)
+                                FROM message_status ms2
+                                WHERE ms2.message_id = m.id
+                            ) as delivery_count
                         FROM messages m
                         JOIN users u ON m.sender_id = u.id
                         JOIN conversations c ON m.conversation_id = c.id
@@ -220,14 +235,20 @@ switch ($method) {
                     
                     $messages = [];
                     foreach ($result as $row) {
+                        // Calculate message status
                         $messageStatus = 'sent'; // Default status
-                        if ((int)$row['read_count'] === (int)$row['recipient_count']) {
+                        
+                        // If all participants have a message_status record, message is delivered
+                        if ((int)$row['delivery_count'] >= ((int)$row['total_participants'] - 1)) {
                             $messageStatus = 'delivered';
-                        } elseif ((int)$row['read_count'] > 0) {
-                            $messageStatus = 'seen';
+                            
+                            // If all non-sender participants have read the message, it's seen
+                            if ((int)$row['read_count'] >= ((int)$row['total_participants'] - 1)) {
+                                $messageStatus = 'seen';
+                            }
                         }
 
-                        $messages[] = [
+                        $message = [
                             'id' => (int)$row['id'],
                             'conversation_id' => (int)$row['conversation_id'],
                             'sender_id' => (int)$row['sender_id'],
@@ -241,8 +262,20 @@ switch ($method) {
                             'is_host' => (int)$row['sender_id'] === (int)$row['host_id'],
                             'status' => $messageStatus,
                             'read_count' => (int)$row['read_count'],
-                            'recipient_count' => (int)$row['recipient_count']
+                            'total_participants' => (int)$row['total_participants'],
+                            'delivery_count' => (int)$row['delivery_count']
                         ];
+
+                        // Add reply data if this is a reply
+                        if ($row['reply_data']) {
+                            $replyData = json_decode($row['reply_data'], true);
+                            $message['reply_to'] = $replyData['id'];
+                            $message['reply_to_content'] = $replyData['content'];
+                            $message['reply_to_sender_id'] = $replyData['sender_id'];
+                            $message['reply_to_sender'] = $replyData['sender_name'];
+                        }
+
+                        $messages[] = $message;
                     }
                     
                     sendResponse(['success' => true, 'messages' => $messages]);
@@ -384,8 +417,9 @@ switch ($method) {
                     $conversationId = isset($data['conversation_id']) ? (int)$data['conversation_id'] : null;
                     $senderId = isset($data['sender_id']) ? (int)$data['sender_id'] : null;
                     $content = isset($data['content']) ? trim($data['content']) : null;
+                    $replyToId = isset($data['reply_to']) ? (int)$data['reply_to'] : null;
 
-                    error_log("Processing message - Conversation ID: $conversationId, Sender ID: $senderId");
+                    error_log("Processing message - Conversation ID: $conversationId, Sender ID: $senderId, Reply To: $replyToId");
 
                     if (!$conversationId || !$senderId || !$content) {
                         error_log("Missing required fields: " . print_r($data, true));
@@ -404,72 +438,139 @@ switch ($method) {
                             throw new Exception('User is not a participant in this conversation');
                         }
 
+                        // If this is a reply, verify the original message exists and belongs to the same conversation
+                        if ($replyToId) {
+                            $stmt = $conn->prepare("SELECT id FROM messages WHERE id = ? AND conversation_id = ?");
+                            $stmt->execute([$replyToId, $conversationId]);
+                            if ($stmt->rowCount() === 0) {
+                                throw new Exception('Original message not found or not in the same conversation');
+                            }
+                        }
+
                         // Insert message
-                        $stmt = $conn->prepare("INSERT INTO messages (conversation_id, sender_id, content, type) VALUES (?, ?, ?, 'text')");
-                        if (!$stmt->execute([$conversationId, $senderId, $content])) {
+                        $stmt = $conn->prepare("INSERT INTO messages (conversation_id, sender_id, content, type, reply_to_id) VALUES (?, ?, ?, 'text', ?)");
+                        if (!$stmt->execute([$conversationId, $senderId, $content, $replyToId])) {
                             throw new Exception('Failed to insert message');
                         }
 
                         $messageId = $conn->lastInsertId();
                         error_log("Message inserted with ID: $messageId");
 
-                        // Create notification for the recipient
-                        require_once '../classes/notification.class.php';
-                        $notification = new Notification();
-
-                        // Get all participants except sender
+                        // Get all participants
                         $stmt = $conn->prepare("
                             SELECT user_id 
                             FROM conversation_participants 
-                            WHERE conversation_id = ? AND user_id != ?
+                            WHERE conversation_id = ?
                         ");
-                        $stmt->execute([$conversationId, $senderId]);
-                        $recipients = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-                        // Create notification for each recipient
-                        foreach ($recipients as $recipientId) {
-                            $notification->createMessageNotification(
-                                $recipientId,
-                                $messageId,
-                                $senderId,
-                                $content
-                            );
-                        }
+                        $stmt->execute([$conversationId]);
+                        $participants = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
                         // Create message status records for all participants
-                        foreach ($recipients as $recipientId) {
+                        foreach ($participants as $participantId) {
+                            $isRead = ($participantId === $senderId) ? 1 : 0;
                             $stmt = $conn->prepare("
-                                INSERT INTO message_status (message_id, user_id, is_read)
-                                VALUES (?, ?, 0)
+                                INSERT INTO message_status (message_id, user_id, is_read, created_at)
+                                VALUES (?, ?, ?, CURRENT_TIMESTAMP)
                             ");
-                            $stmt->execute([$messageId, $recipientId]);
+                            $stmt->execute([$messageId, $participantId, $isRead]);
                         }
 
-                        // Create a read status for sender (marked as read)
-                        $stmt = $conn->prepare("
-                            INSERT INTO message_status (message_id, user_id, is_read)
-                            VALUES (?, ?, 1)
-                        ");
-                        $stmt->execute([$messageId, $senderId]);
+                        // Create notifications for recipients
+                        foreach ($participants as $participantId) {
+                            if ($participantId !== $senderId) {
+                                $stmt = $conn->prepare("
+                                    INSERT INTO notifications (user_id, type, reference_id, message, is_read)
+                                    VALUES (?, 'message', ?, ?, 0)
+                                ");
+                                $stmt->execute([$participantId, $messageId, $content]);
+                            }
+                        }
 
                         $conn->commit();
                         error_log("Message transaction committed successfully");
 
-                        sendResponse([
+                        // Get the updated message status for response
+                        $stmt = $conn->prepare("
+                            SELECT 
+                                m.*,
+                                u.firstname as sender_firstname,
+                                u.lastname as sender_lastname,
+                                u.profile_pic,
+                                CASE WHEN m.reply_to_id IS NOT NULL THEN (
+                                    SELECT JSON_OBJECT(
+                                        'id', rm.id,
+                                        'content', rm.content,
+                                        'sender_name', CONCAT(ru.firstname, ' ', ru.lastname)
+                                    )
+                                    FROM messages rm
+                                    JOIN users ru ON rm.sender_id = ru.id
+                                    WHERE rm.id = m.reply_to_id
+                                ) END as reply_data,
+                                (
+                                    SELECT COUNT(*)
+                                    FROM message_status ms
+                                    WHERE ms.message_id = m.id
+                                ) as delivery_count,
+                                (
+                                    SELECT COUNT(*)
+                                    FROM message_status ms
+                                    WHERE ms.message_id = m.id
+                                    AND ms.is_read = 1
+                                ) as read_count,
+                                (
+                                    SELECT COUNT(*)
+                                    FROM conversation_participants
+                                    WHERE conversation_id = m.conversation_id
+                                ) as total_participants
+                            FROM messages m
+                            JOIN users u ON m.sender_id = u.id
+                            WHERE m.id = ?
+                        ");
+                        $stmt->execute([$messageId]);
+                        $messageData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        // Calculate message status
+                        $messageStatus = 'sent';
+                        if ($messageData['delivery_count'] >= ($messageData['total_participants'] - 1)) {
+                            $messageStatus = 'delivered';
+                            if ($messageData['read_count'] >= ($messageData['total_participants'] - 1)) {
+                                $messageStatus = 'seen';
+                            }
+                        }
+
+                        // Format the response
+                        $response = [
                             'success' => true,
-                            'message_id' => $messageId,
-                            'conversation_id' => $conversationId
-                        ]);
+                            'message' => [
+                                'id' => (int)$messageData['id'],
+                                'conversation_id' => (int)$messageData['conversation_id'],
+                                'sender_id' => (int)$messageData['sender_id'],
+                                'sender_name' => $messageData['sender_firstname'] . ' ' . $messageData['sender_lastname'],
+                                'content' => $messageData['content'],
+                                'created_at' => $messageData['created_at'],
+                                'profile_picture' => $messageData['profile_pic'],
+                                'status' => $messageStatus,
+                                'read_count' => (int)$messageData['read_count'],
+                                'total_participants' => (int)$messageData['total_participants'],
+                                'delivery_count' => (int)$messageData['delivery_count']
+                            ]
+                        ];
+
+                        // Add reply data if this is a reply
+                        if ($messageData['reply_data']) {
+                            $replyData = json_decode($messageData['reply_data'], true);
+                            $response['message']['reply_to'] = $replyData;
+                        }
+
+                        sendResponse($response);
 
                     } catch (Exception $e) {
                         $conn->rollBack();
-                        error_log("Transaction error: " . $e->getMessage());
-                        sendResponse(['error' => $e->getMessage()], 500);
+                        throw $e;
                     }
-
                 } catch (Exception $e) {
-                    error_log("Message sending error: " . $e->getMessage());
-                    sendResponse(['error' => 'Failed to send message'], 500);
+                    error_log("Error sending message: " . $e->getMessage());
+                    sendResponse(['error' => $e->getMessage()], 500);
                 }
                 break;
 
