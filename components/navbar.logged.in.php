@@ -122,14 +122,38 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
 
     
        <!-- Message Button -->
-       <a href="./messages.php" class="flex text-sm bg-white rounded-full focus:ring-4 focus:ring-gray-300 p-2 text-gray-900">
-         <span class="sr-only">Messages</span>
-         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-             d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-           </path>
-         </svg>
-       </a>
+       <div class="relative">
+         <a href="./messages.php" class="flex text-sm bg-white rounded-full focus:ring-4 focus:ring-gray-300 p-2 text-gray-900">
+           <span class="sr-only">Messages</span>
+           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+             </path>
+           </svg>
+         </a>
+         <?php
+         // Get initial unread message count
+         $db = new Database();
+         $conn = $db->connect();
+         $query = "SELECT COUNT(*) as total_unread
+                  FROM messages m
+                  JOIN conversations c ON m.conversation_id = c.id
+                  JOIN conversation_participants cp ON c.id = cp.conversation_id
+                  LEFT JOIN message_status ms ON m.id = ms.message_id AND ms.user_id = :user_id
+                  WHERE cp.user_id = :user_id 
+                  AND m.sender_id != :user_id
+                  AND (ms.is_read = 0 OR ms.is_read IS NULL)";
+         $stmt = $conn->prepare($query);
+         $stmt->execute(['user_id' => $USER_ID]);
+         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+         $unreadMessages = (int) $result['total_unread'];
+         
+         if ($unreadMessages > 0): ?>
+           <span id="messageCount" class="absolute -top-2 -right-2 flex items-center justify-center bg-red-500 text-white text-xs font-medium rounded-full h-5 w-5">
+             <?php echo $unreadMessages > 99 ? '99+' : $unreadMessages; ?>
+           </span>
+         <?php endif; ?>
+       </div>
                             
        <!-- Notification Button -->
        <div class="relative">
@@ -249,4 +273,43 @@ $profileTemplate = $account->getProfileTemplate($USER_ID);
       dropdown.classList.add('hidden');
     }
   });
+
+  // Add message count update function
+  async function updateMessageCount() {
+    try {
+      const response = await fetch(`./api/getTotalUnreadMessages.api.php?user_id=<?php echo $USER_ID; ?>`);
+      const data = await response.json();
+      
+      if (data.success) {
+        const messageCountElement = document.getElementById('messageCount');
+        const count = data.total_unread;
+        
+        if (count > 0) {
+          if (!messageCountElement) {
+            // Create new badge if it doesn't exist
+            const badge = document.createElement('span');
+            badge.id = 'messageCount';
+            badge.className = 'absolute -top-2 -right-2 flex items-center justify-center bg-red-500 text-white text-xs font-medium rounded-full h-5 w-5';
+            badge.textContent = count > 99 ? '99+' : count;
+            document.querySelector('.relative a[href="./messages.php"]').parentElement.appendChild(badge);
+          } else {
+            // Update existing badge
+            messageCountElement.textContent = count > 99 ? '99+' : count;
+            messageCountElement.style.display = 'flex';
+          }
+        } else if (messageCountElement) {
+          // Hide badge if count is 0
+          messageCountElement.style.display = 'none';
+        }
+      }
+    } catch (error) {
+      console.error('Error updating message count:', error);
+    }
+  }
+
+  // Update message count every 5 seconds
+  setInterval(updateMessageCount, 5000);
+
+  // Initial update
+  updateMessageCount();
 </script>
