@@ -453,7 +453,6 @@ $(document).ready(function () {
     }
 
     function bookmarkVenue(venueId, userId, buttonElement) {
-        spinnerOn();
         console.log(`Venue ID: ${venueId}, User ID: ${userId}`); // Debugging
         $.ajax({
             type: "POST",
@@ -467,7 +466,6 @@ $(document).ready(function () {
                 response = JSON.parse(response);
 
                 if (response.status === "success") {
-                    spinnerOff();
                     if (response.action === "bookmarked") {
                         $(buttonElement).removeClass("text-white").addClass("text-red-500");
                     } else if (response.action === "unbookmarked") {
@@ -475,7 +473,6 @@ $(document).ready(function () {
                     }
                     // showModal(response.message, undefined, "black_ico.png");
                 } else {
-                    spinnerOff();
                     showModal(response.message, undefined, "black_ico.png");
                 }
             },
