@@ -59,6 +59,9 @@ $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 $isSpecial = $discountStatus['discount_value'] ?? '0';
 $discountId = $discountStatus ? $discountStatus['id'] : null; // Get the discount ID if it exists
 
+// Get Coupons from the database
+$coupons = $venueObj->getAllDiscounts($venueId);
+
 // Use BCMath for precise calculations
 $computedTotal = bcmul($subTotal, bcsub('1', bcdiv($isSpecial, '100', 2), 2), 2);
 
@@ -124,14 +127,42 @@ $_SESSION['reservationFormData'] = $reservationData;
             <form id="paymentForm" method="POST" enctype="multipart/form-data">
                 <!-- Step 1:  -->
                 <div id="step1" class="step">
-                    <div class="space-y-6">
-                        <h3 class="text-2xl font-semibold mb-4">Reservation Summary</h3>
-
+                    <h3 class="text-2xl font-semibold ">Reservation Summary</h3>
+                    <div class="space-y-4">
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 rounded-lg mb-4">
-                            <div>
+                            <div class="flex gap-4 p-4 overflow-x-auto whitespace-nowrap">
+                                <?php
+                                if (!empty($coupons)) {
+                                    foreach ($coupons as $coupon) {
+                                        echo '
+                <div class="relative text-xs flex bg-white shadow-lg rounded-lg overflow-hidden w-80 min-w-[320px] border border-gray-300">
+                    <!-- Left Discount Badge -->
+                    <div class="bg-red-500 text-white text-center py-6 px-5 flex flex-col justify-center">
+                        <h3 class="text-2xl font-bold">' . intval($coupon['discount_value']) . '%</h3>
+                        <p class="text-sm uppercase font-semibold">OFF</p>
+                    </div>
 
+
+                    <!-- Right Coupon Details -->
+                    <div class="flex-1 p-2 border-l-2 border-dashed border-gray-300">
+                        <h2 class="text-lg font-bold text-gray-800">🎟 ' . htmlspecialchars($coupon['discount_code']) . '</h2>
+                        <p class="text-gray-600 text-sm mt-1">🔢 Remaining: <span class="font-semibold">' . htmlspecialchars($coupon['remaining_quantity']) . '</span></p>
+                        <p class="text-gray-600 text-sm">⏳ Expires: <span class="font-semibold text-red-500">' . htmlspecialchars($coupon['expiration_date']) . '</span></p>
+                        
+                        <button onclick="activateCoupon(event)" class="mt-3 w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition font-semibold">
+                            Apply Coupon
+                        </button>
+                    </div>
+                </div>';
+                                    }
+                                } else {
+                                    echo '<p class="text-gray-500 text-center w-full">No coupons available.</p>';
+                                }
+                                ?>
                             </div>
+
+
                             <div class="flex gap-2">
                                 <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
                                     value=""
@@ -436,10 +467,19 @@ $_SESSION['reservationFormData'] = $reservationData;
             updateStep();
         });
 
+        function activateCoupon(event) {
+            event.preventDefault();
+            const coupon = event.target.closest('.flex');
+            const couponCode = coupon.querySelector('h2').textContent.split(' ')[1];
+
+            document.getElementById('couponCode').value = couponCode;
+            applyCoupon();
+        }
+
         function applyCoupon() {
             const couponCode = document.getElementById('couponCode').value;
 
-            fetch(`applyDiscount.php?discountCode=${couponCode}`)
+            fetch(`applyDiscount.php?discountCode=${couponCode}&venue_id=<?php echo $venueId ?>`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.valid) {
@@ -465,7 +505,7 @@ $_SESSION['reservationFormData'] = $reservationData;
                         document.getElementById('discountValue').textContent = `${(couponDiscount * 100)}%`;
                         document.getElementById('couponMessage').classList.remove('hidden');
                         document.getElementById('couponCode').disabled = true;
-                        document.getElementById('applyCouponBtn').style.display = '';
+                        document.getElementById('applyCouponBtn').style.display = 'none';
                         document.getElementById('grandTotal').textContent = `₱ ${totalToPay.toFixed(2)}`;
                         document.getElementById('balance').textContent = `₱ ${leftToPay.toFixed(2)}`;
 

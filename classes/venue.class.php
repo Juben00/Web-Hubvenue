@@ -382,15 +382,15 @@ class Venue
     ) {
         try {
             $conn = $this->db->connect();
-            
+
             // Debug logging
             error_log("Booking parameters:");
             error_log("booking_discount_id: " . print_r($booking_discount_id, true));
             error_log("booking_coupon_id: " . print_r($booking_coupon_id, true));
-            
+
             $sql = "INSERT INTO bookings (
-                booking_start_date,
-                booking_end_date,
+                booking_start_datetime,
+                booking_end_datetime,
                 booking_participants,
                 booking_venue_price,
                 booking_entrance,
@@ -411,8 +411,8 @@ class Venue
                 booking_payment_status_id,
                 booking_request
             ) VALUES (
-                :booking_start_date,
-                :booking_end_date,
+                :booking_start_datetime,
+                :booking_end_datetime,
                 :booking_participants,
                 :booking_venue_price,
                 :booking_entrance,
@@ -433,9 +433,9 @@ class Venue
                 :booking_payment_status_id,
                 :booking_request
             )";
-            
+
             error_log("SQL Query: " . $sql);
-            
+
             $stmt = $conn->prepare($sql);
 
             // Bind the parameters
@@ -474,15 +474,19 @@ class Venue
 
                 // Update the check_in_link column with the generated link
                 $updateSql = "UPDATE bookings 
-              SET booking_checkin_link = :booking_checkin_link, 
-                  booking_checkout_link = :booking_checkout_link 
-              WHERE id = :booking_id";
+                SET booking_checkin_link = :booking_checkin_link, 
+                    booking_checkout_link = :booking_checkout_link 
+                WHERE id = :booking_id";
                 $updateStmt = $conn->prepare($updateSql);
                 $updateStmt->bindParam(':booking_checkin_link', $checkInLink);
                 $updateStmt->bindParam(':booking_checkout_link', $checkOutLink);
                 $updateStmt->bindParam(':booking_id', $bookingId);
                 $updateStmt->execute();
 
+                $updateCouponSql = "UPDATE discounts set remaining_quantity = remaining_quantity - 1 WHERE id = :coupon_id";
+                $updateCouponStmt = $conn->prepare($updateCouponSql);
+                $updateCouponStmt->bindParam(':coupon_id', $booking_coupon_id);
+                $updateCouponStmt->execute();
 
                 return ['status' => 'success', 'message' => 'Booking added successfully'];
             } else {
@@ -551,11 +555,23 @@ class Venue
         }
     }
 
-    public function getAllDiscounts()
+    public function getAllDiscounts($venueId)
     {
         $query = "SELECT * FROM discounts";
-        $result = $this->db->connect()->query($query);
-        return $result->fetchAll(PDO::FETCH_ASSOC);
+
+        if ($venueId) {
+            $query = "SELECT * FROM discounts WHERE venue_id = $venueId AND remaining_quantity > 0";
+        }
+
+        try {
+            $stmt = $this->db->connect()->prepare($query);
+            $stmt->execute();
+            $discounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $discounts;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
     }
 
     // public function getIdDiscount($name = "")
@@ -994,6 +1010,7 @@ LEFT JOIN
         $discountType,
         $discountCode,
         $discountDate,
+        $discountQuantity,
         $discountsToDelete
     ) {
         try {
@@ -1068,14 +1085,16 @@ LEFT JOIN
 
             // Insert discount if applicable
             if (!empty($discountValue) && !empty($discountType) && !empty($discountCode) && !empty($discountDate)) {
-                $sql = "INSERT INTO discounts (venue_id, discount_value, discount_type, discount_code, expiration_date) 
-                    VALUES (:venue_id, :discount_value, :discount_type, :discount_code, :expiration_date)";
+                $sql = "INSERT INTO discounts (venue_id, discount_value, discount_type, discount_code, expiration_date, initial_quantity, remaining_quantity) 
+                    VALUES (:venue_id, :discount_value, :discount_type, :discount_code, :expiration_date, :initial_quantity, :remaining_quantity)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bindParam(':venue_id', $venueId);
                 $stmt->bindParam(':discount_value', $discountValue);
                 $stmt->bindParam(':discount_type', $discountType);
                 $stmt->bindParam(':discount_code', $discountCode);
                 $stmt->bindParam(':expiration_date', $discountDate);
+                $stmt->bindParam(':initial_quantity', $discountQuantity);
+                $stmt->bindParam(':remaining_quantity', $discountQuantity);
                 $stmt->execute();
             }
 

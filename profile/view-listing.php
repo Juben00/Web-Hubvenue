@@ -813,7 +813,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 }
                                 ?>
                             </div>
-                            <div class="flex flex-col gap-2 w-full">
+                            <div class="flex flex-col gap-2 w-full border-2 p-2 rounded-md">
                                 <label for="" class="font-semibold text-sm ">New Discount</label>
                                 <div class="flex flex-col items-start gap-2 w-full">
                                     <span class="flex items-center gap-2 w-full">
@@ -826,9 +826,11 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                             <option value="flat">Flat</option>
                                         </select>
                                     </span>
-                                    <span class="w-full">
-                                        <input type="text" name="discountCode" class="border rounded-md p-2 w-full"
-                                            placeholder="Discount Code">
+                                    <span class="w-full flex items-center gap-2">
+                                        <input type="text" name="discountCode"
+                                            class="border flex-1 rounded-md p-2 w-2/3" placeholder="Discount Code">
+                                        <input type="number" name="discountQuantity" min="1"
+                                            class="border rounded-md p-2" placeholder="Quantity">
                                     </span>
                                     <span class="w-full">
                                         <input type="date" name="discountDate" class="border rounded-md p-2 w-full"
