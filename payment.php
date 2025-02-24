@@ -57,6 +57,7 @@ $subTotal = number_format((float) $subTotal, 2, '.', '');
 // Get discount value
 $discountStatus = $accountObj->getDiscountApplication($USER_ID);
 $isSpecial = $discountStatus['discount_value'] ?? '0';
+$discountId = $discountStatus ? $discountStatus['id'] : null; // Get the discount ID if it exists
 
 // Use BCMath for precise calculations
 $computedTotal = bcmul($subTotal, bcsub('1', bcdiv($isSpecial, '100', 2), 2), 2);
@@ -72,6 +73,7 @@ $Balance = bcsub($computedTotal, $Total, 2);
 $reservationData['Total'] = $Total;
 $reservationData['Balance'] = $Balance;
 $reservationData['Downpayment'] = $venueDownpayment['id'];
+$reservationData['booking_discount_id'] = $discountId; // Add the discount ID to the reservation data
 
 // Update the session
 $_SESSION['reservationFormData'] = $reservationData;
