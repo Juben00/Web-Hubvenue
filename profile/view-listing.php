@@ -778,6 +778,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                         echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md">';
                                         echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
                                         echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                                        echo '<p class="text-gray-800">Qty: ' . htmlspecialchars($discount['remaining_quantity'] . ' / ' . $discount['initial_quantity']) . '</p>';
                                         echo '</div>';
                                     }
                                 } else {
@@ -801,10 +802,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                             $displayValue = '₱' . number_format((float) $discount['discount_value'], 2);
                                         }
                                         echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md discount-item">';
-                                        echo '<div class="flex items-center gap-2">';
                                         echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
                                         echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                                        echo '</div>';
+                                        echo '<p class="text-gray-800">Qty: ' . htmlspecialchars($discount['remaining_quantity'] . ' / ' . $discount['initial_quantity']) . '</p>';
                                         echo '<button onclick="deleteDiscount(event)" class="text-red-500 font-bold flex items-center" data-discount-id="' . htmlspecialchars($discount['id']) . '">x</button>';
                                         echo '</div>';
                                     }
@@ -813,7 +813,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                 }
                                 ?>
                             </div>
-                            <div class="flex flex-col gap-2 w-full">
+                            <div class="flex flex-col gap-2 w-full border-2 p-2 rounded-md">
                                 <label for="" class="font-semibold text-sm ">New Discount</label>
                                 <div class="flex flex-col items-start gap-2 w-full">
                                     <span class="flex items-center gap-2 w-full">
@@ -826,9 +826,11 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                             <option value="flat">Flat</option>
                                         </select>
                                     </span>
-                                    <span class="w-full">
-                                        <input type="text" name="discountCode" class="border rounded-md p-2 w-full"
-                                            placeholder="Discount Code">
+                                    <span class="w-full flex items-center gap-2">
+                                        <input type="text" name="discountCode"
+                                            class="border flex-1 rounded-md p-2 w-2/3" placeholder="Discount Code">
+                                        <input type="number" name="discountQuantity" min="1"
+                                            class="border rounded-md p-2" placeholder="Quantity">
                                     </span>
                                     <span class="w-full">
                                         <input type="date" name="discountDate" class="border rounded-md p-2 w-full"

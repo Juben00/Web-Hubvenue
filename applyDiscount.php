@@ -2,8 +2,9 @@
 require_once './classes/venue.class.php';
 
 $discountCode = $_GET['discountCode'];
+$venue_id = $_GET['venue_id'];
 $venueObj = new Venue();
-$discounts = $venueObj->getAllDiscounts();
+$discounts = $venueObj->getAllDiscounts($venue_id);
 
 $response = ['valid' => false, 'discountValue' => 0];
 

@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $discountType = clean_input($_POST['discountType']) ?? null;
     $discountCode = clean_input($_POST['discountCode']) ?? null;
     $discountDate = clean_input($_POST['discountDate']) ?? null;
+    $discountQty = clean_input($_POST['discountQuantity']) ?? null;
     $discountToDelete = json_decode($_POST['discountsToDelete'], true) ?? [];
 
 
@@ -183,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $discountType,
             $discountCode,
             $discountDate,
+            $discountQty,
             $discountToDelete
         );
 
