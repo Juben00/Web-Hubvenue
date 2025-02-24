@@ -41,7 +41,8 @@ $unreadCount = $notification->getUnreadCount($USER_ID);
                     <div class="relative">
                         <i class="fas fa-bell text-gray-900"></i>
                         <?php if ($unreadCount > 0): ?>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-[10px] text-white font-medium h-4 min-w-[16px] flex items-center justify-center rounded-full">
+                            <span
+                                class="absolute -top-1 -right-1 bg-red-500 text-[10px] text-white font-medium h-4 min-w-[16px] flex items-center justify-center rounded-full">
                                 <?php echo $unreadCount > 99 ? '99+' : $unreadCount; ?>
                             </span>
                         <?php endif; ?>
@@ -68,23 +69,22 @@ $unreadCount = $notification->getUnreadCount($USER_ID);
                 <?php else: ?>
                     <?php foreach ($notifications as $notif): ?>
                         <div class="notification-item px-6 py-4 hover:bg-gray-50/50 transition-colors"
-                             data-type="<?php echo htmlspecialchars($notif['type']); ?>"
-                             data-read="<?php echo $notif['is_read'] ? 'read' : 'unread'; ?>">
+                            data-type="<?php echo htmlspecialchars($notif['type']); ?>"
+                            data-read="<?php echo $notif['is_read'] ? 'read' : 'unread'; ?>">
                             <div class="flex items-start gap-4">
                                 <!-- Profile Picture/Icon -->
                                 <div class="flex-shrink-0">
                                     <?php if (!empty($notif['profile_pic'])): ?>
                                         <div class="h-10 w-10 rounded-full bg-gray-200 overflow-hidden">
-                                            <img src="./<?php echo htmlspecialchars($notif['profile_pic']); ?>" 
-                                                 alt="Profile" 
-                                                 class="w-full h-full object-cover">
+                                            <img src="./<?php echo htmlspecialchars($notif['profile_pic']); ?>" alt="Profile"
+                                                class="w-full h-full object-cover">
                                         </div>
                                     <?php else: ?>
                                         <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
                                             <span class="text-lg font-medium text-gray-600">
-                                                <?php 
+                                                <?php
                                                 $name = explode(' ', $notif['sender_name'] ?? 'U')[0];
-                                                echo strtoupper(substr($name, 0, 1)); 
+                                                echo strtoupper(substr($name, 0, 1));
                                                 ?>
                                             </span>
                                         </div>
@@ -144,25 +144,25 @@ $unreadCount = $notification->getUnreadCount($USER_ID);
                     user_id: <?php echo $USER_ID; ?>
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Remove the mark all as read button
-                    const markAllReadBtn = document.querySelector('button[onclick="markAllAsRead()"]');
-                    if (markAllReadBtn) {
-                        markAllReadBtn.remove();
-                    }
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the mark all as read button
+                        const markAllReadBtn = document.querySelector('button[onclick="markAllAsRead()"]');
+                        if (markAllReadBtn) {
+                            markAllReadBtn.remove();
+                        }
 
-                    // Update notification badge in navbar if it exists
-                    const navBadge = document.querySelector('#notificationCount');
-                    if (navBadge) {
-                        navBadge.remove();
-                    }
+                        // Update notification badge in navbar if it exists
+                        const navBadge = document.querySelector('#notificationCount');
+                        if (navBadge) {
+                            navBadge.remove();
+                        }
 
-                    // Reload the page to show updated state
-                    window.location.reload();
-                }
-            });
+                        // Reload the page to show updated state
+                        window.location.reload();
+                    }
+                });
         }
     </script>
 </body>
