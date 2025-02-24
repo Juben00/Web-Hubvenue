@@ -127,11 +127,30 @@ $_SESSION['reservationFormData'] = $reservationData;
             <form id="paymentForm" method="POST" enctype="multipart/form-data">
                 <!-- Step 1:  -->
                 <div id="step1" class="step">
-                    <h3 class="text-2xl font-semibold ">Reservation Summary</h3>
+                    <h3 class="text-2xl font-semibold mb-2">Reservation Summary</h3>
                     <div class="space-y-4">
                         <!-- Coupon Input Section -->
                         <div class="bg-slate-50 rounded-lg mb-4">
-                            <div class="flex gap-4 p-4 overflow-x-auto whitespace-nowrap">
+                            <div class="flex gap-2">
+                                <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
+                                    value=""
+                                    class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10"
+                                    <?php echo $discountApplied ? 'disabled' : ''; ?>>
+                                <button type="button" id="applyCouponBtn" onclick="applyCoupon()"
+                                    class="<?php echo $discountApplied ? 'hidden' : ''; ?> px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">Apply</button>
+                                <button type="button" id="cancelCoupon" onclick="cancelCouponfunc(event)"
+                                    class="hidden">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5 text-gray-500 hover:text-gray-700" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <p id="couponMessage"
+                                class="text-sm mt-2 <?php echo $discountApplied ? '' : 'hidden'; ?> text-green-600">
+                                Coupon applied successfully!</p>
+                            <div id="couponHolder" class="flex gap-4 p-4 overflow-x-auto whitespace-nowrap">
                                 <?php
                                 if (!empty($coupons)) {
                                     foreach ($coupons as $coupon) {
@@ -161,20 +180,6 @@ $_SESSION['reservationFormData'] = $reservationData;
                                 }
                                 ?>
                             </div>
-
-
-                            <div class="flex gap-2">
-                                <input type="text" id="couponCode" name="couponCode" placeholder="Enter coupon code"
-                                    value=""
-                                    class="flex-1 rounded-md shadow-sm px-1 focus:ring-primary focus:border-primary h-10"
-                                    <?php echo $discountApplied ? 'disabled' : ''; ?>>
-                                <button type="button" id="applyCouponBtn" onclick="applyCoupon()"
-                                    class="<?php echo $discountApplied ? 'hidden' : ''; ?> px-4 py-2 bg-black text-white rounded-md text-sm font-medium hover:opacity-90">Apply</button>
-
-                            </div>
-                            <p id="couponMessage"
-                                class="text-sm mt-2 <?php echo $discountApplied ? '' : 'hidden'; ?> text-green-600">
-                                Coupon applied successfully!</p>
                         </div>
 
                         <div class="bg-gray-100 p-6 rounded-lg">
@@ -506,8 +511,11 @@ $_SESSION['reservationFormData'] = $reservationData;
                         document.getElementById('couponMessage').classList.remove('hidden');
                         document.getElementById('couponCode').disabled = true;
                         document.getElementById('applyCouponBtn').style.display = 'none';
+                        document.getElementById('cancelCoupon').classList.toggle("hidden")
                         document.getElementById('grandTotal').textContent = `₱ ${totalToPay.toFixed(2)}`;
                         document.getElementById('balance').textContent = `₱ ${leftToPay.toFixed(2)}`;
+
+                        document.getElementById('couponHolder').classList.add('hidden');
 
                     } else {
                         showModal("Invalid Coupon Code", function () {
@@ -515,6 +523,27 @@ $_SESSION['reservationFormData'] = $reservationData;
                         }, "black_ico.png");
                     }
                 });
+        }
+
+        function cancelCouponfunc(event) {
+            event.preventDefault();
+            document.getElementById('couponCode').value = '';
+            document.getElementById('couponCode').disabled = false;
+            document.getElementById('applyCouponBtn').style.display = 'block';
+            document.getElementById('cancelCoupon').classList.toggle("hidden")
+            document.getElementById('couponMessage').classList.add('hidden');
+            document.getElementById('discountValue').textContent = '0%';
+            document.getElementById('couponHolder').classList.remove('hidden');
+
+            // Reset totals
+            const subTotal = <?php echo $subTotal; ?>;
+            const downPaymentPercentage = <?php echo $venueDownpayment['value']; ?>;
+            totalToPay = subTotal * downPaymentPercentage;
+            leftToPay = subTotal - totalToPay;
+
+            document.getElementById('subTotal').textContent = `₱ ${subTotal.toFixed(2)}`;
+            document.getElementById('grandTotal').textContent = `₱ ${totalToPay.toFixed(2)}`;
+            document.getElementById('balance').textContent = `₱ ${leftToPay.toFixed(2)}`;
         }
 
         function appendHiddenInput(form, name, value) {
