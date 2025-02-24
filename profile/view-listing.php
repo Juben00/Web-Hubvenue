@@ -778,6 +778,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                         echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md">';
                                         echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
                                         echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
+                                        echo '<p class="text-gray-800">Qty: ' . htmlspecialchars($discount['remaining_quantity'] . ' / ' . $discount['initial_quantity']) . '</p>';
                                         echo '</div>';
                                     }
                                 } else {
@@ -801,10 +802,9 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
                                             $displayValue = '₱' . number_format((float) $discount['discount_value'], 2);
                                         }
                                         echo '<div class="flex justify-between gap-2 items-center w-full p-2 border-2 rounded-md discount-item">';
-                                        echo '<div class="flex items-center gap-2">';
                                         echo '<span class="font-semibold">' . htmlspecialchars($displayValue) . '</span>';
                                         echo '<p class="text-gray-800">' . htmlspecialchars($discount['discount_code']) . '</p>';
-                                        echo '</div>';
+                                        echo '<p class="text-gray-800">Qty: ' . htmlspecialchars($discount['remaining_quantity'] . ' / ' . $discount['initial_quantity']) . '</p>';
                                         echo '<button onclick="deleteDiscount(event)" class="text-red-500 font-bold flex items-center" data-discount-id="' . htmlspecialchars($discount['id']) . '">x</button>';
                                         echo '</div>';
                                     }
