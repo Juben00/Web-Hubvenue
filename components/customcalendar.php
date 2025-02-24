@@ -49,6 +49,11 @@
             color: gray;
             background: #ffffcc;
         }
+
+        #time option.cleaning {
+            color: green;
+            background: #ccffcc;
+        }
     </style>
 </head>
 
@@ -70,6 +75,9 @@
                 <div class="flex items-center gap-1"> <span class="w-4 h-4 bg-yellow-300 inline-block"></span>
                     <span>Below Minimum Required Hours</span>
                 </div>
+                <div class="flex items-center gap-1"> <span class="w-4 h-4 bg-green-300 inline-block"></span>
+                    <span>Venue Cleaning Allowance</span>
+                </div>
             </div>
 
             <input type="month" id="monthPicker" class="border-2 w-full p-3 rounded-md">
@@ -90,6 +98,7 @@
         const bookedSlots = <?php echo json_encode($bookedDate, JSON_HEX_TAG); ?>;
         const closedSlots = <?php echo json_encode($closedDateTime, JSON_HEX_TAG); ?>;
         const minimumHours = <?php echo $venue['min_time'] ?? 0; ?>;
+        const cleaningTime = 1; // in hours
 
         let selectedDate = null;
 
@@ -110,6 +119,39 @@
             return true;
         }
 
+        function cleaningHours(date, time) {
+            let latestEndTime = null;
+
+            // Find the latest booked end time for the selected date
+            bookedSlots.forEach(slot => {
+                let endDateTime = new Date(slot.enddate.replace(" ", "T"));
+                let slotDate = endDateTime.toISOString().split("T")[0]; // Extract only the date part
+
+                if (slotDate === date) {
+                    let endTime = endDateTime.toTimeString().split(" ")[0].slice(0, 5); // Get HH:MM format
+                    if (!latestEndTime || endTime > latestEndTime) {
+                        latestEndTime = endTime;
+                    }
+                }
+            });
+
+            if (!latestEndTime) return false; // No bookings, no cleaning period needed
+
+            console.log(`Cleaning should apply from ${latestEndTime} onwards`);
+
+            // Convert times to minutes for easy comparison
+            let [bookedHour, bookedMinute] = latestEndTime.split(":").map(Number);
+            let bookedMinutes = bookedHour * 60 + bookedMinute;
+
+            let [selectedHour, selectedMinute] = time.split(":").map(Number);
+            let selectedMinutes = selectedHour * 60 + selectedMinute;
+
+            // Ensure cleaning applies for exactly 1 hour after the latest booking
+            return selectedMinutes >= bookedMinutes && selectedMinutes < (bookedMinutes + 60);
+        }
+
+
+
         function isTimeDisabled(date, time) {
             return bookedSlots.some(slot => {
                 let start = new Date(slot.startdate.replace(" ", "T")); // Fix key names
@@ -121,8 +163,11 @@
         }
 
         function isClosed(time) {
-            let closingTime = closedSlots.closing_time; // "22:00:00"
-            let openingTime = closedSlots.opening_time; // "08:00:00"
+            if (!closedSlots || !closedSlots.opening_time || !closedSlots.closing_time) {
+                return false; // Avoid errors if data is missing
+            }
+            let closingTime = closedSlots.closing_time;
+            let openingTime = closedSlots.opening_time;
 
             return time < openingTime || time >= closingTime;
         }
@@ -151,6 +196,9 @@
                         option.disabled = true;
                     } else if (!meetsMinimumHours(date, timeValue)) {
                         option.classList.add("minimum-hours");
+                        option.disabled = true;
+                    } else if (cleaningHours(date, timeValue)) {
+                        option.classList.add("cleaning");
                         option.disabled = true;
                     } else if (!firstValidTime) {
                         firstValidTime = timeValue;
