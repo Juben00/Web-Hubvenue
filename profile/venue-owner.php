@@ -10,11 +10,13 @@ $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $fullname = $accountObj->getFullName($USER_ID);
 
 // Fetch booking counts by status
+$REJECTED_BOOKING = 0;
 $PENDING_BOOKING = 1;
 $CONFIRMED_BOOKING = 2;
 $CANCELLED_BOOKING = 3;
 $PREVIOUS_BOOKING = 4;
 
+$rejectedBookings = $venueObj->getAllBookings($USER_ID, $REJECTED_BOOKING);
 $pendingBookings = $venueObj->getAllBookings($USER_ID, $PENDING_BOOKING);
 $confirmedBookings = $venueObj->getAllBookings($USER_ID, $CONFIRMED_BOOKING);
 $cancelledBookings = $venueObj->getAllBookings($USER_ID, $CANCELLED_BOOKING);
@@ -24,6 +26,7 @@ $pendingCount = count($pendingBookings);
 $confirmedCount = count($confirmedBookings);
 $cancelledCount = count($cancelledBookings);
 $completedCount = count($completedBookings);
+$rejectedCount = count($rejectedBookings);
 $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCount;
 ?>
 
@@ -83,13 +86,16 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Completed (<?php echo $completedCount; ?>)
                     </button>
+                    <button onclick="showCont('rejected')"
+                        class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                        Rejected (<?php echo $rejectedCount; ?>)
+                    </button>
                     <button onclick="showCont('statistics')"
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Statistics
                     </button>
                 </nav>
             </div>
-
 
             <!-- Tab Content -->
             <!-- <div id="pending-content" class="mt-8 tab-content">
@@ -199,10 +205,10 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             </div> -->
 
             <div id="pending-content" class="mt-8 tab-content">
-                <div class="rounded-xl p-6 text-gray-800">
-                    <?php if (empty($pendingBookings)) { ?>
-                        <p class="text-center text-gray-400">You do not have any pending bookings.</p>
-                    <?php } else {
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <?php if (empty($pendingBookings)) {
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any pending bookings.</p>';
+                    } else {
                         foreach ($pendingBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
                             $currentDateTime = new DateTime('now', $timezone);
@@ -287,7 +293,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($confirmedBookings)) {
-                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any confirmed bookings.</p>';
                     } else {
                         foreach ($confirmedBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
@@ -393,7 +399,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($cancelledBookings)) {
-                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any cancelled bookings.</p>';
                     } else {
                         foreach ($cancelledBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
@@ -490,9 +496,115 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($completedBookings)) {
-                        echo '<p class="p-6 text-center text-gray-700">You do not have any previous bookings.</p>';
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any completed bookings.</p>';
                     } else {
                         foreach ($completedBookings as $booking) {
+                            $timezone = new DateTimeZone('Asia/Manila');
+                            $currentDateTime = new DateTime('now', $timezone);
+                            $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
+                            ?>
+                            <div class="p-6 border-b border-gray-200 booking-item"
+                                data-status="<?php echo $booking['booking_status_id']; ?>">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                    </h2>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                            <?php
+                                            switch ($booking['booking_status_id']) {
+                                                case '1':
+                                                    echo 'Pending';
+                                                    break;
+                                                case '2':
+                                                    echo 'Approved';
+                                                    break;
+                                                case '3':
+                                                    echo 'Cancelled';
+                                                    break;
+                                                case '4':
+                                                    echo 'Completed';
+                                                    break;
+                                                default:
+                                                    echo 'Unknown';
+                                                    break;
+                                            }
+                                            ?>
+                                        </span>
+                                        <?php if ($bookingStartDate > $currentDateTime): ?>
+                                            <span
+                                                class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Upcoming
+                                                Booking</span>
+                                        <?php else: ?>
+                                            <span
+                                                class="px-2 py-1 bg-green-100 text-blue-800 rounded-full text-sm font-medium">Active
+                                                Booking</span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="flex gap-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                                    <?php endif; ?>
+                                    <div class="flex-1">
+                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-700 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?>
+                                        </p>
+                                        <p class="text-gray-700 mt-1">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
+                                        <p class="text-gray-700 mt-1">
+                                            <?php
+                                            $startDate = new DateTime($booking['booking_start_datetime']);
+                                            $endDate = new DateTime($booking['booking_end_datetime']);
+                                            echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                            ?>
+                                        </p>
+                                        <div class="mt-4 space-x-4">
+                                            <button
+                                                onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View Details
+                                            </button>
+                                            <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                                <button
+                                                    onclick="printReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
+                                                    class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                    <i class="fas fa-print mr-2"></i>Print Receipt
+                                                </button>
+                                                <button
+                                                    onclick="downloadReceipt(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    type="button"
+                                                    class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                    <i class="fas fa-download mr-2"></i>Download Receipt
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+
+            <div id="rejected-content" class="mt-8 hidden tab-content">
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <?php
+                    if (empty($rejectedBookings)) {
+                        echo '<p class="p-6 text-center text-gray-700">You do not have any rejected bookings.</p>';
+                    } else {
+                        foreach ($rejectedBookings as $booking) {
                             $timezone = new DateTimeZone('Asia/Manila');
                             $currentDateTime = new DateTime('now', $timezone);
                             $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
