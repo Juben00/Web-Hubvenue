@@ -1,0 +1,178 @@
+<div id="details-modal" class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+    <div class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center pb-4 border-b">
+            <span class="flex items-center space-x-2">
+                <h3 class="text-xl font-bold" id="modal-title"></h3>
+                <div class="flex items-center gap-2">
+                    <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
+                </div>
+            </span>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div id="modal-content" class="mt-4">
+            <!-- Main image and details container -->
+            <div class="flex flex-col items-center">
+                <!-- Images Section -->
+                <div class="w-full mb-6">
+                    <!-- Main Image -->
+                    <div class="relative h-80 rounded-lg overflow-hidden mb-4">
+                        <img id="modal-main-image" src="" alt="Venue Main Image" class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
+                    </div>
+
+                    <!-- Horizontal Thumbnail Strip -->
+                    <div class="flex gap-2 overflow-x-auto py-2" id="image-gallery">
+                        <!-- Thumbnail images will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Details Section -->
+                <div class="w-full space-y-6">
+                    <!-- Two Column Layout for Venue Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column -->
+                        <div class="space-y-4">
+                            <!-- Location Section -->
+                            <div>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Location</h4>
+                                <div class="space-y-1 text-gray-700 text-sm" id="location-details"></div>
+                            </div>
+
+                            <!-- Capacity -->
+                            <div>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Capacity</h4>
+                                <p id="venue-capacity" class="text-gray-700 text-sm"></p>
+                            </div>
+
+                            <!-- Rules -->
+                            <div>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Rules</h4>
+                                <p id="venue-rules" class="text-gray-700 text-sm"></p>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            <!-- Amenities -->
+                            <div>
+                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Amenities</h4>
+                                <ul id="amenities-list" class="text-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booking and Guest Details Section -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <!-- Booking Details Section -->
+                        <div class="p-6">
+                            <h4 class="font-bold text-xl text-gray-900 mb-6">Booking Details</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Booking Duration</h5>
+                                    <p id="booking-duration" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Start Date</h5>
+                                    <p id="start-date" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">End Date</h5>
+                                    <p id="end-date" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Request</h5>
+                                    <p id="request" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Attendees</h5>
+                                    <p id="attendees" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Mode of Payment</h5>
+                                    <p id="mode-of-payment" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Total Cost</h5>
+                                    <p id="raw-cost" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Grand Total</h5>
+                                    <p id="total-cost" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Payment</h5>
+                                    <p id="payment" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Balance</h5>
+                                    <p id="balance" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Discount</h5>
+                                    <p id="discount" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Reservation Date</h5>
+                                    <p id="reservation-date" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guest Details Section -->
+                        <div class="p-6 border-t border-gray-100">
+                            <h4 class="font-bold text-xl text-gray-900 mb-6">Guest Details</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Name</h5>
+                                    <p id="name" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Email</h5>
+                                    <p id="maile" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Address</h5>
+                                    <p id="address" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Sex</h5>
+                                    <p id="xes" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Age</h5>
+                                    <p id="age" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Date Joined</h5>
+                                    <p id="date-joined" class="text-gray-900 font-medium text-sm"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 border-t border-gray-100 flex space-x-4 justify-around">
+                            <!-- Check-In QR Code Button -->
+                            <button id="checkInBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-2xl shadow-md">
+                                Check-In QR Code
+                            </button>
+
+                            <!-- Check-Out QR Code Button -->
+                            <button id="checkOutBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-2xl shadow-md">
+                                Check-Out QR Code
+                            </button>
+
+                            <!-- Guest No Show Button -->
+                            <button id="noShowBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-2xl shadow-md">
+                                Guest No Show
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

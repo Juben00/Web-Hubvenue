@@ -1,0 +1,99 @@
+<div id="stats-modal" class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-8 border w-full max-w-7xl shadow-lg rounded-xl bg-white">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 id="modal-venue-name" class="text-2xl font-bold"></h2>
+                <p class="text-gray-600">Detailed Statistics Overview</p>
+            </div>
+            <button onclick="closeStatsModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Performance Overview -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold mb-4">Performance Overview</h3>
+            <div class="flex space-x-4 mb-4">
+                <button onclick="switchPeriod('today')" class="period-btn selected">Today</button>
+                <button onclick="switchPeriod('week')" class="period-btn">This Week</button>
+                <button onclick="switchPeriod('month')" class="period-btn">This Month</button>
+                <button onclick="switchPeriod('year')" class="period-btn">This Year</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Revenue Card -->
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-gray-600">Revenue</h4>
+                        <span class="text-xs text-blue-600">Last 24h</span>
+                    </div>
+                    <p id="stats-revenue" class="text-2xl font-bold">₱0</p>
+                    <p class="text-sm text-gray-500">Total earnings for the period</p>
+                </div>
+
+                <!-- Bookings Card -->
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-gray-600">Bookings</h4>
+                    </div>
+                    <p id="stats-bookings" class="text-2xl font-bold">0</p>
+                    <p class="text-sm text-gray-500">Total bookings for the period</p>
+                </div>
+
+                <!-- Average Guests Card -->
+                <div class="bg-white p-6 rounded-lg border">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-gray-600">Average Guests</h4>
+                    </div>
+                    <p id="stats-avg-guests" class="text-2xl font-bold">0</p>
+                    <p class="text-sm text-gray-500">Average guests per booking</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Statistics -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Total Revenue</h4>
+                <p id="stats-total-revenue" class="text-xl font-bold">₱0.00</p>
+                <p class="text-xs text-gray-500">Lifetime earnings</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Average Rating</h4>
+                <p id="stats-avg-rating" class="text-xl font-bold flex items-center">0.0 <span
+                        class="text-yellow-400 ml-1">★</span></p>
+                <p class="text-xs text-gray-500">Based on all reviews</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Total Bookings</h4>
+                <p id="stats-total-bookings" class="text-xl font-bold">0</p>
+                <p class="text-xs text-gray-500">All-time bookings</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg border">
+                <h4 class="text-gray-600 text-sm mb-1">Occupancy Rate</h4>
+                <p id="stats-occupancy" class="text-xl font-bold">0%</p>
+                <p class="text-xs text-gray-500">Average occupancy</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-4 rounded-lg border" style="height: 400px;">
+                <h4 class="text-gray-600 font-semibold mb-4">Revenue Over Time</h4>
+                <div style="height: 300px;">
+                    <canvas id="revenue-chart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-lg border" style="height: 400px;">
+                <h4 class="text-gray-600 font-semibold mb-4">Bookings Distribution</h4>
+                <div style="height: 300px;">
+                    <canvas id="bookings-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
