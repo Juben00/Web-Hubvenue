@@ -4,6 +4,7 @@ session_start();
 $venueObj = new Venue();
 
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$REJECTED_BOOKING = 0;
 $PENDING_BOOKING = 1;
 $CURRENT_BOOKING = 2;
 $CANCELLED_BOOKING = 3;
@@ -11,10 +12,18 @@ $PREVIOUS_BOOKING = 4;
 
 $VENUE_AVAILABLE = 1;
 
+$rejectedBookings = $venueObj->guestgetAllBookings($USER_ID, $REJECTED_BOOKING);
 $pendingBooking = $venueObj->guestgetAllBookings($USER_ID, $PENDING_BOOKING);
 $currentBooking = $venueObj->guestgetAllBookings($USER_ID, $CURRENT_BOOKING);
 $cancelledBooking = $venueObj->guestgetAllBookings($USER_ID, $CANCELLED_BOOKING);
 $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
+
+$rejectedCount = count($rejectedBookings);
+$pendingCount = count($pendingBooking);
+$currentCount = count($currentBooking);
+$cancelledCount = count($cancelledBooking);
+$previousCount = count($previousBooking);
+$totalCount = $rejectedCount + $pendingCount + $currentCount + $cancelledCount + $previousCount;
 
 ?>
 <main class="max-w-7xl mx-auto py-6 sm:px-6 pt-20 lg:px-8">
@@ -25,19 +34,23 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
             <nav class="-mb-px flex space-x-8">
                 <button onclick="showTab('pending')"
                     class="tab-btn border-black text-gray-900 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Pending Rentals
+                    Pending Rentals (<?php echo $pendingCount; ?>)
                 </button>
                 <button onclick="showTab('current')"
                     class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Current Rental
+                    Current Rental (<?php echo $currentCount; ?>)
                 </button>
                 <button onclick="showTab('previous')"
                     class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Previous Rentals
+                    Previous Rentals (<?php echo $previousCount; ?>)
                 </button>
                 <button onclick="showTab('cancelled')"
                     class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
-                    Cancelled Rentals
+                    Cancelled Rentals (<?php echo $cancelledCount; ?>)
+                </button>
+                <button onclick="showTab('rejected')"
+                    class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
+                    Rejected Rentals (<?php echo $rejectedCount; ?>)
                 </button>
             </nav>
         </div>
@@ -400,7 +413,7 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                                             class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
                                                             Submit Review
                                                         </button>
-
+                                                    </div>
                                                 </form>
                                                 <button
                                                     onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
@@ -416,86 +429,152 @@ $previousBooking = $venueObj->guestgetAllBookings($USER_ID, $PREVIOUS_BOOKING);
                                                 }
                                                 ?>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <?php
+                        <?php
                     }
                 }
                 ?>
+            </div>
         </div>
-    </div>
-    <!-- Cancelled Rentals Tab -->
-    <div id="cancelled-tab" class="tab-content hidden">
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <?php
-            if (empty($cancelledBooking)) {
-                echo '<p class="p-6 text-center text-gray-600">You do not have any cancelled bookings.</p>';
-            } else {
-                foreach ($cancelledBooking as $booking) {
-                    $timezone = new DateTimeZone('Asia/Manila');
-                    $currentDateTime = new DateTime('now', $timezone);
-                    $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
-                    ?>
-                    <div class="p-6">
-                        <div class="space-y-6">
-                            <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
-                                <?php
-                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
-                                ?>
 
-                                <?php if (!empty($imageUrls)): ?>
-                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                        class="w-28 h-28 object-cover rounded-lg">
-                                <?php endif; ?>
-                                <div>
-                                    <p class="text-lg font-medium">
-                                        <?php echo htmlspecialchars($booking['venue_name']) ?>
-                                    </p>
-                                    <p class="text-gray-600 mt-2"><?php
-                                    $startDate = new DateTime($booking['booking_start_datetime']);
-                                    $endDate = new DateTime($booking['booking_end_datetime']);
-                                    echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
-                                    ?></p>
-                                    <p class="text-gray-600">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
-                                        for
-                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
-                                        days
-                                    </p>
+        <!-- Cancelled Rentals Tab -->
+        <div id="cancelled-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <?php
+                if (empty($cancelledBooking)) {
+                    echo '<p class="p-6 text-center text-gray-600">You do not have any cancelled bookings.</p>';
+                } else {
+                    foreach ($cancelledBooking as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
 
-
-                                    <h4 class="text-gray-600">Reason:
-                                        <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
-                                    </h4>
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-28 h-28 object-cover rounded-lg">
+                                    <?php endif; ?>
+                                    <div>
+                                        <p class="text-lg font-medium">
+                                            <?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><?php
+                                        $startDate = new DateTime($booking['booking_start_datetime']);
+                                        $endDate = new DateTime($booking['booking_end_datetime']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?></p>
+                                        <p class="text-gray-600">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
 
 
-                                    <div class="mt-4">
-                                        <?php
-                                        if ($booking['venue_availability_id'] == $VENUE_AVAILABLE) {
-                                            echo '<button id="bookAgainBtn"
+                                        <h4 class="text-gray-600">Reason:
+                                            <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
+                                        </h4>
+
+
+                                        <div class="mt-4">
+                                            <?php
+                                            if ($booking['venue_availability_id'] == $VENUE_AVAILABLE) {
+                                                echo '<button id="bookAgainBtn"
                                                     data-bvid="' . htmlspecialchars($booking['venue_id']) . '"
                                                     class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
                                                     Book Again
                                                 </button>';
-                                        }
-                                        ?>
+                                            }
+                                            ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <?php
+                        <?php
+                    }
                 }
-            }
-            ?>
+                ?>
+            </div>
         </div>
+
+        <!-- Rejected Rentals Tab -->
+        <div id="rejected-tab" class="tab-content hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <?php
+                if (empty($rejectedBookings)) {
+                    echo '<p class="text-gray-600 p-4">No rejected bookings found.</p>';
+                } else {
+                    foreach ($rejectedBookings as $booking) {
+                        $timezone = new DateTimeZone('Asia/Manila');
+                        $currentDateTime = new DateTime('now', $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
+                        ?>
+                        <div class="p-6">
+                            <div class="space-y-6">
+                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                    <?php
+                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                    ?>
+
+                                    <?php if (!empty($imageUrls)): ?>
+                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                            class="w-28 h-28 object-cover rounded-lg">
+                                    <?php endif; ?>
+                                    <div>
+                                        <p class="text-lg font-medium">
+                                            <?php echo htmlspecialchars($booking['venue_name']) ?>
+                                        </p>
+                                        <p class="text-gray-600 mt-2"><?php
+                                        $startDate = new DateTime($booking['booking_start_datetime']);
+                                        $endDate = new DateTime($booking['booking_end_datetime']);
+                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                        ?></p>
+                                        <p class="text-gray-600">
+                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_grand_total'] ? $booking['booking_grand_total'] : 0.0)) ?>
+                                            for
+                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                            days
+                                        </p>
+
+
+                                        <div class="mt-4">
+                                            <?php
+                                            if ($booking['venue_availability_id'] == $VENUE_AVAILABLE) {
+                                                echo '<button id="bookAgainBtn"
+                                                        data-bvid="' . htmlspecialchars($booking['venue_id']) . '"
+                                                        class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                        Book Again
+                                                    </button>';
+                                            }
+                                            ?>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+            </div>
+        </div>
+
     </div>
+
     <!-- Details Modal -->
     <div id="details-modal"
         class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
