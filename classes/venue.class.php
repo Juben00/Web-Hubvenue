@@ -518,7 +518,6 @@ class Venue
                     b.booking_status_id,
                     b.booking_cancellation_reason,
                     b.booking_created_at,
-
                     u.id AS guest_id,
                     CONCAT(u.firstname, ' ', u.middlename, ' ', u.lastname) AS guest_name,
                     u.contact_number AS guest_contact_number,
@@ -588,7 +587,7 @@ class Venue
     {
         try {
             $conn = $this->db->connect();
-            $sql = "UPDATE bookings SET booking_status_id = 2, booking_payment_status_id = 2 WHERE id = :booking_id";
+            $sql = "UPDATE bookings SET booking_status_id = 2 WHERE id = :booking_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':booking_id', $booking_id);
 
@@ -607,7 +606,7 @@ class Venue
     {
         try {
             $conn = $this->db->connect();
-            $sql = "UPDATE bookings SET booking_status_id = 4 WHERE id = :booking_id";
+            $sql = "UPDATE bookings SET booking_status_id = 0 WHERE id = :booking_id";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':booking_id', $booking_id);
 

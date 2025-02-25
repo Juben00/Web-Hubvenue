@@ -27,6 +27,28 @@ $completedCount = count($completedBookings);
 $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCount;
 ?>
 
+<style>
+    .period-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6B7280;
+        border-bottom: 2px solid transparent;
+        background: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .period-btn:hover {
+        color: #000;
+    }
+
+    .period-btn.selected {
+        color: #000;
+        border-bottom-color: #000;
+    }
+</style>
+
 <main class="max-w-7xl pt-20 mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -70,7 +92,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
 
 
             <!-- Tab Content -->
-            <div id="pending-content" class="mt-8 tab-content">
+            <!-- <div id="pending-content" class="mt-8 tab-content">
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <?php
                     if (empty($pendingBookings)) {
@@ -173,6 +195,91 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         }
                     }
                     ?>
+                </div>
+            </div> -->
+
+            <div id="pending-content" class="mt-8 tab-content">
+                <div class="rounded-xl p-6 text-gray-800">
+                    <?php if (empty($pendingBookings)) { ?>
+                        <p class="text-center text-gray-400">You do not have any pending bookings.</p>
+                    <?php } else {
+                        foreach ($pendingBookings as $booking) {
+                            $timezone = new DateTimeZone('Asia/Manila');
+                            $currentDateTime = new DateTime('now', $timezone);
+                            $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
+                            ?>
+                            <div class="p-6  rounded-lg shadow-lg mb-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-2xl font-bold"> <?php echo htmlspecialchars($booking['venue_name']) ?> </h2>
+                                    <div class="flex items-center gap-3">
+                                        <span class="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-semibold">
+                                            Pending Approval
+                                        </span>
+                                        <?php if ($bookingStartDate > $currentDateTime) { ?>
+                                            <span
+                                                class="px-3 py-1 bg-blue-500 text-white rounded-full text-sm font-semibold">Upcoming</span>
+                                        <?php } else { ?>
+                                            <span
+                                                class="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-semibold">Active</span>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="flex gap-6">
+                                    <?php $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : []; ?>
+                                    <?php if (!empty($imageUrls)) { ?>
+                                        <img src="./<?php echo htmlspecialchars($imageUrls[0]); ?>"
+                                            alt="<?php echo htmlspecialchars($booking['venue_name']); ?>"
+                                            class="w-40 h-40 object-cover rounded-xl shadow-lg border-4 border-gray-700">
+                                    <?php } ?>
+                                    <div class="flex-1">
+                                        <p class="text-lg font-medium">Location:
+                                            <?php echo htmlspecialchars($booking['venue_location']); ?>
+                                        </p>
+                                        <p class="text-sm text-gray-600 mt-1">Participants:
+                                            <?php echo number_format($booking['booking_participants']); ?>
+                                        </p>
+                                        <p class="text-sm text-gray-600 mt-1">Total Cost:
+                                            ₱<?php echo number_format($booking['booking_grand_total']); ?></p>
+                                        <p class="text-sm text-gray-600 mt-1">
+                                            Duration: <?php echo number_format($booking['booking_duration']); ?> hours
+                                        </p>
+                                        <p class="text-sm text-gray-600 mt-1">
+                                            Schedule:
+                                            <?php echo $bookingStartDate->format('F j, Y, g:i A') . ' - ' . (new DateTime($booking['booking_end_datetime']))->format('F j, Y, g:i A'); ?>
+                                        </p>
+                                        <p class="text-sm text-gray-600 mt-1">Guest:
+                                            <?php echo htmlspecialchars($booking['guest_name']); ?>
+                                            (<?php echo htmlspecialchars($booking['guest_contact_number']); ?>)
+                                        </p>
+                                        <div class="mt-4 space-x-4">
+                                            <button
+                                                onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">View
+                                                Details</button>
+                                            <form class="approveReservationButton inline-block" method="POST">
+                                                <input type="hidden" name="booking_id"
+                                                    value="<?php echo $booking['booking_id']; ?>">
+                                                <input type="hidden" name="status_id" value="2">
+                                                <button type="submit"
+                                                    class="text-blue-500 font-bold border-2 px-4 border-blue-500 py-2 rounded-lg">
+                                                    Approve
+                                                </button>
+                                            </form>
+                                            <form class="rejectReservationButton inline-block" method="POST">
+                                                <input type="hidden" name="booking_id"
+                                                    value="<?php echo $booking['booking_id']; ?>">
+                                                <input type="hidden" name="status_id" value="4">
+                                                <button type="submit"
+                                                    class="text-red-500 font-bold border-2 px-4 border-red-500 py-2 rounded-lg">
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php }
+                    } ?>
                 </div>
             </div>
 
@@ -585,352 +692,13 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
         </div>
     </div>
 </main>
-<div id="details-modal"
-    class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-    <div
-        class="relative top-20 mx-auto p-6 border w-full max-w-4xl shadow-lg rounded-xl bg-white transition-all duration-300 transform scale-95">
-        <!-- Modal Header -->
-        <div class="flex justify-between items-center pb-4 border-b">
-            <span class="flex items-center space-x-2">
-                <h3 class="text-xl font-bold" id="modal-title"></h3>
-                <div class="flex items-center gap-2">
-                    <span id="booking-status" class="px-2.5 py-0.5 rounded-full text-sm font-medium"></span>
-                </div>
-            </span>
-            <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </button>
-        </div>
 
-        <!-- Modal Content -->
-        <div id="modal-content" class="mt-4">
-            <!-- Main image and details container -->
-            <div class="flex flex-col items-center">
-                <!-- Images Section -->
-                <div class="w-full mb-6">
-                    <!-- Main Image -->
-                    <div class="relative h-80 rounded-lg overflow-hidden mb-4">
-                        <img id="modal-main-image" src="" alt="Venue Main Image"
-                            class="w-full h-full object-cover transition-transform duration-200 hover:scale-105">
-                    </div>
-
-                    <!-- Horizontal Thumbnail Strip -->
-                    <div class="flex gap-2 overflow-x-auto py-2" id="image-gallery">
-                        <!-- Thumbnail images will be inserted here -->
-                    </div>
-                </div>
-
-                <!-- Details Section -->
-                <div class="w-full space-y-6">
-                    <!-- Two Column Layout for Venue Details -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Left Column -->
-                        <div class="space-y-4">
-                            <!-- Location Section -->
-                            <div>
-                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Location</h4>
-                                <div class="space-y-1 text-gray-700 text-sm" id="location-details"></div>
-                            </div>
-
-                            <!-- Capacity -->
-                            <div>
-                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Capacity</h4>
-                                <p id="venue-capacity" class="text-gray-700 text-sm"></p>
-                            </div>
-
-                            <!-- Rules -->
-                            <div>
-                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Rules</h4>
-                                <p id="venue-rules" class="text-gray-700 text-sm"></p>
-                            </div>
-                        </div>
-
-                        <!-- Right Column -->
-                        <div class="space-y-4">
-                            <!-- Amenities -->
-                            <div>
-                                <h4 class="font-semibold text-lg text-gray-900 mb-2">Amenities</h4>
-                                <ul id="amenities-list"
-                                    class="text-gray-700 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Booking and Guest Details Section -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <!-- Booking Details Section -->
-                        <div class="p-6">
-                            <h4 class="font-bold text-xl text-gray-900 mb-6">Booking Details</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Booking Duration</h5>
-                                    <p id="booking-duration" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Start Date</h5>
-                                    <p id="start-date" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">End Date</h5>
-                                    <p id="end-date" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Request</h5>
-                                    <p id="request" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Attendees</h5>
-                                    <p id="attendees" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Mode of Payment</h5>
-                                    <p id="mode-of-payment" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Total Cost</h5>
-                                    <p id="raw-cost" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Grand Total</h5>
-                                    <p id="total-cost" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Payment</h5>
-                                    <p id="payment" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Balance</h5>
-                                    <p id="balance" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Discount</h5>
-                                    <p id="discount" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Reservation Date</h5>
-                                    <p id="reservation-date" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Guest Details Section -->
-                        <div class="p-6 border-t border-gray-100">
-                            <h4 class="font-bold text-xl text-gray-900 mb-6">Guest Details</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Name</h5>
-                                    <p id="name" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Email</h5>
-                                    <p id="maile" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Address</h5>
-                                    <p id="address" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Sex</h5>
-                                    <p id="xes" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Age</h5>
-                                    <p id="age" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                                <div
-                                    class="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                                    <h5 class="font-semibold text-sm text-gray-600 mb-1">Date Joined</h5>
-                                    <p id="date-joined" class="text-gray-900 font-medium text-sm"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6 border-t border-gray-100 flex space-x-4 justify-around">
-                            <!-- Check-In QR Code Button -->
-                            <button id="checkInBtn"
-                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-2xl shadow-md">
-                                Check-In QR Code
-                            </button>
-
-                            <!-- Check-Out QR Code Button -->
-                            <button id="checkOutBtn"
-                                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-2xl shadow-md">
-                                Check-Out QR Code
-                            </button>
-
-                            <!-- Guest No Show Button -->
-                            <button id="noShowBtn"
-                                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-2xl shadow-md">
-                                Guest No Show
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="qrModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center">
-    <div class="bg-white rounded-lg shadow-lg p-6 w-96 text-center relative">
-        <span onclick="closeQr()" class="absolute right-4 top-4 text-gray-500 cursor-pointer hover:text-gray-700">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </span>
-
-        <h2 class="text-xl font-semibold mb-4">Scan to check-in</h2>
-
-        <!-- QR Code Image -->
-        <div class="flex items-center justify-center mb-4" id="qrCodeContainer">
-            <!-- QR code will be generated here -->
-        </div>
-
-        <a id="qrLink" href="#" target="_blank" class="text-blue-500 hover:underline">Open Link</a>
-    </div>
-</div>
-
-<div id="stats-modal" class="hidden fixed inset-0 bg-black/50 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-10 mx-auto p-8 border w-full max-w-7xl shadow-lg rounded-xl bg-white">
-        <!-- Modal Header -->
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 id="modal-venue-name" class="text-2xl font-bold"></h2>
-                <p class="text-gray-600">Detailed Statistics Overview</p>
-            </div>
-            <button onclick="closeStatsModal()" class="text-gray-500 hover:text-gray-700">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                    </path>
-                </svg>
-            </button>
-        </div>
-
-        <!-- Performance Overview -->
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold mb-4">Performance Overview</h3>
-            <div class="flex space-x-4 mb-4">
-                <button onclick="switchPeriod('today')" class="period-btn selected">Today</button>
-                <button onclick="switchPeriod('week')" class="period-btn">This Week</button>
-                <button onclick="switchPeriod('month')" class="period-btn">This Month</button>
-                <button onclick="switchPeriod('year')" class="period-btn">This Year</button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Revenue Card -->
-                <div class="bg-white p-6 rounded-lg border">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-gray-600">Revenue</h4>
-                        <span class="text-xs text-blue-600">Last 24h</span>
-                    </div>
-                    <p id="stats-revenue" class="text-2xl font-bold">₱0</p>
-                    <p class="text-sm text-gray-500">Total earnings for the period</p>
-                </div>
-
-                <!-- Bookings Card -->
-                <div class="bg-white p-6 rounded-lg border">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-gray-600">Bookings</h4>
-                    </div>
-                    <p id="stats-bookings" class="text-2xl font-bold">0</p>
-                    <p class="text-sm text-gray-500">Total bookings for the period</p>
-                </div>
-
-                <!-- Average Guests Card -->
-                <div class="bg-white p-6 rounded-lg border">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-gray-600">Average Guests</h4>
-                    </div>
-                    <p id="stats-avg-guests" class="text-2xl font-bold">0</p>
-                    <p class="text-sm text-gray-500">Average guests per booking</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Overall Statistics -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-4 rounded-lg border">
-                <h4 class="text-gray-600 text-sm mb-1">Total Revenue</h4>
-                <p id="stats-total-revenue" class="text-xl font-bold">₱0.00</p>
-                <p class="text-xs text-gray-500">Lifetime earnings</p>
-            </div>
-            <div class="bg-white p-4 rounded-lg border">
-                <h4 class="text-gray-600 text-sm mb-1">Average Rating</h4>
-                <p id="stats-avg-rating" class="text-xl font-bold flex items-center">0.0 <span
-                        class="text-yellow-400 ml-1">★</span></p>
-                <p class="text-xs text-gray-500">Based on all reviews</p>
-            </div>
-            <div class="bg-white p-4 rounded-lg border">
-                <h4 class="text-gray-600 text-sm mb-1">Total Bookings</h4>
-                <p id="stats-total-bookings" class="text-xl font-bold">0</p>
-                <p class="text-xs text-gray-500">All-time bookings</p>
-            </div>
-            <div class="bg-white p-4 rounded-lg border">
-                <h4 class="text-gray-600 text-sm mb-1">Occupancy Rate</h4>
-                <p id="stats-occupancy" class="text-xl font-bold">0%</p>
-                <p class="text-xs text-gray-500">Average occupancy</p>
-            </div>
-        </div>
-
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-4 rounded-lg border" style="height: 400px;">
-                <h4 class="text-gray-600 font-semibold mb-4">Revenue Over Time</h4>
-                <div style="height: 300px;">
-                    <canvas id="revenue-chart"></canvas>
-                </div>
-            </div>
-            <div class="bg-white p-4 rounded-lg border" style="height: 400px;">
-                <h4 class="text-gray-600 font-semibold mb-4">Bookings Distribution</h4>
-                <div style="height: 300px;">
-                    <canvas id="bookings-chart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .period-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #6B7280;
-        border-bottom: 2px solid transparent;
-        background: none;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .period-btn:hover {
-        color: #000;
-    }
-
-    .period-btn.selected {
-        color: #000;
-        border-bottom-color: #000;
-    }
-</style>
+<!-- details modal -->
+<?php
+require_once '../components/venue-details.modal.html';
+require_once '../components/qr-code.modal.html';
+require_once '../components/stats.modal.html';
+?>
 
 <script>
     function closeQr() {
@@ -953,7 +721,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 qrModal.classList.add('z-50');
 
                 // Set the check-in link for the QR code
-                const checkLink = booking.check_in_link;
+                const checkLink = booking.booking_checkin_link;
                 document.getElementById('qrLink').href = checkLink;
 
                 // Generate the QR code
@@ -970,7 +738,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                 qrModal.classList.add('z-50');
 
                 // Set the check-out link for the QR code
-                const checkLink = booking.check_out_link;
+                const checkLink = booking.booking_checkout_link;
                 document.getElementById('qrLink').href = checkLink;
 
                 // Generate the QR code

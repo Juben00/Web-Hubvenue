@@ -1,0 +1,18 @@
+<div id="qrModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96 text-center relative">
+        <span onclick="closeQr()" class="absolute right-4 top-4 text-gray-500 cursor-pointer hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </span>
+
+        <h2 class="text-xl font-semibold mb-4">Scan to check-in</h2>
+
+        <!-- QR Code Image -->
+        <div class="flex items-center justify-center mb-4" id="qrCodeContainer">
+            <!-- QR code will be generated here -->
+        </div>
+
+        <a id="qrLink" href="#" target="_blank" class="text-blue-500 hover:underline">Open Link</a>
+    </div>
+</div>

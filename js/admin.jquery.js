@@ -231,7 +231,7 @@ $(document).ready(function () {
       dataType: "html",
       success: function (response) {
         $("#adminView").html(response);
-       
+      
         // Handle approve discount application
         $('#approveDiscountApplication').on('submit', function (e) {
             e.preventDefault();
@@ -247,7 +247,7 @@ $(document).ready(function () {
 
         // Handle reject discount application
         $('#rejectDiscountApplication').on('submit', function (e) {
-             e.preventDefault();
+            e.preventDefault();
             const formElement = $(this);
             confirmshowModal(
                 "Are you sure you want to decline this discount application?",
@@ -396,7 +396,7 @@ $(document).ready(function () {
                 addVenue();
             });
 
-           
+          
 
             
         },

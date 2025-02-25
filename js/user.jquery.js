@@ -363,7 +363,7 @@ $(document).ready(function () {
                         window.location.href = './list-your-venue.php';
                     });
 
-                   $('#bookAgainBtn').on('click', function (e) {
+                    $('#bookAgainBtn').on('click', function (e) {
                         e.preventDefault();
                         const venueId = $(this).data("bvid");
                         window.location.href = './venues.php?id=' + venueId; // Uncomment if you want to navigate
@@ -380,10 +380,62 @@ $(document).ready(function () {
                         const formElement = $(this);
                         cancelBooking(formElement);
                     });
-                    
-                }
-            }
-        )
+
+                    $('.approveReservationButton').on("submit", function (e) {
+                    e.preventDefault();
+                    const formData = $(this).serialize();
+
+                    confirmshowModal(
+                        "Are you sure you want to approve this reservation?",
+                        function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "./api/ApproveReservation.api.php",
+                                data: formData,
+                                dataType: 'json',
+                                success: function (response) {
+                                    if (response.status === "success") {
+                                        window.location.reload();
+                                    }
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("Error:", error);
+                                }
+                            });
+                        },
+                        "black_ico.png"
+                    );
+                    });
+
+                    $('.rejectReservationButton').on("submit", function (e) {
+                        e.preventDefault();
+                        const formData = $(this).serialize();
+
+                        confirmshowModal(
+                            "Are you sure you want to reject this reservation?",
+                            function () {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "./api/RejectReservation.api.php",
+                                    data: formData,
+                                    dataType: 'json',
+                                    success: function (response) {
+                                        if (response.status === "success") {
+                                            window.location.reload();
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        console.error("Error:", error);
+                                    }
+                                });
+                            },
+                            "black_ico.png"
+                        );
+                    });
+                                
+                            }
+                        }
+                    )
     }
     
 
@@ -689,6 +741,8 @@ $(document).ready(function () {
             
         });
     }
+
+
     
     // setting default view for profile
     openProfileNav('rent-history');
