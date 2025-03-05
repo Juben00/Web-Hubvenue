@@ -61,6 +61,33 @@ function sendEmail($email, $context, $content)
                 </html>
                 ";
                 break;
+            case "Booking Rejection":
+                $mail->Body = "
+                <html>
+                <head>
+                    <style>
+                        .booking-rejection {
+                            display: inline-block;
+                            padding: 10px 20px;
+                            font-size: 16px;
+                            color: white;
+                            background-color: #007BFF;
+                            text-decoration: none;
+                            border-radius: 5px;
+                            transition: background-color 0.3s;
+                        }
+                        .booking-rejection:hover {
+                            background-color: #0056b3;
+                        }
+                    </style>
+                </head>
+                    <body>
+                        <p>Your booking has been rejected. Click the button below to view the details:</p>
+                        <a class='booking-rejection' href='$content'>View Booking</a>
+                    </body>
+                </html>
+                ";
+                break;
             case "Payment Confirmation":
                 $mail->Body = "
                 <html>
