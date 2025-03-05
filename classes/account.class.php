@@ -87,7 +87,7 @@ class Account
                 if ($stmt->execute()) {
                     try {
                         // Send verification email
-                        sendVerificationEmail($this->email, $token);
+                        sendEmail($this->email, "Email Verification", $token);
                         return ['status' => 'success', 'message' => 'Account created successfully. Please verify your email.'];
                     } catch (Exception $e) {
                         return ['status' => 'error', 'message' => 'Failed to send verification email: ' . $e->getMessage()];

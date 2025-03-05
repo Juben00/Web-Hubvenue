@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/../dbconnection.php');
+require_once(__DIR__ . '/../classes/account.class.php');
 
 // session_start();
 class Venue
@@ -592,13 +593,21 @@ class Venue
             $stmt->bindParam(':booking_id', $booking_id);
 
             if ($stmt->execute()) {
-                return ['status' => 'success', 'message' => 'Reservation approved successfully'];
+                $sql = 'SELECT b.*, u.email FROM bookings b JOIN users u ON b.booking_guest_id = u.id WHERE b.id = :booking_id';
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':booking_id', $booking_id);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $email = $result['email'];
+                $confirmationLink = "http://localhost/hubvenue/profile.php";
+                sendEmail($email, 'Booking Confirmation', $confirmationLink);
+                return ['status' => 'success', 'message' => "Booking Approved! Email sent to guest"];
             } else {
                 return ['status' => 'error', 'message' => 'Failed to approve reservation'];
             }
         } catch (PDOException $e) {
             error_log("Database error: " . $e->getMessage());
-            return ['status' => 'error', 'message' => $e->getMessage()];
+            return ['status' => 'errors', 'message' => $e->getMessage()];
         }
     }
 

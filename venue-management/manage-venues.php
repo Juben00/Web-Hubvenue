@@ -281,18 +281,4 @@ $venues = $venueObj->getAllVenues($status = '1');
         });
     });
 
-    // Add close modal functionality
-    document.querySelector('#venue-details-modal-manage .close-modal').addEventListener('click', function () {
-        const modal = document.getElementById('venue-details-modal-manage');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    });
-
-    // Close modal when clicking outside
-    document.getElementById('venue-details-modal-manage').addEventListener('click', function (e) {
-        if (e.target === this) {
-            this.classList.add('hidden');
-            this.classList.remove('flex');
-        }
-    });
 </script>
