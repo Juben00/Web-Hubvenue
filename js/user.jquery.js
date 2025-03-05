@@ -388,17 +388,22 @@ $(document).ready(function () {
                     confirmshowModal(
                         "Are you sure you want to approve this reservation?",
                         function () {
+                            spinnerOn();
                             $.ajax({
                                 type: "POST",
                                 url: "./api/ApproveReservation.api.php",
                                 data: formData,
                                 dataType: 'json',
                                 success: function (response) {
+                                    spinnerOff();
                                     if (response.status === "success") {
-                                        window.location.reload();
+                                        showModal(response.message, function () {
+                                            window.location.reload();
+                                        }, "black_ico.png" );
                                     }
                                 },
                                 error: function (xhr, status, error) {
+                                    spinnerOff();
                                     console.error("Error:", error);
                                 }
                             });
@@ -414,17 +419,22 @@ $(document).ready(function () {
                         confirmshowModal(
                             "Are you sure you want to reject this reservation?",
                             function () {
+                                spinnerOn();
                                 $.ajax({
                                     type: "POST",
                                     url: "./api/RejectReservation.api.php",
                                     data: formData,
                                     dataType: 'json',
                                     success: function (response) {
+                                        spinnerOff();
                                         if (response.status === "success") {
-                                            window.location.reload();
+                                            showModal(response.message, function () {
+                                                window.location.reload();
+                                            }, "black_ico.png" );
                                         }
                                     },
                                     error: function (xhr, status, error) {
+                                        spinnerOff();
                                         console.error("Error:", error);
                                     }
                                 });

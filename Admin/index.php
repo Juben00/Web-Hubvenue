@@ -301,6 +301,27 @@ if (isset($USER_ID) && $userRole == 'Admin') {
         $(document).ready(function () {
             console.log("jQuery is working!");
         });
+
+        // Add close modal functionality
+        let viewDetailsModalClose = document.querySelector('#venue-details-modal-manage .close-modal');
+        let viewDetailsModal = document.getElementById('venue-details-modal-manage');
+
+        if (viewDetailsModalClose) {
+            viewDetailsModal.addEventListener('click', function () {
+                const modal = document.getElementById('venue-details-modal-manage');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+        }
+
+        if (viewDetailsModal) {
+            viewDetailsModal.addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                    this.classList.remove('flex');
+                }
+            });
+        }
     </script>
 
 
