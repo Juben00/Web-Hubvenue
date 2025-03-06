@@ -1,7 +1,7 @@
 CREATE TABLE bookings (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_start_date DATE,
-    booking_end_date DATE,
+    booking_start_datetime DATE,
+    booking_end_datetime DATE,
     booking_participants INT,
     booking_venue_price DECIMAL(10,2),
     booking_entrance DECIMAL(10,2),

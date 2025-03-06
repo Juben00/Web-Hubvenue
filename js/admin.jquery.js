@@ -5,6 +5,18 @@ $(document).ready(function () {
 
   //when the page is resfershed, the dashboard is loaded
   $("#dashboard-link").click();
+  
+  const spinner = $("#spinner");
+
+  function spinnerOn() {
+    spinner.removeClass("hidden");
+    spinner.addClass("flex");
+    }
+
+  function spinnerOff() {
+    spinner.removeClass("flex");
+    spinner.addClass("hidden");
+  }
 
   $(".nav-link").on("click", function (e) {
     e.preventDefault();
@@ -133,13 +145,13 @@ $(document).ready(function () {
 
               $("#approved-vm").on("click", function (e) {
                   e.preventDefault();
-                   viewVmApproved();
+                  viewVmApproved();
                   activateTab($(this));
               });
 
               $("#rejected-vm").on("click", function (e) {
                   e.preventDefault();
-                 viewVmRejected();
+                  viewVmRejected();
                   activateTab($(this));
               });
 

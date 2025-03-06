@@ -47,145 +47,146 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     foreach ($pendingBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                         ?>
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
-                                </h2>
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2 py-1 rounded-full text-sm font-medium <?php
-                                        switch ($booking['booking_status_id']) {
-                                            case '1': // Pending
-                                                echo 'bg-yellow-100 text-yellow-800';
-                                                break;
-                                            case '2': // Approved
-                                                echo 'bg-green-100 text-green-800';
-                                                break;
-                                            case '3': // Cancelled
-                                                echo 'bg-red-100 text-red-800';
-                                                break;
-                                            case '4': // Completed
-                                                echo 'bg-blue-100 text-blue-800';
-                                                break;
-                                            default:
-                                                echo 'bg-gray-100 text-gray-800';
-                                                break;
-                                        }
-                                    ?>">
-                                        <?php
-                                        switch ($booking['booking_status_id']) {
-                                            case '1':
-                                                echo 'Pending';
-                                                break;
-                                            case '2':
-                                                echo 'Approved';
-                                                break;
-                                            case '3':
-                                                echo 'Cancelled';
-                                                break;
-                                            case '4':
-                                                echo 'Completed';
-                                                break;
-                                            default:
-                                                echo 'Unknown';
-                                                break;
-                                        }
-                                        ?>
-                                    </span>
-                                    <?php
-                                    if ($bookingStartDate > $currentDateTime): ?>
-                                        <span
-                                            class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
-                                            Booking</span> <!-- Tag for future booking -->
-                                    <?php else: ?>
-                                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
-                                            Booking</span> <!-- Tag for started booking -->
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="flex gap-6">
-                                <?php
-                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
-                                ?>
-
-                                <?php if (!empty($imageUrls)): ?>
-                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                        class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
-                                <?php endif; ?>
-
-                                <div class="flex-1">
-                                    <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
-                                    <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
-                                    <p class="text-gray-600 mt-1">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
-                                        for
-                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
-                                        days
-                                    </p>
-                                    <p class="text-gray-600 mt-1">
-                                        <?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
-                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
-                                        ?>
-                                    </p>
-                                    <div class="mt-4 space-x-4">
-                                        <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
-                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
-                                            Details</button>
-                                        <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                            <button onclick="printReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
-                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
-                                                <i class="fas fa-print mr-2"></i>Print Receipt
-                                            </button>
-                                            <button onclick="downloadReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
-                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
-                                                <i class="fas fa-download mr-2"></i>Download Receipt
-                                            </button>
-                                        <?php endif; ?>
-                                        <?php
-
-                                        if ($bookingStartDate > $currentDateTime):
-                                            ?>
-                                            <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
-                                                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
-                                                Booking</button>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
+                                        </h2>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 rounded-full text-sm font-medium <?php
+                                            switch ($booking['booking_status_id']) {
+                                                case '1': // Pending
+                                                    echo 'bg-yellow-100 text-yellow-800';
+                                                    break;
+                                                case '2': // Approved
+                                                    echo 'bg-green-100 text-green-800';
+                                                    break;
+                                                case '3': // Cancelled
+                                                    echo 'bg-red-100 text-red-800';
+                                                    break;
+                                                case '4': // Completed
+                                                    echo 'bg-blue-100 text-blue-800';
+                                                    break;
+                                                default:
+                                                    echo 'bg-gray-100 text-gray-800';
+                                                    break;
+                                            }
+                                            ?>">
+                                                <?php
+                                                switch ($booking['booking_status_id']) {
+                                                    case '1':
+                                                        echo 'Pending';
+                                                        break;
+                                                    case '2':
+                                                        echo 'Approved';
+                                                        break;
+                                                    case '3':
+                                                        echo 'Cancelled';
+                                                        break;
+                                                    case '4':
+                                                        echo 'Completed';
+                                                        break;
+                                                    default:
+                                                        echo 'Unknown';
+                                                        break;
+                                                }
+                                                ?>
+                                            </span>
                                             <?php
-                                        endif;
+                                            if ($bookingStartDate > $currentDateTime): ?>
+                                                    <span
+                                                        class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
+                                                        Booking</span> <!-- Tag for future booking -->
+                                            <?php else: ?>
+                                                    <span
+                                                        class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
+                                                        Booking</span> <!-- Tag for started booking -->
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-6">
+                                        <?php
+                                        $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
                                         ?>
+
+                                        <?php if (!empty($imageUrls)): ?>
+                                                <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                                    alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                                    class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                                        <?php endif; ?>
+
+                                        <div class="flex-1">
+                                            <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
+                                            <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                            <p class="text-gray-600 mt-1">
+                                                ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                                for
+                                                <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                                days
+                                            </p>
+                                            <p class="text-gray-600 mt-1">
+                                                <?php
+                                                $startDate = new DateTime($booking['booking_start_datetime']);
+                                                $endDate = new DateTime($booking['booking_end_datetime']);
+                                                echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                                ?>
+                                            </p>
+                                            <div class="mt-4 space-x-4">
+                                                <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                                    Details</button>
+                                                <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                                        <button onclick="printReceipt(<?php
+                                                        echo htmlspecialchars(json_encode([
+                                                            'booking_id' => $booking['booking_id'] ?? '',
+                                                            'venue_name' => $booking['venue_name'] ?? '',
+                                                            'booking_start_datetime' => $booking['booking_start_datetime'] ?? '',
+                                                            'booking_end_datetime' => $booking['booking_end_datetime'] ?? '',
+                                                            'booking_duration' => $booking['booking_duration'] ?? '',
+                                                            'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                            'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                            'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                            'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                            'venue_location' => $booking['venue_location'] ?? ''
+                                                        ]), ENT_QUOTES, 'UTF-8');
+                                                        ?>)" type="button"
+                                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                            <i class="fas fa-print mr-2"></i>Print Receipt
+                                                        </button>
+                                                        <button onclick="downloadReceipt(<?php
+                                                        echo htmlspecialchars(json_encode([
+                                                            'booking_id' => $booking['booking_id'] ?? '',
+                                                            'venue_name' => $booking['venue_name'] ?? '',
+                                                            'booking_start_datetime' => $booking['booking_start_datetime'] ?? '',
+                                                            'booking_end_datetime' => $booking['booking_end_datetime'] ?? '',
+                                                            'booking_duration' => $booking['booking_duration'] ?? '',
+                                                            'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                            'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                            'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                            'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                            'venue_location' => $booking['venue_location'] ?? ''
+                                                        ]), ENT_QUOTES, 'UTF-8');
+                                                        ?>)" type="button"
+                                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                            <i class="fas fa-download mr-2"></i>Download Receipt
+                                                        </button>
+                                                <?php endif; ?>
+                                                <?php
+
+                                                if ($bookingStartDate > $currentDateTime):
+                                                    ?>
+                                                        <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
+                                                            class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                                            Booking</button>
+                                                        <?php
+                                                endif;
+                                                ?>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <?php
+                                <?php
                     }
                 }
                 ?>
@@ -204,145 +205,146 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     foreach ($currentBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                         ?>
-                        <div class="p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
-                                </h2>
-                                <div class="flex items-center gap-2">
-                                    <span class="px-2 py-1 rounded-full text-sm font-medium <?php
-                                        switch ($booking['booking_status_id']) {
-                                            case '1': // Pending
-                                                echo 'bg-yellow-100 text-yellow-800';
-                                                break;
-                                            case '2': // Approved
-                                                echo 'bg-green-100 text-green-800';
-                                                break;
-                                            case '3': // Cancelled
-                                                echo 'bg-red-100 text-red-800';
-                                                break;
-                                            case '4': // Completed
-                                                echo 'bg-blue-100 text-blue-800';
-                                                break;
-                                            default:
-                                                echo 'bg-gray-100 text-gray-800';
-                                                break;
-                                        }
-                                    ?>">
-                                        <?php
-                                        switch ($booking['booking_status_id']) {
-                                            case '1':
-                                                echo 'Pending';
-                                                break;
-                                            case '2':
-                                                echo 'Approved';
-                                                break;
-                                            case '3':
-                                                echo 'Cancelled';
-                                                break;
-                                            case '4':
-                                                echo 'Completed';
-                                                break;
-                                            default:
-                                                echo 'Unknown';
-                                                break;
-                                        }
-                                        ?>
-                                    </span>
-                                    <?php
-                                    if ($bookingStartDate > $currentDateTime): ?>
-                                        <span
-                                            class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
-                                            Booking</span> <!-- Tag for future booking -->
-                                    <?php else: ?>
-                                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
-                                            Booking</span> <!-- Tag for started booking -->
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <div class="flex gap-6">
-                                <?php
-                                $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
-                                ?>
-
-                                <?php if (!empty($imageUrls)): ?>
-                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                        class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
-                                <?php endif; ?>
-
-                                <div class="flex-1">
-                                    <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
-                                    <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
-                                    <p class="text-gray-600 mt-1">
-                                        ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
-                                        for
-                                        <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
-                                        days
-                                    </p>
-                                    <p class="text-gray-600 mt-1">
-                                        <?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
-                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
-                                        ?>
-                                    </p>
-                                    <div class="mt-4 space-x-4">
-                                        <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
-                                            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
-                                            Details</button>
-                                        <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
-                                            <button onclick="printReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
-                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
-                                                <i class="fas fa-print mr-2"></i>Print Receipt
-                                            </button>
-                                            <button onclick="downloadReceipt(<?php
-                                            echo htmlspecialchars(json_encode([
-                                                'booking_id' => $booking['booking_id'] ?? '',
-                                                'venue_name' => $booking['venue_name'] ?? '',
-                                                'booking_start_date' => $booking['booking_start_date'] ?? '',
-                                                'booking_end_date' => $booking['booking_end_date'] ?? '',
-                                                'booking_duration' => $booking['booking_duration'] ?? '',
-                                                'booking_grand_total' => $booking['booking_grand_total'] ?? '',
-                                                'booking_payment_method' => $booking['booking_payment_method'] ?? '',
-                                                'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
-                                                'booking_service_fee' => $booking['booking_service_fee'] ?? '',
-                                                'venue_location' => $booking['venue_location'] ?? ''
-                                            ]), ENT_QUOTES, 'UTF-8');
-                                            ?>)" type="button"
-                                                class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
-                                                <i class="fas fa-download mr-2"></i>Download Receipt
-                                            </button>
-                                        <?php endif; ?>
-                                        <?php
-
-                                        if ($bookingStartDate > $currentDateTime):
-                                            ?>
-                                            <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
-                                                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
-                                                Booking</button>
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-semibold"><?php echo htmlspecialchars($booking['venue_tag_name']) ?>
+                                        </h2>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-2 py-1 rounded-full text-sm font-medium <?php
+                                            switch ($booking['booking_status_id']) {
+                                                case '1': // Pending
+                                                    echo 'bg-yellow-100 text-yellow-800';
+                                                    break;
+                                                case '2': // Approved
+                                                    echo 'bg-green-100 text-green-800';
+                                                    break;
+                                                case '3': // Cancelled
+                                                    echo 'bg-red-100 text-red-800';
+                                                    break;
+                                                case '4': // Completed
+                                                    echo 'bg-blue-100 text-blue-800';
+                                                    break;
+                                                default:
+                                                    echo 'bg-gray-100 text-gray-800';
+                                                    break;
+                                            }
+                                            ?>">
+                                                <?php
+                                                switch ($booking['booking_status_id']) {
+                                                    case '1':
+                                                        echo 'Pending';
+                                                        break;
+                                                    case '2':
+                                                        echo 'Approved';
+                                                        break;
+                                                    case '3':
+                                                        echo 'Cancelled';
+                                                        break;
+                                                    case '4':
+                                                        echo 'Completed';
+                                                        break;
+                                                    default:
+                                                        echo 'Unknown';
+                                                        break;
+                                                }
+                                                ?>
+                                            </span>
                                             <?php
-                                        endif;
+                                            if ($bookingStartDate > $currentDateTime): ?>
+                                                    <span
+                                                        class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">Upcoming
+                                                        Booking</span> <!-- Tag for future booking -->
+                                            <?php else: ?>
+                                                    <span
+                                                        class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">Active
+                                                        Booking</span> <!-- Tag for started booking -->
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-6">
+                                        <?php
+                                        $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
                                         ?>
+
+                                        <?php if (!empty($imageUrls)): ?>
+                                                <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                                    alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                                    class="w-32 h-32 object-cover rounded-lg flex-shrink-0">
+                                        <?php endif; ?>
+
+                                        <div class="flex-1">
+                                            <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?></p>
+                                            <p class="text-gray-600 mt-1"><?php echo htmlspecialchars($booking['venue_location']) ?></p>
+                                            <p class="text-gray-600 mt-1">
+                                                ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                                for
+                                                <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                                days
+                                            </p>
+                                            <p class="text-gray-600 mt-1">
+                                                <?php
+                                                $startDate = new DateTime($booking['booking_start_datetime']);
+                                                $endDate = new DateTime($booking['booking_end_datetime']);
+                                                echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                                ?>
+                                            </p>
+                                            <div class="mt-4 space-x-4">
+                                                <button onclick="showDetails(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                    class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">View
+                                                    Details</button>
+                                                <?php if ($booking['booking_status_id'] == '2' || $booking['booking_status_id'] == '4'): ?>
+                                                        <button onclick="printReceipt(<?php
+                                                        echo htmlspecialchars(json_encode([
+                                                            'booking_id' => $booking['booking_id'] ?? '',
+                                                            'venue_name' => $booking['venue_name'] ?? '',
+                                                            'booking_start_datetime' => $booking['booking_start_datetime'] ?? '',
+                                                            'booking_end_datetime' => $booking['booking_end_datetime'] ?? '',
+                                                            'booking_duration' => $booking['booking_duration'] ?? '',
+                                                            'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                            'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                            'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                            'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                            'venue_location' => $booking['venue_location'] ?? ''
+                                                        ]), ENT_QUOTES, 'UTF-8');
+                                                        ?>)" type="button"
+                                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                            <i class="fas fa-print mr-2"></i>Print Receipt
+                                                        </button>
+                                                        <button onclick="downloadReceipt(<?php
+                                                        echo htmlspecialchars(json_encode([
+                                                            'booking_id' => $booking['booking_id'] ?? '',
+                                                            'venue_name' => $booking['venue_name'] ?? '',
+                                                            'booking_start_datetime' => $booking['booking_start_datetime'] ?? '',
+                                                            'booking_end_datetime' => $booking['booking_end_datetime'] ?? '',
+                                                            'booking_duration' => $booking['booking_duration'] ?? '',
+                                                            'booking_grand_total' => $booking['booking_grand_total'] ?? '',
+                                                            'booking_payment_method' => $booking['booking_payment_method'] ?? '',
+                                                            'booking_payment_reference' => $booking['booking_payment_reference'] ?? '',
+                                                            'booking_service_fee' => $booking['booking_service_fee'] ?? '',
+                                                            'venue_location' => $booking['venue_location'] ?? ''
+                                                        ]), ENT_QUOTES, 'UTF-8');
+                                                        ?>)" type="button"
+                                                            class="px-4 py-2 border border-black text-black rounded-lg hover:bg-gray-100">
+                                                            <i class="fas fa-download mr-2"></i>Download Receipt
+                                                        </button>
+                                                <?php endif; ?>
+                                                <?php
+
+                                                if ($bookingStartDate > $currentDateTime):
+                                                    ?>
+                                                        <button onclick="cancelBooking(<?php echo htmlspecialchars($booking['booking_id']); ?>)"
+                                                            class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50">Cancel
+                                                            Booking</button>
+                                                        <?php
+                                                endif;
+                                                ?>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <?php
+                                <?php
                     }
                 }
                 ?>
@@ -361,49 +363,50 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     foreach ($previousBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                         ?>
-                        <div class="p-6">
-                            <div class="space-y-6">
-                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
-                                    <?php
-                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
-                                    ?>
+                                <div class="p-6">
+                                    <div class="space-y-6">
+                                        <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                            <?php
+                                            $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                            ?>
 
-                                    <?php if (!empty($imageUrls)): ?>
-                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                            class="w-28 h-28 object-cover rounded-lg">
-                                    <?php endif; ?>
-                                    <div>
-                                        <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
-                                        </p>
-                                        <p class="text-gray-600 mt-2"><?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
-                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
-                                        ?></p>
-                                        <p class="text-gray-600">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
-                                            for
-                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
-                                            days
-                                        </p>
-                                        <div class="mt-4 ">
-                                            <div class="flex flex-row">
-                                                <form id="reviewForm">
-                                                    <button type="button" onclick="openReviewModal(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
-                                                        class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-150">
-                                                        Write Review
-                                                    </button>
-                                                </form>
+                                            <?php if (!empty($imageUrls)): ?>
+                                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                                        class="w-28 h-28 object-cover rounded-lg">
+                                            <?php endif; ?>
+                                            <div>
+                                                <p class="text-lg font-medium"><?php echo htmlspecialchars($booking['venue_name']) ?>
+                                                </p>
+                                                <p class="text-gray-600 mt-2"><?php
+                                                $startDate = new DateTime($booking['booking_start_datetime']);
+                                                $endDate = new DateTime($booking['booking_end_datetime']);
+                                                echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                                ?></p>
+                                                <p class="text-gray-600">
+                                                    ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                                    for
+                                                    <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                                    days
+                                                </p>
+                                                <div class="mt-4 ">
+                                                    <div class="flex flex-row">
+                                                        <form id="reviewForm">
+                                                            <button type="button"
+                                                                onclick="openReviewModal(<?php echo htmlspecialchars(json_encode($booking)); ?>)"
+                                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-150">
+                                                                Write Review
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <?php
+                                <?php
                     }
                 }
                 ?>
@@ -419,71 +422,75 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     foreach ($cancelledBooking as $booking) {
                         $timezone = new DateTimeZone('Asia/Manila');
                         $currentDateTime = new DateTime('now', $timezone);
-                        $bookingStartDate = new DateTime($booking['booking_start_date'], $timezone);
+                        $bookingStartDate = new DateTime($booking['booking_start_datetime'], $timezone);
                         ?>
-                        <div class="p-6">
-                            <div class="space-y-6">
-                                <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
-                                    <?php
-                                    $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
-                                    ?>
+                                <div class="p-6">
+                                    <div class="space-y-6">
+                                        <div class="flex flex-col md:flex-row gap-6 border-b pb-6">
+                                            <?php
+                                            $imageUrls = !empty($booking['image_urls']) ? explode(',', $booking['image_urls']) : [];
+                                            ?>
 
-                                    <?php if (!empty($imageUrls)): ?>
-                                        <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
-                                            alt="<?= htmlspecialchars($booking['venue_name']) ?>"
-                                            class="w-28 h-28 object-cover rounded-lg">
-                                    <?php endif; ?>
-                                    <div>
-                                        <p class="text-lg font-medium">
-                                            <?php echo htmlspecialchars($booking['venue_name']) ?>
-                                        </p>
-                                        <p class="text-gray-600 mt-2"><?php
-                                        $startDate = new DateTime($booking['booking_start_date']);
-                                        $endDate = new DateTime($booking['booking_end_date']);
-                                        echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
-                                        ?></p>
-                                        <p class="text-gray-600">
-                                            ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
-                                            for
-                                            <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
-                                            days
-                                        </p>
-
-
-                                        <h4 class="text-gray-600">Reason:
-                                            <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
-                                        </h4>
+                                            <?php if (!empty($imageUrls)): ?>
+                                                    <img src="./<?= htmlspecialchars($imageUrls[0]) ?>"
+                                                        alt="<?= htmlspecialchars($booking['venue_name']) ?>"
+                                                        class="w-28 h-28 object-cover rounded-lg">
+                                            <?php endif; ?>
+                                            <div>
+                                                <p class="text-lg font-medium">
+                                                    <?php echo htmlspecialchars($booking['venue_name']) ?>
+                                                </p>
+                                                <p class="text-gray-600 mt-2"><?php
+                                                $startDate = new DateTime($booking['booking_start_datetime']);
+                                                $endDate = new DateTime($booking['booking_end_datetime']);
+                                                echo $startDate->format('F j, Y') . ' to ' . $endDate->format('F j, Y');
+                                                ?></p>
+                                                <p class="text-gray-600">
+                                                    ₱<?php echo number_format(htmlspecialchars($booking['booking_original_price'] ? $booking['booking_original_price'] : 0.0)) ?>
+                                                    for
+                                                    <?php echo number_format(htmlspecialchars($booking['booking_duration'] ? $booking['booking_duration'] : 0.0)) ?>
+                                                    days
+                                                </p>
 
 
-                                        <div class="mt-4">
-                                            <button id="bookAgainBtn"
-                                                data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
-                                                class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                                                Book Again
-                                            </button>
+                                                <h4 class="text-gray-600">Reason:
+                                                    <?php echo htmlspecialchars($booking['booking_cancellation_reason']) ?>
+                                                </h4>
+
+
+                                                <div class="mt-4">
+                                                    <button id="bookAgainBtn"
+                                                        data-bvid="<?php echo htmlspecialchars($booking['venue_id']); ?>"
+                                                        class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
+                                                        Book Again
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <?php
+                                <?php
                     }
                 }
                 ?>
             </div>
         </div>
         <!-- Details Modal -->
-        <div id="details-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
-            <div class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
+        <div id="details-modal"
+            class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-50 transition-all duration-300 ease-out opacity-0">
+            <div
+                class="relative top-20 mx-auto p-8 border w-full max-w-4xl shadow-lg rounded-2xl bg-white transition-all duration-300 transform scale-95 mb-20">
                 <!-- Modal Header -->
                 <div class="flex justify-between items-center pb-6 border-b">
                     <div>
                         <h3 class="text-2xl font-bold text-gray-900" id="modal-title"></h3>
                         <p class="text-sm text-gray-500 mt-1">Booking Details</p>
                     </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
+                    <button onclick="closeModal()"
+                        class="text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 rounded-full hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -496,7 +503,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                         <div class="space-y-4">
                             <!-- Main Image -->
                             <div class="relative rounded-xl overflow-hidden bg-gray-100 aspect-[4/3]">
-                                <img id="modal-main-image" src="" alt="Venue Main Image" class="w-full h-full object-cover transition-all duration-300">
+                                <img id="modal-main-image" src="" alt="Venue Main Image"
+                                    class="w-full h-full object-cover transition-all duration-300">
                             </div>
 
                             <!-- Image Gallery -->
@@ -559,7 +567,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <!-- Action Buttons -->
                             <div class="flex gap-3 pt-4">
                                 <div id="book-again-container" class="hidden">
-                                    <button class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
+                                    <button
+                                        class="px-6 py-2.5 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200">
                                         Book Again
                                     </button>
                                 </div>
@@ -645,7 +654,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         </div>
 
         <!-- Review Modal -->
-        <div id="review-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+        <div id="review-modal"
+            class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
             <div class="relative w-full max-w-3xl mx-auto my-8">
                 <!-- Modal -->
                 <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -653,15 +663,18 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     <div class="sticky top-0 bg-white z-10 px-8 py-6 border-b">
                         <div class="flex items-center justify-between mb-2">
                             <h2 class="text-2xl font-bold">Write a Review</h2>
-                            <button onclick="closeReviewModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <button onclick="closeReviewModal()"
+                                class="p-2 hover:bg-gray-100 rounded-full transition-colors">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
                             </button>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
-                                <div id="review-progress" class="h-full bg-black transition-all duration-300" style="width: 0%"></div>
+                                <div id="review-progress" class="h-full bg-black transition-all duration-300"
+                                    style="width: 0%"></div>
                             </div>
                             <div class="text-sm font-medium text-gray-500">
                                 Step <span id="current-step">1</span> of <span id="total-steps">5</span>
@@ -674,7 +687,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                         <!-- Step 1: Specific Ratings -->
                         <div id="review-step-1" class="review-step active p-8 min-h-[400px] flex items-center">
                             <div class=" mx-auto h-[400px] overflow-y-auto px-4">
-                                <h3 class="text-2xl font-bold mb-8 text-center sticky top-0 bg-white pt-2">Rate specific aspects of your stay</h3>
+                                <h3 class="text-2xl font-bold mb-8 text-center sticky top-0 bg-white pt-2">Rate specific
+                                    aspects of your stay</h3>
                                 <div class="space-y-6 pb-4">
                                     <?php
                                     $aspects = [
@@ -684,20 +698,22 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                         'location' => 'Location',
                                         'value' => 'Value for Money'
                                     ];
-                                    foreach($aspects as $key => $label):
-                                    ?>
-                                    <div class="bg-gray-50 p-6 rounded-xl">
-                                        <label class="block text-base font-medium text-gray-700 mb-3"><?php echo $label ?></label>
-                                        <div class="flex items-center space-x-2">
-                                            <?php for($i = 1; $i <= 5; $i++): ?>
-                                                <label onclick="rate('<?php echo $key ?>', <?php echo $i ?>)" 
-                                                    class="text-3xl text-gray-300 hover:text-yellow-400 transition-all duration-150 cursor-pointer star-<?php echo $key ?>" 
-                                                    data-rating="<?php echo $i ?>">
-                                                    <input type="radio" name="ratings[<?php echo $key ?>]" value="<?php echo $i ?>" class="hidden">★
-                                                </label>
-                                            <?php endfor; ?>
-                                        </div>
-                                    </div>
+                                    foreach ($aspects as $key => $label):
+                                        ?>
+                                            <div class="bg-gray-50 p-6 rounded-xl">
+                                                <label
+                                                    class="block text-base font-medium text-gray-700 mb-3"><?php echo $label ?></label>
+                                                <div class="flex items-center space-x-2">
+                                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                            <label onclick="rate('<?php echo $key ?>', <?php echo $i ?>)"
+                                                                class="text-3xl text-gray-300 hover:text-yellow-400 transition-all duration-150 cursor-pointer star-<?php echo $key ?>"
+                                                                data-rating="<?php echo $i ?>">
+                                                                <input type="radio" name="ratings[<?php echo $key ?>]"
+                                                                    value="<?php echo $i ?>" class="hidden">★
+                                                            </label>
+                                                    <?php endfor; ?>
+                                                </div>
+                                            </div>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -720,13 +736,15 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                                             'quick_responses' => 'Quick responses',
                                             'above_expectations' => 'Above expectations'
                                         ];
-                                        foreach($highlights as $value => $label):
-                                        ?>
-                                        <label class="flex items-center gap-3 p-4 border rounded-lg hover:bg-white transition-colors cursor-pointer group">
-                                            <input type="checkbox" name="highlights[]" value="<?php echo $value ?>" 
-                                                class="w-5 h-5 rounded border-gray-300 text-black focus:ring-black">
-                                            <span class="text-base group-hover:text-black transition-colors"><?php echo $label ?></span>
-                                        </label>
+                                        foreach ($highlights as $value => $label):
+                                            ?>
+                                                <label
+                                                    class="flex items-center gap-3 p-4 border rounded-lg hover:bg-white transition-colors cursor-pointer group">
+                                                    <input type="checkbox" name="highlights[]" value="<?php echo $value ?>"
+                                                        class="w-5 h-5 rounded border-gray-300 text-black focus:ring-black">
+                                                    <span
+                                                        class="text-base group-hover:text-black transition-colors"><?php echo $label ?></span>
+                                                </label>
                                         <?php endforeach; ?>
                                     </div>
                                 </div>
@@ -738,9 +756,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <div class="max-w-2xl mx-auto">
                                 <h3 class="text-2xl font-bold mb-8 text-center">What did you love about your stay?</h3>
                                 <div class="bg-white p-6 rounded-xl border">
-                                    <textarea name="positive_review" 
-                                        class="w-full px-4 py-3 border-0 focus:ring-0 text-base resize-none" 
-                                        rows="8" 
+                                    <textarea name="positive_review"
+                                        class="w-full px-4 py-3 border-0 focus:ring-0 text-base resize-none" rows="8"
                                         placeholder="Share what made your experience special. What would you highlight to future guests?"
                                         required></textarea>
                                     <p class="mt-2 text-sm text-gray-500">Minimum 10 characters required</p>
@@ -753,9 +770,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <div class="max-w-2xl mx-auto">
                                 <h3 class="text-2xl font-bold mb-8 text-center">What could be improved?</h3>
                                 <div class="bg-white p-6 rounded-xl border">
-                                    <textarea name="improvement_review" 
-                                        class="w-full px-4 py-3 border-0 focus:ring-0 text-base resize-none" 
-                                        rows="8" 
+                                    <textarea name="improvement_review"
+                                        class="w-full px-4 py-3 border-0 focus:ring-0 text-base resize-none" rows="8"
                                         placeholder="Share constructive feedback that could help improve the experience for future guests."></textarea>
                                     <p class="mt-2 text-sm text-gray-500">Optional but valuable for improvement</p>
                                 </div>
@@ -767,16 +783,21 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                             <div class="max-w-2xl mx-auto">
                                 <h3 class="text-2xl font-bold mb-8 text-center">Share photos from your stay</h3>
                                 <div class="space-y-6">
-                                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 transition-colors hover:bg-gray-50">
+                                    <div
+                                        class="border-2 border-dashed border-gray-300 rounded-xl p-8 transition-colors hover:bg-gray-50">
                                         <div class="space-y-4 text-center">
-                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" 
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor"
+                                                fill="none" viewBox="0 0 48 48">
+                                                <path
+                                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                             </svg>
                                             <div class="flex flex-col items-center text-sm text-gray-600">
-                                                <label class="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors cursor-pointer mb-2">
+                                                <label
+                                                    class="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors cursor-pointer mb-2">
                                                     <span>Choose photos</span>
-                                                    <input type="file" name="review_photos[]" class="sr-only" multiple accept="image/*" onchange="handleReviewPhotos(event)">
+                                                    <input type="file" name="review_photos[]" class="sr-only" multiple
+                                                        accept="image/*" onchange="handleReviewPhotos(event)">
                                                 </label>
                                                 <p class="text-gray-500">or drag and drop</p>
                                                 <p class="text-xs text-gray-500 mt-2">PNG, JPG, GIF up to 10MB each</p>
@@ -792,11 +813,11 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                     <!-- Modal Footer -->
                     <div class="sticky bottom-0 bg-white border-t px-8 py-4">
                         <div class="flex justify-between items-center">
-                            <button onclick="prevReviewStep()" id="prev-step-btn" 
+                            <button onclick="prevReviewStep()" id="prev-step-btn"
                                 class="px-6 py-2 text-gray-700 hover:text-gray-900 font-medium transition-colors">
                                 Back
                             </button>
-                            <button onclick="nextReviewStep()" id="next-step-btn" 
+                            <button onclick="nextReviewStep()" id="next-step-btn"
                                 class="px-8 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors font-medium">
                                 Next
                             </button>
@@ -1156,8 +1177,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                         <div class="section-title">Booking Information</div>
                         <div class="info">
                             <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
-                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
-                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_datetime).toLocaleDateString()}</div>
+                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_datetime).toLocaleDateString()}</div>
                             <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
                         </div>
                     </div>
@@ -1338,8 +1359,8 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
                         <div class="section-title">Booking Information</div>
                         <div class="info">
                             <div><span class="label">Booking ID:</span> #${bookingData.booking_id}</div>
-                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_date).toLocaleDateString()}</div>
-                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_date).toLocaleDateString()}</div>
+                            <div><span class="label">Check-in:</span> ${new Date(bookingData.booking_start_datetime).toLocaleDateString()}</div>
+                            <div><span class="label">Check-out:</span> ${new Date(bookingData.booking_end_datetime).toLocaleDateString()}</div>
                             <div><span class="label">Duration:</span> ${bookingData.booking_duration} days</div>
                         </div>
                     </div>
@@ -1398,14 +1419,14 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     }
 
     // Add preview for uploaded images
-    document.getElementById('file-upload')?.addEventListener('change', function(e) {
+    document.getElementById('file-upload')?.addEventListener('change', function (e) {
         const files = Array.from(e.target.files);
         const previewContainer = document.createElement('div');
         previewContainer.className = 'grid grid-cols-3 gap-4 mt-4';
-        
+
         files.forEach(file => {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const preview = document.createElement('div');
                 preview.className = 'relative aspect-square rounded-lg overflow-hidden';
                 preview.innerHTML = `
@@ -1452,7 +1473,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         document.getElementById('review-progress').style.width = `${progress}%`;
         document.getElementById('current-step').textContent = currentReviewStep;
         document.getElementById('total-steps').textContent = totalReviewSteps;
-        
+
         // Update button states
         document.getElementById('prev-step-btn').style.visibility = currentReviewStep === 1 ? 'hidden' : 'visible';
         const nextBtn = document.getElementById('next-step-btn');
@@ -1483,10 +1504,10 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     }
 
     function validateCurrentStep() {
-        switch(currentReviewStep) {
+        switch (currentReviewStep) {
             case 1:
                 const requiredRatings = ['cleanliness', 'accuracy', 'communication', 'location', 'value'];
-                const missingRatings = requiredRatings.filter(aspect => 
+                const missingRatings = requiredRatings.filter(aspect =>
                     !document.querySelector(`input[name="ratings[${aspect}]"]:checked`)
                 );
                 if (missingRatings.length > 0) {
@@ -1517,7 +1538,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             }
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const preview = document.createElement('div');
                 preview.className = 'relative aspect-square rounded-lg overflow-hidden';
                 preview.innerHTML = `
@@ -1539,21 +1560,21 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         // Collect all review data
         const formData = new FormData();
         formData.append('booking_id', reviewData.booking.booking_id);
-        
+
         // Ratings
         document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
             formData.append(radio.name, radio.value);
         });
-        
+
         // Highlights
         document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
             formData.append('highlights[]', checkbox.value);
         });
-        
+
         // Text reviews
         formData.append('positive_review', document.querySelector('textarea[name="positive_review"]').value);
         formData.append('improvement_review', document.querySelector('textarea[name="improvement_review"]').value);
-        
+
         // Photos
         const photoInput = document.querySelector('input[name="review_photos[]"]');
         if (photoInput.files.length > 0) {
@@ -1587,25 +1608,33 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     }
 
     /* Enhanced star rating styles */
-    .star-overall, .star-cleanliness, .star-accuracy, 
-    .star-communication, .star-location, .star-value {
+    .star-overall,
+    .star-cleanliness,
+    .star-accuracy,
+    .star-communication,
+    .star-location,
+    .star-value {
         transition: all 0.2s ease-out;
         display: inline-block;
         cursor: pointer;
         user-select: none;
     }
 
-    .star-overall:hover ~ .star-overall,
-    .star-cleanliness:hover ~ .star-cleanliness,
-    .star-accuracy:hover ~ .star-accuracy,
-    .star-communication:hover ~ .star-communication,
-    .star-location:hover ~ .star-location,
-    .star-value:hover ~ .star-value {
+    .star-overall:hover~.star-overall,
+    .star-cleanliness:hover~.star-cleanliness,
+    .star-accuracy:hover~.star-accuracy,
+    .star-communication:hover~.star-communication,
+    .star-location:hover~.star-location,
+    .star-value:hover~.star-value {
         opacity: 0.5;
     }
 
-    .star-overall:hover, .star-cleanliness:hover, .star-accuracy:hover, 
-    .star-communication:hover, .star-location:hover, .star-value:hover {
+    .star-overall:hover,
+    .star-cleanliness:hover,
+    .star-accuracy:hover,
+    .star-communication:hover,
+    .star-location:hover,
+    .star-value:hover {
         transform: scale(1.2);
         text-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
     }
@@ -1615,7 +1644,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
         transition: all 0.2s ease-out;
     }
 
-    input[type="checkbox"]:checked + span {
+    input[type="checkbox"]:checked+span {
         color: black;
         font-weight: 500;
     }
@@ -1633,7 +1662,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
     /* Photo upload area styles */
     .border-dashed {
         background-image: linear-gradient(to right, transparent 50%, rgba(0, 0, 0, 0.05) 50%),
-                          linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.05) 50%);
+            linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.05) 50%);
         background-size: 30px 30px;
         transition: all 0.3s ease-out;
     }
@@ -1648,6 +1677,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             opacity: 0;
             transform: translateY(-20px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -1664,6 +1694,7 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
             opacity: 0;
             transform: translateY(10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -1676,11 +1707,13 @@ $previousBooking = $venueObj->getAllBookings($_SESSION['user']['id'], 4);
 
     /* Add these new styles for consistent step sizing */
     .review-step {
-        height: 520px; /* Fixed height for all steps */
-        overflow: hidden; /* Hide overflow at the step level */
+        height: 520px;
+        /* Fixed height for all steps */
+        overflow: hidden;
+        /* Hide overflow at the step level */
     }
 
-    .review-step > div {
+    .review-step>div {
         height: 100%;
         max-height: 100%;
     }

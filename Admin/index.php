@@ -37,6 +37,7 @@ if (isset($USER_ID) && $userRole == 'Admin') {
 
 <body class="text-gray-800 gradient-background">
     <div class="flex h-screen">
+        <?php require_once './spinner.php'; ?>
         <!-- Sidebar -->
         <?php include_once './admin-components/sidebar.php'; ?>
         <div class="flex-1 flex flex-col overflow-hidden">
