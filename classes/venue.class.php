@@ -2023,6 +2023,54 @@ LEFT JOIN
         }
     }
 
+    public function approvePayment($bookingId)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE bookings SET booking_payment_status_id = 2 WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $bookingId);
+            if ($stmt->execute()) {
+                $sql = 'SELECT b.*, u.email FROM bookings b JOIN users u ON b.booking_guest_id = u.id WHERE b.id = :booking_id';
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':booking_id', $bookingId);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $email = $result['email'];
+                $confirmationLink = "http://localhost/hubvenue/profile.php";
+                sendEmail($email, 'Payment Confirmation', $confirmationLink);
+                return ['status' => 'success', 'message' => "Payment Approved! Email sent to guest"];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => "Error approving payment"];
+        }
+    }
+
+    public function rejectPayment($bookingId)
+    {
+        try {
+            $conn = $this->db->connect();
+            $sql = "UPDATE bookings SET booking_payment_status_id = 3 WHERE id = :booking_id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':booking_id', $bookingId);
+            if ($stmt->execute()) {
+                $sql = 'SELECT b.*, u.email FROM bookings b JOIN users u ON b.booking_guest_id = u.id WHERE b.id = :booking_id';
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':booking_id', $bookingId);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                $email = $result['email'];
+                $confirmationLink = "http://localhost/hubvenue/profile.php";
+                sendEmail($email, 'Payment Confirmation', $confirmationLink);
+                return ['status' => 'success', 'message' => "Payment Rejected! Email sent to guest"];
+            }
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return ['status' => 'error', 'message' => "Error rejecting payment"];
+        }
+    }
+
 }
 
 $venueObj = new Venue();

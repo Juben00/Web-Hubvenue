@@ -80,7 +80,8 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Checkout Date</th>
                     <th class="py-2 px-4 text-left">Payment Method</th>
                     <th class="py-2 px-4 text-left">Payment Reference</th>
-                    <th class="py-2 px-4 text-left">Status</th>
+                    <th class="py-2 px-4 text-left">Booking Status</th>
+                    <th class="py-2 px-4 text-left">Payment Status</th>
                     <th class="py-2 px-4 text-left">Actions</th>
                 </tr>
             </thead>
@@ -153,11 +154,23 @@ function formatDate($date)
                                 $status = "<span class='bg-blue-200 text-blue-800 rounded-full px-2'>Completed</span>";
                                 break;
                         }
+                        $payment_status = $reservation['booking_payment_status_id'];
+                        switch ($payment_status) {
+                            case 1:
+                                $payment_status = "<span class='bg-red-200 text-red-800 rounded-full px-2'>Pending</span>";
+                                break;
+                            case 2:
+                                $payment_status = "<span class='bg-green-200 text-green-800 rounded-full px-2'>Paid</span>";
+                                break;
+                            case 3:
+                                $payment_status = "<span class='bg-red-200 text-red-800 rounded-full px-2'>Failed</span>";
+                                break;
+                        }
                         ?>
                         <tr>
                             <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_start_date']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_end_date']); ?></td>
+                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_start_datetime']); ?></td>
+                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_end_datetime']); ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_duration']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['guest_name']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['guest_contact_number']; ?></td>
@@ -185,6 +198,9 @@ function formatDate($date)
                             <td class="py-2 px-4"><?php echo $paymentTemp ?></td>
                             <td class="py-2 px-4">
                                 <?php echo $status ?>
+                            </td>
+                            <td class="py-2 px-4">
+                                <?php echo $payment_status ?>
                             </td>
                             <td class="py-2 px-4">
                                 <form class="cancelReservationButton inline-block" method="POST">

@@ -9,10 +9,10 @@ $Reservations = $venueObj->getAdminBookings('checkin');
 
 // Filter for confirmed bookings that haven't checked in yet
 $Reservations = array_filter($Reservations, function ($booking) {
-    return isset($booking['booking_status_id']) && 
-           isset($booking['booking_checkin_status']) && 
-           $booking['booking_status_id'] == 2 && 
-           $booking['booking_checkin_status'] == 'Pending';
+    return isset($booking['booking_status_id']) &&
+        isset($booking['booking_checkin_status']) &&
+        $booking['booking_status_id'] == 2 &&
+        $booking['booking_checkin_status'] == 'Pending';
 });
 
 function formatDate($date)
@@ -43,7 +43,8 @@ function formatPrice($price)
         </div>
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Customer</label>
-            <input type="text" id="customerFilter" class="border rounded p-2 w-full" placeholder="Filter by customer name">
+            <input type="text" id="customerFilter" class="border rounded p-2 w-full"
+                placeholder="Filter by customer name">
         </div>
     </div>
     <div class="flex items-center gap-2">
@@ -83,59 +84,57 @@ function formatPrice($price)
                         // Get payment status
                         $payment_status_id = isset($reservation['booking_payment_status_id']) ? $reservation['booking_payment_status_id'] : null;
                         ?>
-                        <tr>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_start_date']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_end_date']); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['guest_name']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['guest_contact_number']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['venue_name']; ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
-                            <td class="py-2 px-4">
-                                <span class="rounded-full px-2">Pending Check-In</span>
-                            </td>
-                            <td class="py-2 px-4">
+                                <tr>
+                                    <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
+                                    <td class="py-2 px-4"><?php echo formatDate($reservation['booking_start_datetime']); ?></td>
+                                    <td class="py-2 px-4"><?php echo formatDate($reservation['booking_end_datetime']); ?></td>
+                                    <td class="py-2 px-4"><?php echo $reservation['guest_name']; ?></td>
+                                    <td class="py-2 px-4"><?php echo $reservation['guest_contact_number']; ?></td>
+                                    <td class="py-2 px-4"><?php echo $reservation['venue_name']; ?></td>
+                                    <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
+                                    <td class="py-2 px-4">
+                                        <span class="rounded-full px-2">Pending Check-In</span>
+                                    </td>
+                                    <td class="py-2 px-4">
+                                        <?php
+                                        switch ($payment_status_id) {
+                                            case 1:
+                                                echo '<span class="bg-yellow-200 text-yellow-800 rounded-full px-2">Pending</span>';
+                                                break;
+                                            case 2:
+                                                echo '<span class="bg-green-200 text-green-800 rounded-full px-2">Paid</span>';
+                                                break;
+                                            case 3:
+                                                echo '<span class="bg-red-200 text-red-800 rounded-full px-2">Failed</span>';
+                                                break;
+                                            default:
+                                                echo '<span class="bg-gray-200 text-gray-800 rounded-full px-2">Unknown</span>';
+                                        }
+                                        ?>
+                                    </td>
+                                    <td class="py-2 px-4">
+                                        <form class="checkInButton inline-block" method="POST">
+                                            <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
+                                            <button type="submit" class=" text-green-500 font-bold py-1 px-3 rounded">
+                                                Check In
+                                            </button>
+                                        </form>
+                                        <form class="noShowButton inline-block" method="POST">
+                                            <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
+                                            <button type="submit" class="  text-red-600  font-bold py-1 px-3 rounded">
+                                                No Show
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
                                 <?php
-                                switch ($payment_status_id) {
-                                    case 1:
-                                        echo '<span class="bg-yellow-200 text-yellow-800 rounded-full px-2">Pending</span>';
-                                        break;
-                                    case 2:
-                                        echo '<span class="bg-green-200 text-green-800 rounded-full px-2">Paid</span>';
-                                        break;
-                                    case 3:
-                                        echo '<span class="bg-red-200 text-red-800 rounded-full px-2">Failed</span>';
-                                        break;
-                                    default:
-                                        echo '<span class="bg-gray-200 text-gray-800 rounded-full px-2">Unknown</span>';
-                                }
-                                ?>
-                            </td>
-                            <td class="py-2 px-4">
-                                <form class="checkInButton inline-block" method="POST">
-                                    <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                    <button type="submit"
-                                        class=" text-green-500 font-bold py-1 px-3 rounded">
-                                        Check In
-                                    </button>
-                                </form>
-                                <form class="noShowButton inline-block" method="POST">
-                                    <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
-                                    <button type="submit"
-                                        class="  text-red-600  font-bold py-1 px-3 rounded">
-                                        No Show
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        <?php
                     }
                 } else {
                     ?>
-                    <tr>
-                        <td colspan="10" class="py-4 text-center">No pending check-ins found</td>
-                    </tr>
-                    <?php
+                        <tr>
+                            <td colspan="10" class="py-4 text-center">No pending check-ins found</td>
+                        </tr>
+                        <?php
                 }
                 ?>
             </tbody>
@@ -276,4 +275,4 @@ function formatPrice($price)
             );
         });
     });
-</script> 
+</script>

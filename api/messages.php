@@ -8,7 +8,8 @@ header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
 
 // Helper function to send JSON response
-function sendResponse($data, $statusCode = 200) {
+function sendResponse($data, $statusCode = 200)
+{
     http_response_code($statusCode);
     echo json_encode($data);
     exit;
@@ -19,12 +20,12 @@ try {
     require_once '../dbconnection.php';
     $db = new Database();
     $conn = $db->connect();
-    
+
     if (!$conn) {
         error_log("Failed to connect to database");
         sendResponse(['error' => 'Database connection failed'], 500);
     }
-    
+
     // Set error mode to throw exceptions
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
@@ -47,29 +48,29 @@ switch ($method) {
                 case 'get_booking_conversations':
                     try {
                         // Get conversations based on bookings for a user
-                        $userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : null;
-                        
+                        $userId = isset($_GET['user_id']) ? (int) $_GET['user_id'] : null;
+
                         if (!$userId) {
                             sendResponse(['success' => false, 'error' => 'User ID is required'], 400);
                         }
-                        
+
                         // Debug logging
                         error_log("Getting conversations for user ID: " . $userId);
-                        
+
                         // Get user type (host or guest)
                         $userTypeQuery = "SELECT user_type_id FROM users WHERE id = ?";
                         $stmt = $conn->prepare($userTypeQuery);
                         $stmt->execute([$userId]);
                         $userTypeResult = $stmt->fetch(PDO::FETCH_ASSOC);
-                        
+
                         if (!$userTypeResult) {
                             sendResponse(['success' => false, 'error' => 'User not found'], 404);
                         }
-                        
+
                         $userType = $userTypeResult['user_type_id'];
-                        
+
                         error_log("User type: " . $userType); // Debug logging
-                        
+
                         // Different queries for hosts and guests
                         if ($userType == 1) { // Host
                             $query = "
@@ -107,7 +108,7 @@ switch ($method) {
                                 AND b.booking_status_id IN (1, 2, 3, 4)
                                 ORDER BY b.booking_created_at DESC
                             ";
-                            
+
                             $stmt = $conn->prepare($query);
                             $stmt->execute(['host_id' => $userId]);
                         } else { // Guest
@@ -146,27 +147,27 @@ switch ($method) {
                                 AND b.booking_status_id IN (1, 2, 3, 4)
                                 ORDER BY b.booking_created_at DESC
                             ";
-                            
+
                             $stmt = $conn->prepare($query);
                             $stmt->execute(['guest_id' => $userId]);
                         }
-                        
+
                         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         error_log("Found " . count($result) . " conversations"); // Debug logging
-                        
+
                         $conversations = [];
                         foreach ($result as $row) {
                             $conversations[] = [
-                                'booking_id' => (int)$row['booking_id'],
-                                'venue_id' => (int)$row['venue_id'],
-                                'conversation_id' => (int)$row['conversation_id'],
-                                'unread_count' => (int)$row['unread_count'],
+                                'booking_id' => (int) $row['booking_id'],
+                                'venue_id' => (int) $row['venue_id'],
+                                'conversation_id' => (int) $row['conversation_id'],
+                                'unread_count' => (int) $row['unread_count'],
                                 'last_message' => $row['last_message'],
                                 'venue_name' => $row['venue_name'],
-                                'booking_status_id' => (int)$row['booking_status_id']
+                                'booking_status_id' => (int) $row['booking_status_id']
                             ];
                         }
-                        
+
                         sendResponse(['success' => true, 'conversations' => $conversations]);
                     } catch (Exception $e) {
                         error_log("Error in get_booking_conversations: " . $e->getMessage());
@@ -176,12 +177,12 @@ switch ($method) {
 
                 case 'get_messages':
                     // Get messages for a specific conversation
-                    $conversationId = isset($_GET['conversation_id']) ? (int)$_GET['conversation_id'] : null;
-                    
+                    $conversationId = isset($_GET['conversation_id']) ? (int) $_GET['conversation_id'] : null;
+
                     if (!$conversationId) {
                         sendResponse(['error' => 'Conversation ID is required'], 400);
                     }
-                    
+
                     $query = "
                         SELECT 
                             m.*,
@@ -228,42 +229,42 @@ switch ($method) {
                         WHERE m.conversation_id = ?
                         ORDER BY m.created_at ASC
                     ";
-                    
+
                     $stmt = $conn->prepare($query);
                     $stmt->execute([$conversationId]);
                     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
+
                     $messages = [];
                     foreach ($result as $row) {
                         // Calculate message status
                         $messageStatus = 'sent'; // Default status
-                        
+
                         // If all participants have a message_status record, message is delivered
-                        if ((int)$row['delivery_count'] >= ((int)$row['total_participants'] - 1)) {
+                        if ((int) $row['delivery_count'] >= ((int) $row['total_participants'] - 1)) {
                             $messageStatus = 'delivered';
-                            
+
                             // If all non-sender participants have read the message, it's seen
-                            if ((int)$row['read_count'] >= ((int)$row['total_participants'] - 1)) {
+                            if ((int) $row['read_count'] >= ((int) $row['total_participants'] - 1)) {
                                 $messageStatus = 'seen';
                             }
                         }
 
                         $message = [
-                            'id' => (int)$row['id'],
-                            'conversation_id' => (int)$row['conversation_id'],
-                            'sender_id' => (int)$row['sender_id'],
+                            'id' => (int) $row['id'],
+                            'conversation_id' => (int) $row['conversation_id'],
+                            'sender_id' => (int) $row['sender_id'],
                             'sender_name' => $row['sender_firstname'] . ' ' . $row['sender_lastname'],
-                            'sender_type' => (int)$row['sender_type'],
+                            'sender_type' => (int) $row['sender_type'],
                             'content' => $row['content'],
                             'created_at' => $row['created_at'],
                             'profile_picture' => $row['profile_pic'],
-                            'booking_status' => (int)$row['booking_status_id'],
+                            'booking_status' => (int) $row['booking_status_id'],
                             'venue_name' => $row['venue_name'],
-                            'is_host' => (int)$row['sender_id'] === (int)$row['host_id'],
+                            'is_host' => (int) $row['sender_id'] === (int) $row['host_id'],
                             'status' => $messageStatus,
-                            'read_count' => (int)$row['read_count'],
-                            'total_participants' => (int)$row['total_participants'],
-                            'delivery_count' => (int)$row['delivery_count']
+                            'read_count' => (int) $row['read_count'],
+                            'total_participants' => (int) $row['total_participants'],
+                            'delivery_count' => (int) $row['delivery_count']
                         ];
 
                         // Add reply data if this is a reply
@@ -277,25 +278,25 @@ switch ($method) {
 
                         $messages[] = $message;
                     }
-                    
+
                     sendResponse(['success' => true, 'messages' => $messages]);
                     break;
 
                 case 'get_conversation_details':
                     // Get details of a specific conversation
-                    $conversationId = isset($_GET['conversation_id']) ? (int)$_GET['conversation_id'] : null;
-                    
+                    $conversationId = isset($_GET['conversation_id']) ? (int) $_GET['conversation_id'] : null;
+
                     if (!$conversationId) {
                         sendResponse(['error' => 'Conversation ID is required'], 400);
                     }
-                    
+
                     $query = "
                         SELECT 
                             c.*,
                             b.booking_venue_id,
                             b.booking_status_id,
-                            b.booking_start_date,
-                            b.booking_end_date,
+                            b.booking_start_datetime,
+                            b.booking_end_datetime,
                             b.booking_duration,
                             b.booking_participants,
                             b.booking_request,
@@ -318,35 +319,35 @@ switch ($method) {
                         JOIN users g ON b.booking_guest_id = g.id
                         WHERE c.id = ?
                     ";
-                    
+
                     $stmt = $conn->prepare($query);
                     $stmt->execute([$conversationId]);
                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
+
                     if (!$result) {
                         sendResponse(['error' => 'Conversation not found'], 404);
                     }
-                    
+
                     sendResponse([
                         'success' => true,
                         'conversation' => [
-                            'id' => (int)$result['id'],
-                            'booking_id' => (int)$result['booking_id'],
-                            'venue_id' => (int)$result['booking_venue_id'],
+                            'id' => (int) $result['id'],
+                            'booking_id' => (int) $result['booking_id'],
+                            'venue_id' => (int) $result['booking_venue_id'],
                             'venue_name' => $result['venue_name'],
                             'venue_address' => $result['venue_address'],
-                            'booking_status' => (int)$result['booking_status_id'],
+                            'booking_status' => (int) $result['booking_status_id'],
                             'booking_details' => [
-                                'start_date' => $result['booking_start_date'],
-                                'end_date' => $result['booking_end_date'],
-                                'duration' => (int)$result['booking_duration'],
-                                'participants' => (int)$result['booking_participants'],
+                                'start_date' => $result['booking_start_datetime'],
+                                'end_date' => $result['booking_end_datetime'],
+                                'duration' => (int) $result['booking_duration'],
+                                'participants' => (int) $result['booking_participants'],
                                 'request' => $result['booking_request'],
-                                'original_price' => (float)$result['booking_original_price'],
-                                'grand_total' => (float)$result['booking_grand_total']
+                                'original_price' => (float) $result['booking_original_price'],
+                                'grand_total' => (float) $result['booking_grand_total']
                             ],
                             'host' => [
-                                'id' => (int)$result['host_id'],
+                                'id' => (int) $result['host_id'],
                                 'name' => $result['host_firstname'] . ' ' . $result['host_lastname'],
                                 'profile_picture' => $result['host_profile_pic']
                             ],
@@ -362,20 +363,20 @@ switch ($method) {
 
                 case 'get_or_create_conversation':
                     $data = json_decode(file_get_contents('php://input'), true);
-                    $bookingId = isset($data['booking_id']) ? (int)$data['booking_id'] : null;
-                    $venueId = isset($data['venue_id']) ? (int)$data['venue_id'] : null;
-                    $guestId = isset($data['guest_id']) ? (int)$data['guest_id'] : null;
-                    $hostId = isset($data['host_id']) ? (int)$data['host_id'] : null;
-                    
+                    $bookingId = isset($data['booking_id']) ? (int) $data['booking_id'] : null;
+                    $venueId = isset($data['venue_id']) ? (int) $data['venue_id'] : null;
+                    $guestId = isset($data['guest_id']) ? (int) $data['guest_id'] : null;
+                    $hostId = isset($data['host_id']) ? (int) $data['host_id'] : null;
+
                     if (!$bookingId || !$venueId || !$guestId || !$hostId) {
                         sendResponse(['error' => 'Missing required fields'], 400);
                     }
-                    
+
                     // Check if conversation exists
                     $stmt = $conn->prepare("SELECT id FROM conversations WHERE booking_id = ?");
                     $stmt->execute([$bookingId]);
                     $conversation = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
+
                     if ($conversation) {
                         // Return existing conversation
                         error_log("Found existing conversation: " . $conversation['id']);
@@ -414,10 +415,10 @@ switch ($method) {
             case 'send_message':
                 try {
                     // Validate required fields
-                    $conversationId = isset($data['conversation_id']) ? (int)$data['conversation_id'] : null;
-                    $senderId = isset($data['sender_id']) ? (int)$data['sender_id'] : null;
+                    $conversationId = isset($data['conversation_id']) ? (int) $data['conversation_id'] : null;
+                    $senderId = isset($data['sender_id']) ? (int) $data['sender_id'] : null;
                     $content = isset($data['content']) ? trim($data['content']) : null;
-                    $replyToId = isset($data['reply_to']) ? (int)$data['reply_to'] : null;
+                    $replyToId = isset($data['reply_to']) ? (int) $data['reply_to'] : null;
 
                     error_log("Processing message - Conversation ID: $conversationId, Sender ID: $senderId, Reply To: $replyToId");
 
@@ -542,17 +543,17 @@ switch ($method) {
                         $response = [
                             'success' => true,
                             'message' => [
-                                'id' => (int)$messageData['id'],
-                                'conversation_id' => (int)$messageData['conversation_id'],
-                                'sender_id' => (int)$messageData['sender_id'],
+                                'id' => (int) $messageData['id'],
+                                'conversation_id' => (int) $messageData['conversation_id'],
+                                'sender_id' => (int) $messageData['sender_id'],
                                 'sender_name' => $messageData['sender_firstname'] . ' ' . $messageData['sender_lastname'],
                                 'content' => $messageData['content'],
                                 'created_at' => $messageData['created_at'],
                                 'profile_picture' => $messageData['profile_pic'],
                                 'status' => $messageStatus,
-                                'read_count' => (int)$messageData['read_count'],
-                                'total_participants' => (int)$messageData['total_participants'],
-                                'delivery_count' => (int)$messageData['delivery_count']
+                                'read_count' => (int) $messageData['read_count'],
+                                'total_participants' => (int) $messageData['total_participants'],
+                                'delivery_count' => (int) $messageData['delivery_count']
                             ]
                         ];
 
@@ -577,10 +578,10 @@ switch ($method) {
             case 'get_or_create_conversation':
                 try {
                     // Validate required fields
-                    $booking_id = isset($data['booking_id']) ? (int)$data['booking_id'] : null;
-                    $venue_id = isset($data['venue_id']) ? (int)$data['venue_id'] : null;
-                    $guest_id = isset($data['guest_id']) ? (int)$data['guest_id'] : null;
-                    $host_id = isset($data['host_id']) ? (int)$data['host_id'] : null;
+                    $booking_id = isset($data['booking_id']) ? (int) $data['booking_id'] : null;
+                    $venue_id = isset($data['venue_id']) ? (int) $data['venue_id'] : null;
+                    $guest_id = isset($data['guest_id']) ? (int) $data['guest_id'] : null;
+                    $host_id = isset($data['host_id']) ? (int) $data['host_id'] : null;
 
                     error_log("Processing conversation for booking_id: $booking_id, venue_id: $venue_id, guest_id: $guest_id, host_id: $host_id");
 
@@ -595,10 +596,10 @@ switch ($method) {
                         error_log("Failed to prepare statement: " . $conn->error);
                         sendResponse(['error' => 'Database error'], 500);
                     }
-                    
+
                     $stmt->execute([$booking_id]);
                     $conversation = $stmt->fetch(PDO::FETCH_ASSOC);
-                    
+
                     if ($conversation) {
                         // Return existing conversation
                         error_log("Found existing conversation: " . $conversation['id']);
@@ -610,7 +611,7 @@ switch ($method) {
                             error_log("Failed to prepare insert statement: " . $conn->error);
                             sendResponse(['error' => 'Database error'], 500);
                         }
-                        
+
                         $stmt->execute([$booking_id]);
                         $conversation_id = $conn->lastInsertId();
                         error_log("Created new conversation: " . $conversation_id);
@@ -622,7 +623,7 @@ switch ($method) {
                             error_log("Failed to prepare participants statement: " . $conn->error);
                             sendResponse(['error' => 'Database error'], 500);
                         }
-                        
+
                         $stmt->execute([$conversation_id, $host_id, $conversation_id, $guest_id]);
                         error_log("Added participants - Host: $host_id, Guest: $guest_id");
 
@@ -641,7 +642,7 @@ switch ($method) {
 
     case 'PUT':
         parse_str(file_get_contents('php://input'), $_PUT);
-        
+
         if (!isset($_PUT['action'])) {
             sendResponse(['success' => false, 'error' => 'No action specified'], 400);
         }
@@ -650,12 +651,12 @@ switch ($method) {
             case 'mark_as_read':
                 // Mark messages as read
                 $messageIds = isset($_PUT['message_ids']) ? json_decode($_PUT['message_ids'], true) : null;
-                $userId = isset($_PUT['user_id']) ? (int)$_PUT['user_id'] : null;
-                
+                $userId = isset($_PUT['user_id']) ? (int) $_PUT['user_id'] : null;
+
                 // Debug logging
                 error_log("Marking messages as read - User ID: " . $userId);
                 error_log("Message IDs: " . print_r($messageIds, true));
-                
+
                 if (!$messageIds || !$userId) {
                     error_log("Missing required fields - messageIds: " . ($messageIds ? 'yes' : 'no') . ", userId: " . ($userId ? 'yes' : 'no'));
                     sendResponse(['success' => false, 'error' => 'Missing required fields'], 400);
@@ -683,9 +684,9 @@ switch ($method) {
                             FROM message_status 
                             WHERE message_id = ? AND user_id = ?
                         ");
-                        $stmt->execute([(int)$messageId, $userId]);
+                        $stmt->execute([(int) $messageId, $userId]);
                         $existingStatus = $stmt->fetch(PDO::FETCH_ASSOC);
-                        
+
                         if ($existingStatus) {
                             // Only update if not already read
                             if (!$existingStatus['is_read']) {
@@ -697,7 +698,7 @@ switch ($method) {
                                             read_at = NOW()
                                         WHERE message_id = ? AND user_id = ?
                                     ");
-                                    $stmt->execute([(int)$messageId, $userId]);
+                                    $stmt->execute([(int) $messageId, $userId]);
 
                                     // Also update the corresponding notification
                                     $stmt = $conn->prepare("
@@ -709,7 +710,7 @@ switch ($method) {
                                         AND type = 'message' 
                                         AND reference_id = ?
                                     ");
-                                    $stmt->execute([$userId, (int)$messageId]);
+                                    $stmt->execute([$userId, (int) $messageId]);
 
                                 } catch (PDOException $e) {
                                     if ($e->getCode() == '42S22') { // Column not found error
@@ -719,7 +720,7 @@ switch ($method) {
                                             SET is_read = 1
                                             WHERE message_id = ? AND user_id = ?
                                         ");
-                                        $stmt->execute([(int)$messageId, $userId]);
+                                        $stmt->execute([(int) $messageId, $userId]);
 
                                         // Also update the corresponding notification
                                         $stmt = $conn->prepare("
@@ -730,7 +731,7 @@ switch ($method) {
                                             AND type = 'message' 
                                             AND reference_id = ?
                                         ");
-                                        $stmt->execute([$userId, (int)$messageId]);
+                                        $stmt->execute([$userId, (int) $messageId]);
                                     } else {
                                         throw $e; // Re-throw if it's a different error
                                     }
@@ -744,7 +745,7 @@ switch ($method) {
                                     INSERT INTO message_status (message_id, user_id, is_read, read_at)
                                     VALUES (?, ?, 1, NOW())
                                 ");
-                                $stmt->execute([(int)$messageId, $userId]);
+                                $stmt->execute([(int) $messageId, $userId]);
 
                                 // Also update the corresponding notification
                                 $stmt = $conn->prepare("
@@ -755,7 +756,7 @@ switch ($method) {
                                     AND type = 'message' 
                                     AND reference_id = ?
                                 ");
-                                $stmt->execute([$userId, (int)$messageId]);
+                                $stmt->execute([$userId, (int) $messageId]);
 
                             } catch (PDOException $e) {
                                 if ($e->getCode() == '42S22') { // Column not found error
@@ -764,7 +765,7 @@ switch ($method) {
                                         INSERT INTO message_status (message_id, user_id, is_read)
                                         VALUES (?, ?, 1)
                                     ");
-                                    $stmt->execute([(int)$messageId, $userId]);
+                                    $stmt->execute([(int) $messageId, $userId]);
 
                                     // Also update the corresponding notification
                                     $stmt = $conn->prepare("
@@ -775,7 +776,7 @@ switch ($method) {
                                         AND type = 'message' 
                                         AND reference_id = ?
                                     ");
-                                    $stmt->execute([$userId, (int)$messageId]);
+                                    $stmt->execute([$userId, (int) $messageId]);
                                 } else {
                                     throw $e; // Re-throw if it's a different error
                                 }
@@ -813,4 +814,4 @@ switch ($method) {
 }
 
 // Close database connection
-$conn = null; 
+$conn = null;

@@ -68,7 +68,7 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Venue Location</th>
                     <th class="py-2 px-4 text-left">Down payment requirement</th>
                     <th class="py-2 px-4 text-left">Venue Price</th>
-                    <th class="py-2 px-4 text-left">Capacity</th>
+                    <!-- <th class="py-2 px-4 text-left">Capacity</th> -->
                     <th class="py-2 px-4 text-left">Participants</th>
                     <th class="py-2 px-4 text-left">Mandatory Discount</th>
                     <th class="py-2 px-4 text-left">Coupon Code</th>
@@ -85,7 +85,8 @@ function formatDate($date)
                     <th class="py-2 px-4 text-left">Checkout Date</th>
                     <th class="py-2 px-4 text-left">Payment Method</th>
                     <th class="py-2 px-4 text-left">Payment Reference</th>
-                    <th class="py-2 px-4 text-left">Status</th>
+                    <th class="py-2 px-4 text-left">Booking Status</th>
+                    <th class="py-2 px-4 text-left">Payment Status</th>
                     <th class="py-2 px-4 text-left">Actions</th>
                 </tr>
             </thead>
@@ -158,11 +159,24 @@ function formatDate($date)
                                 $status = "<span class='bg-blue-200 text-blue-800 rounded-full px-2'>Completed</span>";
                                 break;
                         }
+
+                        $payment_status = $reservation['booking_payment_status_id'];
+                        switch ($payment_status) {
+                            case 1:
+                                $payment_status = "<span class='bg-red-200 text-red-800 rounded-full px-2'>Pending</span>";
+                                break;
+                            case 2:
+                                $payment_status = "<span class='bg-green-200 text-green-800 rounded-full px-2'>Paid</span>";
+                                break;
+                            case 3:
+                                $payment_status = "<span class='bg-red-200 text-red-800 rounded-full px-2'>Failed</span>";
+                                break;
+                        }
                         ?>
                         <tr>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_created_at']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_start_date']); ?></td>
-                            <td class="py-2 px-4"><?php echo formatDate($reservation['booking_end_date']); ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['booking_created_at']; ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['booking_start_datetime']; ?></td>
+                            <td class="py-2 px-4"><?php echo $reservation['booking_end_datetime']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['booking_duration']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['guest_name']; ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['guest_contact_number']; ?></td>
@@ -171,7 +185,7 @@ function formatDate($date)
                             <td class="py-2 px-4"><?php echo $reservation['venue_location']; ?></td>
                             <td class="py-2 px-4"><?php echo $dp_option ?></td>
                             <td class="py-2 px-4">₱<?php echo number_format($reservation['booking_venue_price'], 2); ?></td>
-                            <td class="py-2 px-4"><?php echo $reservation['venue_capacity']; ?></td>
+                            <!-- <td class="py-2 px-4"><?php echo $reservation['venue_capacity']; ?></td> -->
                             <td class="py-2 px-4"><?php echo $reservation['booking_participants']; ?></td>
                             <td class="py-2 px-4"><?php echo $isMandatory_Discount ?></td>
                             <td class="py-2 px-4"><?php echo $reservation['discount_code']; ?></td>
@@ -192,15 +206,18 @@ function formatDate($date)
                                 <?php echo $status ?>
                             </td>
                             <td class="py-2 px-4">
+                                <?php echo $payment_status ?>
+                            </td>
+                            <td class="py-2 px-4">
                                 <?php if ($reservation['booking_status_id'] == 1): ?>
-                                    <form class="approveReservationButton inline-block" method="POST">
+                                    <form class="approvePaymentButton inline-block" method="POST">
                                         <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                         <input type="hidden" name="status_id" value="2">
                                         <button type="submit" class="text-blue-500 font-bold py-1 px-3 rounded">
                                             Approve
                                         </button>
                                     </form>
-                                    <form class="rejectReservationButton inline-block" method="POST">
+                                    <form class="rejectPaymentButton inline-block" method="POST">
                                         <input type="hidden" name="booking_id" value="<?php echo $reservation['booking_id']; ?>">
                                         <input type="hidden" name="status_id" value="4">
                                         <button type="submit" class="text-red-500 font-bold py-1 px-3 rounded">
@@ -293,24 +310,42 @@ function formatDate($date)
                     '<tr id="noResultsRow"><td colspan="19" class="py-4 text-center">No results found</td></tr>'
                 );
             }
+
+        }
+
+
+        const spinner = $("#spinner");
+
+        function spinnerOn() {
+            spinner.removeClass("hidden");
+            spinner.addClass("flex");
+        }
+
+        function spinnerOff() {
+            spinner.removeClass("flex");
+            spinner.addClass("hidden");
         }
 
         // Update approve reservation handler
-        $('.approveReservationButton').on("submit", function (e) {
+        $('.approvePaymentButton').on("submit", function (e) {
             e.preventDefault();
             const formData = $(this).serialize();
 
             confirmshowModal(
                 "Are you sure you want to approve this reservation?",
                 function () {
+                    spinnerOn();
                     $.ajax({
                         type: "POST",
-                        url: "../api/ApproveReservation.api.php",
+                        url: "../api/ApprovePayment.api.php",
                         data: formData,
                         dataType: 'json',
                         success: function (response) {
+                            spinnerOff();
                             if (response.status === "success") {
-                                window.location.reload();
+                                showModal(response.message, function () {
+                                    window.location.reload();
+                                }, "black_ico.png");
                             }
                         },
                         error: function (xhr, status, error) {
@@ -323,21 +358,25 @@ function formatDate($date)
         });
 
         // Update reject reservation handler
-        $('.rejectReservationButton').on("submit", function (e) {
+        $('.rejectPaymentButton').on("submit", function (e) {
             e.preventDefault();
             const formData = $(this).serialize();
 
             confirmshowModal(
                 "Are you sure you want to reject this reservation?",
                 function () {
+                    spinnerOn();
                     $.ajax({
                         type: "POST",
-                        url: "../api/RejectReservation.api.php",
+                        url: "../api/RejectPayment.api.php",
                         data: formData,
                         dataType: 'json',
                         success: function (response) {
+                            spinnerOff();
                             if (response.status === "success") {
-                                window.location.reload();
+                                showModal(response.message, function () {
+                                    window.location.reload();
+                                }, "black_ico.png");
                             }
                         },
                         error: function (xhr, status, error) {

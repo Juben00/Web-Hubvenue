@@ -10,18 +10,18 @@ $reservationData = $_SESSION['reservationFormData'];
 $accountObj = new Account();
 $venueObj = new Venue();
 
-$booking_start_date = $booking_end_date = $booking_duration = $booking_status_id = $booking_participants = $booking_original_price = $booking_grand_total = $booking_guest_id = $booking_venue_id = $booking_discount = $payment_method_name = $booking_payment_reference = $booking_payment_status_id = $booking_cancellation_reason = $booking_service_fee = "";
+$booking_start_datetime = $booking_end_datetime = $booking_duration = $booking_status_id = $booking_participants = $booking_original_price = $booking_grand_total = $booking_guest_id = $booking_venue_id = $booking_discount = $payment_method_name = $booking_payment_reference = $booking_payment_status_id = $booking_cancellation_reason = $booking_service_fee = "";
 
 $booking_start_dateErr = $booking_end_dateErr = $booking_durationErr = $booking_status_idErr = $booking_participantsErr = $booking_original_priceErr = $booking_grand_totalErr = $booking_guest_idErr = $booking_venue_idErr = $booking_discountErr = $payment_method_nameErr = $booking_payment_referenceErr = $booking_payment_status_idErr = $booking_cancellation_reasonErr = $booking_service_feeErr = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $booking_start_date = clean_input($reservationData['checkin']);
-    $booking_end_date = clean_input($reservationData['checkout']);
+    $booking_start_datetime = clean_input($reservationData['checkin']);
+    $booking_end_datetime = clean_input($reservationData['checkout']);
 
     // conver to 24 hours
-    $booking_start_date = date("Y-m-d H:i:s", strtotime($booking_start_date));
-    $booking_end_date = date("Y-m-d H:i:s", strtotime($booking_end_date));
+    $booking_start_datetime = date("Y-m-d H:i:s", strtotime($booking_start_datetime));
+    $booking_end_datetime = date("Y-m-d H:i:s", strtotime($booking_end_datetime));
     $booking_duration = clean_input($reservationData['duration']);
     $booking_status_id = 1;
     $booking_participants = clean_input($reservationData['numberOfGuest']);
@@ -57,10 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bpm = clean_input($_POST['paymentMethod']);
     error_log("Payment Method ID: " . print_r($bpm, true));
 
-    if (empty($booking_start_date)) {
+    if (empty($booking_start_datetime)) {
         $booking_start_dateErr = "Start date is required";
     }
-    if (empty($booking_end_date)) {
+    if (empty($booking_end_datetime)) {
         $booking_end_dateErr = "End date is required";
     }
     if (empty($booking_participants)) {
@@ -142,8 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $booking_payment_reference = $booking_payment_reference === "" ? $booking_payment_receipt : $booking_payment_reference;
 
         $result = $venueObj->bookVenue(
-            $booking_start_date,
-            $booking_end_date,
+            $booking_start_datetime,
+            $booking_end_datetime,
             $booking_participants,
             $booking_price,
             $booking_entrance,
