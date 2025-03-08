@@ -16,86 +16,88 @@ $venueStats = $venueObj->getAllVenuesWithStats($USER_ID);
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php foreach ($venueStats as $venue): ?>
-                <div class="bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition duration-300">
+            <?php foreach ($venueStats as $venue):
+                var_dump($venue);
+                ?>
+                <!-- <div class="bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition duration-300">
                     <!-- Venue Image -->
-                    <div class="relative h-48">
-                        <img src="./<?php echo !empty($venue['image_urls']) ? $venue['image_urls'][$venue['thumbnail']] : '../images/black_ico.png'; ?>"
-                            alt="<?php echo htmlspecialchars($venue['name']); ?>" class="w-full h-full object-cover">
-                        <div class="absolute top-2 right-2">
-                            <span class="px-2 py-1 bg-black text-white rounded-full text-xs">
-                                <?php echo htmlspecialchars($venue['venue_tag_name']); ?>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Venue Details -->
-                    <div class="p-4">
-                        <h3 class="font-medium text-lg mb-2"><?php echo htmlspecialchars($venue['name']); ?></h3>
-
-                        <!-- Quick Stats Grid -->
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <!-- Total Bookings -->
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <p class="text-sm text-gray-600">Total Bookings</p>
-                                <p class="text-lg font-semibold"><?php echo $venue['total_bookings']; ?></p>
-                            </div>
-
-                            <!-- Average Rating -->
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <p class="text-sm text-gray-600">Average Rating</p>
-                                <p class="text-lg font-semibold">
-                                    <?php echo number_format($venue['average_rating'], 1); ?> ⭐
-                                </p>
-                            </div>
-
-                            <!-- Total Revenue -->
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <p class="text-sm text-gray-600">Total Revenue</p>
-                                <p class="text-lg font-semibold">₱<?php echo number_format($venue['total_revenue']); ?></p>
-                            </div>
-
-                            <!-- Occupancy Rate -->
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <p class="text-sm text-gray-600">Occupancy Rate</p>
-                                <p class="text-lg font-semibold"><?php echo number_format($venue['occupancy_rate'], 1); ?>%
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Booking Status Distribution -->
-                        <div class="space-y-2">
-                            <!-- Pending -->
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-600">Pending</span>
-                                <span class="font-medium"><?php echo $venue['pending_bookings']; ?></span>
-                            </div>
-                            <!-- Confirmed -->
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-600">Confirmed</span>
-                                <span class="font-medium"><?php echo $venue['confirmed_bookings']; ?></span>
-                            </div>
-                            <!-- Completed -->
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-600">Completed</span>
-                                <span class="font-medium"><?php echo $venue['completed_bookings']; ?></span>
-                            </div>
-                            <!-- Cancelled -->
-                            <div class="flex justify-between items-center text-sm">
-                                <span class="text-gray-600">Cancelled</span>
-                                <span class="font-medium"><?php echo $venue['cancelled_bookings']; ?></span>
-                            </div>
-                        </div>
-
-                        <!-- View Details Button -->
-                        <button onclick="showVenueDetailStats(<?php echo htmlspecialchars(json_encode($venue)); ?>)"
-                            class="w-full mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition duration-300">
-                            View Detailed Statistics
-                        </button>
+                <div class="relative h-48">
+                    <img src="./<?php echo !empty($venue['image_urls']) ? $venue['image_urls'][$venue['thumbnail']] : '../images/black_ico.png'; ?>"
+                        alt="<?php echo htmlspecialchars($venue['name']); ?>" class="w-full h-full object-cover">
+                    <div class="absolute top-2 right-2">
+                        <span class="px-2 py-1 bg-black text-white rounded-full text-xs">
+                            <?php echo htmlspecialchars($venue['venue_tag_name']); ?>
+                        </span>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        </div>
+
+                <!-- Venue Details -->
+                <div class="p-4">
+                    <h3 class="font-medium text-lg mb-2"><?php echo htmlspecialchars($venue['name']); ?></h3>
+
+                    <!-- Quick Stats Grid -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <!-- Total Bookings -->
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Total Bookings</p>
+                            <p class="text-lg font-semibold"><?php echo $venue['total_bookings']; ?></p>
+                        </div>
+
+                        <!-- Average Rating -->
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Average Rating</p>
+                            <p class="text-lg font-semibold">
+                                <?php echo number_format($venue['average_rating'], 1); ?> ⭐
+                            </p>
+                        </div>
+
+                        <!-- Total Revenue -->
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Total Revenue</p>
+                            <p class="text-lg font-semibold">₱<?php echo number_format($venue['total_revenue']); ?></p>
+                        </div>
+
+                        <!-- Occupancy Rate -->
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <p class="text-sm text-gray-600">Occupancy Rate</p>
+                            <p class="text-lg font-semibold"><?php echo number_format($venue['occupancy_rate'], 1); ?>%
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Booking Status Distribution -->
+                    <div class="space-y-2">
+                        <!-- Pending -->
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Pending</span>
+                            <span class="font-medium"><?php echo $venue['pending_bookings']; ?></span>
+                        </div>
+                        <!-- Confirmed -->
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Confirmed</span>
+                            <span class="font-medium"><?php echo $venue['confirmed_bookings']; ?></span>
+                        </div>
+                        <!-- Completed -->
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Completed</span>
+                            <span class="font-medium"><?php echo $venue['completed_bookings']; ?></span>
+                        </div>
+                        <!-- Cancelled -->
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Cancelled</span>
+                            <span class="font-medium"><?php echo $venue['cancelled_bookings']; ?></span>
+                        </div>
+                    </div>
+
+                    <!-- View Details Button -->
+                    <button onclick="showVenueDetailStats(<?php echo htmlspecialchars(json_encode($venue)); ?>)"
+                        class="w-full mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition duration-300">
+                        View Detailed Statistics
+                    </button>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
     </div>
 </main>
 
@@ -157,7 +159,7 @@ $venueStats = $venueObj->getAllVenuesWithStats($USER_ID);
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     let revenueChart = null;
     let bookingsChart = null;
@@ -246,4 +248,4 @@ $venueStats = $venueObj->getAllVenuesWithStats($USER_ID);
             }
         });
     }
-</script>
+</script> -->

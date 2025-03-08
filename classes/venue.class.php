@@ -1518,9 +1518,14 @@ LEFT JOIN
     public function getVenuesByHost($hostId)
     {
         try {
-            $sql = "SELECT v.*, GROUP_CONCAT(vi.image_url) as image_urls 
+            $sql = "SELECT v.*, 
+                    GROUP_CONCAT(vi.image_url) AS image_urls,
+                    vtg.tag_name AS venue_tag_name,
+                    vss.name AS status
                     FROM venues v 
-                    LEFT JOIN venue_images vi ON v.id = vi.venue_id 
+                    JOIN venue_images vi ON v.id = vi.venue_id 
+                    JOIN venue_tag_sub vtg ON v.venue_tag = vtg.id
+                    JOIN venue_status_sub vss ON v.status_id = vss.id
                     WHERE v.host_id = :host_id
                     GROUP BY v.id";
             $stmt = $this->db->connect()->prepare($sql);
