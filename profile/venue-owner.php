@@ -90,10 +90,10 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Rejected (<?php echo $rejectedCount; ?>)
                     </button>
-                    <button onclick="showCont('statistics')"
+                    <!-- <button onclick="showCont('statistics')"
                         class="tab-links border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm">
                         Statistics
-                    </button>
+                    </button> -->
                 </nav>
             </div>
 
@@ -611,7 +611,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
             </div>
 
             <!-- Add Statistics Content -->
-            <div id="statistics-content" class="mt-8 hidden tab-content">
+            <!-- <div id="statistics-content" class="mt-8 hidden tab-content">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <?php
                     // Fetch venues for this host
@@ -705,7 +705,7 @@ $totalCount = $pendingCount + $confirmedCount + $cancelledCount + $completedCoun
                         </div>
                     <?php } ?>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </div>

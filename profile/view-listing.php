@@ -29,7 +29,7 @@ $thumbnail = $venueView['image_urls'][$venueView['thumbnail']];
 </head>
 <div id="openstreetmapplaceholder"></div>
 <!-- Venue Details View (Initially Hidden) -->
-<div id="venueDetailsView" class="container mx-auto pt-24 mb-8">
+<div id="venueDetailsView" class="container mx-auto max-w-7xl pt-24 mb-8">
     <form class="flex gap-6" id="editVenueForm" enctype="multipart/form-data">
         <!-- Main Content -->
         <div class="w-full">
