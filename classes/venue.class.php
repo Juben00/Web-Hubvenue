@@ -690,26 +690,7 @@ class Venue
 
             $sql = "SELECT 
     b.id AS booking_id,
-    b.booking_start_datetime,
-    b.booking_end_datetime,
-    b.booking_duration,
-    b.booking_participants,
-    b.booking_venue_price,
-    b.booking_grand_total,
-    b.booking_discount_id,
-    b.booking_participants,
-    b.booking_duration,
-    b.booking_dp_amount,
-    b.booking_entrance,
-    b.booking_coupon_id,
-    b.booking_cleaning,
-    b.booking_balance,
-    b.booking_request,
-    b.booking_payment_reference,
-    b.booking_service_fee,
-    b.booking_status_id,
-    b.booking_cancellation_reason,
-    b.booking_created_at,
+    b.*,
 
     u.id AS guest_id,
     CONCAT(u.firstname, ' ', COALESCE(u.middlename, '.'), ' ', u.lastname) AS guest_name,
@@ -762,13 +743,13 @@ LEFT JOIN
             $conditions = [];
             $params = [];
 
-            if ($userId) {
-                $conditions[] = "host_id = :userId";
+            if (isset($userId)) {
+                $conditions[] = "v.host_id = :userId";
                 $params[':userId'] = $userId;
             }
-            if ($status) {
-                $conditions[] = "b.booking_status_id LIKE :status";
-                $params[':status'] = "%$status%";
+            if (isset($status)) {
+                $conditions[] = "b.booking_status_id = :status";
+                $params[':status'] = $status;
             }
 
             // Append conditions to query
@@ -1801,10 +1782,10 @@ LEFT JOIN
             $sql = "UPDATE bookings 
                     SET booking_checkin_status = 'Checked-In',
                         booking_checkin_date = CURRENT_DATE
-                    WHERE id = ?";
+                    WHERE id = :id";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam("i", $booking_id);
+            $stmt->bindParam(":id", $booking_id);
 
             return $stmt->execute();
         } catch (Exception $e) {
@@ -1820,10 +1801,10 @@ LEFT JOIN
                     SET booking_checkout_status = 'Checked-Out',
                         booking_checkout_date = CURRENT_DATE,
                         booking_status_id = 4
-                    WHERE id = ?";
+                    WHERE id = :id";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam("i", $booking_id);
+            $stmt->bindParam(":id", $booking_id);
 
             return $stmt->execute();
         } catch (Exception $e) {
@@ -1837,10 +1818,10 @@ LEFT JOIN
         try {
             $sql = "UPDATE bookings 
                     SET booking_checkin_status = 'No-Show'
-                    WHERE id = ?";
+                    WHERE id = :id";
             $conn = $this->db->connect();
             $stmt = $conn->prepare($sql);
-            $stmt->bindParam("i", $booking_id);
+            $stmt->bindParam(":id", $booking_id);
 
             return $stmt->execute();
         } catch (Exception $e) {

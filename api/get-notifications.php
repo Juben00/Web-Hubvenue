@@ -14,8 +14,8 @@ $notification = new Notification();
 $userId = $_SESSION['user'];
 
 // Get pagination parameters
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$limit = isset($_GET['limit']) ? (int) $_GET['limit'] : 10;
 $offset = ($page - 1) * $limit;
 
 try {
@@ -23,7 +23,7 @@ try {
     $notifications = $notification->getUserNotifications($userId, $limit, $offset);
     $unreadCount = $notification->getUnreadCount($userId);
     $totalCount = $notification->getTotalNotificationCount($userId);
-    
+
     // Start output buffering to capture HTML
     ob_start();
 
@@ -38,24 +38,22 @@ try {
     <?php else:
         foreach ($notifications as $notif): ?>
             <div class="notification-item px-6 py-4 hover:bg-gray-50/50 transition-colors <?php echo !$notif['is_read'] ? 'bg-blue-50/50' : ''; ?>"
-                 data-type="<?php echo htmlspecialchars($notif['type']); ?>"
-                 data-id="<?php echo htmlspecialchars($notif['id']); ?>"
-                 data-read="<?php echo $notif['is_read'] ? 'read' : 'unread'; ?>">
+                data-type="<?php echo htmlspecialchars($notif['type']); ?>" data-id="<?php echo htmlspecialchars($notif['id']); ?>"
+                data-read="<?php echo $notif['is_read'] ? 'read' : 'unread'; ?>">
                 <div class="flex items-start gap-4">
                     <!-- Profile Picture/Icon -->
                     <div class="flex-shrink-0">
                         <?php if (!empty($notif['profile_pic'])): ?>
                             <div class="h-10 w-10 rounded-full bg-gray-200 overflow-hidden">
-                                <img src="./<?php echo htmlspecialchars($notif['profile_pic']); ?>" 
-                                     alt="Profile" 
-                                     class="w-full h-full object-cover">
+                                <img src="./<?php echo htmlspecialchars($notif['profile_pic']); ?>" alt="Profile"
+                                    class="w-full h-full object-cover">
                             </div>
                         <?php else: ?>
                             <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
                                 <span class="text-lg font-medium text-gray-600">
-                                    <?php 
+                                    <?php
                                     $name = explode(' ', $notif['reference_name'] ?? 'U')[0];
-                                    echo strtoupper(substr($name, 0, 1)); 
+                                    echo strtoupper(substr($name, 0, 1));
                                     ?>
                                 </span>
                             </div>
@@ -90,8 +88,8 @@ try {
 
                     <!-- Mark as Read Button (for unread notifications) -->
                     <?php if (!$notif['is_read']): ?>
-                        <button onclick="markAsRead(this, <?php echo $notif['id']; ?>)" 
-                                class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                        <button onclick="markAsRead(this, <?php echo $notif['id']; ?>)"
+                            class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
                             <i class="fas fa-check"></i>
                         </button>
                     <?php endif; ?>
@@ -121,6 +119,9 @@ try {
         'hasMore' => $hasMore,
         'totalCount' => $totalCount
     ]);
+
+    // blah blah sleep
+    sleep(20);
 
 } catch (Exception $e) {
     echo json_encode([
