@@ -45,7 +45,7 @@ foreach ($notifications as $notif) {
             </button>
         <?php endif; ?>
     </div>
-    
+
 
     <!-- Notifications List -->
     <div class="notifications-wrapper" style="height: calc(420px - 65px);">
@@ -64,24 +64,23 @@ foreach ($notifications as $notif) {
                 <div class="notifications-container">
                     <?php foreach ($notifications as $notif): ?>
                         <div class="notification-item px-6 py-4 hover:bg-gray-50/50 transition-colors <?php echo !$notif['is_read'] ? 'bg-blue-50/50' : ''; ?>"
-                             data-type="<?php echo htmlspecialchars($notif['type']); ?>"
-                             data-id="<?php echo htmlspecialchars($notif['id']); ?>"
-                             data-read="<?php echo $notif['is_read'] ? 'read' : 'unread'; ?>">
+                            data-type="<?php echo htmlspecialchars($notif['type']); ?>"
+                            data-id="<?php echo htmlspecialchars($notif['id']); ?>"
+                            data-read="<?php echo $notif['is_read'] ? 'read' : 'unread'; ?>">
                             <div class="flex items-start gap-4">
                                 <!-- Profile Picture/Icon -->
                                 <div class="flex-shrink-0">
                                     <?php if (!empty($notif['profile_pic'])): ?>
                                         <div class="h-10 w-10 rounded-full bg-gray-200 overflow-hidden">
-                                            <img src="./<?php echo htmlspecialchars($notif['profile_pic']); ?>" 
-                                                 alt="Profile" 
-                                                 class="w-full h-full object-cover">
+                                            <img src="./<?php echo htmlspecialchars($notif['profile_pic']); ?>" alt="Profile"
+                                                class="w-full h-full object-cover">
                                         </div>
                                     <?php else: ?>
                                         <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
                                             <span class="text-lg font-medium text-gray-600">
-                                                <?php 
+                                                <?php
                                                 $name = explode(' ', $notif['reference_name'] ?? 'U')[0];
-                                                echo strtoupper(substr($name, 0, 1)); 
+                                                echo strtoupper(substr($name, 0, 1));
                                                 ?>
                                             </span>
                                         </div>
@@ -116,8 +115,8 @@ foreach ($notifications as $notif) {
 
                                 <!-- Mark as Read Button (for unread notifications) -->
                                 <?php if (!$notif['is_read']): ?>
-                                    <button onclick="markAsRead(this, <?php echo $notif['id']; ?>)" 
-                                            class="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-all">
+                                    <button onclick="markAsRead(this, <?php echo $notif['id']; ?>)"
+                                        class="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-gray-300 hover:text-gray-500 hover:bg-gray-100 transition-all">
                                         <i class="fas fa-check text-xs"></i>
                                     </button>
                                 <?php endif; ?>
@@ -133,13 +132,13 @@ foreach ($notifications as $notif) {
                     <?php endforeach; ?>
                 </div>
             </div>
-            
+
             <!-- Load More Button - Outside the scroll container -->
-            <?php 
+            <?php
             // Add visual debugging in the UI (temporary)
             echo "<!-- Debug: totalCount = {$totalCount}, initialLimit = {$initialLimit} -->";
-            if ($totalCount > $initialLimit): 
-            ?>
+            if ($totalCount > $initialLimit):
+                ?>
                 <div id="loadMoreContainer" class="sticky-footer px-6 py-3 text-center border-t border-gray-100 bg-white">
                     <button onclick="loadMoreNotifications()" class="text-sm text-blue-500 hover:text-blue-600 font-medium">
                         See previous notifications
@@ -151,95 +150,95 @@ foreach ($notifications as $notif) {
 </div>
 
 <style>
-/* Notification dropdown specific styles */
-#notificationDropdown {
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    position: absolute;
-    right: 0;
-    margin-top: 8px;
-    z-index: 50;
-    transform-origin: top right;
-    height: 420px;
-    width: 400px;
-    display: flex;
-    flex-direction: column;
-}
+    /* Notification dropdown specific styles */
+    #notificationDropdown {
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        position: absolute;
+        right: 0;
+        margin-top: 8px;
+        z-index: 50;
+        transform-origin: top right;
+        height: 420px;
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+    }
 
-/* Header styles */
-#notificationDropdown .flex.items-center.justify-between {
-    padding-top: 0.875rem;
-    padding-bottom: 0.875rem;
-}
+    /* Header styles */
+    #notificationDropdown .flex.items-center.justify-between {
+        padding-top: 0.875rem;
+        padding-bottom: 0.875rem;
+    }
 
-.notifications-wrapper {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    height: calc(420px - 65px);
-}
+    .notifications-wrapper {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        height: calc(420px - 65px);
+    }
 
-.notifications-scroll-container {
-    flex: 1;
-    overflow-y: auto;
-    position: relative;
-    height: calc(100% - 44px);
-}
+    .notifications-scroll-container {
+        flex: 1;
+        overflow-y: auto;
+        position: relative;
+        height: calc(100% - 44px);
+    }
 
-.notifications-container {
-    display: flex;
-    flex-direction: column;
-}
+    .notifications-container {
+        display: flex;
+        flex-direction: column;
+    }
 
-.notification-item {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-}
+    .notification-item {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
 
-.sticky-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid rgb(243 244 246);
-    border-bottom-left-radius: 0.75rem;
-    border-bottom-right-radius: 0.75rem;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .sticky-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid rgb(243 244 246);
+        border-bottom-left-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-/* Scrollbar styling */
-.notifications-scroll-container::-webkit-scrollbar {
-    width: 4px;
-}
+    /* Scrollbar styling */
+    .notifications-scroll-container::-webkit-scrollbar {
+        width: 4px;
+    }
 
-.notifications-scroll-container::-webkit-scrollbar-track {
-    background: transparent;
-}
+    .notifications-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-.notifications-scroll-container::-webkit-scrollbar-thumb {
-    background-color: rgb(203 213 225);
-    border-radius: 2px;
-}
+    .notifications-scroll-container::-webkit-scrollbar-thumb {
+        background-color: rgb(203 213 225);
+        border-radius: 2px;
+    }
 
-.notifications-scroll-container::-webkit-scrollbar-thumb:hover {
-    background-color: rgb(148 163 184);
-}
+    .notifications-scroll-container::-webkit-scrollbar-thumb:hover {
+        background-color: rgb(148 163 184);
+    }
 
-/* Overlay positioning */
-#notificationOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 40;
-    opacity: 0;
-    transition: opacity 200ms ease-out;
-}
+    /* Overlay positioning */
+    #notificationOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        opacity: 0;
+        transition: opacity 200ms ease-out;
+    }
 </style>
 
 <script>
@@ -248,7 +247,7 @@ foreach ($notifications as $notif) {
     function toggleOverlay(show) {
         const overlay = document.getElementById('notificationOverlay');
         const dropdown = document.querySelector('#notificationDropdown');
-        
+
         if (show) {
             overlay.classList.remove('hidden');
             // Trigger reflow
@@ -295,10 +294,10 @@ foreach ($notifications as $notif) {
                     if (!dropdown.classList.contains('hidden')) {
                         const scrollContainer = dropdown.querySelector('.divide-y');
                         const scrollPosition = scrollContainer ? scrollContainer.scrollTop : 0;
-                        
+
                         dropdown.querySelector('.divide-y').innerHTML = data.notificationsHtml;
                         setupDropdownEventListeners();
-                        
+
                         if (scrollContainer) {
                             scrollContainer.scrollTop = scrollPosition;
                         }
@@ -330,18 +329,18 @@ foreach ($notifications as $notif) {
                 user_id: <?php echo $_SESSION['user']; ?>
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.querySelectorAll('.notification-item[data-read="unread"]').forEach(el => {
-                    el.setAttribute('data-read', 'read');
-                    el.classList.remove('bg-blue-50/50');
-                });
-                const countBadge = document.querySelector('#notificationCount');
-                if (countBadge) countBadge.remove();
-                loadNotifications();
-            }
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll('.notification-item[data-read="unread"]').forEach(el => {
+                        el.setAttribute('data-read', 'read');
+                        el.classList.remove('bg-blue-50/50');
+                    });
+                    const countBadge = document.querySelector('#notificationCount');
+                    if (countBadge) countBadge.remove();
+                    loadNotifications();
+                }
+            });
     }
 
     function setupDropdownEventListeners() {
@@ -353,12 +352,12 @@ foreach ($notifications as $notif) {
     }
 
     // Toggle notification dropdown
-    document.querySelector('#notificationButton').addEventListener('click', function(e) {
+    document.querySelector('#notificationButton').addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         const dropdown = document.querySelector('#notificationDropdown');
         const isHidden = dropdown.classList.contains('hidden');
-        
+
         // Close any other open dropdowns
         document.querySelectorAll('.dropdown-content').forEach(el => {
             if (el !== dropdown) el.classList.add('hidden');
@@ -375,7 +374,7 @@ foreach ($notifications as $notif) {
     });
 
     // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         const dropdown = document.querySelector('#notificationDropdown');
         const button = document.querySelector('#notificationButton');
 
@@ -387,7 +386,7 @@ foreach ($notifications as $notif) {
     });
 
     // Close dropdown when pressing escape
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
             const dropdown = document.querySelector('#notificationDropdown');
             if (!dropdown.classList.contains('hidden')) {
@@ -414,25 +413,25 @@ foreach ($notifications as $notif) {
                 notification_id: notificationId
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update UI
-                const notificationItem = button.closest('.notification-item');
-                notificationItem.setAttribute('data-read', 'read');
-                notificationItem.classList.remove('bg-blue-50/50');
-                button.remove();
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI
+                    const notificationItem = button.closest('.notification-item');
+                    notificationItem.setAttribute('data-read', 'read');
+                    notificationItem.classList.remove('bg-blue-50/50');
+                    button.remove();
 
-                // Update badge count
-                const countBadge = document.querySelector('#notificationCount');
-                const currentCount = parseInt(countBadge.textContent);
-                if (currentCount > 1) {
-                    countBadge.textContent = currentCount - 1;
-                } else {
-                    countBadge.remove();
+                    // Update badge count
+                    const countBadge = document.querySelector('#notificationCount');
+                    const currentCount = parseInt(countBadge.textContent);
+                    if (currentCount > 1) {
+                        countBadge.textContent = currentCount - 1;
+                    } else {
+                        countBadge.remove();
+                    }
                 }
-            }
-        });
+            });
     }
 
     let currentPage = 1;
@@ -447,7 +446,7 @@ foreach ($notifications as $notif) {
                     // Insert new notifications before the load more button
                     const container = document.querySelector('.notifications-container');
                     const loadMoreContainer = document.getElementById('loadMoreContainer');
-                    
+
                     if (container && data.notificationsHtml) {
                         container.insertAdjacentHTML('beforeend', data.notificationsHtml);
                     }
