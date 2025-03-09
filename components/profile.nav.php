@@ -48,6 +48,10 @@ $HOST_ROLE = "Host";
         <a id="bookmarks" data-profileUrl="bookmarks" class="profileNav w-[120px] cursor-pointer block py-2 px-3">
           Bookmarks
         </a>
+        P]2
+        W;'Z'<AP ZP.S="';
+      'L;-[;">O[P [PE[[231Z21WA@:}:
+          qs</AP>
         </li>
 
         <?php

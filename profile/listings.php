@@ -10,17 +10,30 @@ $accountObj = new Account();
 
 $USER_ID = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $userRole = $accountObj->getUserRole($USER_ID);
-// $venuePost = $venueObj->getAllVenues('', '', $USER_ID);
 $venueStats = $venueObj->getAllVenuesWithStats($USER_ID);
 $HOST_ROLE = "Host";
 $GUEST_ROLE = "Guest";
 
-// $stats = $venueObj->getDashboardStats($USER_ID);
+$stats = $venueObj->getDashboardStats($USER_ID);
 $venues = $venueObj->getAllVenuesWithStats($USER_ID);
-// $monthlyRevenue = $venueObj->getMonthlyRevenue($USER_ID);
-// $bookingStats = $venueObj->getBookingStatusStats($USER_ID);
-// $calendarEvents = $venueObj->getVenueCalendarEvents($USER_ID);
+$monthlyRevenue = $venueObj->getMonthlyRevenue($USER_ID);
+$bookingStats = $venueObj->getBookingStatusStats($USER_ID);
+$calendarEvents = $venueObj->getVenueCalendarEvents($USER_ID);
 
+// Format data for charts
+$revenueLabels = [];
+$revenueData = [];
+foreach ($monthlyRevenue as $data) {
+    $revenueLabels[] = date('M Y', strtotime($data['month']));
+    $revenueData[] = $data['revenue'];
+}
+
+$bookingLabels = [];
+$bookingData = [];
+foreach ($bookingStats as $stat) {
+    $bookingLabels[] = $stat['status'];
+    $bookingData[] = $stat['count'];
+}
 ?>
 <main class="max-w-7xl mx-auto py-6 pt-20 sm:px-6 lg:px-8">
     <?php
@@ -52,7 +65,6 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
             </div>
 
             <?php
-            // var_dump($venueStats);
             if ($userRole == $GUEST_ROLE) {
                 echo '<p class="text-gray-500 text-left">You need to apply for Host Account before you can list your venue.</p>';
             }
@@ -64,18 +76,15 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php
-                // Fetch venues for this host
                 $hostVenues = $venueObj->getVenuesByHost($USER_ID);
 
                 foreach ($hostVenues as $venue) {
-                    // Get statistics for each venue
                     $venueStats = $venueObj->getVenueStatistics($venue['id']);
                     $totalBookings = $venueStats['total_bookings'] ?? 0;
                     $averageRating = $venueStats['average_rating'] ?? 0;
                     $totalRevenue = $venueStats['total_revenue'] ?? 0;
                     $occupancyRate = $venueStats['occupancy_rate'] ?? 0;
 
-                    // Get pending, confirmed, completed, cancelled counts for this venue
                     $venuePending = $venueObj->getBookingCountByStatus($venue['id'], 1);
                     $venueConfirmed = $venueObj->getBookingCountByStatus($venue['id'], 2);
                     $venueCompleted = $venueObj->getBookingCountByStatus($venue['id'], 4);
@@ -85,7 +94,7 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
                     ?>
                     <div class="bg-white rounded-xl shadow overflow-hidden hover:shadow-lg transition duration-300">
                         <!-- Venue Image -->
-                        <div class=" relative">
+                        <div class="relative">
                             <?php
                             switch ($venue['status']) {
                                 case 'Approved':
@@ -418,9 +427,9 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             headerToolbar: false, // We'll use our custom toolbar
-            // events: <?php
-            // echo json_encode($calendarEvents); 
-            // ?>,
+            events: <?php
+            echo json_encode($calendarEvents);
+            ?>,
             height: 'auto',
             nowIndicator: true,
             selectable: true,
@@ -497,14 +506,14 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
                 new Chart(revenueCtx, {
                     type: 'line',
                     data: {
-                        // labels: <?php
-                        // echo json_encode($revenueLabels); 
-                        // ?>,
+                        labels: <?php
+                        echo json_encode($revenueLabels);
+                        ?>,
                         datasets: [{
                             label: 'Monthly Revenue',
-                            // data: <?php
-                            // echo json_encode($revenueData)
-                            // ?>,
+                            data: <?php
+                            echo json_encode($revenueData)
+                                ?>,
                             borderColor: '#10B981',
                             backgroundColor: '#10B98120',
                             tension: 0.4,
@@ -551,13 +560,9 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
                     existingChart.destroy();
                 }
 
-                // const bookingData = <?php
-                //  echo json_encode($bookingData); 
-                //  ?>;
-                // const bookingLabels = <?php
-                //  echo json_encode($bookingLabels); 
-                ?>;
-                // const total = bookingData.reduce((a, b) => a + b, 0);
+                const bookingData = <?php echo json_encode($bookingData); ?>;
+                const bookingLabels = <?php echo json_encode($bookingLabels); ?>;
+                const total = bookingData.reduce((a, b) => a + b, 0);
 
                 // Create new chart
                 new Chart(bookingsCtx, {
@@ -720,16 +725,16 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
         const todayTab = document.querySelector('[data-period="today"]');
         todayTab.classList.remove('border-transparent', 'text-gray-500');
         todayTab.classList.add('border-black', 'text-black');
-        updatePeriodStats(venue, 'today');
+        // updatePeriodStats(venue, 'today');
 
         // Update summary stats with proper formatting
-        document.getElementById('totalRevenue').textContent = '₱' + venue.total_revenue.toLocaleString();
-        document.getElementById('averageRating').textContent = venue.average_rating.toFixed(1) + ' ⭐';
-        document.getElementById('totalBookings').textContent = venue.total_bookings.toLocaleString();
-        document.getElementById('occupancyRate').textContent = venue.occupancy_rate.toFixed(1) + '%';
+        // document.getElementById('totalRevenue').textContent = '₱' + venue.total_revenue.toLocaleString();
+        // document.getElementById('averageRating').textContent = venue.average_rating.toFixed(1) + ' ⭐';
+        // document.getElementById('totalBookings').textContent = venue.total_bookings.toLocaleString();
+        // document.getElementById('occupancyRate').textContent = venue.occupancy_rate.toFixed(1) + '%';
 
         // Initialize charts with a slight delay to ensure proper rendering
-        setTimeout(() => initializeVenueCharts(venue), 0);
+        // setTimeout(() => initializeVenueCharts(venue), 0);
     }
 
     function updatePeriodStats(venue, period) {
@@ -763,7 +768,7 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
                     labels: venue.revenue_data.labels,
                     datasets: [{
                         label: 'Monthly Revenue',
-                        // data: venue.revenue_data.values,
+                        data: venue.revenue_data.values,
                         borderColor: '#10B981',
                         backgroundColor: '#10B98120',
                         tension: 0.4,
@@ -886,35 +891,6 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
 
 <script>
 
-    function showVenueDetailStats(venue) {
-        const modal = document.getElementById('statsModal');
-        modal.classList.remove('hidden');
-        document.getElementById('modalVenueName').textContent = venue.name;
-
-        // Initialize or update charts
-        initializeCharts(venue);
-
-        // Update additional stats
-        // document.getElementById('avgDuration').textContent = venue.average_duration + ' days';
-        // document.getElementById('popularMonth').textContent = venue.popular_month;
-        // document.getElementById('totalGuests').textContent = venue.total_guests;
-
-        // Populate reviews
-        // const reviewsList = document.getElementById('reviewsList');
-        // reviewsList.innerHTML = venue.recent_reviews.map(review => `
-        //     <div class="bg-gray-50 p-4 rounded-lg">
-        //         <div class="flex justify-between items-start">
-        //             <div>
-        //                 <p class="font-medium">${review.guest_name}</p>
-        //                 <p class="text-sm text-gray-600">${review.date}</p>
-        //             </div>
-        //             <div class="text-yellow-400">${'⭐'.repeat(review.rating)}</div>
-        //         </div>
-        //         <p class="mt-2">${review.review}</p>
-        //     </div>
-        // `).join('');
-    }
-
     function closeStatsModal() {
         document.getElementById('statsModal').classList.add('hidden');
         if (revenueChart) revenueChart.destroy();
@@ -928,10 +904,10 @@ $venues = $venueObj->getAllVenuesWithStats($USER_ID);
         revenueChart = new Chart(revenueCtx, {
             type: 'line',
             data: {
-                // labels: venue.revenue_data.labels,
+                labels: venue.revenue_data.labels,
                 datasets: [{
                     label: 'Monthly Revenue',
-                    // data: venue.revenue_data.values,
+                    data: venue.revenue_data.values,
                     borderColor: 'rgb(0, 0, 0)',
                     tension: 0.1
                 }]

@@ -351,7 +351,8 @@ foreach ($bookingStats as $stat) {
                                         <div class="bg-gray-50 p-3 rounded-lg">
                                             <p class="text-sm text-gray-600">Occupancy Rate</p>
                                             <p class="text-lg font-semibold">
-                                                <?php echo number_format($venue['occupancy_rate'], 1); ?>%</p>
+                                                <?php echo number_format($venue['occupancy_rate'], 1); ?>%
+                                            </p>
                                         </div>
                                     </div>
 
